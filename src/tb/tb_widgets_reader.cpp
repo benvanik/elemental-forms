@@ -114,6 +114,8 @@ void TBWidget::OnInflate(const INFLATE_INFO &info)
 		SetLayoutParams(layout_params);
 	}
 
+	SetDescription(info.node->GetValueString("desc", nullptr));
+
 	// Add the new widget to the hiearchy if not already added.
 	if (!GetParent())
 		info.target->AddChild(this, info.target->GetZInflate());
