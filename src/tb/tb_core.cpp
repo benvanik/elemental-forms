@@ -11,6 +11,7 @@
 #include "tb_font_renderer.h"
 #include "tb_addon.h"
 #include "tb_system.h"
+#include "tb_tooltips.h"
 #include "animation/tb_animation.h"
 #include "image/tb_image_manager.h"
 
@@ -38,7 +39,9 @@ bool tb_core_init(TBRenderer *renderer, const char *lng_file)
 	#ifdef TB_SYSTEM_LINUX
 	TBSystem::Init();
 	#endif
-	
+
+    g_tooltip_mng = new TBTooltipManager();
+
 	return TBInitAddons();
 }
 
@@ -57,6 +60,7 @@ void tb_core_shutdown()
 	#ifdef TB_SYSTEM_LINUX
 	TBSystem::Shutdown();
 	#endif
+    delete g_tooltip_mng;
 }
 
 bool tb_core_is_initialized()
