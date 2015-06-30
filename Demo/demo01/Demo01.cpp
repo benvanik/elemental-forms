@@ -17,6 +17,7 @@
 #include "tb_font_renderer.h"
 #include "image/tb_image_manager.h"
 #include "utf8/utf8.h"
+#include "CodeEditField\CodeEditField.h"
 
 static Application *application;
 

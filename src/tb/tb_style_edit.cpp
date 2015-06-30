@@ -1224,6 +1224,10 @@ void TBTextFragment::Paint(int32 translate_x, int32 translate_y, TBTextProps *pr
 	}
 	TMPDEBUG(listener->DrawRect(TBRect(x, y, GetWidth(font), GetHeight(font)), TBColor(255, 255, 255, 128)));
 
+  if (IsBreak())
+  {
+    listener->OnBreak();
+  }
 	if (block->styledit->packed.password_on)
 	{
 		int cw = block->CalculateStringWidth(font, special_char_password);

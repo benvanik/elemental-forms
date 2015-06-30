@@ -1,0 +1,6 @@
+WindowInfo
+	title Text editing
+	position 50 50
+	size 750 630
+TBLayout: axis: y, distribution: available
+	CodeEditField: multiline: 1, styling: 1, gravity: all, id: editfield, autofocus: 1

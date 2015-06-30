@@ -174,7 +174,7 @@ public:
 	virtual PreferredSize OnCalculatePreferredContentSize(const SizeConstraints &constraints);
 
 	virtual void OnMessageReceived(TBMessage *msg);
-private:
+protected:
 	TBScrollBar m_scrollbar_x;
 	TBScrollBar m_scrollbar_y;
 	TBWidgetString m_placeholder;

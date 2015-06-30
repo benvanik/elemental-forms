@@ -1,444 +1,143 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\parser">
-      <UniqueIdentifier>{4e6b1255-e084-41b7-bbe3-48e48893b9f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\tests">
-      <UniqueIdentifier>{d80a3164-f81d-4858-b1ea-d515dd3c9d1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\utf8">
-      <UniqueIdentifier>{39488b9f-57ff-4a32-8b13-84b3b68c74b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\renderers">
-      <UniqueIdentifier>{e3dccb00-1283-4413-a12a-4ef486295a84}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\animation">
-      <UniqueIdentifier>{12e88d74-9c68-4f34-b7e1-8141af493ab9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\image">
-      <UniqueIdentifier>{fc5ee9aa-7458-4068-8a14-eb97b73ec7f6}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="..\..\src\tb\animation\tb_animation.cpp" />
+    <ClCompile Include="..\..\src\tb\animation\tb_widget_animation.cpp" />
+    <ClCompile Include="..\..\src\tb\image\tb_image_manager.cpp" />
+    <ClCompile Include="..\..\src\tb\image\tb_image_widget.cpp" />
+    <ClCompile Include="..\..\src\tb\parser\tb_parser.cpp" />
+    <ClCompile Include="..\..\src\tb\renderers\tb_renderer_batcher.cpp" />
+    <ClCompile Include="..\..\src\tb\renderers\tb_renderer_gl.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_addon.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_bitmap_fragment.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_clipboard_win.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_color.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_core.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_debug.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_dimension.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_editfield.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_file_posix.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_font_renderer.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_font_renderer_freetype.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_font_renderer_stb.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_font_renderer_tbbf.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_geometry.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_hash.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_hashtable.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_id.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_image_loader_stb.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_inline_select.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_language.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_layout.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_linklist.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_list.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_menu_window.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_message_window.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_msg.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_node_ref_tree.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_node_tree.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_object.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_popup_window.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_renderer.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_scroller.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_scroll_container.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_select.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_select_item.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_skin.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_skin_util.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_str.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_style_edit.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_style_edit_content.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_system_win.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_tab_container.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_tempbuffer.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_toggle_container.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_tooltips.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_value.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widgets.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widgets_common.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widgets_listener.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widgets_reader.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widget_skin_condition_context.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_widget_value.cpp" />
+    <ClCompile Include="..\..\src\tb\tb_window.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\tb_test.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_color.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_dimension.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_geometry.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_linklist.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_node_ref_tree.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_object.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_parser.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_value.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_space_allocator.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_style_edit.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_tempbuffer.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_test.cpp" />
+    <ClCompile Include="..\..\src\tb\tests\test_tb_widget_value.cpp" />
+    <ClCompile Include="..\..\src\tb\utf8\utf8.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\tb\tb_language.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_layout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_linklist.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_message_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_msg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_scroll_container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_select.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_skin.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_style_edit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_style_edit_content.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_system_win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_tab_container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_tempbuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_toggle_container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_value.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widget_skin_condition_context.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widget_value.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widgets_common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widgets_listener.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_widgets_reader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_addon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_bitmap_fragment.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_editfield.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_font_renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_font_renderer_tbbf.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_hash.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_hashtable.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_style_edit.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_tempbuffer.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_test.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_widget_value.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\tb_test.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_linklist.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_parser.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_value.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_space_allocator.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\utf8\utf8.cpp">
-      <Filter>Source Files\utf8</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_select_item.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_inline_select.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_clipboard_win.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_skin_util.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_color.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_object.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_object.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_popup_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_menu_window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_dimension.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_scroller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_geometry.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_node_tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\parser\tb_parser.cpp">
-      <Filter>Source Files\parser</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\renderers\tb_renderer_batcher.cpp">
-      <Filter>Source Files\renderers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\renderers\tb_renderer_gl.cpp">
-      <Filter>Source Files\renderers</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_image_loader_stb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_node_ref_tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tests\test_tb_node_ref_tree.cpp">
-      <Filter>Source Files\tests</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_dimension.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_str.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_id.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_color.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_core.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\animation\tb_animation.cpp">
-      <Filter>Source Files\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\animation\tb_widget_animation.cpp">
-      <Filter>Source Files\animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_font_renderer_freetype.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_font_renderer_stb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_file_posix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\image\tb_image_widget.cpp">
-      <Filter>Source Files\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\image\tb_image_manager.cpp">
-      <Filter>Source Files\image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tb\tb_tooltips.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\tb\tb_language.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_layout.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_linklist.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_list.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_message_window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_msg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_renderer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_scroll_container.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_select.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_skin.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_style_edit.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_style_edit_content.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_system.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_tab_container.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_tempbuffer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_toggle_container.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_types.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_value.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widget_skin_condition_context.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widget_value.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widgets.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widgets_common.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widgets_listener.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_widgets_reader.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_addon.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_bitmap_fragment.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_editfield.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_font_renderer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_hash.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_hashtable.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tests\tb_test.h">
-      <Filter>Source Files\tests</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\utf8\utf8.h">
-      <Filter>Source Files\utf8</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_select_item.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_inline_select.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_skin_util.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_object.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_popup_window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_menu_window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_debug.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_config.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_scroller.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_node_tree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\parser\tb_parser.h">
-      <Filter>Source Files\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\renderers\tb_renderer_batcher.h">
-      <Filter>Source Files\renderers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\renderers\tb_renderer_gl.h">
-      <Filter>Source Files\renderers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_node_ref_tree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_dimension.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_str.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_id.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_font_desc.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_color.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\tb_core.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\tbanimation\tb_animation_utils.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\animation\tb_animation.h">
-      <Filter>Source Files\animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\animation\tb_animation_utils.h">
-      <Filter>Source Files\animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\animation\tb_widget_animation.h">
-      <Filter>Source Files\animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\image\tb_image_manager.h">
-      <Filter>Source Files\image</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tb\image\tb_image_widget.h">
-      <Filter>Source Files\image</Filter>
-    <ClInclude Include="..\..\src\tb\tb_tooltips.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
+    <ClInclude Include="..\..\src\tb\image\tb_image_manager.h" />
+    <ClInclude Include="..\..\src\tb\image\tb_image_widget.h" />
+    <ClInclude Include="..\..\src\tb\tb_tooltips.h" />
+    <ClInclude Include="..\..\tbanimation\tb_animation_utils.h" />
+    <ClInclude Include="..\..\src\tb\animation\tb_animation.h" />
+    <ClInclude Include="..\..\src\tb\animation\tb_animation_utils.h" />
+    <ClInclude Include="..\..\src\tb\animation\tb_widget_animation.h" />
+    <ClInclude Include="..\..\src\tb\parser\tb_parser.h" />
+    <ClInclude Include="..\..\src\tb\renderers\tb_renderer_batcher.h" />
+    <ClInclude Include="..\..\src\tb\renderers\tb_renderer_gl.h" />
+    <ClInclude Include="..\..\src\tb\tb_addon.h" />
+    <ClInclude Include="..\..\src\tb\tb_bitmap_fragment.h" />
+    <ClInclude Include="..\..\src\tb\tb_color.h" />
+    <ClInclude Include="..\..\src\tb\tb_config.h" />
+    <ClInclude Include="..\..\src\tb\tb_core.h" />
+    <ClInclude Include="..\..\src\tb\tb_debug.h" />
+    <ClInclude Include="..\..\src\tb\tb_dimension.h" />
+    <ClInclude Include="..\..\src\tb\tb_editfield.h" />
+    <ClInclude Include="..\..\src\tb\tb_font_desc.h" />
+    <ClInclude Include="..\..\src\tb\tb_font_renderer.h" />
+    <ClInclude Include="..\..\src\tb\tb_hash.h" />
+    <ClInclude Include="..\..\src\tb\tb_hashtable.h" />
+    <ClInclude Include="..\..\src\tb\tb_id.h" />
+    <ClInclude Include="..\..\src\tb\tb_inline_select.h" />
+    <ClInclude Include="..\..\src\tb\tb_language.h" />
+    <ClInclude Include="..\..\src\tb\tb_layout.h" />
+    <ClInclude Include="..\..\src\tb\tb_linklist.h" />
+    <ClInclude Include="..\..\src\tb\tb_list.h" />
+    <ClInclude Include="..\..\src\tb\tb_menu_window.h" />
+    <ClInclude Include="..\..\src\tb\tb_message_window.h" />
+    <ClInclude Include="..\..\src\tb\tb_msg.h" />
+    <ClInclude Include="..\..\src\tb\tb_node_ref_tree.h" />
+    <ClInclude Include="..\..\src\tb\tb_node_tree.h" />
+    <ClInclude Include="..\..\src\tb\tb_object.h" />
+    <ClInclude Include="..\..\src\tb\tb_popup_window.h" />
+    <ClInclude Include="..\..\src\tb\tb_renderer.h" />
+    <ClInclude Include="..\..\src\tb\tb_scroller.h" />
+    <ClInclude Include="..\..\src\tb\tb_scroll_container.h" />
+    <ClInclude Include="..\..\src\tb\tb_select.h" />
+    <ClInclude Include="..\..\src\tb\tb_select_item.h" />
+    <ClInclude Include="..\..\src\tb\tb_skin.h" />
+    <ClInclude Include="..\..\src\tb\tb_skin_util.h" />
+    <ClInclude Include="..\..\src\tb\tb_str.h" />
+    <ClInclude Include="..\..\src\tb\tb_style_edit.h" />
+    <ClInclude Include="..\..\src\tb\tb_style_edit_content.h" />
+    <ClInclude Include="..\..\src\tb\tb_system.h" />
+    <ClInclude Include="..\..\src\tb\tb_tab_container.h" />
+    <ClInclude Include="..\..\src\tb\tb_tempbuffer.h" />
+    <ClInclude Include="..\..\src\tb\tb_toggle_container.h" />
+    <ClInclude Include="..\..\src\tb\tb_types.h" />
+    <ClInclude Include="..\..\src\tb\tb_value.h" />
+    <ClInclude Include="..\..\src\tb\tb_widgets.h" />
+    <ClInclude Include="..\..\src\tb\tb_widgets_common.h" />
+    <ClInclude Include="..\..\src\tb\tb_widgets_listener.h" />
+    <ClInclude Include="..\..\src\tb\tb_widgets_reader.h" />
+    <ClInclude Include="..\..\src\tb\tb_widget_skin_condition_context.h" />
+    <ClInclude Include="..\..\src\tb\tb_widget_value.h" />
+    <ClInclude Include="..\..\src\tb\tb_window.h" />
+    <ClInclude Include="..\..\src\tb\tests\tb_test.h" />
+    <ClInclude Include="..\..\src\tb\utf8\utf8.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\integration.txt" />

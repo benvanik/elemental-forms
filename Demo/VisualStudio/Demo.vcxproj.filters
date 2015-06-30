@@ -25,6 +25,9 @@
     <Filter Include="Source Files\platform">
       <UniqueIdentifier>{bc150975-47f1-41bc-8c1d-039162628f54}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\demo01\CodeEditField">
+      <UniqueIdentifier>{46c803ce-f5a9-4328-a38f-fc31805f57f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\demo01\Demo01.cpp">
@@ -96,6 +99,9 @@
     <ClCompile Include="..\thirdparty\glfw\src\monitor.c">
       <Filter>Source Files\glfw\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\demo01\CodeEditField\CodeEditField.cpp">
+      <Filter>Source Files\demo01\CodeEditField</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\demo01\Demo.h">
@@ -118,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="..\thirdparty\glfw\src\win32_platform.h">
       <Filter>Source Files\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\demo01\CodeEditField\CodeEditField.h">
+      <Filter>Source Files\demo01\CodeEditField</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

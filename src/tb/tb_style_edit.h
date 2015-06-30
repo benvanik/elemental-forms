@@ -39,6 +39,7 @@ public:
 	virtual void UpdateScrollbars() = 0;
 	virtual void CaretBlinkStart() = 0;
 	virtual void CaretBlinkStop() = 0;
+  virtual void OnBreak() {}
 };
 
 /** Creates TBTextFragmentContent if the sequence of text matches known content. */
