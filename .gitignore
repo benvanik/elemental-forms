@@ -11,10 +11,6 @@ Thumbs.db
 *.sdf
 *.user
 *.suo
-*.pdb
 
-Demo.exe
-Demo.ilk
-
-Demo/VisualStudio/Debug/
-Demo/VisualStudio/Release/
+Debug/
+Release/

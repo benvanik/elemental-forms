@@ -15,7 +15,7 @@
 
 void TBDebugOut(const char *str)
 {
-	OutputDebugString(str);
+	OutputDebugStringA(str);
 }
 
 #endif // TB_RUNTIME_DEBUG_INFO
