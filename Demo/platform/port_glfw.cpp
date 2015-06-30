@@ -13,6 +13,7 @@
 
 #ifdef TB_TARGET_MACOSX
 #include <unistd.h>
+#include <mach-o/dyld.h>
 #endif
 
 using namespace tb;
@@ -312,7 +313,7 @@ static void scroll_callback(GLFWwindow *window, double x, double y)
 	If force is true, it will ask the platform to schedule it again, even if
 	the fire_time is the same as last time. */
 
-#ifndef TB_TARGET_LINUX 
+#ifndef TB_TARGET_LINUX
 static void ReschedulePlatformTimer(double fire_time, bool force)
 {
 	static double set_fire_time = -1;
@@ -443,7 +444,7 @@ bool ApplicationBackendGLFW::Init(Application *app, int width, int height, const
 #ifndef TB_SYSTEM_LINUX
     glfwSetTimerCallback(timer_callback);
 #endif
-	
+
 #if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 1)
 	glfwSetDropCallback(mainWindow, drop_callback);
 #endif
@@ -452,13 +453,22 @@ bool ApplicationBackendGLFW::Init(Application *app, int width, int height, const
 	m_root.SetRect(TBRect(0, 0, width, height));
 
 	// Create the application object for our demo
-	
+
 	m_application = app;
 	m_application->OnBackendAttached(this);
 
-#if defined(TB_TARGET_MACOSX) && !defined(TB_USE_CURRENT_DIRECTORY)
-	// Initializing glfw put us in Resources sub directory.
-	chdir("../");
+#if !defined(TB_USE_CURRENT_DIRECTORY) && defined(TB_TARGET_MACOSX)
+	// Put is in the root of the repository so the demo resources are found.
+	char exec_path[2048];
+	uint32_t exec_path_size = sizeof(exec_path);
+	if (_NSGetExecutablePath(exec_path, &exec_path_size) == 0)
+	{
+		TBTempBuffer path;
+		path.AppendPath(exec_path);
+		chdir(path.GetData());
+	}
+	// For linux?
+	// chdir("../");
 #endif
 
 	return true;
@@ -483,9 +493,9 @@ void ApplicationBackendGLFW::Run()
 		#ifdef TB_TARGET_LINUX
 		TBSystem::PollEvents();
 
-		#endif 
+		#endif
 		glfwPollEvents();
-		
+
 		if (has_pending_update)
 			window_refresh_callback(mainWindow);
 

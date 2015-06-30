@@ -98,23 +98,18 @@
     <ClCompile Include="..\platform\Application.cpp" />
     <ClCompile Include="..\platform\glfw_extra_win.cpp" />
     <ClCompile Include="..\platform\port_glfw.cpp" />
-    <ClCompile Include="..\thirdparty\glfw\src\clipboard.c" />
     <ClCompile Include="..\thirdparty\glfw\src\context.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\gamma.c" />
     <ClCompile Include="..\thirdparty\glfw\src\init.c" />
     <ClCompile Include="..\thirdparty\glfw\src\input.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\joystick.c" />
     <ClCompile Include="..\thirdparty\glfw\src\monitor.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\time.c" />
     <ClCompile Include="..\thirdparty\glfw\src\wgl_context.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\win32_clipboard.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\win32_gamma.c" />
     <ClCompile Include="..\thirdparty\glfw\src\win32_init.c" />
-    <ClCompile Include="..\thirdparty\glfw\src\win32_joystick.c" />
     <ClCompile Include="..\thirdparty\glfw\src\win32_monitor.c" />
     <ClCompile Include="..\thirdparty\glfw\src\win32_time.c" />
+    <ClCompile Include="..\thirdparty\glfw\src\win32_tls.c" />
     <ClCompile Include="..\thirdparty\glfw\src\win32_window.c" />
     <ClCompile Include="..\thirdparty\glfw\src\window.c" />
+    <ClCompile Include="..\thirdparty\glfw\src\winmm_joystick.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\config.h" />
