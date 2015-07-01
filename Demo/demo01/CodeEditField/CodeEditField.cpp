@@ -12,9 +12,9 @@ void CodeEditField::OnInflate(const INFLATE_INFO& info) {
   TBEditField::OnInflate(info);
 }
 
-void CodeEditField::DrawString(int32 x, int32 y, TBFontFace* font,
+void CodeEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
                                const TBColor& color, const char* str,
-                               int32 len) {
+                               int32_t len) {
   TBColor finalColor(color);
   StringHasColorOverride(str, len, finalColor);
   TBEditField::DrawString(x, y, font, finalColor, str, len);
@@ -22,7 +22,7 @@ void CodeEditField::DrawString(int32 x, int32 y, TBFontFace* font,
 
 void CodeEditField::OnBreak() { inComment = false; }
 
-bool CodeEditField::StringHasColorOverride(const char* str, int32 len,
+bool CodeEditField::StringHasColorOverride(const char* str, int32_t len,
                                            TBColor& colour) {
   if (strlen(str) >= 2) {
     if (str[0] == '/' && str[1] == '/') {
@@ -39,12 +39,12 @@ bool CodeEditField::StringHasColorOverride(const char* str, int32 len,
                       "if",  "float", "vec4",    "for",   "uint",    "abs",
                       "sin", "cos",   "texture", "int"};
 
-  for (int32 keywordIdx = 0; keywordIdx < 16; keywordIdx++) {
+  for (int32_t keywordIdx = 0; keywordIdx < 16; keywordIdx++) {
     char* matchAgainst = keywords[keywordIdx];
-    int32 matchLen = (int32)strlen(matchAgainst);
+    int32_t matchLen = (int32_t)strlen(matchAgainst);
     if (matchLen == len) {
       auto matched = true;
-      for (int32 i = 0; i < len; i++) {
+      for (int32_t i = 0; i < len; i++) {
         if (toupper(matchAgainst[i]) != toupper(str[i])) {
           matched = false;
           break;

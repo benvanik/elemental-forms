@@ -147,7 +147,7 @@ TBFontGlyph* TBFontGlyphCache::CreateAndCacheGlyph(const TBID& hash_id,
 
 TBBitmapFragment* TBFontGlyphCache::CreateFragment(TBFontGlyph* glyph, int w,
                                                    int h, int stride,
-                                                   uint32* data) {
+                                                   uint32_t* data) {
   assert(GetGlyph(glyph->hash_id, glyph->cp));
   // Don't bother if the requested glyph is too large.
   if (w > TB_GLYPH_CACHE_WIDTH || h > TB_GLYPH_CACHE_HEIGHT) return nullptr;
@@ -273,14 +273,13 @@ void TBFontFace::RenderGlyph(TBFontGlyph* glyph) {
     TBFontGlyphData* result_glyph_data =
         effect_glyph_data ? effect_glyph_data : &glyph_data;
 
-    // The glyph data may be in uint8 format, which we have to convert since we
-    // always
-    // create fragments (and TBBitmap) in 32bit format.
-    uint32* glyph_dsta_src = result_glyph_data->data32;
+    // The glyph data may be in uint8_t format, which we have to convert since
+    // we always create fragments (and TBBitmap) in 32bit format.
+    uint32_t* glyph_dsta_src = result_glyph_data->data32;
     if (!glyph_dsta_src && result_glyph_data->data8) {
       if (m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
-                                sizeof(uint32))) {
-        glyph_dsta_src = (uint32*)m_temp_buffer.GetData();
+                                sizeof(uint32_t))) {
+        glyph_dsta_src = (uint32_t*)m_temp_buffer.GetData();
         for (int y = 0; y < result_glyph_data->h; y++)
           for (int x = 0; x < result_glyph_data->w; x++) {
             glyph_dsta_src[x + y * result_glyph_data->w] = TBColor(

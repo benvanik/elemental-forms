@@ -89,7 +89,7 @@ class TBMessageHandler {
      deleted
           automatically when the message is deleted. */
   bool PostMessageDelayed(TBID message, TBMessageData* data,
-                          uint32 delay_in_ms);
+                          uint32_t delay_in_ms);
 
   /** Posts a message to the target at the given time (relative to
      TBSystem::GetTimeMS()).

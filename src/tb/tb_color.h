@@ -10,6 +10,8 @@
 #ifndef TB_COLOR_H
 #define TB_COLOR_H
 
+#include <cstdint>
+
 #include "tb_types.h"
 
 namespace tb {
@@ -21,7 +23,7 @@ class TBColor {
   TBColor() : b(0), g(0), r(0), a(255) {}
   TBColor(int r, int g, int b, int a = 255) : b(b), g(g), r(r), a(a) {}
 
-  uint8 b, g, r, a;
+  uint8_t b, g, r, a;
 
   void Set(const TBColor& color) { *this = color; }
 
@@ -29,8 +31,8 @@ class TBColor {
           "#rrggbbaa", "#rrggbb", "#rgba", "#rgb" */
   void SetFromString(const char* str, int len);
 
-  operator uint32() const { return *((uint32*)this); }
-  bool operator==(const TBColor& c) const { return *this == (uint32)c; }
+  operator uint32_t() const { return *((uint32_t*)this); }
+  bool operator==(const TBColor& c) const { return *this == (uint32_t)c; }
   bool operator!=(const TBColor& c) const { return !(*this == c); }
 };
 

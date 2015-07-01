@@ -43,7 +43,7 @@ class FreetypeFace {
     if (!refCount) delete this;
   }
 
-  uint32 hashID;
+  uint32_t hashID;
   unsigned char* ttf_buffer;
   FT_Face m_face;
   unsigned int refCount;
@@ -88,9 +88,9 @@ FreetypeFontRenderer::~FreetypeFontRenderer() {
 
 TBFontMetrics FreetypeFontRenderer::GetMetrics() {
   TBFontMetrics metrics;
-  metrics.ascent = (int16)(m_size->metrics.ascender >> 6);
-  metrics.descent = (int16) - (m_size->metrics.descender >> 6);
-  metrics.height = (int16)(m_size->metrics.height >> 6);
+  metrics.ascent = (int16_t)(m_size->metrics.ascender >> 6);
+  metrics.descent = (int16_t) - (m_size->metrics.descender >> 6);
+  metrics.height = (int16_t)(m_size->metrics.height >> 6);
   return metrics;
 }
 
@@ -111,7 +111,7 @@ void FreetypeFontRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
   FT_Activate_Size(m_size);
   FT_GlyphSlot slot = m_face->m_face->glyph;
   if (FT_Load_Char(m_face->m_face, cp, FT_LOAD_RENDER)) return;
-  metrics->advance = (int16)(slot->advance.x >> 6);
+  metrics->advance = (int16_t)(slot->advance.x >> 6);
   metrics->x = slot->bitmap_left;
   metrics->y = -slot->bitmap_top;
 }

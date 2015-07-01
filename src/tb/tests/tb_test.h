@@ -10,6 +10,8 @@
 #ifndef TB_TEST_H
 #define TB_TEST_H
 
+#include <cstdint>
+
 /**
         This file contains a very simple unit testing framework.
 
@@ -103,7 +105,7 @@ namespace tb {
 #ifdef TB_UNIT_TESTING
 
 /** Run the tests. Return the number of fails. */
-int TBRunTests(uint32 settings = TB_TEST_VERBOSE);
+int TBRunTests(uint32_t settings = TB_TEST_VERBOSE);
 
 /** Verify that the expression is true and fail if it isn't. */
 #define TB_VERIFY(expr)      \
@@ -213,14 +215,14 @@ class TBRegisterCall {
 TBStr tb_get_test_file_name(const char* testpath, const char* filename);
 
 // Internal globals
-extern uint32 test_settings;   ///< Settings, as sent to TBRunTests
-extern int fail_line_nr;       ///< Fail line number
-extern const char* fail_file;  ///< Fail file name
-extern const char* fail_text;  ///< Fail text description
+extern uint32_t test_settings;  ///< Settings, as sent to TBRunTests
+extern int fail_line_nr;        ///< Fail line number
+extern const char* fail_file;   ///< Fail file name
+extern const char* fail_text;   ///< Fail text description
 
 #else
 
-inline int TBRunTests(uint32 settings = TB_TEST_VERBOSE) { return 0; }
+inline int TBRunTests(uint32_t settings = TB_TEST_VERBOSE) { return 0; }
 
 #endif
 

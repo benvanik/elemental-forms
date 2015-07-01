@@ -116,7 +116,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     str.Append(id.debug_string);
     str.Append("\"");
 #else
-    str.SetFormatted("%u", (uint32)id);
+    str.SetFormatted("%u", (uint32_t)id);
 #endif
     return str;
   }

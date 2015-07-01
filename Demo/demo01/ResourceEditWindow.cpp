@@ -56,7 +56,8 @@ void ResourceEditWindow::Load(const char* resource_file) {
   if (TBFile* file = TBFile::Open(m_resource_filename, TBFile::MODE_READ)) {
     TBTempBuffer buffer;
     if (buffer.Reserve(file->Size())) {
-      uint32 size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
+      uint32_t size_read =
+          file->Read(buffer.GetData(), 1, buffer.GetCapacity());
       m_source_edit->SetText(buffer.GetData(), size_read);
     }
     delete file;

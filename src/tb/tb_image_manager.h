@@ -28,13 +28,13 @@ class TBImageRep {
   friend class TBImage;
 
   TBImageRep(TBImageManager* image_manager, TBBitmapFragment* fragment,
-             uint32 hash_key);
+             uint32_t hash_key);
 
   void IncRef();
   void DecRef();
 
   int ref_count;
-  uint32 hash_key;
+  uint32_t hash_key;
   TBImageManager* image_manager;
   TBBitmapFragment* fragment;
 };

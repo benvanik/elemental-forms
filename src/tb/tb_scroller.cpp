@@ -16,17 +16,17 @@
 
 namespace tb {
 
-#define PAN_TARGET_FPS 60
-#define PAN_MSG_DELAY_MS ((double)(1000.0 / PAN_TARGET_FPS))
+constexpr uint32_t PAN_TARGET_FPS = 60;
+constexpr uint32_t PAN_MSG_DELAY_MS = uint32_t(1000.0 / double(PAN_TARGET_FPS));
 
-#define PAN_START_THRESHOLD_MS 50
-#define PAN_POWER_ACC_THRESHOLD_MS 600
+constexpr uint32_t PAN_START_THRESHOLD_MS = 50;
+constexpr uint32_t PAN_POWER_ACC_THRESHOLD_MS = 600;
 
-#define PAN_POWER_MULTIPLIER 1.3f
+constexpr float PAN_POWER_MULTIPLIER = 1.3f;
 
-#define SCROLL_DECAY 200.0f
+constexpr float SCROLL_DECAY = 200.0f;
 
-#define SF_GATE_THRESHOLD 0.01f
+constexpr float SF_GATE_THRESHOLD = 0.01f;
 
 // Lab:
 // http://www.madtealab.com/?V=1&C=6&F=5&G=1&O=1&W=774&GW=720&GH=252&GX=13.389616776278201&GY=4.790704772336853&GS=0.13102127484993598&EH=189&a=3.6666666666666665&aMa=20&aN=OrgSpeed&bMa=3&bN=CurPos&c=8&cMa=60&cI=1&cN=FrameRate&d=16&dMa=16&dI=1&dN=numSimulatedSeconds&l=2.388888888888889&lMa=5&lN=Decay&m=0.1&mMa=0.1&mN=GateThreshold&f1=OrgSpeed+%2A+exp%28-x+%2F+Decay%29&f1N=Speed&f2=CurPos+%2B+OrgSpeed+%2A+%281-exp%28-x+%2F+Decay%29%29%2A+Decay&f2N=Pos&f3=marker%28x%2C+predictGatedPoint%29&f3N=GatePoint&f4=aToF%28simulatedPoints%2Cnearest%2C0%2CnumSimulatedSeconds%29%28x%29&f4N=Iterated&f5=OrgSpeed+%2A+x&f5N=Linear1&Expr=%0ApredictGatedPoint+%3D+-log%28GateThreshold+%2F+%28OrgSpeed%29%29+%2A+Decay%0A%0Avar+cur+%3D+OrgSpeed%0AsimulatedPoints+%3D+sample%28function%28%29+%7B%0A+++cur+%3D+cur+%2A+%281+-+0.05%29%3B%0A+++return+cur%0A+%7D%2C+%5BnumSimulatedSeconds+%2A+FrameRate%5D%29%3B%0A%0ApredictGatedPoint
@@ -256,7 +256,7 @@ void TBScroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
     // Update expected translation
     GetTargetChildTranslation(m_expected_scroll_x, m_expected_scroll_y);
 
-    PostMessageDelayed(TBIDC("scroll"), nullptr, (uint32)PAN_MSG_DELAY_MS);
+    PostMessageDelayed(TBIDC("scroll"), nullptr, PAN_MSG_DELAY_MS);
   }
 }
 

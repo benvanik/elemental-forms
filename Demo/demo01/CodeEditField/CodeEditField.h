@@ -12,12 +12,12 @@ class CodeEditField : public tb::TBEditField {
   virtual void OnInflate(const tb::INFLATE_INFO& info);
 
  private:
-  virtual void DrawString(tb::int32 x, tb::int32 y, tb::TBFontFace* font,
+  virtual void DrawString(int32_t x, int32_t y, tb::TBFontFace* font,
                           const tb::TBColor& color, const char* str,
-                          tb::int32 len);
+                          int32_t len);
   virtual void OnBreak();
 
-  bool StringHasColorOverride(const char* str, tb::int32 len,
+  bool StringHasColorOverride(const char* str, int32_t len,
                               tb::TBColor& colour);
 
   bool inComment;

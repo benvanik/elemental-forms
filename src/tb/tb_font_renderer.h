@@ -32,8 +32,8 @@ class TBFontGlyphData {
       : data8(nullptr), data32(nullptr), w(0), h(0), stride(0), rgb(false) {}
   ~TBFontGlyphData() {}
 
-  uint8* data8;
-  uint32* data32;
+  uint8_t* data8;
+  uint32_t* data32;
   int w, h, stride;
   bool rgb;
 };
@@ -42,16 +42,16 @@ class TBFontGlyphData {
 class TBGlyphMetrics {
  public:
   TBGlyphMetrics() : advance(0), x(0), y(0) {}
-  int16 advance, x, y;
+  int16_t advance, x, y;
 };
 
 /** TBFontMetrics contains metrics for a font face. */
 class TBFontMetrics {
  public:
   TBFontMetrics() : ascent(0), descent(0), height(0) {}
-  int16 ascent;   ///< Ascent. See TBFontFace::GetAscent()
-  int16 descent;  ///< Descent. See TBFontFace::GetDescent()
-  int16 height;   ///< Height. See TBFontFace::GetHeight()
+  int16_t ascent;   ///< Ascent. See TBFontFace::GetAscent()
+  int16_t descent;  ///< Descent. See TBFontFace::GetDescent()
+  int16_t height;   ///< Height. See TBFontFace::GetHeight()
 };
 
 /** TBFontRenderer renders glyphs from a font file. */
@@ -103,7 +103,7 @@ class TBFontGlyphCache : private TBRendererListener {
           rendered glyphs from the fragment map. Returns the fragment, or
      nullptr on fail. */
   TBBitmapFragment* CreateFragment(TBFontGlyph* glyph, int w, int h, int stride,
-                                   uint32* data);
+                                   uint32_t* data);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   /** Render the glyph bitmaps on screen, to analyze fragment positioning. */

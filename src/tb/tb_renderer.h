@@ -10,6 +10,8 @@
 #ifndef TB_RENDERER_H
 #define TB_RENDERER_H
 
+#include <cstdint>
+
 #include "tb_color.h"
 #include "tb_core.h"
 #include "tb_geometry.h"
@@ -55,7 +57,7 @@ class TBBitmap {
      TBRenderer::FlushBitmap
           to make sure any active batch is being flushed before the bitmap is
      changed. */
-  virtual void SetData(uint32* data) = 0;
+  virtual void SetData(uint32_t* data) = 0;
 };
 
 /** TBRenderer is a minimal interface for painting strings and bitmaps. */
@@ -134,7 +136,7 @@ class TBRenderer {
   /** Create a new TBBitmap from the given data (in BGRA32 format).
           Width and height must be a power of two.
           Return nullptr if fail. */
-  virtual TBBitmap* CreateBitmap(int width, int height, uint32* data) = 0;
+  virtual TBBitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;
 
   /** Add a listener to this renderer. Does not take ownership. */
   void AddListener(TBRendererListener* listener) {

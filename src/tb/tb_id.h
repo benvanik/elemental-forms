@@ -10,6 +10,8 @@
 #ifndef TB_ID_H
 #define TB_ID_H
 
+#include <cstdint>
+
 #include "tb_hash.h"
 #include "tb_str.h"
 #include "tb_types.h"
@@ -21,28 +23,28 @@ namespace tb {
         set from a string which will be hashed into the uint32. */
 class TBID {
  public:
-  TBID(uint32 id = 0) { Set(id); }
+  TBID(uint32_t id = 0) { Set(id); }
   TBID(const char* string) { Set(string); }
   TBID(const TBID& id) { Set(id); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  void Set(uint32 newid);
+  void Set(uint32_t newid);
   void Set(const TBID& newid);
   void Set(const char* string);
 #else
-  void Set(uint32 newid) { id = newid; }
+  void Set(uint32_t newid) { id = newid; }
   void Set(const TBID& newid) { id = newid; }
   void Set(const char* string) { id = TBGetHash(string); }
 #endif
 
-  operator uint32() const { return id; }
+  operator uint32_t() const { return id; }
   const TBID& operator=(const TBID& id) {
     Set(id);
     return *this;
   }
 
  private:
-  uint32 id;
+  uint32_t id;
 
  public:
 /** This string is here to aid debugging (Only in debug builds!)

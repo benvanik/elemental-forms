@@ -32,7 +32,7 @@ TBMessageHandler::TBMessageHandler() {}
 TBMessageHandler::~TBMessageHandler() { DeleteAllMessages(); }
 
 bool TBMessageHandler::PostMessageDelayed(TBID message, TBMessageData* data,
-                                          uint32 delay_in_ms) {
+                                          uint32_t delay_in_ms) {
   return PostMessageOnTime(message, data,
                            TBSystem::GetTimeMS() + (double)delay_in_ms);
 }

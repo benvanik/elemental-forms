@@ -11,6 +11,7 @@
 #define TB_HASHTABLE_H
 
 #include <cassert>
+#include <cstdint>
 
 #include "tb_core.h"
 
@@ -35,28 +36,28 @@ class TBHashTable {
   void DeleteAll() { RemoveAll(true); }
 
   /** Get the content for the given key, or nullptr if not found. */
-  void* Get(uint32 key) const;
+  void* Get(uint32_t key) const;
 
   /** Add content with the given key.
           Returns false if out of memory. */
-  bool Add(uint32 key, void* content);
+  bool Add(uint32_t key, void* content);
 
   /** Remove the content with the given key. */
-  void* Remove(uint32 key);
+  void* Remove(uint32_t key);
 
   /** Delete the content with the given key. */
-  void Delete(uint32 key);
+  void Delete(uint32_t key);
 
   /** Rehash the table so use the given number of buckets.
           Returns false if out of memory. */
-  bool Rehash(uint32 num_buckets);
+  bool Rehash(uint32_t num_buckets);
 
   /** Return true if the hashtable itself think it's time to rehash. */
   bool NeedRehash() const;
 
   /** Get the number of buckets the hashtable itself thinks is suitable for
           the current number of items. */
-  uint32 GetSuitableBucketsCount() const;
+  uint32_t GetSuitableBucketsCount() const;
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   /** Print out some debug info about the hash table. */
@@ -75,12 +76,12 @@ class TBHashTable {
   friend class TBHashTableIterator;
   void RemoveAll(bool delete_content);
   struct ITEM {
-    uint32 key;
+    uint32_t key;
     ITEM* next;
     void* content;
   } * *m_buckets;
-  uint32 m_num_buckets;
-  uint32 m_num_items;
+  uint32_t m_num_buckets;
+  uint32_t m_num_items;
 };
 
 /** TBHashTableIterator is a iterator for stepping through all content stored in
@@ -93,7 +94,7 @@ class TBHashTableIterator {
 
  private:
   TBHashTable* m_hash_table;
-  uint32 m_current_bucket;
+  uint32_t m_current_bucket;
   TBHashTable::ITEM* m_current_item;
 };
 
@@ -113,7 +114,7 @@ class TBHashTableOf : public TBHashTable {
   // FIX: Don't do public inheritance! Either inherit privately and forward, or
   // use a private member backend!
  public:
-  T* Get(uint32 key) const { return (T*)TBHashTable::Get(key); }
+  T* Get(uint32_t key) const { return (T*)TBHashTable::Get(key); }
 
  protected:
   virtual void DeleteContent(void* content) { delete (T*)content; }
@@ -126,7 +127,7 @@ class TBHashTableAutoDeleteOf : public TBHashTable {
  public:
   ~TBHashTableAutoDeleteOf() { DeleteAll(); }
 
-  T* Get(uint32 key) const { return (T*)TBHashTable::Get(key); }
+  T* Get(uint32_t key) const { return (T*)TBHashTable::Get(key); }
 
  protected:
   virtual void DeleteContent(void* content) { delete (T*)content; }

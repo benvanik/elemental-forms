@@ -21,7 +21,7 @@ namespace tb {
 static TBHashTableAutoDeleteOf<TBID> all_id_hash;
 static bool is_adding = false;
 
-void TBID::Set(uint32 newid) {
+void TBID::Set(uint32_t newid) {
   id = newid;
   debug_string.Clear();
   if (!is_adding && tb_core_is_initialized()) {

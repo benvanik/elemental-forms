@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <cstdint>
+
 #include "tb_bitmap_fragment.h"
 #include "tb_system.h"
 
@@ -40,7 +42,7 @@ class STBI_Loader : public TBImageLoader {
 
   virtual int Width() { return width; }
   virtual int Height() { return height; }
-  virtual uint32* Data() { return (uint32*)data; }
+  virtual uint32_t* Data() { return (uint32_t*)data; }
 };
 
 TBImageLoader* TBImageLoader::CreateFromFile(const char* filename) {

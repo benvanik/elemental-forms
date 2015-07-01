@@ -32,7 +32,7 @@ class TBRendererBatcher : public TBRenderer {
       struct {
         unsigned char r, g, b, a;
       };
-      uint32 col;
+      uint32_t col;
     };
   };
   /** A batch which should be rendered. */
@@ -53,7 +53,7 @@ class TBRendererBatcher : public TBRenderer {
     TBBitmap* bitmap;
     TBBitmapFragment* fragment;
 
-    uint32 batch_id;
+    uint32_t batch_id;
     bool is_flushing;
   };
 
@@ -89,12 +89,12 @@ class TBRendererBatcher : public TBRenderer {
   virtual void BeginBatchHint(TBRenderer::BATCH_HINT hint) {}
   virtual void EndBatchHint() {}
 
-  virtual TBBitmap* CreateBitmap(int width, int height, uint32* data) = 0;
+  virtual TBBitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;
   virtual void RenderBatch(Batch* batch) = 0;
   virtual void SetClipRect(const TBRect& rect) = 0;
 
  protected:
-  uint8 m_opacity;
+  uint8_t m_opacity;
   TBRect m_screen_rect;
   TBRect m_clip_rect;
   int m_translation_x;
@@ -104,7 +104,7 @@ class TBRendererBatcher : public TBRenderer {
   Batch batch;  ///< The one and only batch. this should be improved.
 
   void AddQuadInternal(const TBRect& dst_rect, const TBRect& src_rect,
-                       uint32 color, TBBitmap* bitmap,
+                       uint32_t color, TBBitmap* bitmap,
                        TBBitmapFragment* fragment);
   void FlushAllInternal();
 };

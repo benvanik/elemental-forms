@@ -158,9 +158,9 @@ bool TBEditField::GetCustomSkinCondition(
         return info.value == TBIDC("number");
     };
   } else if (info.custom_prop == TBIDC("multiline"))
-    return !((uint32)info.value) == !GetMultiline();
+    return !((uint32_t)info.value) == !GetMultiline();
   else if (info.custom_prop == TBIDC("readonly"))
-    return !((uint32)info.value) == !GetReadOnly();
+    return !((uint32_t)info.value) == !GetReadOnly();
   return false;
 }
 
@@ -420,8 +420,9 @@ bool TBEditField::OnEnter() { return false; }
 
 void TBEditField::Invalidate(const TBRect& rect) { TBWidget::Invalidate(); }
 
-void TBEditField::DrawString(int32 x, int32 y, TBFontFace* font,
-                             const TBColor& color, const char* str, int32 len) {
+void TBEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
+                             const TBColor& color, const char* str,
+                             int32_t len) {
   font->DrawString(x, y, color, str, len);
 }
 
@@ -450,15 +451,15 @@ void TBEditField::DrawCaret(const TBRect& rect) {
     DrawTextSelectionBg(rect);
 }
 
-void TBEditField::Scroll(int32 dx, int32 dy) {
+void TBEditField::Scroll(int32_t dx, int32_t dy) {
   TBWidget::Invalidate();
   m_scrollbar_x.SetValue(m_style_edit.scroll_x);
   m_scrollbar_y.SetValue(m_style_edit.scroll_y);
 }
 
 void TBEditField::UpdateScrollbars() {
-  int32 w = m_style_edit.layout_width;
-  int32 h = m_style_edit.layout_height;
+  int32_t w = m_style_edit.layout_width;
+  int32_t h = m_style_edit.layout_height;
   m_scrollbar_x.SetLimits(0, m_style_edit.GetContentWidth() - w, w);
   m_scrollbar_y.SetLimits(0, m_style_edit.GetContentHeight() - h, h);
 }
@@ -503,9 +504,9 @@ class TBTextFragmentContentWidget : public TBTextFragmentContent {
   virtual ~TBTextFragmentContentWidget();
 
   virtual void UpdatePos(int x, int y);
-  virtual int32 GetWidth(TBFontFace* font, TBTextFragment* fragment);
-  virtual int32 GetHeight(TBFontFace* font, TBTextFragment* fragment);
-  virtual int32 GetBaseline(TBFontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetWidth(TBFontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetHeight(TBFontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetBaseline(TBFontFace* font, TBTextFragment* fragment);
 
  private:
   TBWidget* m_widget;
@@ -527,20 +528,20 @@ void TBTextFragmentContentWidget::UpdatePos(int x, int y) {
       TBRect(x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)));
 }
 
-int32 TBTextFragmentContentWidget::GetWidth(TBFontFace* font,
-                                            TBTextFragment* fragment) {
+int32_t TBTextFragmentContentWidget::GetWidth(TBFontFace* font,
+                                              TBTextFragment* fragment) {
   return m_widget->GetRect().w ? m_widget->GetRect().w
                                : m_widget->GetPreferredSize().pref_w;
 }
 
-int32 TBTextFragmentContentWidget::GetHeight(TBFontFace* font,
-                                             TBTextFragment* fragment) {
+int32_t TBTextFragmentContentWidget::GetHeight(TBFontFace* font,
+                                               TBTextFragment* fragment) {
   return m_widget->GetRect().h ? m_widget->GetRect().h
                                : m_widget->GetPreferredSize().pref_h;
 }
 
-int32 TBTextFragmentContentWidget::GetBaseline(TBFontFace* font,
-                                               TBTextFragment* fragment) {
+int32_t TBTextFragmentContentWidget::GetBaseline(TBFontFace* font,
+                                                 TBTextFragment* fragment) {
   int height = GetHeight(font, fragment);
   return (height + fragment->block->CalculateBaseline(font)) / 2;
 }

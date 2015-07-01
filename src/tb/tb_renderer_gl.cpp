@@ -17,7 +17,7 @@
 namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-uint32 dbg_bitmap_validations = 0;
+uint32_t dbg_bitmap_validations = 0;
 #endif  // TB_RUNTIME_DEBUG_INFO
 
 // == Utilities
@@ -59,7 +59,7 @@ TBBitmapGL::~TBBitmapGL() {
   glDeleteTextures(1, &m_texture);
 }
 
-bool TBBitmapGL::Init(int width, int height, uint32* data) {
+bool TBBitmapGL::Init(int width, int height, uint32_t* data) {
   assert(width == TBGetNearestPowerOfTwo(width));
   assert(height == TBGetNearestPowerOfTwo(height));
 
@@ -76,7 +76,7 @@ bool TBBitmapGL::Init(int width, int height, uint32* data) {
   return true;
 }
 
-void TBBitmapGL::SetData(uint32* data) {
+void TBBitmapGL::SetData(uint32_t* data) {
   m_renderer->FlushBitmap(this);
   BindBitmap(this);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA,
@@ -127,7 +127,7 @@ void TBRendererGL::EndPaint() {
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 
-TBBitmap* TBRendererGL::CreateBitmap(int width, int height, uint32* data) {
+TBBitmap* TBRendererGL::CreateBitmap(int width, int height, uint32_t* data) {
   TBBitmapGL* bitmap = new TBBitmapGL(this);
   if (!bitmap || !bitmap->Init(width, height, data)) {
     delete bitmap;

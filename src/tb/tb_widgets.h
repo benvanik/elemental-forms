@@ -1264,21 +1264,21 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   TBStr m_desc_str;
   union {
     struct {
-      uint16 is_group_root : 1;
-      uint16 is_focusable : 1;
-      uint16 click_by_key : 1;
-      uint16 has_key_pressed_state : 1;
-      uint16 ignore_input : 1;
-      uint16 is_dying : 1;
-      uint16 is_cached_ps_valid : 1;
-      uint16 no_automatic_hover_state : 1;
-      uint16 is_panning : 1;
-      uint16 want_long_click : 1;
-      uint16 visibility : 2;
-      uint16 inflate_child_z : 1;  // Should have enough bits to hold WIDGET_Z
-                                   // values.
+      uint16_t is_group_root : 1;
+      uint16_t is_focusable : 1;
+      uint16_t click_by_key : 1;
+      uint16_t has_key_pressed_state : 1;
+      uint16_t ignore_input : 1;
+      uint16_t is_dying : 1;
+      uint16_t is_cached_ps_valid : 1;
+      uint16_t no_automatic_hover_state : 1;
+      uint16_t is_panning : 1;
+      uint16_t want_long_click : 1;
+      uint16_t visibility : 2;
+      uint16_t inflate_child_z : 1;  // Should have enough bits to hold WIDGET_Z
+                                     // values.
     } m_packed;
-    uint16 m_packed_init;
+    uint16_t m_packed_init;
   };
 
  public:
