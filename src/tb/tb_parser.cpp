@@ -286,7 +286,7 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
         if (pending_multiline) {
           // The value wrapped to the next line, so we should remember the token
           // and continue.
-          multi_line_token.Set(token);
+          multi_line_token = token;
           return;
         }
       }
@@ -322,7 +322,7 @@ void TBParser::OnCompactLine(char* line, TBParserTarget* target) {
     if (pending_multiline) {
       // The value wrapped to the next line, so we should remember the token and
       // continue.
-      multi_line_token.Set(token);
+      multi_line_token = token;
       // Since we need to call target->Leave when the multiline is ready, set
       // multi_line_sub_level.
       multi_line_sub_level = 1;

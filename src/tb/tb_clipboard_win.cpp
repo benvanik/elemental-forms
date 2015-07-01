@@ -56,8 +56,8 @@ bool TBClipboard::SetText(const char* text) {
   return false;
 }
 
-bool TBClipboard::GetText(TBStr& text) {
-  bool success = false;
+TBStr TBClipboard::GetText() {
+  TBStr result;
   if (HasText() && OpenClipboard(NULL)) {
     if (HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT)) {
       wchar_t* pchData = (wchar_t*)GlobalLock(hClipboardData);
@@ -65,14 +65,14 @@ bool TBClipboard::GetText(TBStr& text) {
           WideCharToMultiByte(CP_UTF8, 0, pchData, -1, NULL, 0, NULL, NULL);
       if (char* utf8 = new char[len]) {
         WideCharToMultiByte(CP_UTF8, 0, pchData, -1, utf8, len, NULL, NULL);
-        success = text.Set(utf8);
+        result = utf8;
         delete[] utf8;
       }
       GlobalUnlock(hClipboardData);
     }
     CloseClipboard();
   }
-  return success;
+  return result;
 }
 
 }  // namespace tb

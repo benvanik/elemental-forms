@@ -98,9 +98,8 @@ class TBWindow : public TBWidget {
   void ResizeToFitContent(RESIZE_FIT fit = RESIZE_FIT_PREFERRED);
 
   /** Set the window title. */
-  virtual bool SetText(const char* text) { return m_textfield.SetText(text); }
-  virtual bool GetText(TBStr& text) { return m_textfield.GetText(text); }
-  using TBWidget::GetText;  ///< Make all versions in base class available.
+  void SetText(const char* text) override { m_textfield.SetText(text); }
+  TBStr GetText() override { return m_textfield.GetText(); }
 
   /** Get the height of the title bar (or 0 if the WINDOW_SETTINGS say this
      window

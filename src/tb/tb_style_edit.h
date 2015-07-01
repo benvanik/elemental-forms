@@ -111,7 +111,7 @@ class TBSelection {
   bool IsFragmentSelected(TBTextFragment* elm) const;
   bool IsSelected() const;
   void RemoveContent();
-  bool GetText(TBStr& text) const;
+  TBStr GetText() const;
 
  public:
   TBStyleEdit* styledit;
@@ -369,10 +369,10 @@ class TBStyleEdit {
 
   void Clear(bool init_new = true);
   bool Load(const char* filename);
-  bool SetText(const char* text, TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
-  bool SetText(const char* text, size_t text_len,
+  void SetText(const char* text, TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
+  void SetText(const char* text, size_t text_len,
                TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
-  bool GetText(TBStr& text);
+  TBStr GetText();
   bool IsEmpty() const;
 
   /** Set the default text alignment and all currently selected blocks,

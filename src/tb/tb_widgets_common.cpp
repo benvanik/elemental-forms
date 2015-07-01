@@ -73,12 +73,12 @@ TBTextField::TBTextField()
   SetSkinBg(TBIDC("TBTextField"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
 }
 
-bool TBTextField::SetText(const char* text) {
-  if (m_text.m_text.compare(text) == 0) return true;
+void TBTextField::SetText(const char* text) {
+  if (m_text.m_text.compare(text) == 0) return;
   m_cached_text_width = UPDATE_TEXT_WIDTH_CACHE;
   Invalidate();
   InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
-  return m_text.SetText(text);
+  m_text.SetText(text);
 }
 
 void TBTextField::SetSqueezable(bool squeezable) {
@@ -139,10 +139,9 @@ TBButton::~TBButton() {
   RemoveChild(&m_layout);
 }
 
-bool TBButton::SetText(const char* text) {
-  bool ret = m_textfield.SetText(text);
+void TBButton::SetText(const char* text) {
+  m_textfield.SetText(text);
   UpdateTextFieldVisibility();
-  return ret;
 }
 
 void TBButton::SetValue(int value) {

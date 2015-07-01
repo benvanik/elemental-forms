@@ -204,7 +204,7 @@ class TBGenericStringItem {
   TBGenericStringItem(const char* str, TBSelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
   const TBGenericStringItem& operator=(const TBGenericStringItem& other) {
-    str.Set(other.str);
+    str = other.str;
     id = other.id;
     sub_source = other.sub_source;
     tag = other.tag;

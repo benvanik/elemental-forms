@@ -227,13 +227,11 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
     // (example: "10 -4 3.5")
     SetNull();
     if (TBValueArray* arr = new TBValueArray) {
-      TBStr tmpstr;
-      if (tmpstr.Set(str)) {
-        char* str_next = tmpstr.c_str();
-        while (char* token = next_token(str_next, ", ")) {
-          if (TBValue* new_val = arr->AddValue())
-            new_val->SetFromStringAuto(token, SET_NEW_COPY);
-        }
+      TBStr tmpstr = str;
+      char* str_next = tmpstr.c_str();
+      while (char* token = next_token(str_next, ", ")) {
+        if (TBValue* new_val = arr->AddValue())
+          new_val->SetFromStringAuto(token, SET_NEW_COPY);
       }
       SetArray(arr, SET_TAKE_OWNERSHIP);
     }

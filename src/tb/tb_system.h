@@ -108,9 +108,8 @@ class TBClipboard {
   /** Set the text of the clipboard in UTF-8 format. */
   static bool SetText(const char* text);
 
-  /** Get the text from the clipboard in UTF-8 format.
-          Returns true on success. */
-  static bool GetText(TBStr& text);
+  /** Get the text from the clipboard in UTF-8 format. */
+  static TBStr GetText();
 };
 
 /** TBFile is a porting interface for file access. */

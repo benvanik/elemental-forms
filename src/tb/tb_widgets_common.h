@@ -34,8 +34,8 @@ class TBWidgetString {
   int GetWidth(TBWidget* widget);
   int GetHeight(TBWidget* widget);
 
-  bool SetText(const char* text) { return m_text.Set(text); }
-  bool GetText(TBStr& text) const { return text.Set(m_text); }
+  void SetText(const char* text) { m_text = text; }
+  TBStr GetText() const { return m_text; }
 
   bool empty() const { return m_text.empty(); }
 
@@ -59,9 +59,8 @@ class TBTextField : public TBWidget {
   TBTextField();
 
   /** Set the text of the text field. */
-  virtual bool SetText(const char* text);
-  virtual bool GetText(TBStr& text) { return m_text.GetText(text); }
-  using TBWidget::GetText;  ///< Make all versions in base class available.
+  void SetText(const char* text) override;
+  TBStr GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
 
@@ -122,9 +121,8 @@ class TBButton : public TBWidget, protected TBMessageHandler {
   bool GetToggleMode() const { return m_toggle_mode; }
 
   /** Set the text of the button. */
-  virtual bool SetText(const char* text);
-  virtual bool GetText(TBStr& text) { return m_textfield.GetText(text); }
-  using TBWidget::GetText;  ///< Make all versions in base class available.
+  void SetText(const char* text) override;
+  TBStr GetText() override { return m_textfield.GetText(); }
 
   virtual void SetValue(int value);
   virtual int GetValue();
@@ -176,9 +174,8 @@ class TBClickLabel : public TBWidget {
   virtual AXIS GetAxis() const { return m_layout.GetAxis(); }
 
   /** Set the text of the label. */
-  virtual bool SetText(const char* text) { return m_textfield.SetText(text); }
-  virtual bool GetText(TBStr& text) { return m_textfield.GetText(text); }
-  using TBWidget::GetText;  ///< Make all versions in base class available.
+  void SetText(const char* text) override { m_textfield.SetText(text); }
+  TBStr GetText() override { return m_textfield.GetText(); }
 
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) {

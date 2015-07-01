@@ -35,7 +35,7 @@ void TBID::Set(uint32_t newid) {
 
 void TBID::Set(const TBID& newid) {
   id = newid;
-  TB_IF_DEBUG(debug_string.Set(newid.debug_string));
+  TB_IF_DEBUG(debug_string = newid.debug_string);
   if (!is_adding && tb_core_is_initialized()) {
     if (TBID* other_id = all_id_hash.Get(id)) {
       // If this happens, 2 different strings result in the same hash.
@@ -51,7 +51,7 @@ void TBID::Set(const TBID& newid) {
 
 void TBID::Set(const char* string) {
   id = TBGetHash(string);
-  TB_IF_DEBUG(debug_string.Set(string));
+  TB_IF_DEBUG(debug_string = string);
   if (!is_adding && tb_core_is_initialized()) {
     if (TBID* other_id = all_id_hash.Get(id)) {
       assert(other_id->debug_string.compare(debug_string) == 0);

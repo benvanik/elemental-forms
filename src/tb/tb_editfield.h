@@ -152,36 +152,33 @@ class TBEditField : public TBWidget,
   void SetTextAlign(TB_TEXT_ALIGN align) { m_style_edit.SetAlign(align); }
   TB_TEXT_ALIGN GetTextAlign() { return m_style_edit.align; }
 
-  virtual bool SetText(const char* text) {
-    return m_style_edit.SetText(text, TB_CARET_POS_BEGINNING);
+  void SetText(const char* text) override {
+    m_style_edit.SetText(text, TB_CARET_POS_BEGINNING);
   }
-  virtual bool GetText(TBStr& text) { return m_style_edit.GetText(text); }
-  using TBWidget::GetText;  ///< Make all versions in base class available.
+  TBStr GetText() override { return m_style_edit.GetText(); }
 
   using TBWidget::Invalidate;  ///< Make Invalidate in base class available.
 
   /** Set the text and also specify if the caret should be positioned at the
      beginning
           or end of the text. */
-  bool SetText(const char* text, TB_CARET_POS pos) {
-    return m_style_edit.SetText(text, pos);
+  void SetText(const char* text, TB_CARET_POS pos) {
+    m_style_edit.SetText(text, pos);
   }
   /** Set the text of the given length and also specify if the caret should be
      positioned
           at the beginning or end of the text. */
-  bool SetText(const char* text, size_t text_len,
+  void SetText(const char* text, size_t text_len,
                TB_CARET_POS pos = TB_CARET_POS_BEGINNING) {
-    return m_style_edit.SetText(text, text_len, pos);
+    m_style_edit.SetText(text, text_len, pos);
   }
 
   /** Set the placeholder text. It will be visible only when the textfield is
    * empty. */
-  virtual bool SetPlaceholderText(const char* text) {
-    return m_placeholder.SetText(text);
+  virtual void SetPlaceholderText(const char* text) {
+    m_placeholder.SetText(text);
   }
-  virtual bool GetPlaceholderText(TBStr& text) {
-    return m_placeholder.GetText(text);
-  }
+  virtual TBStr GetPlaceholderText() { return m_placeholder.GetText(); }
 
   virtual void ScrollTo(int x, int y);
   virtual TBWidget::ScrollInfo GetScrollInfo();

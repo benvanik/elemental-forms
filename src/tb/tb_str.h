@@ -59,21 +59,20 @@ class TBStr : public TBStrC {
   TBStr(const char* str);
   TBStr(const char* str, size_t len);
 
-  bool Set(const char* str, size_t len = std::string::npos);
+  void assign(const char* str, size_t len);
   bool SetFormatted(const char* format, ...);
 
   void clear();
 
   void erase(size_t ofs, size_t len);
-  bool insert(size_t ofs, const char* ins, size_t ins_len = std::string::npos);
-  bool append(const char* ins, size_t ins_len = std::string::npos) {
-    return insert(strlen(s), ins, std::string::npos);
+  void insert(size_t ofs, const char* ins, size_t ins_len = std::string::npos);
+  void append(const char* ins, size_t ins_len = std::string::npos) {
+    insert(strlen(s), ins, std::string::npos);
   }
 
-  inline operator char*() const { return s; }
   char* c_str() const { return s; }
   const TBStr& operator=(const TBStr& str) {
-    Set(str);
+    assign(str, std::string::npos);
     return *this;
   }
 };

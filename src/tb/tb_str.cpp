@@ -36,21 +36,18 @@ TBStr::TBStr(const TBStr& str)
 }
 
 TBStr::TBStr(const char* str, size_t len) : TBStrC(kEmptyString) {
-  Set(str, len);
+  assign(str, len);
 }
 
 TBStr::~TBStr() { safe_delete(s); }
 
-bool TBStr::Set(const char* str, size_t len) {
+void TBStr::assign(const char* str, size_t len) {
   safe_delete(s);
   if (len == std::string::npos) len = strlen(str);
-  if (char* new_s = (char*)malloc(len + 1)) {
-    s = new_s;
-    memcpy(s, str, len);
-    s[len] = 0;
-    return true;
-  }
-  return false;
+  char* new_s = (char*)malloc(len + 1);
+  s = new_s;
+  memcpy(s, str, len);
+  s[len] = 0;
 }
 
 bool TBStr::SetFormatted(const char* format, ...) {
@@ -99,20 +96,19 @@ void TBStr::erase(size_t ofs, size_t len) {
   *dst = *src;
 }
 
-bool TBStr::insert(size_t ofs, const char* ins, size_t ins_len) {
+void TBStr::insert(size_t ofs, const char* ins, size_t ins_len) {
   size_t len1 = strlen(s);
-  if (ins_len == std::string::npos) ins_len = strlen(ins);
-  size_t newlen = len1 + ins_len;
-  if (char* news = (char*)malloc(newlen + 1)) {
-    memcpy(&news[0], s, ofs);
-    memcpy(&news[ofs], ins, ins_len);
-    memcpy(&news[ofs + ins_len], &s[ofs], len1 - ofs);
-    news[newlen] = 0;
-    safe_delete(s);
-    s = news;
-    return true;
+  if (ins_len == std::string::npos) {
+    ins_len = strlen(ins);
   }
-  return false;
+  size_t newlen = len1 + ins_len;
+  char* news = (char*)malloc(newlen + 1);
+  memcpy(&news[0], s, ofs);
+  memcpy(&news[ofs], ins, ins_len);
+  memcpy(&news[ofs + ins_len], &s[ofs], len1 - ofs);
+  news[newlen] = 0;
+  safe_delete(s);
+  s = news;
 }
 
 }  // namespace tb

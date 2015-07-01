@@ -47,7 +47,7 @@ ResourceEditWindow::~ResourceEditWindow() {
 }
 
 void ResourceEditWindow::Load(const char* resource_file) {
-  m_resource_filename.Set(resource_file);
+  m_resource_filename = resource_file;
   SetText(resource_file);
 
   // Set the text of the source view

@@ -145,9 +145,11 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     }
 
     if (ev.type == EVENT_TYPE_CHANGED) {
-      TBStr extra, text;
-      if (ev.target->GetText(text) && text.size() > 24)
+      TBStr text = ev.target->GetText();
+      if (text.size() > 24) {
         sprintf(text.c_str() + 20, "...");
+      }
+      TBStr extra;
       extra.SetFormatted(", value: %.2f (\"%s\")", ev.target->GetValueDouble(),
                          text.c_str());
       buf.AppendString(extra);

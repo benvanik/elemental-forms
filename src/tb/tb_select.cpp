@@ -92,9 +92,13 @@ void TBSelectList::OnAllItemsRemoved() {
 
 void TBSelectList::SetFilter(const char* filter) {
   TBStr new_filter;
-  if (filter && *filter) new_filter.Set(filter);
-  if (m_filter.compare(new_filter) == 0) return;
-  m_filter.Set(new_filter);
+  if (filter && *filter) {
+    new_filter = filter;
+  }
+  if (m_filter.compare(new_filter) == 0) {
+    return;
+  }
+  m_filter = new_filter;
   InvalidateList();
 }
 

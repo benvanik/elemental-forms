@@ -77,7 +77,7 @@ class TBWidgetValue {
   void SetInt(int value);
 
   /** Set text value and sync to connected widgets. */
-  bool SetText(const char* text);
+  void SetText(const char* text);
 
   /** Set double value and sync to connected widgets. */
   void SetDouble(double value);
@@ -88,15 +88,8 @@ class TBWidgetValue {
   /** Get value as integer. */
   int GetInt() { return m_value.GetInt(); }
 
-  /** Get value as text. Return false on fail. */
-  bool GetText(TBStr& text) { return text.Set(m_value.GetString()); }
-
   /** Get value as text. */
-  TBStr GetText() {
-    TBStr text;
-    GetText(text);
-    return text;
-  }
+  TBStr GetText() { return m_value.GetString(); }
 
   /** Get the value as double. */
   double GetDouble() { return m_value.GetFloat(); }
@@ -114,8 +107,8 @@ class TBWidgetValue {
   TBLinkListOf<TBWidgetValueConnection> m_connections;
   bool m_syncing;
 
-  bool SyncToWidget(TBWidget* dst_widget);
-  bool SyncToWidgets(TBWidget* exclude_widget);
+  void SyncToWidget(TBWidget* dst_widget);
+  void SyncToWidgets(TBWidget* exclude_widget);
 };
 
 /** Listener that will be notified when any of the values in a TBValueGroup is

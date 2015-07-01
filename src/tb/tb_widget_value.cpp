@@ -42,11 +42,9 @@ void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
   if (m_syncing) return;  // We ended up here because syncing is in progress.
 
   // Get the value in the format
-  TBStr text;
   switch (m_value.GetType()) {
     case TBValue::TYPE_STRING:
-      if (!source_widget->GetText(text)) return;
-      m_value.SetString(text, TBValue::SET_NEW_COPY);
+      m_value.SetString(source_widget->GetText(), TBValue::SET_NEW_COPY);
       break;
     case TBValue::TYPE_NULL:
     case TBValue::TYPE_INT:
@@ -63,29 +61,28 @@ void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
   SyncToWidgets(source_widget);
 }
 
-bool TBWidgetValue::SyncToWidgets(TBWidget* exclude_widget) {
+void TBWidgetValue::SyncToWidgets(TBWidget* exclude_widget) {
   // FIX: Assign group to each value. Currently we only have one global group.
   g_value_group.InvokeOnValueChanged(this);
 
-  bool fail = false;
   TBLinkListOf<TBWidgetValueConnection>::Iterator iter =
       m_connections.IterateForward();
   while (TBWidgetValueConnection* connection = iter.GetAndStep()) {
-    if (connection->m_widget != exclude_widget)
-      fail |= !SyncToWidget(connection->m_widget);
+    if (connection->m_widget != exclude_widget) {
+      SyncToWidget(connection->m_widget);
+    }
   }
-  return !fail;
 }
 
-bool TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
-  if (m_syncing)
-    return true;  // We ended up here because syncing is in progress.
+void TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
+  if (m_syncing) {
+    return;  // We ended up here because syncing is in progress.
+  }
 
   m_syncing = true;
-  bool ret = true;
   switch (m_value.GetType()) {
     case TBValue::TYPE_STRING:
-      ret = dst_widget->SetText(m_value.GetString());
+      dst_widget->SetText(m_value.GetString());
       break;
     case TBValue::TYPE_NULL:
     case TBValue::TYPE_INT:
@@ -99,7 +96,6 @@ bool TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
       assert(!"Unsupported value type!");
   }
   m_syncing = false;
-  return ret;
 }
 
 void TBWidgetValue::SetInt(int value) {
@@ -107,9 +103,9 @@ void TBWidgetValue::SetInt(int value) {
   SyncToWidgets(nullptr);
 }
 
-bool TBWidgetValue::SetText(const char* text) {
+void TBWidgetValue::SetText(const char* text) {
   m_value.SetString(text, TBValue::SET_NEW_COPY);
-  return SyncToWidgets(nullptr);
+  SyncToWidgets(nullptr);
 }
 
 void TBWidgetValue::SetDouble(double value) {

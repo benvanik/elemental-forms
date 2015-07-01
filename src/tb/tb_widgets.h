@@ -1031,20 +1031,13 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Set the text of this widget. Implemented by most widgets (that has text).
    */
-  virtual bool SetText(const char* text) { return true; }
-
-  /** Get the text of this widget. Implemented by most widgets (that has text).
-          returns false if it failed. */
-  virtual bool GetText(TBStr& text) {
-    text.clear();
-    return true;
-  }
+  virtual void SetText(const char* text) {}
 
   /** Get the text of this widget. Implemented by most widgets (that has text).
    */
-  TBStr GetText() {
+  virtual TBStr GetText() {
     TBStr str;
-    GetText(str);
+    str.clear();
     return str;
   }
 

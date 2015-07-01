@@ -92,9 +92,8 @@ bool TBInlineSelect::OnEvent(const TBWidgetEvent& ev) {
     SetValue(GetValue() + 1);
     return true;
   } else if (ev.type == EVENT_TYPE_CHANGED && ev.target == &m_editfield) {
-    TBStr text;
-    m_editfield.GetText(text);
-    SetValueInternal(atoi(text), false);
+    auto text = m_editfield.GetText();
+    SetValueInternal(atoi(text.c_str()), false);
   }
   return false;
 }

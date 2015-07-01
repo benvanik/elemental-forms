@@ -185,8 +185,7 @@ void TBSelection::CorrectOrder() {
 
 void TBSelection::CopyToClipboard() {
   if (IsSelected()) {
-    TBStr text;
-    if (GetText(text)) TBClipboard::SetText(text);
+    TBClipboard::SetText(GetText());
   }
 }
 
@@ -325,14 +324,13 @@ void TBSelection::RemoveContent() {
   styledit->EndLockScrollbars();
 }
 
-bool TBSelection::GetText(TBStr& text) const {
+TBStr TBSelection::GetText() const {
   if (!IsSelected()) {
-    text.clear();
-    return true;
+    return TBStr();
   }
-  if (start.block == stop.block)
-    text.append(start.block->str.c_str() + start.ofs, stop.ofs - start.ofs);
-  else {
+  if (start.block == stop.block) {
+    return TBStr(start.block->str.c_str() + start.ofs, stop.ofs - start.ofs);
+  } else {
     TBTempBuffer buf;
     buf.Append(start.block->str.c_str() + start.ofs,
                start.block->str_len - start.ofs);
@@ -343,9 +341,8 @@ bool TBSelection::GetText(TBStr& text) const {
     }
     // FIX: Add methods to change data owner from temp buffer to string!
     buf.Append(stop.block->str, stop.ofs);
-    text.Set((char*)buf.GetData(), buf.GetAppendPos());
+    return TBStr(buf.GetData(), buf.GetAppendPos());
   }
-  return true;
 }
 
 size_t TBTextOfs::GetGlobalOfs(TBStyleEdit* se) const {
@@ -588,7 +585,7 @@ TBBlock::~TBBlock() { Clear(); }
 void TBBlock::Clear() { fragments.DeleteAll(); }
 
 void TBBlock::Set(const char* newstr, size_t len) {
-  str.Set(newstr, len);
+  str.assign(newstr, len);
   str_len = len;
   Split();
   Layout(true, true);
@@ -1550,8 +1547,8 @@ void TBStyleEdit::Copy() {
 }
 
 void TBStyleEdit::Paste() {
-  TBStr text;
-  if (TBClipboard::HasText() && TBClipboard::GetText(text)) {
+  if (TBClipboard::HasText()) {
+    auto text = TBClipboard::GetText();
     InsertText(text, text.size());
     ScrollIfNeeded(true, true);
     listener->OnChange();
@@ -1667,16 +1664,16 @@ void TBStyleEdit::Focus(bool focus) {
   selection.Invalidate();
 }
 
-bool TBStyleEdit::SetText(const char* text, TB_CARET_POS pos) {
-  return SetText(text, strlen(text), pos);
+void TBStyleEdit::SetText(const char* text, TB_CARET_POS pos) {
+  SetText(text, strlen(text), pos);
 }
 
-bool TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
+void TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
   if (!text || !*text) {
     Clear(true);
     caret.UpdateWantedX();
     ScrollIfNeeded(true, true);
-    return true;
+    return;
   }
 
   Clear(true);
@@ -1686,11 +1683,11 @@ bool TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
   caret.UpdateWantedX();
   ScrollIfNeeded(true, false);
 
-  if (pos == TB_CARET_POS_END)
+  if (pos == TB_CARET_POS_END) {
     caret.Place(blocks.GetLast(), blocks.GetLast()->str_len);
+  }
 
   listener->OnChange();
-  return true;
 }
 
 bool TBStyleEdit::Load(const char* filename) {
@@ -1715,10 +1712,10 @@ bool TBStyleEdit::Load(const char* filename) {
   return true;
 }
 
-bool TBStyleEdit::GetText(TBStr& text) {
+TBStr TBStyleEdit::GetText() {
   TBSelection tmp_selection(this);
   tmp_selection.SelectAll();
-  return tmp_selection.GetText(text);
+  return tmp_selection.GetText();
 }
 
 bool TBStyleEdit::IsEmpty() const {
@@ -1837,7 +1834,7 @@ TBUndoEvent* TBUndoRedoStack::Commit(TBStyleEdit* styledit, size_t gofs,
   // Create a new event
   if (TBUndoEvent* e = new TBUndoEvent()) {
     e->gofs = gofs;
-    e->text.Set(text, len);
+    e->text.assign(text, len);
     e->insert = insert;
     undos.Add(e);
     return e;

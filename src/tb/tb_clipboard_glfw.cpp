@@ -33,11 +33,13 @@ bool TBClipboard::SetText(const char* text) {
   return false;
 }
 
-bool TBClipboard::GetText(TBStr& text) {
+TBStr TBClipboard::GetText() {
+  text.clear();
   if (GLFWwindow* window = glfwGetCurrentContext()) {
-    if (const char* str = glfwGetClipboardString(window)) return text.Set(str);
+    if (const char* str = glfwGetClipboardString(window)) {
+      return str;
+    }
   }
-  return false;
 }
 
 };  // namespace tb

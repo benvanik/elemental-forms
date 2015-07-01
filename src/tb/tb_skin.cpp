@@ -647,8 +647,8 @@ void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
   cut = n->GetValueInt("cut", cut);
   expand = n->GetValueInt("expand", expand);
 
-  name.Set(n->GetName());
-  id.Set(n->GetName());
+  name = n->GetName();
+  id = n->GetName();
 
   const TBDimensionConverter* dim_conv = skin->GetDimensionConverter();
 
