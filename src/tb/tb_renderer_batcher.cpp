@@ -12,8 +12,6 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_system.h"
 
-#ifdef TB_RENDERER_BATCHER
-
 namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -288,5 +286,3 @@ void TBRendererBatcher::FlushBitmapFragment(TBBitmapFragment* bitmap_fragment) {
 }
 
 }  // namespace tb
-
-#endif  // TB_RENDERER_BATCHER

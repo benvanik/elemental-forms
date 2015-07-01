@@ -14,8 +14,6 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_system.h"
 
-#if defined(TB_RENDERER_GLES_1) || defined(TB_RENDERER_GL)
-
 namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -158,5 +156,4 @@ void TBRendererGL::SetClipRect(const TBRect& rect) {
             m_clip_rect.w, m_clip_rect.h);
 }
 
-};      // namespace tb
-#endif  // defined(TB_RENDERER_GLES_1) || defined(TB_RENDERER_GL)
+}  // namespace tb

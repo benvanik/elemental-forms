@@ -9,6 +9,7 @@
 
 #include "tb_image_manager.h"
 
+#include "tb_hash.h"
 #include "tb_skin.h"
 #include "tb_system.h"
 #include "tb_tempbuffer.h"

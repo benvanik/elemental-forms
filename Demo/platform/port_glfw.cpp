@@ -18,6 +18,8 @@
 
 using namespace tb;
 
+#define TB_USE_CURRENT_DIRECTORY
+
 int mouse_x = 0;
 int mouse_y = 0;
 bool key_alt = false;

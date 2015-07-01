@@ -283,16 +283,9 @@ void TBFontFace::RenderGlyph(TBFontGlyph* glyph) {
         glyph_dsta_src = (uint32*)m_temp_buffer.GetData();
         for (int y = 0; y < result_glyph_data->h; y++)
           for (int x = 0; x < result_glyph_data->w; x++) {
-#ifdef TB_PREMULTIPLIED_ALPHA
-            uint8 opacity =
-                result_glyph_data->data8[x + y * result_glyph_data->stride];
-            glyph_dsta_src[x + y * result_glyph_data->w] =
-                TBColor(opacity, opacity, opacity, opacity);
-#else
             glyph_dsta_src[x + y * result_glyph_data->w] = TBColor(
                 255, 255, 255,
                 result_glyph_data->data8[x + y * result_glyph_data->stride]);
-#endif
           }
       }
     }

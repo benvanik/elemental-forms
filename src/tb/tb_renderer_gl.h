@@ -12,7 +12,6 @@
 
 #include "tb_renderer_batcher.h"
 
-#if defined(TB_RENDERER_GLES_1) || defined(TB_RENDERER_GL)
 #ifdef TB_RENDERER_GLES_1
 #include <EGL/egl.h>
 #include <GLES/gl.h>
@@ -69,5 +68,4 @@ class TBRendererGL : public TBRendererBatcher {
 
 }  // namespace tb
 
-#endif  // defined(TB_RENDERER_GLES_1) || defined(TB_RENDERER_GL)
 #endif  // TB_RENDERER_GL_H

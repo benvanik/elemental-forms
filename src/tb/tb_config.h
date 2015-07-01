@@ -20,27 +20,17 @@
 /** Enable for some handy runtime debugging, enabled by modifying
         the various settings in g_tb_debug. A settings window can be
         shown by calling ShowDebugInfoSettingsWindow. */
-#ifndef NDEBUG
 #define TB_RUNTIME_DEBUG_INFO
-#endif
 
 #ifndef NDEBUG
 /** Enable compilation of unit tests. */
-#define TB_UNIT_TESTING
+//#define TB_UNIT_TESTING
 #endif
-
-#define TB_USE_CURRENT_DIRECTORY
 
 /** Enable if the focus state should automatically be set on edit fields even
         when using the pointer. It is normally set only while moving focus by
    keyboard. */
 //#define TB_ALWAYS_SHOW_EDIT_FOCUS
-
-/** Enable to use premultiplied alpha. Warning: This is not handled everywhere
-   in
-        the default backends, so consider it an experimental and unfinished
-   feature! */
-//#define TB_PREMULTIPLIED_ALPHA
 
 /** Enable to support TBBF fonts (Turbo Badger Bitmap Fonts) */
 #define TB_FONT_RENDERER_TBBF
@@ -64,27 +54,11 @@
         your app, that you know work! */
 #define TB_IMAGE_LOADER_STB
 
-/** Enable to get TBRendererBatcher, an helper class for renderers that
-        implements batching of draw operations. Subclasses of TBRendererBatcher
-        can be done super easily, and still do batching. */
-#define TB_RENDERER_BATCHER
-
-/** Enable renderer using OpenGL. This renderer depends on TB_RENDERER_BATCHER.
-        It is using GL version 1.1, */
-#define TB_RENDERER_GL
-
-/** Enable renderer using OpenGL ES. This renderer depends on TB_RENDERER_GL.
-        It is using GL ES version 1. */
-//#define TB_RENDERER_GLES_1
-
 /** The width of the font glyph cache. Must be a power of two. */
 #define TB_GLYPH_CACHE_WIDTH 512
 
 /** The height of the font glyph cache. Must be a power of two. */
 #define TB_GLYPH_CACHE_HEIGHT 512
-
-// == Optional features
-// ===========================================================
 
 // == Additional configuration of platform implementations
 // ========================

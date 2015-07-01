@@ -12,8 +12,6 @@
 
 #include "tb_renderer.h"
 
-#ifdef TB_RENDERER_BATCHER
-
 namespace tb {
 
 #define VERTEX_BATCH_SIZE 6 * 2048
@@ -112,7 +110,5 @@ class TBRendererBatcher : public TBRenderer {
 };
 
 }  // namespace tb
-
-#endif  // TB_RENDERER_BATCHER
 
 #endif  // TB_RENDERER_BATCHER_H

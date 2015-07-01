@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_addon.h"
+#include "tb_core.h"
+
 #include "tb_animation.h"
 #include "tb_config.h"
-#include "tb_core.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
 #include "tb_language.h"
@@ -43,12 +43,11 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
 
   g_tooltip_mng = new TBTooltipManager();
 
-  return TBInitAddons();
+  return true;
 }
 
 void tb_core_shutdown() {
   TBAnimationManager::AbortAllAnimations();
-  TBShutdownAddons();
   delete g_image_manager;
   delete g_widgets_reader;
   delete g_tb_skin;

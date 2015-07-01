@@ -9,6 +9,7 @@
 
 #include "tb_hashtable.h"
 
+#include "tb_hash.h"
 #include "tb_system.h"
 #include "tb_tempbuffer.h"
 
