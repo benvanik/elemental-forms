@@ -364,9 +364,14 @@ static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
     glfwKillTimer();
   } else if (fire_time != set_fire_time || force || fire_time == 0) {
     set_fire_time = fire_time;
-    uint64_t delay = fire_time - tb::TBSystem::GetTimeMS();
-    unsigned int idelay = (unsigned int)std::max(delay, 0ull);
-    glfwRescheduleTimer(idelay);
+    auto now = tb::TBSystem::GetTimeMS();
+    if (fire_time < now) {
+      glfwRescheduleTimer(0);
+    } else {
+      uint64_t delay = fire_time - now;
+      unsigned int idelay = (unsigned int)std::max(delay, 0ull);
+      glfwRescheduleTimer(idelay);
+    }
   }
 }
 

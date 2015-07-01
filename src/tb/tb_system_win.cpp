@@ -27,7 +27,11 @@ namespace tb {
 
 // == TBSystem ========================================
 
-uint64_t TBSystem::GetTimeMS() { return timeGetTime(); }
+uint64_t TBSystem::GetTimeMS() {
+  FILETIME t;
+  GetSystemTimeAsFileTime(&t);
+  return ((uint64_t(t.dwHighDateTime) << 32) | t.dwLowDateTime) / 10000;
+}
 
 // Implementation currently done in port_glut.cpp.
 // Windows timer suck. Glut timers suck too (can't be canceled) but that will do

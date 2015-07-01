@@ -50,7 +50,7 @@ constexpr uint32_t TBGetHash(const char* str) {
 
 #else  // TB_SUPPORT_CONSTEXPR
 
-#define TBIDC(str) TBID(str)
+#define TBIDC(str) tb::TBID(str)
 
 /** Get hash value from string */
 inline uint32_t TBGetHash(const char* str) {

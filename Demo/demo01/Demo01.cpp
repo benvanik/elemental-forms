@@ -752,7 +752,8 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   // Update the FPS counter
   uint64_t time = TBSystem::GetTimeMS();
   if (time > frame_counter_reset_time + 1000) {
-    fps = (int)((frame_counter / (time - frame_counter_reset_time)) * 1000);
+    fps = (int)((frame_counter / double(time - frame_counter_reset_time)) *
+                1000.0);
     frame_counter_reset_time = time;
     frame_counter = 0;
   }

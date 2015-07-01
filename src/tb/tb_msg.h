@@ -22,7 +22,7 @@ class TBMessageHandler;
 
 /** TB_NOT_SOON is returned from TBMessageHandler::GetNextMessageFireTime
         and means that there is currently no more messages to process. */
-constexpr uint64_t TB_NOT_SOON = 0xffffffff;
+constexpr uint64_t TB_NOT_SOON = -1;
 
 /** TBMessageData holds custom data to send with a posted message. */
 

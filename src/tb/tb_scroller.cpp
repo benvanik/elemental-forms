@@ -131,7 +131,7 @@ bool TBScroller::OnPan(int dx, int dy) {
 
   // Calculate the pan speed. Smooth it out with the
   // previous pan speed to reduce fluctuation a little.
-  uint64_t now_ms = TBSystem::GetTimeMS();
+  double now_ms = double(TBSystem::GetTimeMS());
   if (m_pan_time_ms) {
     if (m_pan_delta_time_ms) {
       m_pan_delta_time_ms =
@@ -141,7 +141,7 @@ bool TBScroller::OnPan(int dx, int dy) {
     }
   }
 
-  m_pan_time_ms = double(now_ms);
+  m_pan_time_ms = now_ms;
   m_pan_dx = (m_pan_dx + in_dx) / 2.0f;
   m_pan_dy = (m_pan_dy + in_dy) / 2.0f;
 
@@ -306,7 +306,7 @@ void TBScroller::OnMessageReceived(TBMessage* msg) {
 
     // Calculate the time elapsed from scroll start. Clip within the
     // duration for each axis.
-    uint64_t now_ms = TBSystem::GetTimeMS();
+    double now_ms = double(TBSystem::GetTimeMS());
     float elapsed_time_x = (float)(now_ms - m_scroll_start_ms);
     float elapsed_time_y = elapsed_time_x;
     elapsed_time_x = std::min(elapsed_time_x, m_scroll_duration_x_ms);
@@ -343,7 +343,7 @@ void TBScroller::OnMessageReceived(TBMessage* msg) {
     if (!StopIfAlmostStill()) {
       uint64_t next_fire_time = msg->GetFireTime() + PAN_MSG_DELAY_MS;
       // avoid timer catch-up if program went sleeping for a while.
-      next_fire_time = std::max(next_fire_time, now_ms);
+      next_fire_time = std::max(next_fire_time, uint64_t(now_ms));
       PostMessageOnTime(TBIDC("scroll"), nullptr, next_fire_time);
     }
   }

@@ -104,6 +104,9 @@ void TBAnimationManager::Update() {
 
     // Update animation
     obj->InvokeOnAnimationUpdate(progress);
+    if (!animating_objects.ContainsLink(obj)) {
+      continue;
+    }
 
     // Remove completed animations
     if (progress == 1.0f) {
