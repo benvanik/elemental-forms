@@ -33,7 +33,7 @@ class AdvancedItem : public TBGenericStringItem {
   bool GetMale() const { return m_male; }
 
  private:
-  TBStr m_info;
+  std::string m_info;
   bool m_checked;
   bool m_male;
 };

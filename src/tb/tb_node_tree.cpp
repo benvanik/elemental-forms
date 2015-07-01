@@ -133,7 +133,7 @@ const char* TBNode::GetValueStringRaw(const char* request, const char* def) {
 
 class FileParser : public TBParserStream {
  public:
-  bool Read(const TBStr& filename, TBParserTarget* target) {
+  bool Read(const std::string& filename, TBParserTarget* target) {
     f = TBFile::Open(filename, TBFile::MODE_READ);
     if (!f) return false;
     TBParser p;
@@ -173,11 +173,11 @@ class DataParser : public TBParserStream {
 
 class TBNodeTarget : public TBParserTarget {
  public:
-  TBNodeTarget(TBNode* root, const TBStr& filename) {
+  TBNodeTarget(TBNode* root, const std::string& filename) {
     m_root_node = m_target_node = root;
     m_filename = filename;
   }
-  void OnError(int line_nr, const TBStr& error) override {
+  void OnError(int line_nr, const std::string& error) override {
 #ifdef TB_RUNTIME_DEBUG_INFO
     TBDebugOut(tb::format_string("%s(%d):Parse error: %s\n", m_filename,
                                  line_nr, error.c_str()));
@@ -252,10 +252,10 @@ class TBNodeTarget : public TBParserTarget {
  private:
   TBNode* m_root_node;
   TBNode* m_target_node;
-  TBStr m_filename;
+  std::string m_filename;
 };
 
-bool TBNode::ReadFile(const TBStr& filename, TB_NODE_READ_FLAGS flags) {
+bool TBNode::ReadFile(const std::string& filename, TB_NODE_READ_FLAGS flags) {
   if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
   FileParser p;
   TBNodeTarget t(this, filename);

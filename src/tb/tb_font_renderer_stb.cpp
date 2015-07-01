@@ -29,7 +29,8 @@ class STBFontRenderer : public TBFontRenderer {
 
   bool Load(const char* filename, int size);
 
-  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager,
+                             const std::string& filename,
                              const TBFontDescription& font_desc);
 
   virtual TBFontMetrics GetMetrics();

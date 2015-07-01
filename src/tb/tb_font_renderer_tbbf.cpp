@@ -92,11 +92,12 @@ class TBBFRenderer : public TBFontRenderer {
   TBBFRenderer();
   ~TBBFRenderer();
 
-  bool Load(const TBStr& filename, int size);
+  bool Load(const std::string& filename, int size);
   bool FindGlyphs();
   GLYPH* FindNext(UCS4 cp, int x);
 
-  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager,
+                             const std::string& filename,
                              const TBFontDescription& font_desc);
 
   virtual TBFontMetrics GetMetrics();
@@ -152,7 +153,7 @@ void TBBFRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
     metrics->advance = glyph->w + m_advance_delta;
 }
 
-bool TBBFRenderer::Load(const TBStr& filename, int size) {
+bool TBBFRenderer::Load(const std::string& filename, int size) {
   m_size = size;
   if (!m_node.ReadFile(filename)) return false;
 
@@ -259,7 +260,7 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
 }
 
 TBFontFace* TBBFRenderer::Create(TBFontManager* font_manager,
-                                 const TBStr& filename,
+                                 const std::string& filename,
                                  const TBFontDescription& font_desc) {
   if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
   TBBFRenderer* fr = new TBBFRenderer();

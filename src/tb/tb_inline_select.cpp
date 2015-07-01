@@ -62,7 +62,7 @@ void TBInlineSelect::SetValueInternal(int value, bool update_text) {
   m_value = value;
 
   if (update_text) {
-    m_editfield.SetText(tb::format_string("%d", m_value));
+    m_editfield.SetText(std::to_string(m_value));
   }
 
   TBWidgetEvent ev(EVENT_TYPE_CHANGED);

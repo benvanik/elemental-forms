@@ -360,7 +360,7 @@ TBBitmapFragmentManager::TBBitmapFragmentManager()
 TBBitmapFragmentManager::~TBBitmapFragmentManager() { Clear(); }
 
 TBBitmapFragment* TBBitmapFragmentManager::GetFragmentFromFile(
-    const TBStr& filename, bool dedicated_map) {
+    const std::string& filename, bool dedicated_map) {
   TBID id(filename);
 
   // If we already have a fragment for this filename, return that

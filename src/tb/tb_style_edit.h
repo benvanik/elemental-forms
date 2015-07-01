@@ -111,7 +111,7 @@ class TBSelection {
   bool IsFragmentSelected(TBTextFragment* elm) const;
   bool IsSelected() const;
   void RemoveContent();
-  TBStr GetText() const;
+  std::string GetText() const;
 
  public:
   TBStyleEdit* styledit;
@@ -243,7 +243,7 @@ class TBBlock : public TBLinkOf<TBBlock> {
   int8_t align;
   int line_width_max;
 
-  TBStr str;
+  std::string str;
   size_t str_len;
 
  private:
@@ -256,7 +256,7 @@ class TBBlock : public TBLinkOf<TBBlock> {
 class TBUndoEvent {
  public:
   size_t gofs;
-  TBStr text;
+  std::string text;
   bool insert;
 };
 
@@ -372,7 +372,7 @@ class TBStyleEdit {
   void SetText(const char* text, TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
   void SetText(const char* text, size_t text_len,
                TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
-  TBStr GetText();
+  std::string GetText();
   bool IsEmpty() const;
 
   /** Set the default text alignment and all currently selected blocks,
@@ -407,7 +407,7 @@ class TBStyleEdit {
 
   void InsertText(const char* text, size_t len = std::string::npos,
                   bool after_last = false, bool clear_undo_redo = false);
-  void InsertText(const TBStr& text, size_t len = std::string::npos,
+  void InsertText(const std::string& text, size_t len = std::string::npos,
                   bool after_last = false, bool clear_undo_redo = false) {
     InsertText(text.c_str(), len, after_last, clear_undo_redo);
   }

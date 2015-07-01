@@ -141,7 +141,7 @@ void TBHashTable::Debug() {
       count++;
       item = item->next;
     }
-    line.AppendString(tb::format_string("%d ", count));
+    line.AppendString(std::to_string(count) + " ");
     total_count += count;
   }
   line.AppendString(tb::format_string(" (total: %d of %d buckets)\n",

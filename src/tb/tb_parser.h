@@ -29,7 +29,7 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type);
 class TBParserTarget {
  public:
   virtual ~TBParserTarget() {}
-  virtual void OnError(int line_nr, const TBStr& error) = 0;
+  virtual void OnError(int line_nr, const std::string& error) = 0;
   virtual void OnComment(int line_nr, const char* comment) = 0;
   virtual void OnToken(int line_nr, const char* name, TBValue& value) = 0;
   virtual void Enter() = 0;
@@ -51,7 +51,7 @@ class TBParser {
  private:
   int current_indent;
   int current_line_nr;
-  TBStr multi_line_token;
+  std::string multi_line_token;
   TBTempBuffer multi_line_value;
   int multi_line_sub_level;
   bool pending_multiline;

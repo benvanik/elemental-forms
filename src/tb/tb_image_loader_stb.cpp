@@ -45,7 +45,7 @@ class STBI_Loader : public TBImageLoader {
   virtual uint32_t* Data() { return (uint32_t*)data; }
 };
 
-TBImageLoader* TBImageLoader::CreateFromFile(const TBStr& filename) {
+TBImageLoader* TBImageLoader::CreateFromFile(const std::string& filename) {
   // Load directly from file
   /*int w, h, comp;
   if (unsigned char *data = stbi_load(filename, &w, &h, &comp, 4))

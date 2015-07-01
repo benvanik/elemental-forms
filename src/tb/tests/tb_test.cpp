@@ -44,8 +44,8 @@ const char* fail_text;
 // to it. Using a manual one way link list is very simple.
 TBTestGroup* g_test_groups = nullptr;
 
-TBStr tb_get_test_file_name(const char* testpath, const char* filename) {
-  TBStr str;
+std::string tb_get_test_file_name(const char* testpath, const char* filename) {
+  std::string str;
   int test_path_len = strlen(testpath);
   for (int i = test_path_len - 1;
        i > 0 && testpath[i] != '/' && testpath[i] != '\\'; i--)
@@ -87,7 +87,7 @@ const char* CallAndOutput(TBTestGroup* test, TBCall* call) {
   call->exec();
 
   if (!fail_text) return fail_text;
-  TBStr msg;
+  std::string msg;
   msg.SetFormatted(
       "FAIL: \"%s/%s\":\n"
       "  %s(%d): \"%s\"\n",
@@ -98,7 +98,7 @@ const char* CallAndOutput(TBTestGroup* test, TBCall* call) {
 
 void OutputPass(TBTestGroup* test, const char* call_name) {
   if (!(test_settings & TB_TEST_VERBOSE)) return;
-  TBStr msg;
+  std::string msg;
   msg.SetFormatted("PASS: \"%s/%s\"\n", test->name, call_name);
   TBDebugOut(msg);
 }
@@ -118,7 +118,7 @@ int TBRunTests(uint32_t settings) {
       for (TBCall* call = group->calls.GetFirst(); call; call = call->GetNext())
         if (!group->IsSpecialTest(call)) num_tests_in_group++;
 
-      TBStr msg;
+      std::string msg;
       msg.SetFormatted("  %d tests skipped.\n", num_tests_in_group);
       TBDebugOut(msg);
 
@@ -146,7 +146,7 @@ int TBRunTests(uint32_t settings) {
       CallAndOutput(group, group->shutdown);
   }
 
-  TBStr msg;
+  std::string msg;
   msg.SetFormatted("Test results: %d passed, %d failed.\n", num_passed,
                    num_failed);
   TBDebugOut(msg);

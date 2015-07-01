@@ -36,7 +36,7 @@ class TBPosixFile : public TBFile {
 };
 
 // static
-TBFile* TBFile::Open(const TBStr& filename, TBFileMode mode) {
+TBFile* TBFile::Open(const std::string& filename, TBFileMode mode) {
   FILE* f = nullptr;
   switch (mode) {
     case MODE_READ:

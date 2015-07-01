@@ -10,12 +10,14 @@
 #ifndef TB_SYSTEM_H
 #define TB_SYSTEM_H
 
+#include <string>
+
 #include "tb_core.h"
 #include "tb_str.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 void TBDebugOut(const char* str);
-inline void TBDebugOut(const tb::TBStr& str) { TBDebugOut(str.c_str()); }
+inline void TBDebugOut(const std::string& str) { TBDebugOut(str.c_str()); }
 #define TBDebugPrint(str, ...) \
   { TBDebugOut(tb::format_string(str, __VA_ARGS__)); }
 #else
@@ -103,17 +105,17 @@ class TBClipboard {
   static bool HasText();
 
   /** Set the text of the clipboard in UTF-8 format. */
-  static bool SetText(const TBStr& text);
+  static bool SetText(const std::string& text);
 
   /** Get the text from the clipboard in UTF-8 format. */
-  static TBStr GetText();
+  static std::string GetText();
 };
 
 /** TBFile is a porting interface for file access. */
 class TBFile {
  public:
   enum TBFileMode { MODE_READ };
-  static TBFile* Open(const TBStr& filename, TBFileMode mode);
+  static TBFile* Open(const std::string& filename, TBFileMode mode);
 
   virtual ~TBFile() {}
   virtual size_t Size() = 0;

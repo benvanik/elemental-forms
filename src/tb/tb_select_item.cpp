@@ -126,7 +126,7 @@ TBSelectItemSource::~TBSelectItemSource() {
   assert(!m_viewers.HasLinks());
 }
 
-bool TBSelectItemSource::Filter(int index, const TBStr& filter) {
+bool TBSelectItemSource::Filter(int index, const std::string& filter) {
   const char* str = GetItemString(index);
   if (str && stristr(str, filter.c_str())) return true;
   return false;

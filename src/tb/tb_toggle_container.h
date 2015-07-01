@@ -106,7 +106,7 @@ class TBSection : public TBWidget {
 
   /** Set the text of the text field. */
   void SetText(const char* text) override { m_header.SetText(text); }
-  TBStr GetText() override { return m_header.GetText(); }
+  std::string GetText() override { return m_header.GetText(); }
 
   virtual void SetValue(int value);
   virtual int GetValue() { return m_toggle_container.GetValue(); }

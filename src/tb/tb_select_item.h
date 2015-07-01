@@ -88,7 +88,7 @@ class TBSelectItemSource {
 
   /** Return true if a item matches the given filter text.
           By default, it returns true if GetItemString contains filter. */
-  virtual bool Filter(int index, const TBStr& filter);
+  virtual bool Filter(int index, const std::string& filter);
 
   /** Get the string of a item. If a item has more than one string,
           return the one that should be used for inline-find (pressing keys
@@ -205,10 +205,10 @@ class TBGenericStringItem {
       : str(str), id(id), sub_source(nullptr) {}
   TBGenericStringItem(const char* str, TBSelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
-  TBGenericStringItem(const TBStr& str) : str(str), sub_source(nullptr) {}
-  TBGenericStringItem(const TBStr& str, TBID id)
+  TBGenericStringItem(const std::string& str) : str(str), sub_source(nullptr) {}
+  TBGenericStringItem(const std::string& str, TBID id)
       : str(str), id(id), sub_source(nullptr) {}
-  TBGenericStringItem(const TBStr& str, TBSelectItemSource* sub_source)
+  TBGenericStringItem(const std::string& str, TBSelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
   const TBGenericStringItem& operator=(const TBGenericStringItem& other) {
     str = other.str;
@@ -221,7 +221,7 @@ class TBGenericStringItem {
   void SetSkinImage(const TBID& image) { skin_image = image; }
 
  public:
-  TBStr str;
+  std::string str;
   TBID id;
   TBID skin_image;
   TBSelectItemSource* sub_source;

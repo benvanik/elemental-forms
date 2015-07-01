@@ -148,7 +148,7 @@ TBWidget* TBWidget::GetWidgetByIDInternal(const TBID& id,
   return nullptr;
 }
 
-TBStr TBWidget::GetTextByID(const TBID& id) {
+std::string TBWidget::GetTextByID(const TBID& id) {
   if (TBWidget* widget = GetWidgetByID(id)) return widget->GetText();
   return "";
 }

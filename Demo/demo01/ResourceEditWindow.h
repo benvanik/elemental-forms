@@ -12,7 +12,7 @@ using namespace tb;
 
 class ResourceItem : public TBGenericStringItem {
  public:
-  ResourceItem(TBWidget* widget, const TBStr& str);
+  ResourceItem(TBWidget* widget, const std::string& str);
   TBWidget* GetWidget() { return m_widget; }
 
  private:
@@ -63,7 +63,7 @@ class ResourceEditWindow : public TBWindow,
   TBScrollContainer* m_scroll_container;
   TBWidget* m_build_container;
   TBEditField* m_source_edit;
-  TBStr m_resource_filename;
+  std::string m_resource_filename;
   TBWidgetSafePointer m_selected_widget;
   void AddWidgetListItemsRecursive(TBWidget* widget, int depth);
   bool OnDropFileEvent(const TBWidgetEvent& ev);

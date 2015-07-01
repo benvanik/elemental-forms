@@ -156,7 +156,7 @@ class TBEditField : public TBWidget,
     m_style_edit.SetText(text, TB_CARET_POS_BEGINNING);
   }
   using TBWidget::SetText;
-  TBStr GetText() override { return m_style_edit.GetText(); }
+  std::string GetText() override { return m_style_edit.GetText(); }
 
   using TBWidget::Invalidate;  ///< Make Invalidate in base class available.
 
@@ -179,7 +179,7 @@ class TBEditField : public TBWidget,
   virtual void SetPlaceholderText(const char* text) {
     m_placeholder.SetText(text);
   }
-  virtual TBStr GetPlaceholderText() { return m_placeholder.GetText(); }
+  virtual std::string GetPlaceholderText() { return m_placeholder.GetText(); }
 
   virtual void ScrollTo(int x, int y);
   virtual TBWidget::ScrollInfo GetScrollInfo();

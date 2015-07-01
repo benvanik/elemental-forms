@@ -20,7 +20,7 @@ using namespace tb;
 TB_TEST_GROUP(tb_node_ref_tree) {
   class DataListener : public TBNodeRefTreeListener {
    public:
-    TBStr changed_request;
+    std::string changed_request;
     int changed_counter;
     DataListener() : changed_counter(0) {}
     virtual void OnDataChanged(TBNodeRefTree* dt, const char* request) {

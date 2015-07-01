@@ -36,7 +36,7 @@ bool TBClipboard::HasText() {
   return has_text;
 }
 
-bool TBClipboard::SetText(const TBStr& text) {
+bool TBClipboard::SetText(const std::string& text) {
   if (OpenClipboard(NULL)) {
     int num_wide_chars_needed =
         MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, NULL, 0);
@@ -57,8 +57,8 @@ bool TBClipboard::SetText(const TBStr& text) {
   return false;
 }
 
-TBStr TBClipboard::GetText() {
-  TBStr result;
+std::string TBClipboard::GetText() {
+  std::string result;
   if (HasText() && OpenClipboard(NULL)) {
     if (HANDLE hClipboardData = GetClipboardData(CF_UNICODETEXT)) {
       wchar_t* pchData = (wchar_t*)GlobalLock(hClipboardData);

@@ -24,7 +24,7 @@ bool TBLanguage::Load(const char* filename) {
   TBNode* n = node.GetFirstChild();
   while (n) {
     const char* str = n->GetValue().GetString();
-    TBStr* new_str = new TBStr(str);
+    std::string* new_str = new std::string(str);
     if (!new_str || !strings.Add(TBID(n->GetName()), new_str)) {
       delete new_str;
       return false;
@@ -37,11 +37,11 @@ bool TBLanguage::Load(const char* filename) {
 void TBLanguage::Clear() { strings.DeleteAll(); }
 
 const char* TBLanguage::GetString(const TBID& id) {
-  if (TBStr* str = strings.Get(id)) {
+  if (std::string* str = strings.Get(id)) {
     return str->c_str();
   }
 #ifdef TB_RUNTIME_DEBUG_INFO
-  static TBStr tmp;
+  static std::string tmp;
   tmp = tb::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
   return tmp.c_str();
 #else

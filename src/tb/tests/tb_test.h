@@ -59,7 +59,7 @@
         TB_TEST_GROUP(groupname)
         {
                 // Here goes the data for this group
-                TBStr str;
+                std::string str;
 
                 // Here goes methods with access to data
                 bool is_str_empty() { return str.IsEmpty(); }
@@ -212,7 +212,7 @@ class TBRegisterCall {
     }                                  \
   }
 
-TBStr tb_get_test_file_name(const char* testpath, const char* filename);
+std::string tb_get_test_file_name(const char* testpath, const char* filename);
 
 // Internal globals
 extern uint32_t test_settings;  ///< Settings, as sent to TBRunTests

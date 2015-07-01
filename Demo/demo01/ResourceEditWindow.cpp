@@ -11,7 +11,7 @@
 // == ResourceItem
 // ====================================================================================
 
-ResourceItem::ResourceItem(TBWidget* widget, const TBStr& str)
+ResourceItem::ResourceItem(TBWidget* widget, const std::string& str)
     : TBGenericStringItem(str), m_widget(widget) {}
 
 // == ResourceEditWindow

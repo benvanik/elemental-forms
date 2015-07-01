@@ -325,12 +325,13 @@ void TBSelection::RemoveContent() {
   styledit->EndLockScrollbars();
 }
 
-TBStr TBSelection::GetText() const {
+std::string TBSelection::GetText() const {
   if (!IsSelected()) {
-    return TBStr();
+    return std::string();
   }
   if (start.block == stop.block) {
-    return TBStr(start.block->str.c_str() + start.ofs, stop.ofs - start.ofs);
+    return std::string(start.block->str.c_str() + start.ofs,
+                       stop.ofs - start.ofs);
   } else {
     TBTempBuffer buf;
     buf.Append(start.block->str.c_str() + start.ofs,
@@ -342,7 +343,7 @@ TBStr TBSelection::GetText() const {
     }
     // FIX: Add methods to change data owner from temp buffer to string!
     buf.Append(stop.block->str, stop.ofs);
-    return TBStr(buf.GetData(), buf.GetAppendPos());
+    return std::string(buf.GetData(), buf.GetAppendPos());
   }
 }
 
@@ -1713,7 +1714,7 @@ bool TBStyleEdit::Load(const char* filename) {
   return true;
 }
 
-TBStr TBStyleEdit::GetText() {
+std::string TBStyleEdit::GetText() {
   TBSelection tmp_selection(this);
   tmp_selection.SelectAll();
   return tmp_selection.GetText();

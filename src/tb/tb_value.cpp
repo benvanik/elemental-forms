@@ -227,7 +227,7 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
     // (example: "10 -4 3.5")
     SetNull();
     if (TBValueArray* arr = new TBValueArray) {
-      TBStr tmpstr = str;
+      std::string tmpstr = str;
       char* str_next = (char*)tmpstr.data();
       while (char* token = next_token(str_next, ", ")) {
         if (TBValue* new_val = arr->AddValue())

@@ -50,7 +50,7 @@ class TBLanguage {
   const char* GetString(const TBID& id);
 
  private:
-  TBHashTableOf<TBStr> strings;
+  TBHashTableOf<std::string> strings;
 };
 };
 

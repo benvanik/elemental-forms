@@ -30,7 +30,7 @@ TBMessageWindow::~TBMessageWindow() {
   }
 }
 
-bool TBMessageWindow::Show(const TBStr& title, const TBStr& message,
+bool TBMessageWindow::Show(const std::string& title, const std::string& message,
                            TBMessageWindowSettings* settings) {
   TBWidget* target = m_target.Get();
   if (!target) return false;

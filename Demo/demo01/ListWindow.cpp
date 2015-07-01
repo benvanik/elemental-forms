@@ -95,7 +95,7 @@ bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
     return true;
   } else if (select && ev.type == EVENT_TYPE_CLICK &&
              ev.target->GetID() == TBIDC("add")) {
-    TBStr name = GetTextByID(TBIDC("add_name"));
+    std::string name = GetTextByID(TBIDC("add_name"));
     if (!name.empty()) {
       m_source->AddItem(
           new AdvancedItem(name.c_str(), TBIDC("boy_item"), true));

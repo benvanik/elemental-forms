@@ -62,7 +62,8 @@ class TBFontRenderer : public TBLinkOf<TBFontRenderer> {
   /** Open the given font file with this renderer and return a new TBFontFace
      with it.
           return nullptr if the file can't be opened by this renderer. */
-  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager,
+                             const std::string& filename,
                              const TBFontDescription& font_desc) = 0;
 
   virtual bool RenderGlyph(TBFontGlyphData* data, UCS4 cp) = 0;
@@ -180,7 +181,7 @@ class TBFontFace {
   /** Draw string at position x, y (marks the upper left corner of the text). */
   void DrawString(int x, int y, const TBColor& color, const char* str,
                   size_t len = std::string::npos);
-  void DrawString(int x, int y, const TBColor& color, const TBStr& str,
+  void DrawString(int x, int y, const TBColor& color, const std::string& str,
                   size_t len = std::string::npos) {
     DrawString(x, y, color, str.c_str(), len);
   }
@@ -189,7 +190,7 @@ class TBFontFace {
      the null
           termination (whatever comes first). */
   int GetStringWidth(const char* str, size_t len = std::string::npos);
-  int GetStringWidth(const TBStr& str, size_t len = std::string::npos) {
+  int GetStringWidth(const std::string& str, size_t len = std::string::npos) {
     return GetStringWidth(str.c_str(), len);
   }
 
@@ -226,10 +227,10 @@ class TBFontFace {
 class TBFontInfo {
  public:
   /** Get the font filename. */
-  const TBStr& GetFilename() const { return m_filename; }
+  const std::string& GetFilename() const { return m_filename; }
 
   /** Get the font name. */
-  const TBStr& GetName() const { return m_name; }
+  const std::string& GetName() const { return m_name; }
 
   /** Get the font ID that can be used to create this font from a
           TBFontDescription (See TBFontDescription::SetID) */
@@ -239,8 +240,8 @@ class TBFontInfo {
   friend class TBFontManager;
   TBFontInfo(const char* filename, const char* name)
       : m_filename(filename), m_name(name), m_id(name) {}
-  TBStr m_filename;
-  TBStr m_name;
+  std::string m_filename;
+  std::string m_name;
   TBID m_id;
 };
 

@@ -191,9 +191,10 @@ class TBSkinElement {
   ~TBSkinElement();
 
   // Skin properties
-  TBID id;     ///< ID of the skin element
-  TBStr name;  ///< Name of the skin element, f.ex "TBSelectDropdown.arrow"
-  TBStr bitmap_file;  ///< File name of the bitmap (might be empty)
+  TBID id;  ///< ID of the skin element
+  std::string
+      name;  ///< Name of the skin element, f.ex "TBSelectDropdown.arrow"
+  std::string bitmap_file;  ///< File name of the bitmap (might be empty)
   TBBitmapFragment*
       bitmap;   ///< Bitmap fragment containing the graphics, or nullptr.
   uint8_t cut;  ///< How the bitmap should be sliced using StretchBox.

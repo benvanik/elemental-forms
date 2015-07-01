@@ -35,7 +35,7 @@ class TBWidgetString {
   int GetHeight(TBWidget* widget);
 
   void SetText(const char* text) { m_text = text; }
-  TBStr GetText() const { return m_text; }
+  std::string GetText() const { return m_text; }
 
   bool empty() const { return m_text.empty(); }
 
@@ -45,7 +45,7 @@ class TBWidgetString {
   TB_TEXT_ALIGN GetTextAlign() { return m_text_align; }
 
  public:
-  TBStr m_text;
+  std::string m_text;
   TB_TEXT_ALIGN m_text_align;
 };
 
@@ -61,7 +61,7 @@ class TBTextField : public TBWidget {
   /** Set the text of the text field. */
   void SetText(const char* text) override;
   using TBWidget::SetText;
-  TBStr GetText() override { return m_text.GetText(); }
+  std::string GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
 
@@ -124,7 +124,7 @@ class TBButton : public TBWidget, protected TBMessageHandler {
   /** Set the text of the button. */
   void SetText(const char* text) override;
   using TBWidget::SetText;
-  TBStr GetText() override { return m_textfield.GetText(); }
+  std::string GetText() override { return m_textfield.GetText(); }
 
   virtual void SetValue(int value);
   virtual int GetValue();
@@ -177,7 +177,7 @@ class TBClickLabel : public TBWidget {
 
   /** Set the text of the label. */
   void SetText(const char* text) override { m_textfield.SetText(text); }
-  TBStr GetText() override { return m_textfield.GetText(); }
+  std::string GetText() override { return m_textfield.GetText(); }
 
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) {

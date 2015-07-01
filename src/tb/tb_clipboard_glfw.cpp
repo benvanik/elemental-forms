@@ -25,7 +25,7 @@ bool TBClipboard::HasText() {
   return false;
 }
 
-bool TBClipboard::SetText(const TBStr& text) {
+bool TBClipboard::SetText(const std::string& text) {
   if (GLFWwindow* window = glfwGetCurrentContext()) {
     glfwSetClipboardString(window, text.c_str());
     return true;
@@ -33,7 +33,7 @@ bool TBClipboard::SetText(const TBStr& text) {
   return false;
 }
 
-TBStr TBClipboard::GetText() {
+std::string TBClipboard::GetText() {
   text.clear();
   if (GLFWwindow* window = glfwGetCurrentContext()) {
     if (const char* str = glfwGetClipboardString(window)) {

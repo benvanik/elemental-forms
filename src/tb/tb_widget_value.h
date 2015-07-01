@@ -89,7 +89,7 @@ class TBWidgetValue {
   int GetInt() { return m_value.GetInt(); }
 
   /** Get value as text. */
-  TBStr GetText() { return m_value.GetString(); }
+  std::string GetText() { return m_value.GetString(); }
 
   /** Get the value as double. */
   double GetDouble() { return m_value.GetFloat(); }

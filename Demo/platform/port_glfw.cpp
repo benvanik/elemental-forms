@@ -427,7 +427,8 @@ static void drop_callback(GLFWwindow* window, int count,
   if (!target) target = backend->GetRoot();
   if (target) {
     TBWidgetEventFileDrop ev;
-    for (int i = 0; i < count; i++) ev.files.Add(new TBStr(files_utf8[i]));
+    for (int i = 0; i < count; i++)
+      ev.files.Add(new std::string(files_utf8[i]));
     target->InvokeEvent(ev);
   }
 }

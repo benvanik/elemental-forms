@@ -29,7 +29,7 @@ class TBNodeRefTree : public TBLinkOf<TBNodeRefTree> {
   TBNodeRefTree(const char* name);
   virtual ~TBNodeRefTree();
 
-  const TBStr& GetName() const { return m_name; }
+  const std::string& GetName() const { return m_name; }
   const TBID& GetNameID() const { return m_name_id; }
 
   /** Read the data file. This will *not* invoke any change listener! */
@@ -75,7 +75,7 @@ class TBNodeRefTree : public TBLinkOf<TBNodeRefTree> {
 
   void InvokeChangeListenersInternal(const char* request);
   TBNode m_node;
-  TBStr m_name;
+  std::string m_name;
   TBID m_name_id;
   TBLinkListOf<TBNodeRefTreeListener> m_listeners;
   static TBLinkListOf<TBNodeRefTree> s_ref_trees;

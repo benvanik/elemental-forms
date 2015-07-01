@@ -49,7 +49,7 @@ void const_expr_test() {
 
 DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 
-bool DemoWindow::LoadResourceFile(const TBStr& filename) {
+bool DemoWindow::LoadResourceFile(const std::string& filename) {
   // We could do g_widgets_reader->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   TBNode node;
@@ -237,7 +237,7 @@ class EditWindow : public DemoWindow {
 
 // == LayoutWindow ============================================================
 
-LayoutWindow::LayoutWindow(const TBStr& filename) {
+LayoutWindow::LayoutWindow(const std::string& filename) {
   LoadResourceFile(filename);
 }
 
@@ -569,7 +569,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
                     "Does everything look fine?");
       return true;
     } else if (ev.target->GetID() == TBIDC("test-layout")) {
-      TBStr resource_file("Demo/demo01/ui_resources/");
+      std::string resource_file("Demo/demo01/ui_resources/");
       resource_file.append(ev.target->data.GetString());
       new LayoutWindow(resource_file);
       return true;
@@ -763,7 +763,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   bool continuous_repaint =
       continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;
 
-  TBStr str;
+  std::string str;
   if (continuous_repaint) {
     str = tb::format_string("FPS: %d Frame %d", fps, frame_counter_total);
   } else {

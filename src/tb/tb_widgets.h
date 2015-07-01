@@ -211,7 +211,7 @@ class TBWidgetEvent : public TBTypedObject {
         It contains a list of filenames of the files that was dropped. */
 class TBWidgetEventFileDrop : public TBWidgetEvent {
  public:
-  TBListAutoDeleteOf<TBStr> files;
+  TBListAutoDeleteOf<std::string> files;
 
   TBOBJECT_SUBCLASS(TBWidgetEventFileDrop, TBWidgetEvent);
 
@@ -739,7 +739,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Get the text of a child widget with the given id, or an empty string if
      there was
           no widget with that id. */
-  TBStr GetTextByID(const TBID& id);
+  std::string GetTextByID(const TBID& id);
 
   /** Get the value of a child widget with the given id, or 0 if there was no
      widget
@@ -1032,21 +1032,23 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Set the text of this widget. Implemented by most widgets (that has text).
    */
   virtual void SetText(const char* text) {}
-  void SetText(const TBStr& text) { SetText(text.c_str()); }
+  void SetText(const std::string& text) { SetText(text.c_str()); }
 
   /** Get the text of this widget. Implemented by most widgets (that has text).
    */
-  virtual TBStr GetText() {
-    TBStr str;
+  virtual std::string GetText() {
+    std::string str;
     str.clear();
     return str;
   }
 
   /** Get the description string of this widget. Used for tooltips. */
-  virtual TBStr GetDescription() { return m_desc_str; }
+  virtual std::string GetDescription() { return m_desc_str; }
 
   /** Set the description string for this widget. Used for tooltips. */
-  virtual void SetDescription(const char* desc) { m_desc_str = desc; }
+  virtual void SetDescription(const char* desc) {
+    m_desc_str = desc ? desc : "";
+  }
 
   /** Connect this widget to a widget value.
 
@@ -1258,7 +1260,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   LayoutParams* m_layout_params;  ///< Layout params, or nullptr.
   TBScroller* m_scroller;
   TBLongClickTimer* m_long_click_timer;
-  TBStr m_desc_str;
+  std::string m_desc_str;
   union {
     struct {
       uint16_t is_group_root : 1;

@@ -38,7 +38,7 @@ class TBTempBuffer {
           increase the append position with the same amount.
           Returns false on OOM. */
   bool Append(const char* data, size_t size);
-  bool Append(const TBStr& data, size_t size) {
+  bool Append(const std::string& data, size_t size) {
     return Append(data.c_str(), size);
   }
 
@@ -55,13 +55,15 @@ class TBTempBuffer {
           Returns false on OOM. */
   bool AppendString(const char* str);
 
-  bool AppendString(const TBStr& str) { return AppendString(str.c_str()); }
+  bool AppendString(const std::string& str) {
+    return AppendString(str.c_str());
+  }
 
   /** Append a path without the ending filename.
           The buffer will be null terminated and the append position will be
           increased with the length of the path (excluding the null
      termination). */
-  bool AppendPath(const TBStr& full_path_and_filename);
+  bool AppendPath(const std::string& full_path_and_filename);
 
   /** Set the position (in bytes) in the buffer where Append should write. */
   void SetAppendPos(size_t append_pos);

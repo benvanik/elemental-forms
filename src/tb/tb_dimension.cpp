@@ -29,7 +29,7 @@ void TBDimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
   }
 }
 
-void TBDimensionConverter::GetDstDPIFilename(const TBStr& filename,
+void TBDimensionConverter::GetDstDPIFilename(const std::string& filename,
                                              TBTempBuffer* tempbuf) const {
   size_t dot_pos = 0;
   for (dot_pos = filename.size() - 1; dot_pos > 0; dot_pos--) {

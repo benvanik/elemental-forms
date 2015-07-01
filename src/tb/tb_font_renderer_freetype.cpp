@@ -55,7 +55,8 @@ class FreetypeFontRenderer : public TBFontRenderer {
   FreetypeFontRenderer();
   ~FreetypeFontRenderer();
 
-  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager,
+                             const std::string& filename,
                              const TBFontDescription& font_desc);
 
   virtual TBFontMetrics GetMetrics();
@@ -126,7 +127,7 @@ bool FreetypeFontRenderer::Load(FreetypeFace* face, int size) {
   return true;
 }
 
-bool FreetypeFontRenderer::Load(const TBStr& filename, int size) {
+bool FreetypeFontRenderer::Load(const std::string& filename, int size) {
   if (!ft_initialized) ft_initialized = !FT_Init_FreeType(&g_freetype);
   if (!ft_initialized) return false;
 
@@ -151,7 +152,7 @@ bool FreetypeFontRenderer::Load(const TBStr& filename, int size) {
 }
 
 TBFontFace* FreetypeFontRenderer::Create(TBFontManager* font_manager,
-                                         const TBStr& filename,
+                                         const std::string& filename,
                                          const TBFontDescription& font_desc) {
   if (FreetypeFontRenderer* fr = new FreetypeFontRenderer()) {
     TBID face_cache_id(filename);

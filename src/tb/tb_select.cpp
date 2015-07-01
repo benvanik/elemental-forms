@@ -91,7 +91,7 @@ void TBSelectList::OnAllItemsRemoved() {
 }
 
 void TBSelectList::SetFilter(const char* filter) {
-  TBStr new_filter;
+  std::string new_filter;
   if (filter && *filter) {
     new_filter = filter;
   }

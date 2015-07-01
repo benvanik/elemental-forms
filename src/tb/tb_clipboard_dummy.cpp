@@ -17,19 +17,20 @@
 
 namespace tb {
 
-TBStr clipboard;  ///< Obviosly not a full implementation since it ignores the
+std::string
+    clipboard;  ///< Obviosly not a full implementation since it ignores the
 /// OS :)
 
 void TBClipboard::Empty() { clipboard.clear(); }
 
 bool TBClipboard::HasText() { return !clipboard.empty(); }
 
-bool TBClipboard::SetText(const TBStr& text) {
+bool TBClipboard::SetText(const std::string& text) {
   clipboard = text;
   return true;
 }
 
-TBStr TBClipboard::GetText() { return clipboard; }
+std::string TBClipboard::GetText() { return clipboard; }
 
 };  // namespace tb
 

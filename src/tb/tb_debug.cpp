@@ -109,8 +109,8 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     g_renderer->Translate(-GetRect().w, 0);
   }
 
-  TBStr GetIDString(const TBID& id) {
-    TBStr str;
+  std::string GetIDString(const TBID& id) {
+    std::string str;
 #ifdef TB_RUNTIME_DEBUG_INFO
     str.append("\"");
     str.append(id.debug_string);

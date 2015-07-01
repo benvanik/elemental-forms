@@ -25,7 +25,7 @@ class TBID {
  public:
   TBID(uint32_t id = 0) { Set(id); }
   TBID(const char* string) { Set(string); }
-  TBID(const TBStr& string) { Set(string.c_str()); }
+  TBID(const std::string& string) { Set(string.c_str()); }
   TBID(const TBID& id) { Set(id); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -52,7 +52,7 @@ class TBID {
         It should not to be used in your code! */
 #ifdef TB_RUNTIME_DEBUG_INFO
   friend class TBLanguage;
-  TBStr debug_string;
+  std::string debug_string;
 #endif
 };
 

@@ -75,7 +75,7 @@ bool TBTempBuffer::AppendString(const char* str) {
   return false;
 }
 
-bool TBTempBuffer::AppendPath(const TBStr& full_path_and_filename) {
+bool TBTempBuffer::AppendPath(const std::string& full_path_and_filename) {
   const char* path = full_path_and_filename.c_str();
   const char* str_start = path;
   while (const char* next = strpbrk(path, "\\/")) {
