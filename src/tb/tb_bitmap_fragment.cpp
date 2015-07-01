@@ -9,6 +9,8 @@
 
 #include "tb_bitmap_fragment.h"
 
+#include <algorithm>
+
 #include "tb_renderer.h"
 #include "tb_system.h"
 
@@ -398,8 +400,8 @@ TBBitmapFragment* TBBitmapFragmentManager::CreateNewFragment(
   bool allow_another_map = (m_num_maps_limit == 0 ||
                             m_fragment_maps.GetNumItems() < m_num_maps_limit);
   if (!frag && allow_another_map && m_fragment_maps.GrowIfNeeded()) {
-    int po2w = TBGetNearestPowerOfTwo(MAX(data_w, m_default_map_w));
-    int po2h = TBGetNearestPowerOfTwo(MAX(data_h, m_default_map_h));
+    int po2w = TBGetNearestPowerOfTwo(std::max(data_w, m_default_map_w));
+    int po2h = TBGetNearestPowerOfTwo(std::max(data_h, m_default_map_h));
     if (dedicated_map) {
       po2w = TBGetNearestPowerOfTwo(data_w);
       po2h = TBGetNearestPowerOfTwo(data_h);

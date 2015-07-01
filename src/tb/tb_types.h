@@ -17,21 +17,6 @@
 namespace tb {
 
 template <class T>
-T Max(const T& left, const T& right) {
-  return left > right ? left : right;
-}
-
-template <class T>
-T Min(const T& left, const T& right) {
-  return left < right ? left : right;
-}
-
-template <class T>
-T Abs(const T& value) {
-  return value < 0 ? -value : value;
-}
-
-template <class T>
 T Clamp(const T& value, const T& min, const T& max) {
   return (value > max) ? max : ((value < min) ? min : value);
 }
@@ -43,26 +28,6 @@ T ClampClipMax(const T& value, const T& min, const T& max) {
   return (value > max) ? (max > min ? max : min)
                        : ((value < min) ? min : value);
 }
-
-#ifndef MAX
-/** This is deprecated! Use Max(a, b)! */
-#define MAX(a, b) Max(a, b)
-#endif
-
-#ifndef MIN
-/** This is deprecated! Use Min(a, b)! */
-#define MIN(a, b) Min(a, b)
-#endif
-
-#ifndef ABS
-/** This is deprecated! Use Abs(value)! */
-#define ABS(value) Abs(value)
-#endif
-
-#ifndef CLAMP
-/** This is deprecated! Use Clamp(value, min, max)! */
-#define CLAMP(value, min, max) Clamp(value, min, max)
-#endif
 
 /** Makes it possible to use the given enum types as flag combinations.
         That will catch use of incorrect type during compilation, that wouldn't

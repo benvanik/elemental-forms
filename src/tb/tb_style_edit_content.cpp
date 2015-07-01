@@ -9,6 +9,7 @@
 
 #include "tb_style_edit_content.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "tb_style_edit.h"
@@ -33,11 +34,11 @@ TBTextFragmentContent* TBTextFragmentContentFactory::CreateFragmentContent(
     return new TBTextFragmentContentHR(100, 2);
   else if (strncmp(text, "<u>", text_len) == 0)
     return new TBTextFragmentContentUnderline();
-  else if (strncmp(text, "<color ", MIN(text_len, 7)) == 0) {
+  else if (strncmp(text, "<color ", std::min(text_len, 7)) == 0) {
     TBColor color;
     color.SetFromString(text + 7, text_len - 8);
     return new TBTextFragmentContentTextColor(color);
-  } else if (strncmp(text, "</", MIN(text_len, 2)) == 0)
+  } else if (strncmp(text, "</", std::min(text_len, 2)) == 0)
     return new TBTextFragmentContentStylePop();
   return nullptr;
 }
@@ -61,7 +62,7 @@ void TBTextFragmentContentHR::Paint(TBTextFragment* fragment,
 
 int32_t TBTextFragmentContentHR::GetWidth(TBFontFace* font,
                                           TBTextFragment* fragment) {
-  return MAX(fragment->block->styledit->layout_width, 0);
+  return std::max(fragment->block->styledit->layout_width, 0);
 }
 
 int32_t TBTextFragmentContentHR::GetHeight(TBFontFace* font,

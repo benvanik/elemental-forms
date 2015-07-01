@@ -10,12 +10,15 @@
 #ifndef TB_WIDGETS_H
 #define TB_WIDGETS_H
 
+#include <algorithm>
+
 #include "tb_core.h"
 #include "tb_font_desc.h"
 #include "tb_geometry.h"
 #include "tb_linklist.h"
 #include "tb_object.h"
 #include "tb_skin.h"
+#include "tb_types.h"
 #include "tb_widget_value.h"
 
 namespace tb {
@@ -368,8 +371,8 @@ class SizeConstraints {
     if (constraint == NO_RESTRICTION)
       return lp_max != LayoutParams::UNSPECIFIED ? lp_max : NO_RESTRICTION;
     int ret = constraint;
-    if (lp_min != LayoutParams::UNSPECIFIED) ret = MAX(ret, lp_min);
-    if (lp_max != LayoutParams::UNSPECIFIED) ret = MIN(ret, lp_max);
+    if (lp_min != LayoutParams::UNSPECIFIED) ret = std::max(ret, lp_min);
+    if (lp_max != LayoutParams::UNSPECIFIED) ret = std::min(ret, lp_max);
     return ret;
   }
 };

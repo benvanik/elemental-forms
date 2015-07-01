@@ -11,6 +11,7 @@
 
 #ifdef TB_SYSTEM_WINDOWS
 
+#define NOMINMAX
 #include <Windows.h>
 #include <mmsystem.h>
 

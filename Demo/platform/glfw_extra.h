@@ -2,6 +2,7 @@
 #define GLFW_EXTRA_H
 
 #ifdef WIN32
+#define NOMINMAX
 #include <Windows.h>  // Avoid compilation warnings in GLFW/glfw.h
 #endif
 #include "GLFW/glfw3.h"

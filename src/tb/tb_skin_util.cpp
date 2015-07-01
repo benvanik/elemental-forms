@@ -14,7 +14,7 @@ namespace tb {
 static int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
   // Make it appear gradually
   // float factor = scrolled_distance / 10.f;
-  // factor = CLAMP(factor, 0.5f, 1);
+  // factor = Clamp(factor, 0.5f, 1);
   // return (int)(fadeout_length * factor);
   return scrolled_distance > 0 ? fadeout_length : 0;
 }

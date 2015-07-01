@@ -103,7 +103,7 @@ bool TBListBackend::Reserve(int new_capacity) {
 
 bool TBListBackend::GrowIfNeeded() {
   int capacity = GetCapacity();
-  if (GetNumItems() == capacity) return Reserve(CLAMP(4, capacity * 2, 1024));
+  if (GetNumItems() == capacity) return Reserve(Clamp(4, capacity * 2, 1024));
   return true;
 }
 

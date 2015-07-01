@@ -10,6 +10,8 @@
 #ifndef TB_FONT_DESC_H
 #define TB_FONT_DESC_H
 
+#include <algorithm>
+
 #include "tb_id.h"
 #include "tb_types.h"
 
@@ -46,7 +48,7 @@ class TBFontDescription {
           should be inherited from the parent widget. */
   TBID GetFontFaceID() const { return m_id + m_packed_init; }
 
-  void SetSize(uint32_t size) { m_packed.size = MIN(size, 0x8000u); }
+  void SetSize(uint32_t size) { m_packed.size = std::min(size, 0x8000u); }
   uint32_t GetSize() const { return m_packed.size; }
 
   // not connected to anything yet

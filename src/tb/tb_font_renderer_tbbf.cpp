@@ -9,6 +9,8 @@
 
 #include "tb_font_renderer.h"
 
+#include <algorithm>
+
 #include "tb_hashtable.h"
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
@@ -159,8 +161,8 @@ bool TBBFRenderer::Load(const char* filename, int size) {
   for (TBNode* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
     if (strcmp(n->GetName(), "size") == 0) {
       if (!size_node ||
-          ABS(m_size - n->GetValue().GetInt()) <
-              ABS(m_size - size_node->GetValue().GetInt()))
+          std::abs(m_size - n->GetValue().GetInt()) <
+              std::abs(m_size - size_node->GetValue().GetInt()))
         size_node = n;
     }
   }

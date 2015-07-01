@@ -9,6 +9,7 @@
 
 #include "tb_widgets.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "tb_font_renderer.h"
@@ -401,8 +402,8 @@ void TBWidget::ScrollToSmooth(int x, int y) {
 void TBWidget::ScrollBySmooth(int dx, int dy) {
   // Clip the values to the scroll limits, so we don't
   // scroll any parents.
-  // int x = CLAMP(info.x + dx, info.min_x, info.max_x);
-  // int y = CLAMP(info.y + dy, info.min_y, info.max_y);
+  // int x = Clamp(info.x + dx, info.min_x, info.max_x);
+  // int y = Clamp(info.y + dy, info.min_y, info.max_y);
   // dx = x - info.x;
   // dy = y - info.y;
   if (!dx && !dy) return;
@@ -812,12 +813,12 @@ PreferredSize TBWidget::OnCalculatePreferredContentSize(
       if (apply_max_h) ps.max_h = 0;
     }
     PreferredSize child_ps = child->GetPreferredSize(inner_sc);
-    ps.pref_w = MAX(ps.pref_w, child_ps.pref_w);
-    ps.pref_h = MAX(ps.pref_h, child_ps.pref_h);
-    ps.min_w = MAX(ps.min_w, child_ps.min_w);
-    ps.min_h = MAX(ps.min_h, child_ps.min_h);
-    if (apply_max_w) ps.max_w = MAX(ps.max_w, child_ps.max_w);
-    if (apply_max_h) ps.max_h = MAX(ps.max_h, child_ps.max_h);
+    ps.pref_w = std::max(ps.pref_w, child_ps.pref_w);
+    ps.pref_h = std::max(ps.pref_h, child_ps.pref_h);
+    ps.min_w = std::max(ps.min_w, child_ps.min_w);
+    ps.min_h = std::max(ps.min_h, child_ps.min_h);
+    if (apply_max_w) ps.max_w = std::max(ps.max_w, child_ps.max_w);
+    if (apply_max_h) ps.max_h = std::max(ps.max_h, child_ps.max_h);
     ps.size_dependency |= child_ps.size_dependency;
   }
 
@@ -861,12 +862,12 @@ PreferredSize TBWidget::OnCalculatePreferredSize(
     if (e->GetMinWidth() != SKIN_VALUE_NOT_SPECIFIED)
       ps.min_w = e->GetMinWidth();
     else
-      ps.min_w = MAX(ps.min_w, e->GetIntrinsicMinWidth());
+      ps.min_w = std::max(ps.min_w, e->GetIntrinsicMinWidth());
 
     if (e->GetMinHeight() != SKIN_VALUE_NOT_SPECIFIED)
       ps.min_h = e->GetMinHeight();
     else
-      ps.min_h = MAX(ps.min_h, e->GetIntrinsicMinHeight());
+      ps.min_h = std::max(ps.min_h, e->GetIntrinsicMinHeight());
 
     if (e->GetMaxWidth() != SKIN_VALUE_NOT_SPECIFIED)
       ps.max_w = e->GetMaxWidth();
@@ -879,8 +880,8 @@ PreferredSize TBWidget::OnCalculatePreferredSize(
       ps.max_h += e->padding_top + e->padding_bottom;
 
     // Sanitize result
-    ps.pref_w = MAX(ps.pref_w, ps.min_w);
-    ps.pref_h = MAX(ps.pref_h, ps.min_h);
+    ps.pref_w = std::max(ps.pref_w, ps.min_w);
+    ps.pref_h = std::max(ps.pref_h, ps.min_h);
   }
   return ps;
 }
@@ -927,10 +928,10 @@ PreferredSize TBWidget::GetPreferredSize(
     LP_OVERRIDE(pref_h);
 
     // Sanitize results
-    m_cached_ps.max_w = MAX(m_cached_ps.max_w, m_cached_ps.min_w);
-    m_cached_ps.max_h = MAX(m_cached_ps.max_h, m_cached_ps.min_h);
-    m_cached_ps.pref_w = MAX(m_cached_ps.pref_w, m_cached_ps.min_w);
-    m_cached_ps.pref_h = MAX(m_cached_ps.pref_h, m_cached_ps.min_h);
+    m_cached_ps.max_w = std::max(m_cached_ps.max_w, m_cached_ps.min_w);
+    m_cached_ps.max_h = std::max(m_cached_ps.max_h, m_cached_ps.min_h);
+    m_cached_ps.pref_w = std::max(m_cached_ps.pref_w, m_cached_ps.min_w);
+    m_cached_ps.pref_h = std::max(m_cached_ps.pref_h, m_cached_ps.min_h);
   }
   return m_cached_ps;
 }
@@ -1255,8 +1256,8 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
   const int dx = pointer_down_widget_x - x;
   const int dy = pointer_down_widget_y - y;
   const int threshold = TBSystem::GetPanThreshold();
-  const bool maybe_start_panning_x = ABS(dx) >= threshold;
-  const bool maybe_start_panning_y = ABS(dy) >= threshold;
+  const bool maybe_start_panning_x = std::abs(dx) >= threshold;
+  const bool maybe_start_panning_y = std::abs(dy) >= threshold;
 
   // Do panning, or attempt starting panning (we don't know if any widget is
   // scrollable yet)

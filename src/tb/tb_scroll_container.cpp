@@ -9,6 +9,7 @@
 
 #include "tb_scroll_container.h"
 
+#include <algorithm>
 #include <cassert>
 
 #include "tb_system.h"
@@ -256,18 +257,18 @@ void TBScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
 
     int content_w, content_h;
     if (m_adapt_content_size) {
-      content_w = MAX(ps.pref_w, m_root.GetRect().w);
-      content_h = MAX(ps.pref_h, m_root.GetRect().h);
+      content_w = std::max(ps.pref_w, m_root.GetRect().w);
+      content_h = std::max(ps.pref_h, m_root.GetRect().h);
       if (!visibility.x_on && m_root.GetRect().w < ps.pref_w)
-        content_w = MIN(ps.pref_w, m_root.GetRect().w);
+        content_w = std::min(ps.pref_w, m_root.GetRect().w);
     } else {
       content_w = ps.pref_w;
       content_h = ps.pref_h;
     }
 
     content_child->SetRect(TBRect(0, 0, content_w, content_h));
-    double limit_max_w = MAX(0, content_w - m_root.GetRect().w);
-    double limit_max_h = MAX(0, content_h - m_root.GetRect().h);
+    double limit_max_w = std::max(0, content_w - m_root.GetRect().w);
+    double limit_max_h = std::max(0, content_h - m_root.GetRect().h);
     m_scrollbar_x.SetLimits(0, limit_max_w, m_root.GetRect().w);
     m_scrollbar_y.SetLimits(0, limit_max_h, m_root.GetRect().h);
   }

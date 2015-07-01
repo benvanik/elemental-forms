@@ -10,6 +10,8 @@
 #ifndef TB_STYLE_EDIT_H
 #define TB_STYLE_EDIT_H
 
+#include <algorithm>
+
 #include "tb_core.h"
 #include "tb_linklist.h"
 #include "tb_list.h"
@@ -421,9 +423,11 @@ class TBStyleEdit {
   int32_t GetContentWidth();
   int32_t GetContentHeight() const;
 
-  int32_t GetOverflowX() const { return MAX(content_width - layout_width, 0); }
+  int32_t GetOverflowX() const {
+    return std::max(content_width - layout_width, 0);
+  }
   int32_t GetOverflowY() const {
-    return MAX(content_height - layout_height, 0);
+    return std::max(content_height - layout_height, 0);
   }
 
  public:

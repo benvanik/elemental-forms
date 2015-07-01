@@ -9,6 +9,7 @@
 
 #include "tb_node_tree.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstdlib>
 #include <string>
@@ -158,7 +159,7 @@ class DataParser : public TBParserStream {
     return status == TBParser::STATUS_OK ? true : false;
   }
   virtual int GetMoreData(char* buf, int buf_len) {
-    int consume = MIN(buf_len, m_data_len);
+    int consume = std::min(buf_len, m_data_len);
     memcpy(buf, m_data, consume);
     m_data += consume;
     m_data_len -= consume;

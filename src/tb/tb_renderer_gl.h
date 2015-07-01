@@ -18,6 +18,7 @@
 #include <EGL/egl.h>
 #include <GLES/gl.h>
 #elif defined(_WIN32)
+#define NOMINMAX
 #include <windows.h>  // make gl.h compile
 #include <GL/gl.h>
 #elif defined(MACOSX)

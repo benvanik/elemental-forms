@@ -13,6 +13,7 @@
 
 #include <cstdio>
 
+#define NOMINMAX
 #include <Windows.h>
 
 namespace tb {

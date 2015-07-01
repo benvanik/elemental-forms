@@ -1,8 +1,11 @@
 #include "glfw_extra.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <algorithm>
+
 #include "tb_skin.h"
 #include "tb_system.h"
 #include "tb_widgets.h"
@@ -362,7 +365,7 @@ static void ReschedulePlatformTimer(double fire_time, bool force) {
   } else if (fire_time != set_fire_time || force || fire_time == 0) {
     set_fire_time = fire_time;
     double delay = fire_time - tb::TBSystem::GetTimeMS();
-    unsigned int idelay = (unsigned int)MAX(delay, 0.0);
+    unsigned int idelay = (unsigned int)std::max(delay, 0.0);
     glfwRescheduleTimer(idelay);
   }
 }
@@ -522,6 +525,7 @@ void ApplicationBackendGLFW::Run() {
 
 #ifdef TB_TARGET_WINDOWS
 
+#define NOMINMAX
 #include <mmsystem.h>
 int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow) {

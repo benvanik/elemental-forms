@@ -9,6 +9,7 @@
 
 #include "tb_tooltips.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "tb_language.h"
@@ -69,8 +70,8 @@ TBRect TBTooltipWindow::GetAlignedRect(int x, int y) {
   PreferredSize ps = GetPreferredSize(sc);
 
   TBPoint pos(x, y);
-  int w = MIN(ps.pref_w, root->GetRect().w);
-  int h = MIN(ps.pref_h, root->GetRect().h);
+  int w = std::min(ps.pref_w, root->GetRect().w);
+  int h = std::min(ps.pref_h, root->GetRect().h);
 
   x = pos.x + w > root->GetRect().w ? pos.x - w : pos.x;
   y = pos.y;
