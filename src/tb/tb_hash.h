@@ -1,7 +1,11 @@
-// ================================================================================
-// ==      This file is a part of Turbo Badger. (C) 2011-2014, Emil Segerås      ==
-// ==                     See tb_core.h for more information.                    ==
-// ================================================================================
+/**
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See tb_core.h and LICENSE in the root for more information.                *
+ ******************************************************************************
+ */
 
 #ifndef TB_HASH_H
 #define TB_HASH_H
@@ -30,29 +34,27 @@ static constexpr uint32 basis = 2166136261U;
 static constexpr uint32 prime = 16777619U;
 
 // compile-time hash helper function
-constexpr uint32 TBGetHash_one(char c, const char* remain, uint32 value)
-{
-	return c == 0 ? value : TBGetHash_one(remain[0], remain + 1, (value ^ c) * prime);
+constexpr uint32 TBGetHash_one(char c, const char* remain, uint32 value) {
+  return c == 0 ? value
+                : TBGetHash_one(remain[0], remain + 1, (value ^ c) * prime);
 }
 
 // compile-time hash
-constexpr uint32 TBGetHash(const char* str)
-{
-	return (str && *str) ? TBGetHash_one(str[0], str + 1, basis) : 0;
+constexpr uint32 TBGetHash(const char* str) {
+  return (str && *str) ? TBGetHash_one(str[0], str + 1, basis) : 0;
 }
 
 #define TBIDC(str) TBGetHash(str)
 
-#else // TB_SUPPORT_CONSTEXPR
+#else  // TB_SUPPORT_CONSTEXPR
 
 #define TBIDC(str) TBID(str)
 
 /** Get hash value from string */
-uint32 TBGetHash(const char *str);
+uint32 TBGetHash(const char* str);
 
-#endif // !TB_SUPPORT_CONSTEXPR
+#endif  // !TB_SUPPORT_CONSTEXPR
 
-}; // namespace tb
+}  // namespace tb
 
-#endif // TB_HASH_H
-
+#endif  // TB_HASH_H

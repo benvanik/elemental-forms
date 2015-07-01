@@ -26,38 +26,24 @@ GLFWtimerfun timerCallback;
 
 #ifndef TB_TARGET_LINUX
 
-void glfwWakeUpMsgLoop(GLFWwindow *window)
-{
+void glfwWakeUpMsgLoop(GLFWwindow* window) {}
+
+void glfwWaitMsgLoop(GLFWwindow* window) {
+  glfwPollEvents();
+  if (timerCallback) timerCallback();
 }
 
-void glfwWaitMsgLoop(GLFWwindow *window)
-{
-	glfwPollEvents();
-	if (timerCallback)
-		timerCallback();
+void glfwPollMsgLoop(GLFWwindow* window) {
+  glfwPollEvents();
+  if (timerCallback) timerCallback();
 }
 
-void glfwPollMsgLoop(GLFWwindow *window)
-{
-	glfwPollEvents();
-	if (timerCallback)
-		timerCallback();
-}
+void glfwRescheduleTimer(unsigned int delay_ms) {}
 
-void glfwRescheduleTimer(unsigned int delay_ms)
-{
-}
+void glfwKillTimer() {}
 
-void glfwKillTimer()
-{
-}
-
-void glfwSetTimerCallback(GLFWtimerfun cbfun)
-{
-
-	timerCallback = cbfun;
-}
+void glfwSetTimerCallback(GLFWtimerfun cbfun) { timerCallback = cbfun; }
 
 #endif /* TB_TARGET_LINUX */
 
-#endif // defined(TB_TARGET_LINUX) || defined(TB_TARGET_MACOSX)
+#endif  // defined(TB_TARGET_LINUX) || defined(TB_TARGET_MACOSX)

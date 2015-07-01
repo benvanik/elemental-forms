@@ -45,21 +45,22 @@ class TBWidgetsReader;
 class TBLanguage;
 class TBFontManager;
 
-extern TBRenderer *g_renderer;
-extern TBSkin *g_tb_skin;
-extern TBWidgetsReader *g_widgets_reader;
-extern TBLanguage *g_tb_lng;
-extern TBFontManager *g_font_manager;
+extern TBRenderer* g_renderer;
+extern TBSkin* g_tb_skin;
+extern TBWidgetsReader* g_widgets_reader;
+extern TBLanguage* g_tb_lng;
+extern TBFontManager* g_font_manager;
 
 /** Initialize turbo badger. Call this before using any turbo badger API. */
-bool tb_core_init(TBRenderer *renderer, const char *lng_file);
+bool tb_core_init(TBRenderer* renderer, const char* lng_file);
 
-/** Shutdown turbo badger. Call this after deleting the last widget, to free turbo badger internals. */
+/** Shutdown turbo badger. Call this after deleting the last widget, to free
+ * turbo badger internals. */
 void tb_core_shutdown();
 
 /** Returns true if turbo badger is initialized. */
 bool tb_core_is_initialized();
 
-}; // namespace tb
+}  // namespace tb
 
-#endif // TB_CORE_H
+#endif  // TB_CORE_H

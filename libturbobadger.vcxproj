@@ -11,15 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\tb\animation\tb_animation.cpp" />
-    <ClCompile Include="src\tb\animation\tb_widget_animation.cpp" />
-    <ClCompile Include="src\tb\image\tb_image_manager.cpp" />
-    <ClCompile Include="src\tb\image\tb_image_widget.cpp" />
-    <ClCompile Include="src\tb\parser\tb_parser.cpp" />
-    <ClCompile Include="src\tb\renderers\tb_renderer_batcher.cpp" />
-    <ClCompile Include="src\tb\renderers\tb_renderer_gl.cpp" />
     <ClCompile Include="src\tb\tb_addon.cpp" />
+    <ClCompile Include="src\tb\tb_animation.cpp" />
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
+    <ClCompile Include="src\tb\tb_clipboard_dummy.cpp" />
+    <ClCompile Include="src\tb\tb_clipboard_glfw.cpp" />
     <ClCompile Include="src\tb\tb_clipboard_win.cpp" />
     <ClCompile Include="src\tb\tb_color.cpp" />
     <ClCompile Include="src\tb\tb_core.cpp" />
@@ -36,6 +32,8 @@
     <ClCompile Include="src\tb\tb_hashtable.cpp" />
     <ClCompile Include="src\tb\tb_id.cpp" />
     <ClCompile Include="src\tb\tb_image_loader_stb.cpp" />
+    <ClCompile Include="src\tb\tb_image_manager.cpp" />
+    <ClCompile Include="src\tb\tb_image_widget.cpp" />
     <ClCompile Include="src\tb\tb_inline_select.cpp" />
     <ClCompile Include="src\tb\tb_language.cpp" />
     <ClCompile Include="src\tb\tb_layout.cpp" />
@@ -47,8 +45,11 @@
     <ClCompile Include="src\tb\tb_node_ref_tree.cpp" />
     <ClCompile Include="src\tb\tb_node_tree.cpp" />
     <ClCompile Include="src\tb\tb_object.cpp" />
+    <ClCompile Include="src\tb\tb_parser.cpp" />
     <ClCompile Include="src\tb\tb_popup_window.cpp" />
     <ClCompile Include="src\tb\tb_renderer.cpp" />
+    <ClCompile Include="src\tb\tb_renderer_batcher.cpp" />
+    <ClCompile Include="src\tb\tb_renderer_gl.cpp" />
     <ClCompile Include="src\tb\tb_scroller.cpp" />
     <ClCompile Include="src\tb\tb_scroll_container.cpp" />
     <ClCompile Include="src\tb\tb_select.cpp" />
@@ -58,6 +59,8 @@
     <ClCompile Include="src\tb\tb_str.cpp" />
     <ClCompile Include="src\tb\tb_style_edit.cpp" />
     <ClCompile Include="src\tb\tb_style_edit_content.cpp" />
+    <ClCompile Include="src\tb\tb_system_android.cpp" />
+    <ClCompile Include="src\tb\tb_system_linux.cpp" />
     <ClCompile Include="src\tb\tb_system_win.cpp" />
     <ClCompile Include="src\tb\tb_tab_container.cpp" />
     <ClCompile Include="src\tb\tb_tempbuffer.cpp" />
@@ -68,6 +71,7 @@
     <ClCompile Include="src\tb\tb_widgets_common.cpp" />
     <ClCompile Include="src\tb\tb_widgets_listener.cpp" />
     <ClCompile Include="src\tb\tb_widgets_reader.cpp" />
+    <ClCompile Include="src\tb\tb_widget_animation.cpp" />
     <ClCompile Include="src\tb\tb_widget_skin_condition_context.cpp" />
     <ClCompile Include="src\tb\tb_widget_value.cpp" />
     <ClCompile Include="src\tb\tb_window.cpp" />
@@ -85,19 +89,21 @@
     <ClCompile Include="src\tb\tests\test_tb_tempbuffer.cpp" />
     <ClCompile Include="src\tb\tests\test_tb_test.cpp" />
     <ClCompile Include="src\tb\tests\test_tb_widget_value.cpp" />
-    <ClCompile Include="src\tb\utf8\utf8.cpp" />
+    <ClCompile Include="src\tb\utf8.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\tb\image\tb_image_manager.h" />
-    <ClInclude Include="src\tb\image\tb_image_widget.h" />
+    <ClInclude Include="src\tb\tb_animation.h" />
+    <ClInclude Include="src\tb\tb_animation_utils.h" />
+    <ClInclude Include="src\tb\tb_geometry.h" />
+    <ClInclude Include="src\tb\tb_image_manager.h" />
+    <ClInclude Include="src\tb\tb_image_widget.h" />
+    <ClInclude Include="src\tb\tb_parser.h" />
+    <ClInclude Include="src\tb\tb_renderer_batcher.h" />
+    <ClInclude Include="src\tb\tb_renderer_gl.h" />
+    <ClInclude Include="src\tb\tb_sort.h" />
     <ClInclude Include="src\tb\tb_tooltips.h" />
-    <ClInclude Include="tbanimation\tb_animation_utils.h" />
-    <ClInclude Include="src\tb\animation\tb_animation.h" />
-    <ClInclude Include="src\tb\animation\tb_animation_utils.h" />
-    <ClInclude Include="src\tb\animation\tb_widget_animation.h" />
-    <ClInclude Include="src\tb\parser\tb_parser.h" />
-    <ClInclude Include="src\tb\renderers\tb_renderer_batcher.h" />
-    <ClInclude Include="src\tb\renderers\tb_renderer_gl.h" />
+    <ClInclude Include="src\tb\tb_widget_animation.h" />
+    <ClInclude Include="src\tb\utf8.h" />
     <ClInclude Include="src\tb\tb_addon.h" />
     <ClInclude Include="src\tb\tb_bitmap_fragment.h" />
     <ClInclude Include="src\tb\tb_color.h" />
@@ -147,7 +153,6 @@
     <ClInclude Include="src\tb\tb_widget_value.h" />
     <ClInclude Include="src\tb\tb_window.h" />
     <ClInclude Include="src\tb\tests\tb_test.h" />
-    <ClInclude Include="src\tb\utf8\utf8.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="integration.txt" />
@@ -199,7 +204,6 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
-      <MinimalRebuild>false</MinimalRebuild>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
@@ -213,8 +217,6 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>

@@ -1,7 +1,11 @@
-// ================================================================================
-// ==      This file is a part of Turbo Badger. (C) 2011-2014, Emil Segerås      ==
-// ==                     See tb_core.h for more information.                    ==
-// ================================================================================
+/**
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See tb_core.h and LICENSE in the root for more information.                *
+ ******************************************************************************
+ */
 
 #include "tb_system.h"
 
@@ -11,44 +15,31 @@
 
 namespace tb {
 
-// == TBClipboard =====================================
+void TBClipboard::Empty() { SetText(""); }
 
-void TBClipboard::Empty()
-{
-	SetText("");
+bool TBClipboard::HasText() {
+  if (GLFWwindow* window = glfwGetCurrentContext()) {
+    const char* str = glfwGetClipboardString(window);
+    if (str && *str) return true;
+  }
+  return false;
 }
 
-bool TBClipboard::HasText()
-{
-	if (GLFWwindow *window = glfwGetCurrentContext())
-	{
-		const char *str = glfwGetClipboardString(window);
-		if (str && *str)
-			return true;
-	}
-	return false;
+bool TBClipboard::SetText(const char* text) {
+  if (GLFWwindow* window = glfwGetCurrentContext()) {
+    glfwSetClipboardString(window, text);
+    return true;
+  }
+  return false;
 }
 
-bool TBClipboard::SetText(const char *text)
-{
-	if (GLFWwindow *window = glfwGetCurrentContext())
-	{
-		glfwSetClipboardString(window, text);
-		return true;
-	}
-	return false;
+bool TBClipboard::GetText(TBStr& text) {
+  if (GLFWwindow* window = glfwGetCurrentContext()) {
+    if (const char* str = glfwGetClipboardString(window)) return text.Set(str);
+  }
+  return false;
 }
 
-bool TBClipboard::GetText(TBStr &text)
-{
-	if (GLFWwindow *window = glfwGetCurrentContext())
-	{
-		if (const char *str = glfwGetClipboardString(window))
-			return text.Set(str);
-	}
-	return false;
-}
+};  // namespace tb
 
-}; // namespace tb
-
-#endif // TB_CLIPBOARD_GLFW
+#endif  // TB_CLIPBOARD_GLFW

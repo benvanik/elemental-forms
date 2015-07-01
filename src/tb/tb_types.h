@@ -1,16 +1,20 @@
-// ================================================================================
-// ==      This file is a part of Turbo Badger. (C) 2011-2014, Emil Segerås      ==
-// ==                     See tb_core.h for more information.                    ==
-// ================================================================================
+/**
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See tb_core.h and LICENSE in the root for more information.                *
+ ******************************************************************************
+ */
 
 #ifndef TB_TYPES_H
 #define TB_TYPES_H
 
+#include <cstring>
+
 // Include <tb_config.h> so it may be overridden in application directory.
 // The default "tb_config.h" (local) will be used if there is no other match.
 #include <tb_config.h>
-
-#include <string.h>
 
 namespace tb {
 
@@ -23,26 +27,31 @@ typedef unsigned short uint16;
 typedef unsigned int uint32;
 
 template <class T>
-T Max(const T& left, const T& right) { return left > right ? left : right; }
+T Max(const T& left, const T& right) {
+  return left > right ? left : right;
+}
 
 template <class T>
-T Min(const T& left, const T& right) { return left < right ? left : right; }
+T Min(const T& left, const T& right) {
+  return left < right ? left : right;
+}
 
 template <class T>
-T Abs(const T& value) { return value < 0 ? -value : value; }
+T Abs(const T& value) {
+  return value < 0 ? -value : value;
+}
 
 template <class T>
-T Clamp(const T& value, const T& min, const T& max)
-	{ return (value > max) ? max : ((value < min) ? min : value); }
+T Clamp(const T& value, const T& min, const T& max) {
+  return (value > max) ? max : ((value < min) ? min : value);
+}
 
 /** Returns value clamped to min and max. If max is greater than min,
-	max will be clipped to min. */
+        max will be clipped to min. */
 template <class T>
-T ClampClipMax(const T& value, const T& min, const T& max)
-{
-	return (value > max)
-		? (max > min ? max : min)
-		: ((value < min) ? min : value);
+T ClampClipMax(const T& value, const T& min, const T& max) {
+  return (value > max) ? (max > min ? max : min)
+                       : ((value < min) ? min : value);
 }
 
 #ifndef MAX
@@ -66,17 +75,32 @@ T ClampClipMax(const T& value, const T& min, const T& max)
 #endif
 
 /** Makes it possible to use the given enum types as flag combinations.
-	That will catch use of incorrect type during compilation, that wouldn't be caught
-	using a uint32 flag. */
-#define MAKE_ENUM_FLAG_COMBO(Enum) \
-	inline Enum operator | (Enum a, Enum b)  { return static_cast<Enum>(static_cast<uint32>(a) | static_cast<uint32>(b)); } \
-	inline Enum operator & (Enum a, Enum b)  { return static_cast<Enum>(static_cast<uint32>(a) & static_cast<uint32>(b)); } \
-	inline Enum operator ^ (Enum a, Enum b)  { return static_cast<Enum>(static_cast<uint32>(a) ^ static_cast<uint32>(b)); } \
-	inline void operator |= (Enum &a, Enum b) { a = static_cast<Enum>(static_cast<uint32>(a) | static_cast<uint32>(b)); } \
-	inline void operator &= (Enum &a, Enum b) { a = static_cast<Enum>(static_cast<uint32>(a) & static_cast<uint32>(b)); } \
-	inline void operator ^= (Enum &a, Enum b) { a = static_cast<Enum>(static_cast<uint32>(a) ^ static_cast<uint32>(b)); } \
-	inline Enum operator ~ (Enum a)  { return static_cast<Enum>(~static_cast<uint32>(a)); }
+        That will catch use of incorrect type during compilation, that wouldn't
+   be caught
+        using a uint32 flag. */
+#define MAKE_ENUM_FLAG_COMBO(Enum)                                             \
+  inline Enum operator|(Enum a, Enum b) {                                      \
+    return static_cast<Enum>(static_cast<uint32>(a) | static_cast<uint32>(b)); \
+  }                                                                            \
+  inline Enum operator&(Enum a, Enum b) {                                      \
+    return static_cast<Enum>(static_cast<uint32>(a) & static_cast<uint32>(b)); \
+  }                                                                            \
+  inline Enum operator^(Enum a, Enum b) {                                      \
+    return static_cast<Enum>(static_cast<uint32>(a) ^ static_cast<uint32>(b)); \
+  } inline void                                                                \
+  operator|=(Enum& a, Enum b) {                                                \
+    a = static_cast<Enum>(static_cast<uint32>(a) | static_cast<uint32>(b));    \
+  }                                                                            \
+  inline void operator&=(Enum& a, Enum b) {                                    \
+    a = static_cast<Enum>(static_cast<uint32>(a) & static_cast<uint32>(b));    \
+  }                                                                            \
+  inline void operator^=(Enum& a, Enum b) {                                    \
+    a = static_cast<Enum>(static_cast<uint32>(a) ^ static_cast<uint32>(b));    \
+  }                                                                            \
+  inline Enum operator~(Enum a) {                                              \
+    return static_cast<Enum>(~static_cast<uint32>(a));                         \
+  }
 
-}; // namespace tb
+}  // namespace tb
 
-#endif // TB_TYPES_H
+#endif  // TB_TYPES_H
