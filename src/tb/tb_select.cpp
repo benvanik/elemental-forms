@@ -9,20 +9,14 @@
 
 #include "tb_select.h"
 
+#include <algorithm>
+
 #include "tb_language.h"
 #include "tb_menu_window.h"
-#include "tb_sort.h"
 #include "tb_tempbuffer.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {
-
-// Sort callback for sorting items
-int select_list_sort_cb(TBSelectItemSource* source, const int* a,
-                        const int* b) {
-  int value = strcmp(source->GetItemString(*a), source->GetItemString(*b));
-  return source->GetSort() == TB_SORT_DESCENDING ? -value : value;
-}
 
 TBSelectList::TBSelectList()
     : m_value(-1),
@@ -142,9 +136,14 @@ void TBSelectList::ValidateList() {
       sorted_index[num_sorted_items++] = i;
 
   // Sort
-  if (m_source->GetSort() != TB_SORT_NONE)
-    insertion_sort<TBSelectItemSource*, int>(sorted_index, num_sorted_items,
-                                             m_source, select_list_sort_cb);
+  if (m_source->GetSort() != TB_SORT_NONE) {
+    std::sort(&sorted_index[0], &sorted_index[num_sorted_items],
+              [&](const int a, const int b) {
+      int value =
+          strcmp(m_source->GetItemString(a), m_source->GetItemString(b));
+      return m_source->GetSort() == TB_SORT_DESCENDING ? value > 0 : value < 0;
+    });
+  }
 
   // Show header if we only show a subset of all items.
   if (!m_filter.IsEmpty()) {

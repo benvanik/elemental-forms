@@ -98,7 +98,6 @@
     <ClInclude Include="src\tb\tb_parser.h" />
     <ClInclude Include="src\tb\tb_renderer_batcher.h" />
     <ClInclude Include="src\tb\tb_renderer_gl.h" />
-    <ClInclude Include="src\tb\tb_sort.h" />
     <ClInclude Include="src\tb\tb_tooltips.h" />
     <ClInclude Include="src\tb\tb_widget_animation.h" />
     <ClInclude Include="src\tb\utf8.h" />
