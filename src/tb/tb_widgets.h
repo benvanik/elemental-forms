@@ -1032,6 +1032,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Set the text of this widget. Implemented by most widgets (that has text).
    */
   virtual void SetText(const char* text) {}
+  void SetText(const TBStr& text) { SetText(text.c_str()); }
 
   /** Get the text of this widget. Implemented by most widgets (that has text).
    */

@@ -135,9 +135,11 @@ void TBSelectList::ValidateList() {
 
   // Populate the sorted index list
   int num_sorted_items = 0;
-  for (int i = 0; i < m_source->GetNumItems(); i++)
-    if (m_filter.empty() || m_source->Filter(i, m_filter))
+  for (int i = 0; i < m_source->GetNumItems(); i++) {
+    if (m_filter.empty() || m_source->Filter(i, m_filter)) {
       sorted_index[num_sorted_items++] = i;
+    }
+  }
 
   // Sort
   if (m_source->GetSort() != TB_SORT_NONE) {
@@ -153,10 +155,9 @@ void TBSelectList::ValidateList() {
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
     if (TBWidget* widget = new TBTextField()) {
-      TBStr str;
-      str.SetFormatted(g_tb_lng->GetString(m_header_lng_string_id),
-                       num_sorted_items, m_source->GetNumItems());
-      widget->SetText(str);
+      widget->SetText(
+          tb::format_string(g_tb_lng->GetString(m_header_lng_string_id),
+                            num_sorted_items, m_source->GetNumItems()));
       widget->SetSkinBg(TBIDC("TBList.header"));
       widget->SetState(WIDGET_STATE_DISABLED, true);
       widget->SetGravity(WIDGET_GRAVITY_ALL);

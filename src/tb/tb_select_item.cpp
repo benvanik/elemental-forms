@@ -126,9 +126,9 @@ TBSelectItemSource::~TBSelectItemSource() {
   assert(!m_viewers.HasLinks());
 }
 
-bool TBSelectItemSource::Filter(int index, const char* filter) {
+bool TBSelectItemSource::Filter(int index, const TBStr& filter) {
   const char* str = GetItemString(index);
-  if (str && stristr(str, filter)) return true;
+  if (str && stristr(str, filter.c_str())) return true;
   return false;
 }
 

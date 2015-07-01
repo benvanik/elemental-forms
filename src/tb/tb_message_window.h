@@ -48,7 +48,7 @@ class TBMessageWindow : public TBWindow, private TBWidgetListener {
   TBMessageWindow(TBWidget* target, TBID id);
   virtual ~TBMessageWindow();
 
-  bool Show(const char* title, const char* message,
+  bool Show(const TBStr& title, const TBStr& message,
             TBMessageWindowSettings* settings = nullptr);
 
   virtual TBWidget* GetEventDestination() { return m_target.Get(); }

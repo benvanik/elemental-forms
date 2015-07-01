@@ -24,18 +24,21 @@ void TBDimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
   m_src_dpi = src_dpi;
   m_dst_dpi = dst_dpi;
   m_dst_dpi_str.clear();
-  if (NeedConversion()) m_dst_dpi_str.SetFormatted("@%d", m_dst_dpi);
+  if (NeedConversion()) {
+    m_dst_dpi_str = tb::format_string("@%d", m_dst_dpi);
+  }
 }
 
-void TBDimensionConverter::GetDstDPIFilename(const char* filename,
+void TBDimensionConverter::GetDstDPIFilename(const TBStr& filename,
                                              TBTempBuffer* tempbuf) const {
   size_t dot_pos = 0;
-  for (dot_pos = strlen(filename) - 1; dot_pos > 0; dot_pos--)
+  for (dot_pos = filename.size() - 1; dot_pos > 0; dot_pos--) {
     if (filename[dot_pos] == '.') break;
+  }
   tempbuf->ResetAppendPos();
-  tempbuf->Append(filename, dot_pos);
+  tempbuf->Append(filename.c_str(), dot_pos);
   tempbuf->AppendString(GetDstDPIStr());
-  tempbuf->AppendString(filename + dot_pos);
+  tempbuf->AppendString(filename.c_str() + dot_pos);
 }
 
 int TBDimensionConverter::DpToPx(int dp) const {

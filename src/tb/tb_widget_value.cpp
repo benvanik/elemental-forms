@@ -44,7 +44,7 @@ void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
   // Get the value in the format
   switch (m_value.GetType()) {
     case TBValue::TYPE_STRING:
-      m_value.SetString(source_widget->GetText(), TBValue::SET_NEW_COPY);
+      m_value.SetString(source_widget->GetText());
       break;
     case TBValue::TYPE_NULL:
     case TBValue::TYPE_INT:

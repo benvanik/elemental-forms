@@ -49,7 +49,7 @@ void const_expr_test() {
 
 DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 
-bool DemoWindow::LoadResourceFile(const char* filename) {
+bool DemoWindow::LoadResourceFile(const TBStr& filename) {
   // We could do g_widgets_reader->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   TBNode node;
@@ -141,10 +141,8 @@ class EditWindow : public DemoWindow {
         redo->SetState(WIDGET_STATE_DISABLED, !edit->GetStyleEdit()->CanRedo());
       if (TBTextField* info =
               GetWidgetByIDAndType<TBTextField>(TBIDC("info"))) {
-        TBStr text;
-        text.SetFormatted("Caret ofs: %d",
-                          edit->GetStyleEdit()->caret.GetGlobalOfs());
-        info->SetText(text);
+        info->SetText(tb::format_string(
+            "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOfs()));
       }
     }
   }
@@ -239,7 +237,9 @@ class EditWindow : public DemoWindow {
 
 // == LayoutWindow ============================================================
 
-LayoutWindow::LayoutWindow(const char* filename) { LoadResourceFile(filename); }
+LayoutWindow::LayoutWindow(const TBStr& filename) {
+  LoadResourceFile(filename);
+}
 
 bool LayoutWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EVENT_TYPE_CHANGED &&
@@ -351,11 +351,9 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
       return true;
     } else if (ev.target->GetID() == TBIDC("new buttons")) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
-        TBStr str;
-        str.SetFormatted("Remove %d", i);
         TBButton* button = new TBButton;
         button->SetID(TBIDC("remove button"));
-        button->SetText(str);
+        button->SetText(tb::format_string("Remove %d", i));
         ev.target->GetParent()->AddChild(button);
       }
       return true;
@@ -376,11 +374,11 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
         menu->Show(&popup_menu_source, TBPopupAlignment());
       return true;
     } else if (ev.target->GetID() == TBIDC("popupmenu1")) {
-      TBStr str;
-      str.SetFormatted("Menu event received!\nref_id: %d", (int)ev.ref_id);
       TBMessageWindow* msg_win =
           new TBMessageWindow(this, TBIDC("popup_dialog"));
-      msg_win->Show("Info", str);
+      msg_win->Show("Info",
+                    tb::format_string("Menu event received!\nref_id: %d",
+                                      (int)ev.ref_id));
       return true;
     }
   }
@@ -390,11 +388,9 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
 void ScrollContainerWindow::OnMessageReceived(TBMessage* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
     if (TBWidget* target = GetWidgetByID(msg->data->id1)) {
-      TBStr str;
-      str.SetFormatted("Remove %d", msg->data->v1.GetInt());
       TBButton* button = new TBButton;
       button->SetID(TBIDC("remove button"));
-      button->SetText(str);
+      button->SetText(tb::format_string("Remove %d", msg->data->v1.GetInt()));
       target->AddChild(button);
     }
   }
@@ -495,13 +491,12 @@ void MainWindow::OnMessageReceived(TBMessage* msg) {
     // Keep the message queue busy by posting another "busy" message.
     PostMessage(TBIDC("busy"), nullptr);
   } else if (msg->message == TBIDC("delayedmsg")) {
-    TBStr text;
-    text.SetFormatted(
-        "Delayed message received!\n\n"
-        "It was received %d ms after its intended fire time.",
-        (int)(TBSystem::GetTimeMS() - msg->GetFireTime()));
     TBMessageWindow* msg_win = new TBMessageWindow(this, TBIDC(""));
-    msg_win->Show("Message window", text);
+    msg_win->Show("Message window",
+                  tb::format_string(
+                      "Delayed message received!\n\n"
+                      "It was received %d ms after its intended fire time.",
+                      (int)(TBSystem::GetTimeMS() - msg->GetFireTime())));
   }
 }
 
@@ -559,11 +554,11 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       for (int i = 0; i < reload_count; i++) g_tb_skin->ReloadBitmaps();
       double t2 = TBSystem::GetTimeMS();
 
-      TBStr message;
-      message.SetFormatted("Reloading the skin graphics %d times took %dms",
-                           reload_count, (int)(t2 - t1));
       TBMessageWindow* msg_win = new TBMessageWindow(ev.target, TBID());
-      msg_win->Show("GFX load performance", message);
+      msg_win->Show(
+          "GFX load performance",
+          tb::format_string("Reloading the skin graphics %d times took %dms",
+                            reload_count, (int)(t2 - t1)));
       return true;
     } else if (ev.target->GetID() == TBIDC("test context lost")) {
       g_renderer->InvokeContextLost();
@@ -727,12 +722,12 @@ bool DemoApplication::Init() {
   new TabContainerWindow();
 
   if (num_failed_tests) {
-    TBStr text;
-    text.SetFormatted(
-        "There is %d failed tests!\nCheck the output for details.",
-        num_failed_tests);
     TBMessageWindow* msg_win = new TBMessageWindow(GetRoot(), TBIDC(""));
-    msg_win->Show("Testing results", text);
+    msg_win->Show(
+        "Testing results",
+        tb::format_string(
+            "There is %d failed tests!\nCheck the output for details.",
+            num_failed_tests));
   }
   return true;
 }
@@ -769,18 +764,20 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
       continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;
 
   TBStr str;
-  if (continuous_repaint)
-    str.SetFormatted("FPS: %d Frame %d", fps, frame_counter_total);
-  else
-    str.SetFormatted("Frame %d", frame_counter_total);
+  if (continuous_repaint) {
+    str = tb::format_string("FPS: %d Frame %d", fps, frame_counter_total);
+  } else {
+    str = tb::format_string("Frame %d", frame_counter_total);
+  }
   GetRoot()->GetFont()->DrawString(5, 5, TBColor(255, 255, 255), str);
 
   g_renderer->EndPaint();
 
   // If we want continous updates or got animations running, reinvalidate
   // immediately
-  if (continuous_repaint || TBAnimationManager::HasAnimationsRunning())
+  if (continuous_repaint || TBAnimationManager::HasAnimationsRunning()) {
     GetRoot()->Invalidate();
+  }
 }
 
 int app_main() {

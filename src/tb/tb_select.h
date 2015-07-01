@@ -44,7 +44,8 @@ class TBSelectList : public TBWidget, public TBSelectItemViewer {
   /** Set filter string so only matching items will be showed.
           Set nullptr or empty string to remove filter and show all items. */
   void SetFilter(const char* filter);
-  const char* GetFilter() const { return m_filter; }
+  void SetFilter(const TBStr& filter) { SetFilter(filter.c_str()); }
+  const TBStr& GetFilter() const { return m_filter; }
 
   /** Set the language string id for the header. The header is shown
           at the top of the list when only a subset of all items are shown. */

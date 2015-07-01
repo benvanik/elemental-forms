@@ -299,8 +299,9 @@ void TBSelection::RemoveContent() {
     // Remove text in all block in between start and stop
     TBBlock* block = start.block->GetNext();
     while (block != stop.block) {
-      if (!styledit->undoredo.applying)
+      if (!styledit->undoredo.applying) {
         commit_string.Append(block->str, block->str_len);
+      }
 
       TBBlock* next = block->GetNext();
       styledit->blocks.Delete(block);
@@ -410,7 +411,7 @@ bool TBCaret::Move(bool forward, bool word) {
 
   size_t len = pos.block->str_len;
   if (word && !(forward && pos.ofs == len) && !(!forward && pos.ofs == 0)) {
-    const char* str = pos.block->str;
+    const char* str = pos.block->str.c_str();
     if (forward) {
       if (is_linebreak(str[pos.ofs])) {
         pos.ofs++;
@@ -440,9 +441,9 @@ bool TBCaret::Move(bool forward, bool word) {
     } else {
       size_t i = pos.ofs;
       if (forward)
-        utf8::move_inc(pos.block->str, &i, pos.block->str_len);
+        utf8::move_inc(pos.block->str.c_str(), &i, pos.block->str_len);
       else
-        utf8::move_dec(pos.block->str, &i);
+        utf8::move_dec(pos.block->str.c_str(), &i);
       pos.ofs = i;
     }
   }
@@ -722,7 +723,7 @@ int TBBlock::GetStartIndentation(TBFontFace* font,
   size_t i = 0;
   while (i < first_line_len) {
     const char* current_str = str.c_str() + i;
-    UCS4 uc = utf8::decode_next(str, &i, first_line_len);
+    UCS4 uc = utf8::decode_next(str.c_str(), &i, first_line_len);
     switch (uc) {
       case '\t':
         indentation += CalculateTabWidth(font, indentation);
@@ -747,7 +748,7 @@ void TBBlock::Layout(bool update_fragments, bool propagate_height) {
     Clear();
 
     int ofs = 0;
-    const char* text = str;
+    const char* text = str.c_str();
     while (true) {
       int frag_len;
       bool is_embed = false;

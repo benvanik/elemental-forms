@@ -92,11 +92,11 @@ class TBBFRenderer : public TBFontRenderer {
   TBBFRenderer();
   ~TBBFRenderer();
 
-  bool Load(const char* filename, int size);
+  bool Load(const TBStr& filename, int size);
   bool FindGlyphs();
   GLYPH* FindNext(UCS4 cp, int x);
 
-  virtual TBFontFace* Create(TBFontManager* font_manager, const char* filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
                              const TBFontDescription& font_desc);
 
   virtual TBFontMetrics GetMetrics();
@@ -152,7 +152,7 @@ void TBBFRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
     metrics->advance = glyph->w + m_advance_delta;
 }
 
-bool TBBFRenderer::Load(const char* filename, int size) {
+bool TBBFRenderer::Load(const TBStr& filename, int size) {
   m_size = size;
   if (!m_node.ReadFile(filename)) return false;
 
@@ -259,21 +259,22 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
 }
 
 TBFontFace* TBBFRenderer::Create(TBFontManager* font_manager,
-                                 const char* filename,
+                                 const TBStr& filename,
                                  const TBFontDescription& font_desc) {
-  if (!strstr(filename, ".tb.txt")) return nullptr;
-  if (TBBFRenderer* fr = new TBBFRenderer()) {
-    if (fr->Load(filename, (int)font_desc.GetSize()))
-      if (TBFontFace* font =
-              new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc))
-        return font;
-    delete fr;
+  if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
+  TBBFRenderer* fr = new TBBFRenderer();
+  if (fr->Load(filename, (int)font_desc.GetSize())) {
+    TBFontFace* font =
+        new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc);
+    return font;
   }
+  delete fr;
   return nullptr;
 }
 
 void register_tbbf_font_renderer() {
-  if (TBBFRenderer* fr = new TBBFRenderer) g_font_manager->AddRenderer(fr);
+  TBBFRenderer* fr = new TBBFRenderer();
+  g_font_manager->AddRenderer(fr);
 }
 
 #endif  // TB_FONT_RENDERER_TBBF

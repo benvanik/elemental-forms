@@ -14,6 +14,7 @@
 
 #include "tb_core.h"
 #include "tb_list.h"
+#include "tb_str.h"
 
 namespace tb {
 
@@ -113,6 +114,7 @@ class TBValue {
 
   /** Set the passed in string */
   void SetString(const char* val, SET set);
+  void SetString(const TBStr& val) { SetString(val.c_str(), SET_NEW_COPY); }
 
   /** Set the passed in object. Takes the ownership of the object! */
   void SetObject(TBTypedObject* object);

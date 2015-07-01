@@ -141,14 +141,11 @@ void TBHashTable::Debug() {
       count++;
       item = item->next;
     }
-    TBStr tmp;
-    tmp.SetFormatted("%d ", count);
-    line.AppendString(tmp);
+    line.AppendString(tb::format_string("%d ", count));
     total_count += count;
   }
-  TBStr tmp;
-  tmp.SetFormatted(" (total: %d of %d buckets)\n", total_count, m_num_buckets);
-  line.AppendString(tmp);
+  line.AppendString(tb::format_string(" (total: %d of %d buckets)\n",
+                                      total_count, m_num_buckets));
   TBDebugOut(line.GetData());
 }
 

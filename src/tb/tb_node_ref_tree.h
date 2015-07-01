@@ -29,7 +29,7 @@ class TBNodeRefTree : public TBLinkOf<TBNodeRefTree> {
   TBNodeRefTree(const char* name);
   virtual ~TBNodeRefTree();
 
-  const char* GetName() const { return m_name; }
+  const TBStr& GetName() const { return m_name; }
   const TBID& GetNameID() const { return m_name_id; }
 
   /** Read the data file. This will *not* invoke any change listener! */

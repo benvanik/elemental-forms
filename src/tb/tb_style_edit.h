@@ -407,6 +407,10 @@ class TBStyleEdit {
 
   void InsertText(const char* text, size_t len = std::string::npos,
                   bool after_last = false, bool clear_undo_redo = false);
+  void InsertText(const TBStr& text, size_t len = std::string::npos,
+                  bool after_last = false, bool clear_undo_redo = false) {
+    InsertText(text.c_str(), len, after_last, clear_undo_redo);
+  }
   void AppendText(const char* text, size_t len = std::string::npos,
                   bool clear_undo_redo = false) {
     InsertText(text, len, true, clear_undo_redo);

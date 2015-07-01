@@ -15,12 +15,9 @@
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 void TBDebugOut(const char* str);
-#define TBDebugPrint(str, ...)          \
-  {                                     \
-    tb::TBStr tmp;                      \
-    tmp.SetFormatted(str, __VA_ARGS__); \
-    TBDebugOut(tmp);                    \
-  }
+inline void TBDebugOut(const tb::TBStr& str) { TBDebugOut(str.c_str()); }
+#define TBDebugPrint(str, ...) \
+  { TBDebugOut(tb::format_string(str, __VA_ARGS__)); }
 #else
 #define TBDebugOut(str) ((void)0)
 #define TBDebugPrint(str, ...) ((void)0)
@@ -106,7 +103,7 @@ class TBClipboard {
   static bool HasText();
 
   /** Set the text of the clipboard in UTF-8 format. */
-  static bool SetText(const char* text);
+  static bool SetText(const TBStr& text);
 
   /** Get the text from the clipboard in UTF-8 format. */
   static TBStr GetText();
@@ -116,7 +113,7 @@ class TBClipboard {
 class TBFile {
  public:
   enum TBFileMode { MODE_READ };
-  static TBFile* Open(const char* filename, TBFileMode mode);
+  static TBFile* Open(const TBStr& filename, TBFileMode mode);
 
   virtual ~TBFile() {}
   virtual size_t Size() = 0;

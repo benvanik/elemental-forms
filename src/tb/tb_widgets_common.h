@@ -60,6 +60,7 @@ class TBTextField : public TBWidget {
 
   /** Set the text of the text field. */
   void SetText(const char* text) override;
+  using TBWidget::SetText;
   TBStr GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
@@ -122,6 +123,7 @@ class TBButton : public TBWidget, protected TBMessageHandler {
 
   /** Set the text of the button. */
   void SetText(const char* text) override;
+  using TBWidget::SetText;
   TBStr GetText() override { return m_textfield.GetText(); }
 
   virtual void SetValue(int value);

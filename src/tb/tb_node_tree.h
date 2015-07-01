@@ -40,7 +40,7 @@ class TBNode : public TBLinkOf<TBNode> {
   static TBNode* Create(const char* name);
 
   /** Read a tree of nodes from file into this node. Returns true on success. */
-  bool ReadFile(const char* filename,
+  bool ReadFile(const TBStr& filename,
                 TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
 
   /** Read a tree of nodes from a null terminated string buffer. */

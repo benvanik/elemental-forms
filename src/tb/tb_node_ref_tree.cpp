@@ -58,8 +58,11 @@ void TBNodeRefTree::InvokeChangeListenersInternal(const char* request) {
 
 // static
 TBNodeRefTree* TBNodeRefTree::GetRefTree(const char* name, size_t name_len) {
-  for (TBNodeRefTree* rt = s_ref_trees.GetFirst(); rt; rt = rt->GetNext())
-    if (strncmp(rt->GetName(), name, name_len) == 0) return rt;
+  for (TBNodeRefTree* rt = s_ref_trees.GetFirst(); rt; rt = rt->GetNext()) {
+    if (strncmp(rt->GetName().c_str(), name, name_len) == 0) {
+      return rt;
+    }
+  }
   return nullptr;
 }
 

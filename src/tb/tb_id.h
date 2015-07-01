@@ -25,6 +25,7 @@ class TBID {
  public:
   TBID(uint32_t id = 0) { Set(id); }
   TBID(const char* string) { Set(string); }
+  TBID(const TBStr& string) { Set(string.c_str()); }
   TBID(const TBID& id) { Set(id); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO

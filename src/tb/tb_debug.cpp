@@ -145,13 +145,13 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     }
 
     if (ev.type == EVENT_TYPE_CHANGED) {
-      TBStr text = ev.target->GetText();
+      auto text = ev.target->GetText();
       if (text.size() > 24) {
-        sprintf(text.c_str() + 20, "...");
+        text.erase(20);
+        text.append("...");
       }
-      TBStr extra;
-      extra.SetFormatted(", value: %.2f (\"%s\")", ev.target->GetValueDouble(),
-                         text.c_str());
+      auto extra = tb::format_string(", value: %.2f (\"%s\")",
+                                     ev.target->GetValueDouble(), text.c_str());
       buf.AppendString(extra);
     }
     buf.AppendString("\n");

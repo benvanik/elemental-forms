@@ -228,7 +228,7 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
     SetNull();
     if (TBValueArray* arr = new TBValueArray) {
       TBStr tmpstr = str;
-      char* str_next = tmpstr.c_str();
+      char* str_next = (char*)tmpstr.data();
       while (char* token = next_token(str_next, ", ")) {
         if (TBValue* new_val = arr->AddValue())
           new_val->SetFromStringAuto(token, SET_NEW_COPY);

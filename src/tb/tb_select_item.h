@@ -88,7 +88,7 @@ class TBSelectItemSource {
 
   /** Return true if a item matches the given filter text.
           By default, it returns true if GetItemString contains filter. */
-  virtual bool Filter(int index, const char* filter);
+  virtual bool Filter(int index, const TBStr& filter);
 
   /** Get the string of a item. If a item has more than one string,
           return the one that should be used for inline-find (pressing keys
@@ -139,7 +139,9 @@ class TBSelectItemSourceList : public TBSelectItemSource {
  public:
   TBSelectItemSourceList() {}
   virtual ~TBSelectItemSourceList() { DeleteAllItems(); }
-  virtual const char* GetItemString(int index) { return GetItem(index)->str; }
+  virtual const char* GetItemString(int index) {
+    return GetItem(index)->str.c_str();
+  }
   virtual TBSelectItemSource* GetItemSubSource(int index) {
     return GetItem(index)->sub_source;
   }
@@ -202,6 +204,11 @@ class TBGenericStringItem {
   TBGenericStringItem(const char* str, TBID id)
       : str(str), id(id), sub_source(nullptr) {}
   TBGenericStringItem(const char* str, TBSelectItemSource* sub_source)
+      : str(str), sub_source(sub_source) {}
+  TBGenericStringItem(const TBStr& str) : str(str), sub_source(nullptr) {}
+  TBGenericStringItem(const TBStr& str, TBID id)
+      : str(str), id(id), sub_source(nullptr) {}
+  TBGenericStringItem(const TBStr& str, TBSelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
   const TBGenericStringItem& operator=(const TBGenericStringItem& other) {
     str = other.str;

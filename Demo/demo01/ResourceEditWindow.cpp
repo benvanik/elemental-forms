@@ -11,7 +11,7 @@
 // == ResourceItem
 // ====================================================================================
 
-ResourceItem::ResourceItem(TBWidget* widget, const char* str)
+ResourceItem::ResourceItem(TBWidget* widget, const TBStr& str)
     : TBGenericStringItem(str), m_widget(widget) {}
 
 // == ResourceEditWindow
@@ -62,11 +62,9 @@ void ResourceEditWindow::Load(const char* resource_file) {
     delete file;
   } else  // Error, show message
   {
-    TBStr text;
-    text.SetFormatted("Could not load file %s", resource_file);
-    if (TBMessageWindow* msg_win =
-            new TBMessageWindow(GetParentRoot(), TBIDC("")))
-      msg_win->Show("Error loading resource", text);
+    TBMessageWindow* msg_win = new TBMessageWindow(GetParentRoot(), TBIDC(""));
+    msg_win->Show("Error loading resource",
+                  tb::format_string("Could not load file %s", resource_file));
   }
 
   RefreshFromSource();
@@ -80,7 +78,8 @@ void ResourceEditWindow::RefreshFromSource() {
   }
 
   // Create new widgets from source
-  g_widgets_reader->LoadData(m_build_container, m_source_edit->GetText());
+  g_widgets_reader->LoadData(m_build_container,
+                             m_source_edit->GetText().c_str());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
@@ -104,18 +103,19 @@ void ResourceEditWindow::AddWidgetListItemsRecursive(TBWidget* widget,
   if (depth > 0)  // Ignore the root
   {
     // Add a new ResourceItem for this widget
-    TBStr str;
     const char* classname = widget->GetClassName();
-    if (!*classname) classname = "<Unknown widget type>";
-    str.SetFormatted("% *s%s", depth - 1, "", classname);
-
-    if (ResourceItem* item = new ResourceItem(widget, str))
-      m_widget_list_source.AddItem(item);
+    if (!*classname) {
+      classname = "<Unknown widget type>";
+    }
+    auto str = tb::format_string("% *s%s", depth - 1, "", classname);
+    ResourceItem* item = new ResourceItem(widget, str.c_str());
+    m_widget_list_source.AddItem(item);
   }
 
   for (TBWidget* child = widget->GetFirstChild(); child;
-       child = child->GetNext())
+       child = child->GetNext()) {
     AddWidgetListItemsRecursive(child, depth + 1);
+  }
 }
 
 ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromWidget(
@@ -156,7 +156,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
     if (TBWindow* win = new TBWindow()) {
       win->SetText("Test window");
       g_widgets_reader->LoadData(win->GetContentRoot(),
-                                 m_source_edit->GetText());
+                                 m_source_edit->GetText().c_str());
       TBRect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
       win->SetRect(
           win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -221,6 +221,9 @@ void ResourceEditWindow::OnWidgetRemove(TBWidget* parent, TBWidget* child) {
 bool ResourceEditWindow::OnDropFileEvent(const TBWidgetEvent& ev) {
   const TBWidgetEventFileDrop* fd_event =
       TBSafeCast<TBWidgetEventFileDrop>(&ev);
-  if (fd_event->files.GetNumItems() > 0) Load(*fd_event->files.Get(0));
+  if (fd_event->files.GetNumItems() > 0) {
+    auto data = *fd_event->files.Get(0);
+    Load(data.c_str());
+  }
   return true;
 }

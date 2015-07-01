@@ -23,7 +23,7 @@ class DemoApplication : public Application {
 class DemoWindow : public TBWindow {
  public:
   DemoWindow();
-  bool LoadResourceFile(const char* filename);
+  bool LoadResourceFile(const TBStr& filename);
   void LoadResourceData(const char* data);
   void LoadResource(TBNode& node);
 
@@ -62,7 +62,7 @@ class AnimationsWindow : public DemoWindow {
 
 class LayoutWindow : public DemoWindow {
  public:
-  LayoutWindow(const char* filename);
+  LayoutWindow(const TBStr& filename);
   virtual bool OnEvent(const TBWidgetEvent& ev);
 };
 

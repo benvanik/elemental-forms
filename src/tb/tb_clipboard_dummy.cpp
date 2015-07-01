@@ -20,11 +20,14 @@ namespace tb {
 TBStr clipboard;  ///< Obviosly not a full implementation since it ignores the
 /// OS :)
 
-void TBClipboard::Empty() { clipboard.Clear(); }
+void TBClipboard::Empty() { clipboard.clear(); }
 
-bool TBClipboard::HasText() { return !clipboard.IsEmpty(); }
+bool TBClipboard::HasText() { return !clipboard.empty(); }
 
-bool TBClipboard::SetText(const char* text) { return clipboard.Set(text); }
+bool TBClipboard::SetText(const TBStr& text) {
+  clipboard = text;
+  return true;
+}
 
 TBStr TBClipboard::GetText() { return clipboard; }
 

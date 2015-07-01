@@ -29,7 +29,7 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type);
 class TBParserTarget {
  public:
   virtual ~TBParserTarget() {}
-  virtual void OnError(int line_nr, const char* error) = 0;
+  virtual void OnError(int line_nr, const TBStr& error) = 0;
   virtual void OnComment(int line_nr, const char* comment) = 0;
   virtual void OnToken(int line_nr, const char* name, TBValue& value) = 0;
   virtual void Enter() = 0;

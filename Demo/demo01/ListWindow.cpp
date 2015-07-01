@@ -68,8 +68,8 @@ ListWindow::ListWindow(TBSelectItemSource* source) {
 
 bool ListWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EVENT_TYPE_CHANGED && ev.target->GetID() == TBIDC("filter")) {
-    if (TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list"))
-      select->SetFilter(ev.target->GetText());
+    TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list");
+    select->SetFilter(ev.target->GetText());
     return true;
   }
   return DemoWindow::OnEvent(ev);
@@ -96,8 +96,10 @@ bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
   } else if (select && ev.type == EVENT_TYPE_CLICK &&
              ev.target->GetID() == TBIDC("add")) {
     TBStr name = GetTextByID(TBIDC("add_name"));
-    if (!name.empty())
-      m_source->AddItem(new AdvancedItem(name, TBIDC("boy_item"), true));
+    if (!name.empty()) {
+      m_source->AddItem(
+          new AdvancedItem(name.c_str(), TBIDC("boy_item"), true));
+    }
     return true;
   } else if (select && ev.type == EVENT_TYPE_CLICK &&
              ev.target->GetID() == TBIDC("delete all")) {

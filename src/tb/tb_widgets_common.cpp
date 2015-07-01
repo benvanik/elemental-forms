@@ -34,15 +34,16 @@ void TBWidgetString::Paint(TBWidget* widget, const TBRect& rect,
   int string_w = GetWidth(widget);
 
   int x = rect.x;
-  if (m_text_align == TB_TEXT_ALIGN_RIGHT)
+  if (m_text_align == TB_TEXT_ALIGN_RIGHT) {
     x += rect.w - string_w;
-  else if (m_text_align == TB_TEXT_ALIGN_CENTER)
+  } else if (m_text_align == TB_TEXT_ALIGN_CENTER) {
     x += std::max(0, (rect.w - string_w) / 2);
+  }
   int y = rect.y + (rect.h - GetHeight(widget)) / 2;
 
-  if (string_w <= rect.w)
+  if (string_w <= rect.w) {
     font->DrawString(x, y, color, m_text);
-  else {
+  } else {
     // There's not enough room for the entire string
     // so cut it off and end with ellipsis (...)
 
@@ -55,7 +56,9 @@ void TBWidgetString::Paint(TBWidget* widget, const TBRect& rect,
     int startlen = 0;
     while (m_text[startlen]) {
       int new_startw = font->GetStringWidth(m_text, startlen);
-      if (new_startw + endw > rect.w) break;
+      if (new_startw + endw > rect.w) {
+        break;
+      }
       startw = new_startw;
       startlen++;
     }

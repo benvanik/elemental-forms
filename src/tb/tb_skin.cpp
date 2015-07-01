@@ -222,10 +222,8 @@ bool TBSkin::ReloadBitmaps() {
   if (success) success = m_frag_manager.ValidateBitmaps();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  TBStr info;
-  info.SetFormatted("Skin loaded using %d bitmaps.\n",
-                    m_frag_manager.GetNumMaps());
-  TBDebugOut(info);
+  TBDebugOut(tb::format_string("Skin loaded using %d bitmaps.\n",
+                               m_frag_manager.GetNumMaps()));
 #endif
   return success;
 }
@@ -255,9 +253,10 @@ bool TBSkin::ReloadBitmapsInternal() {
       element->SetBitmapDPI(m_dim_conv, bitmap_dpi);
 
       // If we still have no bitmap fragment, load from default file.
-      if (!element->bitmap)
+      if (!element->bitmap) {
         element->bitmap = m_frag_manager.GetFragmentFromFile(
             element->bitmap_file, dedicated_map);
+      }
 
       if (!element->bitmap) success = false;
     }

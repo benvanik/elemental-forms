@@ -36,9 +36,9 @@ class TBImageLoader {
      this
           function and create an implementation of the TBImageLoader interface.
      */
-  static TBImageLoader* CreateFromFile(const char* filename);
+  static TBImageLoader* CreateFromFile(const TBStr& filename);
 
-  virtual ~TBImageLoader() {}
+  virtual ~TBImageLoader() = default;
 
   /** Return the width of the loaded bitmap. */
   virtual int Width() = 0;
@@ -205,7 +205,7 @@ class TBBitmapFragmentManager {
      loaded,
           it will be loaded into a new fragment with the filename as id.
           returns nullptr on fail. */
-  TBBitmapFragment* GetFragmentFromFile(const char* filename,
+  TBBitmapFragment* GetFragmentFromFile(const TBStr& filename,
                                         bool dedicated_map);
 
   /** Get the fragment with the given id, or nullptr if it doesn't exist. */

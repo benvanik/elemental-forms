@@ -155,6 +155,7 @@ class TBEditField : public TBWidget,
   void SetText(const char* text) override {
     m_style_edit.SetText(text, TB_CARET_POS_BEGINNING);
   }
+  using TBWidget::SetText;
   TBStr GetText() override { return m_style_edit.GetText(); }
 
   using TBWidget::Invalidate;  ///< Make Invalidate in base class available.

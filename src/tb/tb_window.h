@@ -99,6 +99,7 @@ class TBWindow : public TBWidget {
 
   /** Set the window title. */
   void SetText(const char* text) override { m_textfield.SetText(text); }
+  using TBWidget::SetText;
   TBStr GetText() override { return m_textfield.GetText(); }
 
   /** Get the height of the title bar (or 0 if the WINDOW_SETTINGS say this

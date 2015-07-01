@@ -62,9 +62,7 @@ void TBInlineSelect::SetValueInternal(int value, bool update_text) {
   m_value = value;
 
   if (update_text) {
-    TBStr strval;
-    strval.SetFormatted("%d", m_value);
-    m_editfield.SetText(strval);
+    m_editfield.SetText(tb::format_string("%d", m_value));
   }
 
   TBWidgetEvent ev(EVENT_TYPE_CHANGED);

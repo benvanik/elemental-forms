@@ -36,11 +36,11 @@ class TBPosixFile : public TBFile {
 };
 
 // static
-TBFile* TBFile::Open(const char* filename, TBFileMode mode) {
+TBFile* TBFile::Open(const TBStr& filename, TBFileMode mode) {
   FILE* f = nullptr;
   switch (mode) {
     case MODE_READ:
-      f = fopen(filename, "rb");
+      f = fopen(filename.c_str(), "rb");
       break;
     default:
       break;

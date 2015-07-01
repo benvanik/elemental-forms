@@ -12,7 +12,7 @@ using namespace tb;
 
 class ResourceItem : public TBGenericStringItem {
  public:
-  ResourceItem(TBWidget* widget, const char* str);
+  ResourceItem(TBWidget* widget, const TBStr& str);
   TBWidget* GetWidget() { return m_widget; }
 
  private:

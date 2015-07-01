@@ -37,11 +37,13 @@ bool TBLanguage::Load(const char* filename) {
 void TBLanguage::Clear() { strings.DeleteAll(); }
 
 const char* TBLanguage::GetString(const TBID& id) {
-  if (TBStr* str = strings.Get(id)) return *str;
+  if (TBStr* str = strings.Get(id)) {
+    return str->c_str();
+  }
 #ifdef TB_RUNTIME_DEBUG_INFO
   static TBStr tmp;
-  tmp.SetFormatted("<TRANSLATE:%s>", id.debug_string.c_str());
-  return tmp;
+  tmp = tb::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
+  return tmp.c_str();
 #else
   return "<TRANSLATE!>";
 #endif

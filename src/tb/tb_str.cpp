@@ -23,19 +23,24 @@ inline void safe_delete(char*& str) {
   str = const_cast<char*>(kEmptyString);
 }
 
-TBStr::TBStr() : TBStrC(kEmptyString) {}
+TBStr::TBStr() : s(const_cast<char*>(kEmptyString)) {}
 
 TBStr::TBStr(const char* str)
-    : TBStrC(str == kEmptyString ? kEmptyString : strdup(str)) {
-  if (!s) s = const_cast<char*>(kEmptyString);
+    : s(const_cast<char*>(str == kEmptyString ? kEmptyString : strdup(str))) {
+  if (!s) {
+    s = const_cast<char*>(kEmptyString);
+  }
 }
 
 TBStr::TBStr(const TBStr& str)
-    : TBStrC(str.s == kEmptyString ? kEmptyString : strdup(str.s)) {
-  if (!s) s = const_cast<char*>(kEmptyString);
+    : s(const_cast<char*>(str.s == kEmptyString ? kEmptyString
+                                                : strdup(str.s))) {
+  if (!s) {
+    s = const_cast<char*>(kEmptyString);
+  }
 }
 
-TBStr::TBStr(const char* str, size_t len) : TBStrC(kEmptyString) {
+TBStr::TBStr(const char* str, size_t len) : s(const_cast<char*>(kEmptyString)) {
   assign(str, len);
 }
 
@@ -48,41 +53,6 @@ void TBStr::assign(const char* str, size_t len) {
   s = new_s;
   memcpy(s, str, len);
   s[len] = 0;
-}
-
-bool TBStr::SetFormatted(const char* format, ...) {
-  safe_delete(s);
-  if (!format) return true;
-  va_list ap;
-  size_t max_len = 64;
-  char* new_s = nullptr;
-  while (true) {
-    if (char* tris_try_new_s = (char*)realloc(new_s, max_len)) {
-      new_s = tris_try_new_s;
-
-      va_start(ap, format);
-      int ret = vsnprintf(new_s, max_len, format, ap);
-      va_end(ap);
-
-      if (ret > max_len)  // Needed size is known (+2 for termination and avoid
-                          // ambiguity)
-        max_len = ret + 2;
-      else if (ret == -1 ||
-               ret >=
-                   max_len - 1)  // Handle some buggy vsnprintf implementations.
-        max_len *= 2;
-      else  // Everything fit for sure
-      {
-        s = new_s;
-        return true;
-      }
-    } else {
-      // Out of memory
-      free(new_s);
-      break;
-    }
-  }
-  return false;
 }
 
 void TBStr::clear() { safe_delete(s); }
@@ -110,5 +80,73 @@ void TBStr::insert(size_t ofs, const char* ins, size_t ins_len) {
   safe_delete(s);
   s = news;
 }
+
+const char* stristr(const char* arg1, const char* arg2) {
+  const char* a, *b;
+  for (; *arg1; arg1++) {
+    a = arg1;
+    b = arg2;
+    while (std::toupper(*a++) == std::toupper(*b++)) {
+      if (!*b) return arg1;
+    }
+  }
+  return nullptr;
+}
+
+TBStr format_string(const char* format, ...) {
+  if (!format) return TBStr();
+  va_list ap;
+  size_t max_len = 64;
+  char* new_s = nullptr;
+  while (true) {
+    char* tris_try_new_s = (char*)realloc(new_s, max_len);
+    new_s = tris_try_new_s;
+
+    va_start(ap, format);
+    int ret = vsnprintf(new_s, max_len, format, ap);
+    va_end(ap);
+
+    if (ret > max_len) {
+      // Needed size is known (+2 for termination and avoid
+      // ambiguity)
+      max_len = ret + 2;
+    } else if (ret == -1 || ret >= max_len - 1) {
+      // Handle some buggy vsnprintf implementations.
+      max_len *= 2;
+    } else {
+      // Everything fit for sure
+      return TBStr(new_s);
+    }
+  }
+  return false;
+}
+
+/*
+std::string format_string(const char* format, ...) {
+  if (!format) return "";
+  va_list ap;
+  size_t max_len = std::min(size_t(64), std::strlen(format));
+  std::string new_s;
+  while (true) {
+    new_s.resize(max_len);
+    va_start(ap, format);
+    int ret = vsnprintf((char*)new_s.data(), max_len, format, ap);
+    va_end(ap);
+    if (ret > max_len) {  // Needed size is known (+2 for termination and
+                          // avoid ambiguity)
+      max_len = ret + 2;
+    }
+    else if (ret == -1 ||
+      ret >= max_len -
+      1) {  // Handle some buggy vsnprintf implementations.
+      max_len *= 2;
+    }
+    else {
+      // Everything fit for sure
+      return new_s;
+    }
+  }
+}
+*/
 
 }  // namespace tb

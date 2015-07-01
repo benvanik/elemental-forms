@@ -326,10 +326,13 @@ TBFontGlyph* TBFontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
 
 void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
                             size_t len) {
-  if (m_bgFont) m_bgFont->DrawString(x + m_bgX, y + m_bgY, m_bgColor, str, len);
+  if (m_bgFont) {
+    m_bgFont->DrawString(x + m_bgX, y + m_bgY, m_bgColor, str, len);
+  }
 
-  if (m_font_renderer)
+  if (m_font_renderer) {
     g_renderer->BeginBatchHint(TBRenderer::BATCH_HINT_DRAW_BITMAP_FRAGMENT);
+  }
 
   size_t i = 0;
   while (str[i] && i < len) {

@@ -62,7 +62,7 @@ class TBFontRenderer : public TBLinkOf<TBFontRenderer> {
   /** Open the given font file with this renderer and return a new TBFontFace
      with it.
           return nullptr if the file can't be opened by this renderer. */
-  virtual TBFontFace* Create(TBFontManager* font_manager, const char* filename,
+  virtual TBFontFace* Create(TBFontManager* font_manager, const TBStr& filename,
                              const TBFontDescription& font_desc) = 0;
 
   virtual bool RenderGlyph(TBFontGlyphData* data, UCS4 cp) = 0;
@@ -180,11 +180,18 @@ class TBFontFace {
   /** Draw string at position x, y (marks the upper left corner of the text). */
   void DrawString(int x, int y, const TBColor& color, const char* str,
                   size_t len = std::string::npos);
+  void DrawString(int x, int y, const TBColor& color, const TBStr& str,
+                  size_t len = std::string::npos) {
+    DrawString(x, y, color, str.c_str(), len);
+  }
 
   /** Measure the width of the given string. Should measure len characters or to
      the null
           termination (whatever comes first). */
   int GetStringWidth(const char* str, size_t len = std::string::npos);
+  int GetStringWidth(const TBStr& str, size_t len = std::string::npos) {
+    return GetStringWidth(str.c_str(), len);
+  }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   /** Render the glyph bitmaps on screen, to analyze fragment positioning. */
@@ -219,10 +226,10 @@ class TBFontFace {
 class TBFontInfo {
  public:
   /** Get the font filename. */
-  const char* GetFilename() const { return m_filename; }
+  const TBStr& GetFilename() const { return m_filename; }
 
   /** Get the font name. */
-  const char* GetName() const { return m_name; }
+  const TBStr& GetName() const { return m_name; }
 
   /** Get the font ID that can be used to create this font from a
           TBFontDescription (See TBFontDescription::SetID) */

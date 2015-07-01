@@ -133,7 +133,7 @@ const char* TBNode::GetValueStringRaw(const char* request, const char* def) {
 
 class FileParser : public TBParserStream {
  public:
-  bool Read(const char* filename, TBParserTarget* target) {
+  bool Read(const TBStr& filename, TBParserTarget* target) {
     f = TBFile::Open(filename, TBFile::MODE_READ);
     if (!f) return false;
     TBParser p;
@@ -173,33 +173,32 @@ class DataParser : public TBParserStream {
 
 class TBNodeTarget : public TBParserTarget {
  public:
-  TBNodeTarget(TBNode* root, const char* filename) {
+  TBNodeTarget(TBNode* root, const TBStr& filename) {
     m_root_node = m_target_node = root;
     m_filename = filename;
   }
-  virtual void OnError(int line_nr, const char* error) {
+  void OnError(int line_nr, const TBStr& error) override {
 #ifdef TB_RUNTIME_DEBUG_INFO
-    TBStr err;
-    err.SetFormatted("%s(%d):Parse error: %s\n", m_filename, line_nr, error);
-    TBDebugOut(err);
+    TBDebugOut(tb::format_string("%s(%d):Parse error: %s\n", m_filename,
+                                 line_nr, error.c_str()));
 #endif  // TB_RUNTIME_DEBUG_INFO
   }
-  virtual void OnComment(int line_nr, const char* comment) {}
-  virtual void OnToken(int line_nr, const char* name, TBValue& value) {
+  void OnComment(int line_nr, const char* comment) override {}
+  void OnToken(int line_nr, const char* name, TBValue& value) override {
     if (!m_target_node) return;
-    if (strcmp(name, "@file") == 0)
+    if (strcmp(name, "@file") == 0) {
       IncludeFile(line_nr, value.GetString());
-    else if (strcmp(name, "@include") == 0)
+    } else if (strcmp(name, "@include") == 0) {
       IncludeRef(line_nr, value.GetString());
-    else if (TBNode* n = TBNode::Create(name)) {
+    } else if (TBNode* n = TBNode::Create(name)) {
       n->m_value.TakeOver(value);
       m_target_node->Add(n);
     }
   }
-  virtual void Enter() {
+  void Enter() override {
     if (m_target_node) m_target_node = m_target_node->GetLastChild();
   }
-  virtual void Leave() {
+  void Leave() override {
     assert(m_target_node != m_root_node);
     if (m_target_node) m_target_node = m_target_node->m_parent;
   }
@@ -216,10 +215,9 @@ class TBNodeTarget : public TBParserTarget {
         m_target_node->Add(content_n);
       }
     } else {
-      TBStr err;
-      err.SetFormatted("Referenced file \"%s\" was not found!",
-                       include_filename.GetData());
-      OnError(line_nr, err);
+      OnError(line_nr,
+              tb::format_string("Referenced file \"%s\" was not found!",
+                                include_filename.GetData()));
     }
   }
   void IncludeRef(int line_nr, const char* refstr) {
@@ -243,22 +241,21 @@ class TBNodeTarget : public TBParserTarget {
         cycle_detection = cycle_detection->GetParent();
       }
     }
-    if (refnode)
+    if (refnode) {
       m_target_node->CloneChildren(refnode);
-    else {
-      TBStr err;
-      err.SetFormatted("Include \"%s\" was not found!", refstr);
-      OnError(line_nr, err);
+    } else {
+      OnError(line_nr,
+              tb::format_string("Include \"%s\" was not found!", refstr));
     }
   }
 
  private:
   TBNode* m_root_node;
   TBNode* m_target_node;
-  const char* m_filename;
+  TBStr m_filename;
 };
 
-bool TBNode::ReadFile(const char* filename, TB_NODE_READ_FLAGS flags) {
+bool TBNode::ReadFile(const TBStr& filename, TB_NODE_READ_FLAGS flags) {
   if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
   FileParser p;
   TBNodeTarget t(this, filename);

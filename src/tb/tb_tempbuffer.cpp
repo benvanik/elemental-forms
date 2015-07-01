@@ -75,18 +75,20 @@ bool TBTempBuffer::AppendString(const char* str) {
   return false;
 }
 
-bool TBTempBuffer::AppendPath(const char* full_path_and_filename) {
-  const char* str_start = full_path_and_filename;
-  while (const char* next = strpbrk(full_path_and_filename, "\\/"))
-    full_path_and_filename = next + 1;
-
-  if (str_start == full_path_and_filename)  // Filename contained no path
-  {
-    str_start = "./";
-    full_path_and_filename = str_start + 2;
+bool TBTempBuffer::AppendPath(const TBStr& full_path_and_filename) {
+  const char* path = full_path_and_filename.c_str();
+  const char* str_start = path;
+  while (const char* next = strpbrk(path, "\\/")) {
+    path = next + 1;
   }
 
-  size_t len = full_path_and_filename - str_start;
+  if (str_start == path) {
+    // Filename contained no path
+    str_start = "./";
+    path = str_start + 2;
+  }
+
+  size_t len = path - str_start;
   if (Reserve(len + 1)) {
     // Add the string, and nulltermination.
     Append(str_start, len);

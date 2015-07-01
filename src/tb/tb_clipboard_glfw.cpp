@@ -25,9 +25,9 @@ bool TBClipboard::HasText() {
   return false;
 }
 
-bool TBClipboard::SetText(const char* text) {
+bool TBClipboard::SetText(const TBStr& text) {
   if (GLFWwindow* window = glfwGetCurrentContext()) {
-    glfwSetClipboardString(window, text);
+    glfwSetClipboardString(window, text.c_str());
     return true;
   }
   return false;
