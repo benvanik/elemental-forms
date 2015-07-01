@@ -69,7 +69,7 @@ class TBAndroidFile : public TBFile {
   TBAndroidFile(AAsset* f) : file(f) {}
   virtual ~TBAndroidFile() { AAsset_close(file); }
 
-  virtual long Size() { return AAsset_getLength(file); }
+  virtual size_t Size() { return AAsset_getLength(file); }
   virtual size_t Read(void* buf, size_t elemSize, size_t count) {
     return AAsset_read(file, buf, elemSize * count);
   }

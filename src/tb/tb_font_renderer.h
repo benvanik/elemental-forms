@@ -155,7 +155,7 @@ class TBFontFace {
 
   /** Render all glyphs needed to display the string. */
   bool RenderGlyphs(const char* glyph_str,
-                    int glyph_str_len = TB_ALL_TO_TERMINATION);
+                    size_t glyph_str_len = std::string::npos);
 
   /** Get the vertical distance (positive) from the horizontal baseline to the
      highest character coordinate
@@ -179,12 +179,12 @@ class TBFontFace {
 
   /** Draw string at position x, y (marks the upper left corner of the text). */
   void DrawString(int x, int y, const TBColor& color, const char* str,
-                  int len = TB_ALL_TO_TERMINATION);
+                  size_t len = std::string::npos);
 
   /** Measure the width of the given string. Should measure len characters or to
      the null
           termination (whatever comes first). */
-  int GetStringWidth(const char* str, int len = TB_ALL_TO_TERMINATION);
+  int GetStringWidth(const char* str, size_t len = std::string::npos);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   /** Render the glyph bitmaps on screen, to analyze fragment positioning. */

@@ -25,12 +25,12 @@ TBTempBuffer::TBTempBuffer() : m_data(0), m_data_size(0), m_append_pos(0) {}
 
 TBTempBuffer::~TBTempBuffer() { p_free(m_data); }
 
-void TBTempBuffer::SetAppendPos(int append_pos) {
+void TBTempBuffer::SetAppendPos(size_t append_pos) {
   assert(append_pos >= 0 && append_pos <= m_data_size);
   m_append_pos = append_pos;
 }
 
-bool TBTempBuffer::Reserve(int size) {
+bool TBTempBuffer::Reserve(size_t size) {
   if (size > m_data_size) {
     char* new_data = p_realloc(m_data, size);
     if (!new_data) return false;
@@ -40,13 +40,13 @@ bool TBTempBuffer::Reserve(int size) {
   return true;
 }
 
-int TBTempBuffer::GetAppendReserveSize(int needed_size) const {
+size_t TBTempBuffer::GetAppendReserveSize(size_t needed_size) const {
   // Reserve some extra memory to reduce the reserve calls.
   needed_size *= 2;
   return needed_size < 32 ? 32 : needed_size;
 }
 
-bool TBTempBuffer::Append(const char* data, int size) {
+bool TBTempBuffer::Append(const char* data, size_t size) {
   if (m_append_pos + size > m_data_size &&
       !Reserve(GetAppendReserveSize(m_append_pos + size)))
     return false;
@@ -55,7 +55,7 @@ bool TBTempBuffer::Append(const char* data, int size) {
   return true;
 }
 
-bool TBTempBuffer::AppendSpace(int size) {
+bool TBTempBuffer::AppendSpace(size_t size) {
   if (m_append_pos + size > m_data_size &&
       !Reserve(GetAppendReserveSize(m_append_pos + size)))
     return false;
@@ -86,7 +86,7 @@ bool TBTempBuffer::AppendPath(const char* full_path_and_filename) {
     full_path_and_filename = str_start + 2;
   }
 
-  int len = full_path_and_filename - str_start;
+  size_t len = full_path_and_filename - str_start;
   if (Reserve(len + 1)) {
     // Add the string, and nulltermination.
     Append(str_start, len);

@@ -142,7 +142,7 @@ void TBTooltipManager::DeleteShowMessages() {
 
 TBWidget* TBTooltipManager::GetTippedWidget() {
   TBWidget* current = TBWidget::hovered_widget;
-  while (current && current->GetDescription().IsEmpty())
+  while (current && current->GetDescription().empty())
     current = current->GetParent();
   return current;
 }

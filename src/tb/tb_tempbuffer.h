@@ -24,24 +24,24 @@ class TBTempBuffer {
 
   /** Make sure the buffer has at least size bytes.
           Returns false on OOM. */
-  bool Reserve(int size);
+  bool Reserve(size_t size);
 
   /** Get a pointer to the buffer data. */
   char* GetData() const { return m_data; }
 
   /** Return the size of the buffer in bytes. */
-  int GetCapacity() const { return m_data_size; }
+  size_t GetCapacity() const { return m_data_size; }
 
   /** Append data with size bytes at the end of the buffer and
           increase the append position with the same amount.
           Returns false on OOM. */
-  bool Append(const char* data, int size);
+  bool Append(const char* data, size_t size);
 
   /** Increase the append position with size bytes without
           writing any data. This is useful if you want to write
           the data later and want to make sure space is reserved.
           Returns false on OOM. */
-  bool AppendSpace(int size);
+  bool AppendSpace(size_t size);
 
   /** Append a null terminated string (including the null termination)
           at the end of the buffer. The append position will be increased
@@ -57,19 +57,19 @@ class TBTempBuffer {
   bool AppendPath(const char* full_path_and_filename);
 
   /** Set the position (in bytes) in the buffer where Append should write. */
-  void SetAppendPos(int append_pos);
+  void SetAppendPos(size_t append_pos);
 
   /** Reset the append position to 0. */
   void ResetAppendPos() { m_append_pos = 0; }
 
   /** Return the current append position in in bytes. */
-  int GetAppendPos() const { return m_append_pos; }
+  size_t GetAppendPos() const { return m_append_pos; }
 
  private:
-  int GetAppendReserveSize(int needed_size) const;
+  size_t GetAppendReserveSize(size_t needed_size) const;
   char* m_data;
-  int m_data_size;
-  int m_append_pos;
+  size_t m_data_size;
+  size_t m_append_pos;
 };
 
 }  // namespace tb

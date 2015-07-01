@@ -39,7 +39,7 @@ class TBParserTarget {
 class TBParserStream {
  public:
   virtual ~TBParserStream() {}
-  virtual int GetMoreData(char* buf, int buf_len) = 0;
+  virtual size_t GetMoreData(char* buf, size_t buf_len) = 0;
 };
 
 class TBParser {

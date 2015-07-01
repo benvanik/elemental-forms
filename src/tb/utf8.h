@@ -1,6 +1,8 @@
 #ifndef BASIC_UTF8_H
 #define BASIC_UTF8_H
 
+#include <cstdint>
+
 typedef unsigned int UCS4;
 
 namespace utf8 {
@@ -30,7 +32,7 @@ int encode(UCS4 ch, char* dst);
    the next position.
         @param i_max The last position (size of str).
 */
-UCS4 decode_next(const char* str, int* i, int i_max);
+UCS4 decode_next(const char* str, size_t* i, size_t i_max);
 
 /** Move to the next character in a UTF-8 string.
         @param str The UTF-8 string.
@@ -38,21 +40,21 @@ UCS4 decode_next(const char* str, int* i, int i_max);
    the next position.
         @param i_max The last position (size of str).
 */
-void move_inc(const char* str, int* i, int i_max);
+void move_inc(const char* str, size_t* i, size_t i_max);
 
 /** Move to the previous character in a UTF-8 string.
         @param str The UTF-8 string.
         @param i The index of the current position. This will be decreased to
    the previous position.
 */
-void move_dec(const char* str, int* i);
+void move_dec(const char* str, size_t* i);
 
 /** Count characters before null termination in a UTF-8 string.
         Node: Does not include the null termination!
         @param str The UTF-8 string.
         @param i_max The last position (size of str).
 */
-int count_characters(const char* str, int i_max);
+size_t count_characters(const char* str, size_t i_max);
 
 };  // namespace utf8
 

@@ -76,14 +76,14 @@ int encode(UCS4 ch, char* dst) {
   }
 }
 
-UCS4 decode_next(const char* str, int* i, int i_max) {
+UCS4 decode_next(const char* str, size_t* i, size_t i_max) {
   str += *i;
   i_max -= *i;
   const char* old_str = str;
 
   // Handle wrapping that could happen if the caller use
   // something really large for i_max if src is known to
-  // be null terminated (like TB_ALL_TO_TERMINATION)
+  // be null terminated (like std::string::npos)
   const char* str_end = str + i_max;
   if (str_end < str) str_end = (const char*)(-1);
 
@@ -95,20 +95,20 @@ UCS4 decode_next(const char* str, int* i, int i_max) {
   return ch;
 }
 
-void move_inc(const char* str, int* i, int i_max) {
+void move_inc(const char* str, size_t* i, size_t i_max) {
   (void)((*i < i_max && isutf(str[++(*i)])) ||
          (*i < i_max && isutf(str[++(*i)])) ||
          (*i < i_max && isutf(str[++(*i)])) || (*i < i_max && ++(*i)));
 }
 
-void move_dec(const char* str, int* i) {
+void move_dec(const char* str, size_t* i) {
   (void)((*i > 0 && isutf(str[--(*i)])) || (*i > 0 && isutf(str[--(*i)])) ||
          (*i > 0 && isutf(str[--(*i)])) || (*i > 0 && --(*i)));
 }
 
-int count_characters(const char* str, int i_max) {
-  int count = 0;
-  int i = 0;
+size_t count_characters(const char* str, size_t i_max) {
+  size_t count = 0;
+  size_t i = 0;
   while (i < i_max && decode_next(str, &i, i_max)) count++;
   return count;
 }

@@ -1036,7 +1036,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Get the text of this widget. Implemented by most widgets (that has text).
           returns false if it failed. */
   virtual bool GetText(TBStr& text) {
-    text.Clear();
+    text.clear();
     return true;
   }
 

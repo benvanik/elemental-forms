@@ -93,7 +93,7 @@ void TBSelectList::OnAllItemsRemoved() {
 void TBSelectList::SetFilter(const char* filter) {
   TBStr new_filter;
   if (filter && *filter) new_filter.Set(filter);
-  if (m_filter.Equals(new_filter)) return;
+  if (m_filter.compare(new_filter) == 0) return;
   m_filter.Set(new_filter);
   InvalidateList();
 }
@@ -132,21 +132,22 @@ void TBSelectList::ValidateList() {
   // Populate the sorted index list
   int num_sorted_items = 0;
   for (int i = 0; i < m_source->GetNumItems(); i++)
-    if (m_filter.IsEmpty() || m_source->Filter(i, m_filter))
+    if (m_filter.empty() || m_source->Filter(i, m_filter))
       sorted_index[num_sorted_items++] = i;
 
   // Sort
   if (m_source->GetSort() != TB_SORT_NONE) {
     std::sort(&sorted_index[0], &sorted_index[num_sorted_items],
               [&](const int a, const int b) {
-      int value =
-          strcmp(m_source->GetItemString(a), m_source->GetItemString(b));
-      return m_source->GetSort() == TB_SORT_DESCENDING ? value > 0 : value < 0;
-    });
+                int value = strcmp(m_source->GetItemString(a),
+                                   m_source->GetItemString(b));
+                return m_source->GetSort() == TB_SORT_DESCENDING ? value > 0
+                                                                 : value < 0;
+              });
   }
 
   // Show header if we only show a subset of all items.
-  if (!m_filter.IsEmpty()) {
+  if (!m_filter.empty()) {
     if (TBWidget* widget = new TBTextField()) {
       TBStr str;
       str.SetFormatted(g_tb_lng->GetString(m_header_lng_string_id),

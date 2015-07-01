@@ -13,7 +13,7 @@
 
 namespace tb {
 
-void TBColor::SetFromString(const char* str, int len) {
+void TBColor::SetFromString(const char* str, size_t len) {
   int r, g, b, a;
   if (len == 9 &&
       sscanf(str, "#%2x%2x%2x%2x", &r, &g, &b, &a) == 4)  // rrggbbaa

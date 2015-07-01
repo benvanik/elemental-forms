@@ -236,7 +236,7 @@ bool TBSkin::ReloadBitmapsInternal() {
   bool success = true;
   TBHashTableIteratorOf<TBSkinElement> it(&m_elements);
   while (TBSkinElement* element = it.GetNextContent()) {
-    if (!element->bitmap_file.IsEmpty()) {
+    if (!element->bitmap_file.empty()) {
       assert(!element->bitmap);
 
       // FIX: dedicated_map is not needed for all backends (only deprecated
@@ -637,9 +637,9 @@ bool TBSkinElement::HasState(SKIN_STATE state,
 
 void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
   if (const char* bitmap = n->GetValueString("bitmap", nullptr)) {
-    bitmap_file.Clear();
-    bitmap_file.Append(skin_path);
-    bitmap_file.Append(bitmap);
+    bitmap_file.clear();
+    bitmap_file.append(skin_path);
+    bitmap_file.append(bitmap);
   }
 
   // Note: Always read cut and expand as pixels. These values might later be

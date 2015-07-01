@@ -424,7 +424,7 @@ void TBEditField::Invalidate(const TBRect& rect) { TBWidget::Invalidate(); }
 
 void TBEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
                              const TBColor& color, const char* str,
-                             int32_t len) {
+                             size_t len) {
   font->DrawString(x, y, color, str, len);
 }
 

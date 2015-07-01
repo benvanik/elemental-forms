@@ -16,14 +16,6 @@
 
 namespace tb {
 
-/** Use as parameter for string length if you know the string is null
-   terminated.
-        Can be used in functions that support it. */
-#define TB_ALL_TO_TERMINATION 2147483647
-
-/** Some useful C-like functions that's missing in the standard. */
-const char* stristr(const char* arg1, const char* arg2);
-
 /** Simple string class that doesn't own or change the string pointer. */
 
 class TBStrC {
@@ -33,15 +25,13 @@ class TBStrC {
  public:
   TBStrC(const char* str) : s(const_cast<char*>(str)) {}
 
-  inline int Length() const { return strlen(s); }
-  inline bool IsEmpty() const { return s[0] == 0; }
+  inline size_t size() const { return strlen(s); }
+  inline bool empty() const { return s[0] == 0; }
 
-  inline int Compare(const char* str) const { return strcmp(s, str); }
-  inline bool Equals(const char* str) const { return !strcmp(s, str); }
+  inline int compare(const char* str) const { return strcmp(s, str); }
 
-  inline char operator[](int n) const { return s[n]; }
+  inline char operator[](size_t n) const { return s[n]; }
   inline operator const char*() const { return s; }
-  const char* CStr() const { return s; }
 };
 
 /** TBStr is a simple string class.
@@ -67,21 +57,21 @@ class TBStr : public TBStrC {
   TBStr();
   TBStr(const TBStr& str);
   TBStr(const char* str);
-  TBStr(const char* str, int len);
+  TBStr(const char* str, size_t len);
 
-  bool Set(const char* str, int len = TB_ALL_TO_TERMINATION);
+  bool Set(const char* str, size_t len = std::string::npos);
   bool SetFormatted(const char* format, ...);
 
-  void Clear();
+  void clear();
 
-  void Remove(int ofs, int len);
-  bool Insert(int ofs, const char* ins, int ins_len = TB_ALL_TO_TERMINATION);
-  bool Append(const char* ins, int ins_len = TB_ALL_TO_TERMINATION) {
-    return Insert(strlen(s), ins, ins_len);
+  void erase(size_t ofs, size_t len);
+  bool insert(size_t ofs, const char* ins, size_t ins_len = std::string::npos);
+  bool append(const char* ins, size_t ins_len = std::string::npos) {
+    return insert(strlen(s), ins, std::string::npos);
   }
 
   inline operator char*() const { return s; }
-  char* CStr() const { return s; }
+  char* c_str() const { return s; }
   const TBStr& operator=(const TBStr& str) {
     Set(str);
     return *this;

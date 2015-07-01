@@ -17,42 +17,33 @@
 
 namespace tb {
 
-static const char* empty = "";
+static const char* kEmptyString = "";
 inline void safe_delete(char*& str) {
-  if (str != empty && str) free(str);
-  str = const_cast<char*>(empty);
+  if (str != kEmptyString && str) free(str);
+  str = const_cast<char*>(kEmptyString);
 }
 
-const char* stristr(const char* arg1, const char* arg2) {
-  const char* a, *b;
+TBStr::TBStr() : TBStrC(kEmptyString) {}
 
-  for (; *arg1; arg1++) {
-    a = arg1;
-    b = arg2;
-    while (toupper(*a++) == toupper(*b++))
-      if (!*b) return arg1;
-  }
-  return nullptr;
-}
-
-TBStr::TBStr() : TBStrC(empty) {}
-
-TBStr::TBStr(const char* str) : TBStrC(str == empty ? empty : strdup(str)) {
-  if (!s) s = const_cast<char*>(empty);
+TBStr::TBStr(const char* str)
+    : TBStrC(str == kEmptyString ? kEmptyString : strdup(str)) {
+  if (!s) s = const_cast<char*>(kEmptyString);
 }
 
 TBStr::TBStr(const TBStr& str)
-    : TBStrC(str.s == empty ? empty : strdup(str.s)) {
-  if (!s) s = const_cast<char*>(empty);
+    : TBStrC(str.s == kEmptyString ? kEmptyString : strdup(str.s)) {
+  if (!s) s = const_cast<char*>(kEmptyString);
 }
 
-TBStr::TBStr(const char* str, int len) : TBStrC(empty) { Set(str, len); }
+TBStr::TBStr(const char* str, size_t len) : TBStrC(kEmptyString) {
+  Set(str, len);
+}
 
 TBStr::~TBStr() { safe_delete(s); }
 
-bool TBStr::Set(const char* str, int len) {
+bool TBStr::Set(const char* str, size_t len) {
   safe_delete(s);
-  if (len == TB_ALL_TO_TERMINATION) len = strlen(str);
+  if (len == std::string::npos) len = strlen(str);
   if (char* new_s = (char*)malloc(len + 1)) {
     s = new_s;
     memcpy(s, str, len);
@@ -66,7 +57,7 @@ bool TBStr::SetFormatted(const char* format, ...) {
   safe_delete(s);
   if (!format) return true;
   va_list ap;
-  int max_len = 64;
+  size_t max_len = 64;
   char* new_s = nullptr;
   while (true) {
     if (char* tris_try_new_s = (char*)realloc(new_s, max_len)) {
@@ -97,9 +88,9 @@ bool TBStr::SetFormatted(const char* format, ...) {
   return false;
 }
 
-void TBStr::Clear() { safe_delete(s); }
+void TBStr::clear() { safe_delete(s); }
 
-void TBStr::Remove(int ofs, int len) {
+void TBStr::erase(size_t ofs, size_t len) {
   assert(ofs >= 0 && (ofs + len <= (int)strlen(s)));
   if (!len) return;
   char* dst = s + ofs;
@@ -108,10 +99,10 @@ void TBStr::Remove(int ofs, int len) {
   *dst = *src;
 }
 
-bool TBStr::Insert(int ofs, const char* ins, int ins_len) {
-  int len1 = strlen(s);
-  if (ins_len == TB_ALL_TO_TERMINATION) ins_len = strlen(ins);
-  int newlen = len1 + ins_len;
+bool TBStr::insert(size_t ofs, const char* ins, size_t ins_len) {
+  size_t len1 = strlen(s);
+  if (ins_len == std::string::npos) ins_len = strlen(ins);
+  size_t newlen = len1 + ins_len;
   if (char* news = (char*)malloc(newlen + 1)) {
     memcpy(&news[0], s, ofs);
     memcpy(&news[ofs], ins, ins_len);

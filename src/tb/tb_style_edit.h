@@ -37,7 +37,7 @@ class TBStyleEditListener {
   virtual void Invalidate(const TBRect& rect) = 0;
   virtual void DrawString(int32_t x, int32_t y, TBFontFace* font,
                           const TBColor& color, const char* str,
-                          int32_t len = TB_ALL_TO_TERMINATION) = 0;
+                          size_t len = std::string::npos) = 0;
   virtual void DrawRect(const TBRect& rect, const TBColor& color) = 0;
   virtual void DrawRectFill(const TBRect& rect, const TBColor& color) = 0;
   virtual void DrawTextSelectionBg(const TBRect& rect) = 0;
@@ -74,9 +74,9 @@ class TBTextFragmentContentFactory {
 class TBTextOfs {
  public:
   TBTextOfs() : block(nullptr), ofs(0) {}
-  TBTextOfs(TBBlock* block, int32_t ofs) : block(block), ofs(ofs) {}
+  TBTextOfs(TBBlock* block, size_t ofs) : block(block), ofs(ofs) {}
 
-  void Set(TBBlock* new_block, int32_t new_ofs) {
+  void Set(TBBlock* new_block, size_t new_ofs) {
     block = new_block;
     ofs = new_ofs;
   }
@@ -85,12 +85,12 @@ class TBTextOfs {
     ofs = pos.ofs;
   }
 
-  int32_t GetGlobalOfs(TBStyleEdit* se) const;
-  bool SetGlobalOfs(TBStyleEdit* se, int32_t gofs);
+  size_t GetGlobalOfs(TBStyleEdit* se) const;
+  bool SetGlobalOfs(TBStyleEdit* se, size_t gofs);
 
  public:
   TBBlock* block;
-  int32_t ofs;
+  size_t ofs;
 };
 
 /** Handles the selected text in a TBStyleEdit. */
@@ -101,8 +101,8 @@ class TBSelection {
   void Invalidate() const;
   void Select(const TBTextOfs& new_start, const TBTextOfs& new_stop);
   void Select(const TBPoint& from, const TBPoint& to);
-  void Select(int glob_ofs_from, int glob_ofs_to);
-  void SelectToCaret(TBBlock* old_caret_block, int32_t old_caret_ofs);
+  void Select(size_t glob_ofs_from, size_t glob_ofs_to);
+  void SelectToCaret(TBBlock* old_caret_block, size_t old_caret_ofs);
   void SelectAll();
   void SelectNothing();
   void CorrectOrder();
@@ -129,7 +129,7 @@ class TBCaret {
   void UpdatePos();
   bool Move(bool forward, bool word);
   bool Place(const TBPoint& point);
-  bool Place(TBBlock* block, int ofs, bool allow_snap = true,
+  bool Place(TBBlock* block, size_t ofs, bool allow_snap = true,
              bool snap_forward = false);
   void Place(TB_CARET_POS place);
   void AvoidLineBreak();
@@ -137,8 +137,8 @@ class TBCaret {
   void ResetBlink();
   void UpdateWantedX();
 
-  int32_t GetGlobalOfs() const { return pos.GetGlobalOfs(styledit); }
-  void SetGlobalOfs(int32_t gofs, bool allow_snap = true,
+  size_t GetGlobalOfs() const { return pos.GetGlobalOfs(styledit); }
+  void SetGlobalOfs(size_t gofs, bool allow_snap = true,
                     bool snap_forward = false);
 
   TBTextFragment* GetFragment();
@@ -190,12 +190,12 @@ class TBBlock : public TBLinkOf<TBBlock> {
   ~TBBlock();
 
   void Clear();
-  void Set(const char* newstr, int32_t len);
+  void Set(const char* newstr, size_t len);
   void SetAlign(TB_TEXT_ALIGN align);
 
-  int32_t InsertText(int32_t ofs, const char* text, int32_t len,
-                     bool allow_line_recurse);
-  void RemoveContent(int32_t ofs, int32_t len);
+  size_t InsertText(size_t ofs, const char* text, size_t len,
+                    bool allow_line_recurse);
+  void RemoveContent(size_t ofs, size_t len);
 
   /** Check if this block contains extra line breaks and split into new blocks
    * if it does. */
@@ -219,11 +219,11 @@ class TBBlock : public TBLinkOf<TBBlock> {
   void SetSize(int32_t old_w, int32_t new_w, int32_t new_h,
                bool propagate_height);
 
-  TBTextFragment* FindFragment(int32_t ofs, bool prefer_first = false) const;
+  TBTextFragment* FindFragment(size_t ofs, bool prefer_first = false) const;
   TBTextFragment* FindFragment(int32_t x, int32_t y) const;
 
   int32_t CalculateStringWidth(TBFontFace* font, const char* str,
-                               int len = TB_ALL_TO_TERMINATION) const;
+                               size_t len = std::string::npos) const;
   int32_t CalculateTabWidth(TBFontFace* font, int32_t xpos) const;
   int32_t CalculateLineHeight(TBFontFace* font) const;
   int32_t CalculateBaseline(TBFontFace* font) const;
@@ -244,10 +244,10 @@ class TBBlock : public TBLinkOf<TBBlock> {
   int line_width_max;
 
   TBStr str;
-  int32_t str_len;
+  size_t str_len;
 
  private:
-  int GetStartIndentation(TBFontFace* font, int first_line_len) const;
+  int GetStartIndentation(TBFontFace* font, size_t first_line_len) const;
 };
 
 /** Event in the TBUndoRedoStack. Each insert or remove change is stored as a
@@ -255,7 +255,7 @@ class TBBlock : public TBLinkOf<TBBlock> {
 
 class TBUndoEvent {
  public:
-  int32_t gofs;
+  size_t gofs;
   TBStr text;
   bool insert;
 };
@@ -271,7 +271,7 @@ class TBUndoRedoStack {
   void Redo(TBStyleEdit* styledit);
   void Clear(bool clear_undo, bool clear_redo);
 
-  TBUndoEvent* Commit(TBStyleEdit* styledit, int32_t gofs, int32_t len,
+  TBUndoEvent* Commit(TBStyleEdit* styledit, size_t gofs, size_t len,
                       const char* text, bool insert);
 
  public:
@@ -319,17 +319,17 @@ class TBTextFragment : public TBLinkOf<TBTextFragment> {
   bool IsSpace() const;
   bool IsTab() const;
 
-  int32_t GetCharX(TBFontFace* font, int32_t ofs);
-  int32_t GetCharOfs(TBFontFace* font, int32_t x);
+  int32_t GetCharX(TBFontFace* font, size_t ofs);
+  size_t GetCharOfs(TBFontFace* font, int32_t x);
 
   /** Get the stringwidth. Handles passwordmode, tab, linebreaks etc
    * automatically. */
-  int32_t GetStringWidth(TBFontFace* font, const char* str, int len);
+  int32_t GetStringWidth(TBFontFace* font, const char* str, size_t len);
 
   bool GetAllowBreakBefore() const;
   bool GetAllowBreakAfter() const;
 
-  const char* Str() const { return block->str.CStr() + ofs; }
+  const char* Str() const { return block->str.c_str() + ofs; }
 
   int32_t GetWidth(TBFontFace* font);
   int32_t GetHeight(TBFontFace* font);
@@ -370,7 +370,7 @@ class TBStyleEdit {
   void Clear(bool init_new = true);
   bool Load(const char* filename);
   bool SetText(const char* text, TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
-  bool SetText(const char* text, int text_len,
+  bool SetText(const char* text, size_t text_len,
                TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
   bool GetText(TBStr& text);
   bool IsEmpty() const;
@@ -405,9 +405,9 @@ class TBStyleEdit {
   bool CanUndo() const { return undoredo.undos.GetNumItems() ? true : false; }
   bool CanRedo() const { return undoredo.redos.GetNumItems() ? true : false; }
 
-  void InsertText(const char* text, int32_t len = TB_ALL_TO_TERMINATION,
+  void InsertText(const char* text, size_t len = std::string::npos,
                   bool after_last = false, bool clear_undo_redo = false);
-  void AppendText(const char* text, int32_t len = TB_ALL_TO_TERMINATION,
+  void AppendText(const char* text, size_t len = std::string::npos,
                   bool clear_undo_redo = false) {
     InsertText(text, len, true, clear_undo_redo);
   }

@@ -14,7 +14,7 @@ void CodeEditField::OnInflate(const INFLATE_INFO& info) {
 
 void CodeEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
                                const TBColor& color, const char* str,
-                               int32_t len) {
+                               size_t len) {
   TBColor finalColor(color);
   StringHasColorOverride(str, len, finalColor);
   TBEditField::DrawString(x, y, font, finalColor, str, len);
@@ -22,7 +22,7 @@ void CodeEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
 
 void CodeEditField::OnBreak() { inComment = false; }
 
-bool CodeEditField::StringHasColorOverride(const char* str, int32_t len,
+bool CodeEditField::StringHasColorOverride(const char* str, size_t len,
                                            TBColor& colour) {
   if (strlen(str) >= 2) {
     if (str[0] == '/' && str[1] == '/') {

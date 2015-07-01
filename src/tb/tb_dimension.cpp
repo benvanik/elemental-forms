@@ -23,13 +23,13 @@ namespace tb {
 void TBDimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
   m_src_dpi = src_dpi;
   m_dst_dpi = dst_dpi;
-  m_dst_dpi_str.Clear();
+  m_dst_dpi_str.clear();
   if (NeedConversion()) m_dst_dpi_str.SetFormatted("@%d", m_dst_dpi);
 }
 
 void TBDimensionConverter::GetDstDPIFilename(const char* filename,
                                              TBTempBuffer* tempbuf) const {
-  int dot_pos = 0;
+  size_t dot_pos = 0;
   for (dot_pos = strlen(filename) - 1; dot_pos > 0; dot_pos--)
     if (filename[dot_pos] == '.') break;
   tempbuf->ResetAppendPos();
@@ -58,7 +58,7 @@ int TBDimensionConverter::MmToPx(int mm) const {
 int TBDimensionConverter::GetPxFromString(const char* str,
                                           int def_value) const {
   if (!str || !is_start_of_number(str)) return def_value;
-  int len = strlen(str);
+  size_t len = strlen(str);
   int val = atoi(str);
   // "dp" and unspecified unit is dp.
   if ((len > 0 && isdigit(str[len - 1])) ||

@@ -48,7 +48,7 @@ class TBNode : public TBLinkOf<TBNode> {
                 TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
 
   /** Read a tree of nodes from a buffer with a known length. */
-  void ReadData(const char* data, int data_len,
+  void ReadData(const char* data, size_t data_len,
                 TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
 
   /** Clear the contens of this node. */
@@ -149,8 +149,8 @@ class TBNode : public TBLinkOf<TBNode> {
   friend class TBNodeRefTree;
   TBNode* GetNodeFollowRef(const char* request,
                            GET_MISS_POLICY mp = GET_MISS_POLICY_NULL);
-  TBNode* GetNodeInternal(const char* name, int name_len) const;
-  static TBNode* Create(const char* name, int name_len);
+  TBNode* GetNodeInternal(const char* name, size_t name_len) const;
+  static TBNode* Create(const char* name, size_t name_len);
   char* m_name;
   TBValue m_value;
   TBLinkListOf<TBNode> m_children;

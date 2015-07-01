@@ -169,7 +169,7 @@ class TBEditField : public TBWidget,
   /** Set the text of the given length and also specify if the caret should be
      positioned
           at the beginning or end of the text. */
-  bool SetText(const char* text, int text_len,
+  bool SetText(const char* text, size_t text_len,
                TB_CARET_POS pos = TB_CARET_POS_BEGINNING) {
     return m_style_edit.SetText(text, text_len, pos);
   }
@@ -219,7 +219,7 @@ class TBEditField : public TBWidget,
   virtual bool OnEnter();
   virtual void Invalidate(const TBRect& rect);
   virtual void DrawString(int32_t x, int32_t y, TBFontFace* font,
-                          const TBColor& color, const char* str, int32_t len);
+                          const TBColor& color, const char* str, size_t len);
   virtual void DrawRect(const TBRect& rect, const TBColor& color);
   virtual void DrawRectFill(const TBRect& rect, const TBColor& color);
   virtual void DrawTextSelectionBg(const TBRect& rect);

@@ -203,8 +203,8 @@ bool TBBFRenderer::FindGlyphs() {
   const char* glyph_str = m_node.GetValueString("info>glyph_str", nullptr);
   if (!glyph_str) return false;
 
-  int glyph_str_len = strlen(glyph_str);
-  int i = 0;
+  size_t glyph_str_len = strlen(glyph_str);
+  size_t i = 0;
   int x = 0;
   while (UCS4 uc = utf8::decode_next(glyph_str, &i, glyph_str_len)) {
     if (GLYPH* glyph = FindNext(uc, x)) {

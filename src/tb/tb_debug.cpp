@@ -112,9 +112,9 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
   TBStr GetIDString(const TBID& id) {
     TBStr str;
 #ifdef TB_RUNTIME_DEBUG_INFO
-    str.Append("\"");
-    str.Append(id.debug_string);
-    str.Append("\"");
+    str.append("\"");
+    str.append(id.debug_string);
+    str.append("\"");
 #else
     str.SetFormatted("%u", (uint32_t)id);
 #endif
@@ -146,10 +146,10 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
 
     if (ev.type == EVENT_TYPE_CHANGED) {
       TBStr extra, text;
-      if (ev.target->GetText(text) && text.Length() > 24)
-        sprintf(text.CStr() + 20, "...");
+      if (ev.target->GetText(text) && text.size() > 24)
+        sprintf(text.c_str() + 20, "...");
       extra.SetFormatted(", value: %.2f (\"%s\")", ev.target->GetValueDouble(),
-                         text.CStr());
+                         text.c_str());
       buf.AppendString(extra);
     }
     buf.AppendString("\n");
@@ -157,7 +157,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     // Append the line to the output textfield
     TBStyleEdit* se = output->GetStyleEdit();
     se->selection.SelectNothing();
-    se->AppendText(buf.GetData(), TB_ALL_TO_TERMINATION, true);
+    se->AppendText(buf.GetData(), std::string::npos, true);
     se->ScrollIfNeeded(false, true);
 
     // Remove lines from the top if we exceed the height limit.

@@ -37,7 +37,7 @@ class TBWidgetString {
   bool SetText(const char* text) { return m_text.Set(text); }
   bool GetText(TBStr& text) const { return text.Set(m_text); }
 
-  bool IsEmpty() const { return m_text.IsEmpty(); }
+  bool empty() const { return m_text.empty(); }
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text. */
@@ -63,7 +63,7 @@ class TBTextField : public TBWidget {
   virtual bool GetText(TBStr& text) { return m_text.GetText(text); }
   using TBWidget::GetText;  ///< Make all versions in base class available.
 
-  bool IsEmpty() const { return m_text.IsEmpty(); }
+  bool empty() const { return m_text.empty(); }
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text. */

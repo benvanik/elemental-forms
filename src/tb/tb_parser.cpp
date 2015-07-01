@@ -171,7 +171,7 @@ TBParser::STATUS TBParser::Read(TBParserStream* stream,
   pending_multiline = false;
   multi_line_sub_level = 0;
 
-  while (int read_len =
+  while (size_t read_len =
              stream->GetMoreData((char*)work.GetData(), work.GetCapacity())) {
     char* buf = work.GetData();
 
@@ -183,22 +183,22 @@ TBParser::STATUS TBParser::Read(TBParserStream* stream,
       buf += 3;
     }
 
-    int line_pos = 0;
+    size_t line_pos = 0;
     while (true) {
       // Find line end
-      int line_start = line_pos;
+      size_t line_start = line_pos;
       while (line_pos < read_len && buf[line_pos] != '\n') line_pos++;
 
       if (line_pos < read_len) {
         // We have a line
         // Skip preceding \r (if we have one)
-        int line_len = line_pos - line_start;
+        size_t line_len = line_pos - line_start;
         if (!line.Append(buf + line_start, line_len))
           return STATUS_OUT_OF_MEMORY;
 
         // Strip away trailing '\r' if the line has it
         char* linebuf = line.GetData();
-        int linebuf_len = line.GetAppendPos();
+        size_t linebuf_len = line.GetAppendPos();
         if (linebuf_len > 0 && linebuf[linebuf_len - 1] == '\r')
           linebuf[linebuf_len - 1] = 0;
 
@@ -266,7 +266,7 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
     char* token = line;
     // Read line while consuming it and copy over to token buf
     while (!is_white_space(line) && *line != 0) line++;
-    int token_len = line - token;
+    size_t token_len = line - token;
     // Consume any white space after the token
     while (is_white_space(line)) line++;
 

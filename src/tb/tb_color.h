@@ -29,7 +29,7 @@ class TBColor {
 
   /** Set the color from string in any of the following formats:
           "#rrggbbaa", "#rrggbb", "#rgba", "#rgb" */
-  void SetFromString(const char* str, int len);
+  void SetFromString(const char* str, size_t len);
 
   operator uint32_t() const { return *((uint32_t*)this); }
   bool operator==(const TBColor& c) const { return *this == (uint32_t)c; }

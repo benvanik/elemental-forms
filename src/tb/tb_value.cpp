@@ -229,7 +229,7 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
     if (TBValueArray* arr = new TBValueArray) {
       TBStr tmpstr;
       if (tmpstr.Set(str)) {
-        char* str_next = tmpstr.CStr();
+        char* str_next = tmpstr.c_str();
         while (char* token = next_token(str_next, ", ")) {
           if (TBValue* new_val = arr->AddValue())
             new_val->SetFromStringAuto(token, SET_NEW_COPY);

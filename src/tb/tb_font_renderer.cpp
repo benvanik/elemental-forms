@@ -241,13 +241,15 @@ void TBFontFace::SetBackgroundFont(TBFontFace* font, const TBColor& col,
   m_bgColor = col;
 }
 
-bool TBFontFace::RenderGlyphs(const char* glyph_str, int glyph_str_len) {
+bool TBFontFace::RenderGlyphs(const char* glyph_str, size_t glyph_str_len) {
   if (!m_font_renderer) return true;  // This is the test font
 
-  if (glyph_str_len == TB_ALL_TO_TERMINATION) glyph_str_len = strlen(glyph_str);
+  if (glyph_str_len == std::string::npos) {
+    glyph_str_len = strlen(glyph_str);
+  }
 
   bool has_all_glyphs = true;
-  int i = 0;
+  size_t i = 0;
   while (glyph_str[i] && i < glyph_str_len) {
     UCS4 cp = utf8::decode_next(glyph_str, &i, glyph_str_len);
     if (!GetGlyph(cp, true)) has_all_glyphs = false;
@@ -323,13 +325,13 @@ TBFontGlyph* TBFontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
 }
 
 void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
-                            int len) {
+                            size_t len) {
   if (m_bgFont) m_bgFont->DrawString(x + m_bgX, y + m_bgY, m_bgColor, str, len);
 
   if (m_font_renderer)
     g_renderer->BeginBatchHint(TBRenderer::BATCH_HINT_DRAW_BITMAP_FRAGMENT);
 
-  int i = 0;
+  size_t i = 0;
   while (str[i] && i < len) {
     UCS4 cp = utf8::decode_next(str, &i, len);
     if (cp == 0xFFFF) continue;
@@ -357,9 +359,9 @@ void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
   if (m_font_renderer) g_renderer->EndBatchHint();
 }
 
-int TBFontFace::GetStringWidth(const char* str, int len) {
+int TBFontFace::GetStringWidth(const char* str, size_t len) {
   int width = 0;
-  int i = 0;
+  size_t i = 0;
   while (str[i] && i < len) {
     UCS4 cp = utf8::decode_next(str, &i, len);
     if (cp == 0xFFFF) continue;

@@ -575,7 +575,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       return true;
     } else if (ev.target->GetID() == TBIDC("test-layout")) {
       TBStr resource_file("Demo/demo01/ui_resources/");
-      resource_file.Append(ev.target->data.GetString());
+      resource_file.append(ev.target->data.GetString());
       new LayoutWindow(resource_file);
       return true;
     } else if (ev.target->GetID() == TBIDC("test-connections")) {

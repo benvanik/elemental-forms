@@ -20,7 +20,7 @@ class TBPosixFile : public TBFile {
   TBPosixFile(FILE* f) : file(f) {}
   virtual ~TBPosixFile() { fclose(file); }
 
-  virtual long Size() {
+  virtual size_t Size() {
     long oldpos = ftell(file);
     fseek(file, 0, SEEK_END);
     long num_bytes = ftell(file);

@@ -23,7 +23,7 @@ static bool is_adding = false;
 
 void TBID::Set(uint32_t newid) {
   id = newid;
-  debug_string.Clear();
+  debug_string.clear();
   if (!is_adding && tb_core_is_initialized()) {
     if (!all_id_hash.Get(id)) {
       is_adding = true;
@@ -40,7 +40,7 @@ void TBID::Set(const TBID& newid) {
     if (TBID* other_id = all_id_hash.Get(id)) {
       // If this happens, 2 different strings result in the same hash.
       // It might be a good idea to change one of them, but it might not matter.
-      assert(other_id->debug_string.Equals(debug_string));
+      assert(other_id->debug_string.compare(debug_string) == 0);
     } else {
       is_adding = true;
       all_id_hash.Add(id, new TBID(*this));
@@ -54,7 +54,7 @@ void TBID::Set(const char* string) {
   TB_IF_DEBUG(debug_string.Set(string));
   if (!is_adding && tb_core_is_initialized()) {
     if (TBID* other_id = all_id_hash.Get(id)) {
-      assert(other_id->debug_string.Equals(debug_string));
+      assert(other_id->debug_string.compare(debug_string) == 0);
     } else {
       is_adding = true;
       all_id_hash.Add(id, new TBID(*this));

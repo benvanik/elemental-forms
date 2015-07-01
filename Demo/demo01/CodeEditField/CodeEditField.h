@@ -14,11 +14,10 @@ class CodeEditField : public tb::TBEditField {
  private:
   virtual void DrawString(int32_t x, int32_t y, tb::TBFontFace* font,
                           const tb::TBColor& color, const char* str,
-                          int32_t len);
+                          size_t len);
   virtual void OnBreak();
 
-  bool StringHasColorOverride(const char* str, int32_t len,
-                              tb::TBColor& colour);
+  bool StringHasColorOverride(const char* str, size_t len, tb::TBColor& colour);
 
   bool inComment;
 };

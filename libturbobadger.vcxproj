@@ -201,7 +201,6 @@
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,7 +214,6 @@
       </PrecompiledHeader>
       <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

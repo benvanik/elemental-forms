@@ -34,7 +34,7 @@ TBNode* TBNode::Create(const char* name) {
 }
 
 // static
-TBNode* TBNode::Create(const char* name, int name_len) {
+TBNode* TBNode::Create(const char* name, size_t name_len) {
   TBNode* n = new TBNode;
   if (!n || !(n->m_name = (char*)malloc(name_len + 1))) {
     delete n;
@@ -56,7 +56,7 @@ TBNode* TBNode::GetNode(const char* request, GET_MISS_POLICY mp) {
   TBNode* n = this;
   while (*request && n) {
     const char* nextend = GetNextNodeSeparator(request);
-    int name_len = nextend - request;
+    size_t name_len = nextend - request;
     TBNode* n_child = n->GetNodeInternal(request, name_len);
     if (!n_child && mp == GET_MISS_POLICY_CREATE) {
       n_child = n->Create(request, name_len);
@@ -74,7 +74,7 @@ TBNode* TBNode::GetNodeFollowRef(const char* request, GET_MISS_POLICY mp) {
   return node;
 }
 
-TBNode* TBNode::GetNodeInternal(const char* name, int name_len) const {
+TBNode* TBNode::GetNodeInternal(const char* name, size_t name_len) const {
   for (TBNode* n = GetFirstChild(); n; n = n->GetNext()) {
     if (strncmp(n->m_name, name, name_len) == 0 && n->m_name[name_len] == 0)
       return n;
@@ -141,7 +141,7 @@ class FileParser : public TBParserStream {
     delete f;
     return status == TBParser::STATUS_OK ? true : false;
   }
-  virtual int GetMoreData(char* buf, int buf_len) {
+  virtual size_t GetMoreData(char* buf, size_t buf_len) {
     return f->Read(buf, 1, buf_len);
   }
 
@@ -151,15 +151,15 @@ class FileParser : public TBParserStream {
 
 class DataParser : public TBParserStream {
  public:
-  bool Read(const char* data, int data_len, TBParserTarget* target) {
+  bool Read(const char* data, size_t data_len, TBParserTarget* target) {
     m_data = data;
     m_data_len = data_len;
     TBParser p;
     TBParser::STATUS status = p.Read(this, target);
     return status == TBParser::STATUS_OK ? true : false;
   }
-  virtual int GetMoreData(char* buf, int buf_len) {
-    int consume = std::min(buf_len, m_data_len);
+  virtual size_t GetMoreData(char* buf, size_t buf_len) {
+    size_t consume = std::min(buf_len, m_data_len);
     memcpy(buf, m_data, consume);
     m_data += consume;
     m_data_len -= consume;
@@ -168,7 +168,7 @@ class DataParser : public TBParserStream {
 
  private:
   const char* m_data;
-  int m_data_len;
+  size_t m_data_len;
 };
 
 class TBNodeTarget : public TBParserTarget {
@@ -273,7 +273,7 @@ void TBNode::ReadData(const char* data, TB_NODE_READ_FLAGS flags) {
   ReadData(data, strlen(data), flags);
 }
 
-void TBNode::ReadData(const char* data, int data_len,
+void TBNode::ReadData(const char* data, size_t data_len,
                       TB_NODE_READ_FLAGS flags) {
   if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
   DataParser p;

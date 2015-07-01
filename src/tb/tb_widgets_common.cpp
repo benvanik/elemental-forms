@@ -53,7 +53,7 @@ void TBWidgetString::Paint(TBWidget* widget, const TBRect& rect,
     int endw = font->GetStringWidth(end);
     int startw = 0;
     int startlen = 0;
-    while (m_text.CStr()[startlen]) {
+    while (m_text[startlen]) {
       int new_startw = font->GetStringWidth(m_text, startlen);
       if (new_startw + endw > rect.w) break;
       startw = new_startw;
@@ -74,7 +74,7 @@ TBTextField::TBTextField()
 }
 
 bool TBTextField::SetText(const char* text) {
-  if (m_text.m_text.Equals(text)) return true;
+  if (m_text.m_text.compare(text) == 0) return true;
   m_cached_text_width = UPDATE_TEXT_WIDTH_CACHE;
   Invalidate();
   InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
@@ -212,7 +212,7 @@ void TBButton::UpdateTextFieldVisibility() {
   // Auto-collapse the textfield if the text is empty and there are other
   // widgets added apart from the textfield. This removes the extra spacing
   // added between the textfield and the other widget.
-  bool collapse_textfield = m_textfield.IsEmpty() &&
+  bool collapse_textfield = m_textfield.empty() &&
                             m_layout.GetFirstChild() != m_layout.GetLastChild();
   m_textfield.SetVisibilility(collapse_textfield ? WIDGET_VISIBILITY_GONE
                                                  : WIDGET_VISIBILITY_VISIBLE);

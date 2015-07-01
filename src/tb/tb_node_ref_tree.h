@@ -60,7 +60,7 @@ class TBNodeRefTree : public TBLinkOf<TBNodeRefTree> {
 
   /** Return the tree with the given name, or nullptr if no matching tree
    * exists. */
-  static TBNodeRefTree* GetRefTree(const char* name, int name_len);
+  static TBNodeRefTree* GetRefTree(const char* name, size_t name_len);
 
   /** Go through the tree of nodes recursively and include
           or remove branches depending on any conditions. */

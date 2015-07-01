@@ -62,13 +62,13 @@ TBImageLoader* TBImageLoader::CreateFromFile(const char* filename) {
   }
   return nullptr;*/
   if (TBFile* file = TBFile::Open(filename, TBFile::MODE_READ)) {
-    long size = file->Size();
+    size_t size = file->Size();
     if (unsigned char* data = new unsigned char[size]) {
       size = file->Read(data, 1, size);
 
       int w, h, comp;
       if (unsigned char* img_data =
-              stbi_load_from_memory(data, size, &w, &h, &comp, 4)) {
+              stbi_load_from_memory(data, int(size), &w, &h, &comp, 4)) {
         if (STBI_Loader* img = new STBI_Loader()) {
           img->width = w;
           img->height = h;
