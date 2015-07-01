@@ -1287,8 +1287,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
 // Debugging
 #ifdef TB_RUNTIME_DEBUG_INFO
-  double last_measure_time;
-  double last_layout_time;
+  uint64_t last_measure_time;
+  uint64_t last_layout_time;
 #endif  // TB_RUNTIME_DEBUG_INFO
 
   // TBWidget related globals

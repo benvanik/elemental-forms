@@ -96,7 +96,6 @@
     <ClCompile Include="demo01\CodeEditField\CodeEditField.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Demo\config.h" />
     <ClInclude Include="..\Demo\demo01\Demo.h" />
     <ClInclude Include="..\Demo\demo01\ListWindow.h" />
     <ClInclude Include="..\Demo\demo01\ResourceEditWindow.h" />

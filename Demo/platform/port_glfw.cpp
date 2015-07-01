@@ -306,12 +306,12 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
     if (action == GLFW_PRESS) {
       // This is a quick fix with n-click support :)
-      static double last_time = 0;
+      static uint64_t last_time = 0;
       static int last_x = 0;
       static int last_y = 0;
       static int counter = 1;
 
-      double time = TBSystem::GetTimeMS();
+      uint64_t time = TBSystem::GetTimeMS();
       if (time < last_time + 600 && last_x == x && last_y == y)
         counter++;
       else
@@ -357,22 +357,22 @@ static void scroll_callback(GLFWwindow* window, double x, double y) {
         the fire_time is the same as last time. */
 
 #ifndef TB_TARGET_LINUX
-static void ReschedulePlatformTimer(double fire_time, bool force) {
-  static double set_fire_time = -1;
+static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
+  static uint64_t set_fire_time = -1;
   if (fire_time == TB_NOT_SOON) {
     set_fire_time = -1;
     glfwKillTimer();
   } else if (fire_time != set_fire_time || force || fire_time == 0) {
     set_fire_time = fire_time;
-    double delay = fire_time - tb::TBSystem::GetTimeMS();
-    unsigned int idelay = (unsigned int)std::max(delay, 0.0);
+    uint64_t delay = fire_time - tb::TBSystem::GetTimeMS();
+    unsigned int idelay = (unsigned int)std::max(delay, 0ull);
     glfwRescheduleTimer(idelay);
   }
 }
 
 static void timer_callback() {
-  double next_fire_time = TBMessageHandler::GetNextMessageFireTime();
-  double now = tb::TBSystem::GetTimeMS();
+  uint64_t next_fire_time = TBMessageHandler::GetNextMessageFireTime();
+  uint64_t now = tb::TBSystem::GetTimeMS();
   if (now < next_fire_time) {
     // We timed out *before* we were supposed to (the OS is not playing nice).
     // Calling ProcessMessages now won't achieve a thing so force a reschedule
@@ -391,7 +391,7 @@ static void timer_callback() {
 
 // This doesn't really belong here (it belongs in tb_system_[linux/windows].cpp.
 // This is here since the proper implementations has not yet been done.
-void TBSystem::RescheduleTimer(double fire_time) {
+void TBSystem::RescheduleTimer(uint64_t fire_time) {
   ReschedulePlatformTimer(fire_time, false);
 }
 #endif /* TB_TARGET_LINUX */

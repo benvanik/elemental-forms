@@ -1060,8 +1060,8 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
     // Layout debug painting. Paint recently layouted widgets with red and
     // recently measured widgets with yellow.
     // Invalidate to keep repainting until we've timed out (so it's removed).
-    const double debug_time = 300;
-    const double now = TBSystem::GetTimeMS();
+    const uint64_t debug_time = 300;
+    const uint64_t now = TBSystem::GetTimeMS();
     if (now < last_layout_time + debug_time) {
       g_renderer->DrawRect(local_rect, TBColor(255, 30, 30, 200));
       Invalidate();

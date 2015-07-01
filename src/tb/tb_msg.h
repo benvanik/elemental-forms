@@ -22,7 +22,7 @@ class TBMessageHandler;
 
 /** TB_NOT_SOON is returned from TBMessageHandler::GetNextMessageFireTime
         and means that there is currently no more messages to process. */
-#define TB_NOT_SOON 0xffffffff
+constexpr uint64_t TB_NOT_SOON = 0xffffffff;
 
 /** TBMessageData holds custom data to send with a posted message. */
 
@@ -52,7 +52,7 @@ class TBMessageLink : public TBLinkOf<TBMessageLink> {};
 
 class TBMessage : public TBLinkOf<TBMessage>, public TBMessageLink {
  private:
-  TBMessage(TBID message, TBMessageData* data, double fire_time_ms,
+  TBMessage(TBID message, TBMessageData* data, uint64_t fire_time_ms,
             TBMessageHandler* mh);
   ~TBMessage();
 
@@ -62,11 +62,11 @@ class TBMessage : public TBLinkOf<TBMessage>, public TBMessageLink {
 
   /** The time which a delayed message should have fired (0 for non delayed
    * messages) */
-  double GetFireTime() { return fire_time_ms; }
+  uint64_t GetFireTime() { return fire_time_ms; }
 
  private:
   friend class TBMessageHandler;
-  double fire_time_ms;
+  uint64_t fire_time_ms;
   TBMessageHandler* mh;
 };
 
@@ -96,7 +96,7 @@ class TBMessageHandler {
           data may be nullptr if no extra data need to be sent. It will be
      deleted
           automatically when the message is deleted. */
-  bool PostMessageOnTime(TBID message, TBMessageData* data, double fire_time);
+  bool PostMessageOnTime(TBID message, TBMessageData* data, uint64_t fire_time);
 
   /** Posts a message to the target.
           data may be nullptr if no extra data need to be sent. It will be
@@ -116,7 +116,6 @@ class TBMessageHandler {
   void DeleteAllMessages();
 
   /** Called when a message is delivered.
-
           This message won't be found using GetMessageByID. It is already
      removed from the list.
           You should not call DeleteMessage on this message. That is done
@@ -133,7 +132,7 @@ class TBMessageHandler {
      the earliest delayed message should be fired.
           If there's no more messages to process at the moment, it returns
      TB_NOT_SOON (No call to ProcessMessages is needed). */
-  static double GetNextMessageFireTime();
+  static uint64_t GetNextMessageFireTime();
 
  private:
   TBLinkListOf<TBMessage> m_messages;

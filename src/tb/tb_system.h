@@ -56,7 +56,7 @@ class TBSystem {
 #endif /* TB_SYSTEM_LINUX */
  public:
   /** Get the system time in milliseconds since some undefined epoch. */
-  static double GetTimeMS();
+  static uint64_t GetTimeMS();
 
   /** Called when the need to call TBMessageHandler::ProcessMessages has changed
      due to changes in the
@@ -65,7 +65,7 @@ class TBSystem {
      (but NOT from this call!)
           It may also be TB_NOT_SOON which means that ProcessMessages doesn't
      need to be called. */
-  static void RescheduleTimer(double fire_time);
+  static void RescheduleTimer(uint64_t fire_time);
 
   /** Get how many milliseconds it should take after a touch down event should
      generate a long click

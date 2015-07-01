@@ -21,7 +21,7 @@ TBLinkListOf<TBMessageLink> g_all_delayed_messages;
 /** List of all nondelayed messages. */
 TBLinkListOf<TBMessageLink> g_all_normal_messages;
 
-TBMessage::TBMessage(TBID message, TBMessageData* data, double fire_time_ms,
+TBMessage::TBMessage(TBID message, TBMessageData* data, uint64_t fire_time_ms,
                      TBMessageHandler* mh)
     : message(message), data(data), fire_time_ms(fire_time_ms), mh(mh) {}
 
@@ -33,12 +33,11 @@ TBMessageHandler::~TBMessageHandler() { DeleteAllMessages(); }
 
 bool TBMessageHandler::PostMessageDelayed(TBID message, TBMessageData* data,
                                           uint32_t delay_in_ms) {
-  return PostMessageOnTime(message, data,
-                           TBSystem::GetTimeMS() + (double)delay_in_ms);
+  return PostMessageOnTime(message, data, TBSystem::GetTimeMS() + delay_in_ms);
 }
 
 bool TBMessageHandler::PostMessageOnTime(TBID message, TBMessageData* data,
-                                         double fire_time) {
+                                         uint64_t fire_time) {
   if (TBMessage* msg = new TBMessage(message, data, fire_time, this)) {
     // Find the message that is already in the list that should fire later, so
     // we can
@@ -160,7 +159,7 @@ void TBMessageHandler::ProcessMessages() {
 }
 
 // static
-double TBMessageHandler::GetNextMessageFireTime() {
+uint64_t TBMessageHandler::GetNextMessageFireTime() {
   if (g_all_normal_messages.GetFirst()) return 0;
 
   if (g_all_delayed_messages.GetFirst()) {

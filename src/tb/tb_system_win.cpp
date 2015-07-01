@@ -27,7 +27,7 @@ namespace tb {
 
 // == TBSystem ========================================
 
-double TBSystem::GetTimeMS() { return timeGetTime(); }
+uint64_t TBSystem::GetTimeMS() { return timeGetTime(); }
 
 // Implementation currently done in port_glut.cpp.
 // Windows timer suck. Glut timers suck too (can't be canceled) but that will do

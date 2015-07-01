@@ -62,7 +62,7 @@ void TBAnimationManager::AbortAllAnimations() {
 
 // static
 void TBAnimationManager::Update() {
-  double time_now = TBSystem::GetTimeMS();
+  uint64_t time_now = TBSystem::GetTimeMS();
 
   TBLinkListOf<TBAnimationObject>::Iterator iter =
       animating_objects.IterateForward();
@@ -129,7 +129,7 @@ void TBAnimationManager::StartAnimation(TBAnimationObject* obj,
   obj->adjust_start_time =
       (animation_time == ANIMATION_TIME_FIRST_UPDATE ? true : false);
   obj->animation_start_time = TBSystem::GetTimeMS();
-  obj->animation_duration = std::max(animation_duration, 0.0);
+  obj->animation_duration = uint64_t(std::max(animation_duration, 0.0));
   obj->animation_curve = animation_curve;
   animating_objects.AddLast(obj);
   obj->InvokeOnAnimationStart();

@@ -550,9 +550,9 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       return true;
     } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
-      double t1 = TBSystem::GetTimeMS();
+      uint64_t t1 = TBSystem::GetTimeMS();
       for (int i = 0; i < reload_count; i++) g_tb_skin->ReloadBitmaps();
-      double t2 = TBSystem::GetTimeMS();
+      uint64_t t2 = TBSystem::GetTimeMS();
 
       TBMessageWindow* msg_win = new TBMessageWindow(ev.target, TBID());
       msg_win->Show(
@@ -626,7 +626,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
 int fps = 0;
 uint32_t frame_counter_total = 0;
 uint32_t frame_counter = 0;
-double frame_counter_reset_time = 0;
+uint64_t frame_counter_reset_time = 0;
 
 const char* girl_names[] = {
     "Maja",     "Alice",    "Julia",   "Linnéa",   "Wilma",  "Ella",
@@ -750,7 +750,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   frame_counter_total++;
 
   // Update the FPS counter
-  double time = TBSystem::GetTimeMS();
+  uint64_t time = TBSystem::GetTimeMS();
   if (time > frame_counter_reset_time + 1000) {
     fps = (int)((frame_counter / (time - frame_counter_reset_time)) * 1000);
     frame_counter_reset_time = time;

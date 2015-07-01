@@ -87,8 +87,8 @@ class TBAnimationObject : public TBTypedObject,
                           public TBLinkOf<TBAnimationObject> {
  public:
   ANIMATION_CURVE animation_curve;
-  double animation_start_time;
-  double animation_duration;
+  uint64_t animation_start_time;
+  uint64_t animation_duration;
   bool adjust_start_time;
 
  public:

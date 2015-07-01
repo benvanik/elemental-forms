@@ -32,7 +32,7 @@ namespace tb {
 
 // == TBSystem ========================================
 
-double TBSystem::GetTimeMS() {
+uint64_t TBSystem::GetTimeMS() {
   struct timeval now;
   gettimeofday(&now, NULL);
   return now.tv_usec / 1000 + now.tv_sec * 1000;
@@ -72,7 +72,7 @@ int TBSystem::Shutdown() {
   return 0;
 }
 
-void TBSystem::RescheduleTimer(double fire_time) {
+void TBSystem::RescheduleTimer(uint64_t fire_time) {
   if (fire_time == TB_NOT_SOON) return;
 
   if (fire_time == 0) {

@@ -39,7 +39,7 @@ namespace tb {
 
 // == TBSystem ========================================
 
-double TBSystem::GetTimeMS() {
+uint64_t TBSystem::GetTimeMS() {
   struct timeval now;
   gettimeofday(&now, NULL);
   return now.tv_usec / 1000 + now.tv_sec * 1000;
