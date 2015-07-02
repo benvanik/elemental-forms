@@ -286,7 +286,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
         effect_glyph_data ? effect_glyph_data : &glyph_data;
 
     // The glyph data may be in uint8_t format, which we have to convert since
-    // we always create fragments (and TBBitmap) in 32bit format.
+    // we always create fragments (and Bitmap) in 32bit format.
     uint32_t* glyph_dsta_src = result_glyph_data->data32;
     if (!glyph_dsta_src && result_glyph_data->data8) {
       if (m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
@@ -345,7 +345,7 @@ void FontFace::DrawString(int x, int y, const Color& color, const char* str,
   }
 
   if (m_font_renderer) {
-    g_renderer->BeginBatchHint(TBRenderer::BatchHint::kDrawBitmapFragment);
+    g_renderer->BeginBatchHint(Renderer::BatchHint::kDrawBitmapFragment);
   }
 
   size_t i = 0;

@@ -19,8 +19,8 @@
 
 namespace tb {
 
+class Bitmap;
 class BitmapFragment;
-class TBBitmap;
 
 // Returns the nearest power of two from val.
 // F.ex 110 -> 128, 256->256, 257->512 etc.
@@ -91,9 +91,9 @@ enum class Validate {
   kFirstTime,
 };
 
-// Used to pack multiple bitmaps into a single TBBitmap.
-// When initialized (in a size suitable for a TBBitmap) is also creates a
-// software buffer that will make up the TBBitmap when all fragments have been
+// Used to pack multiple bitmaps into a single Bitmap.
+// When initialized (in a size suitable for a Bitmap) is also creates a
+// software buffer that will make up the Bitmap when all fragments have been
 // added.
 class BitmapFragmentMap {
  public:
@@ -102,7 +102,7 @@ class BitmapFragmentMap {
 
   // Initializes the map with the given size.
   // The size should be a power of two since it will be used to create a
-  // TBBitmap (texture memory).
+  // Bitmap (texture memory).
   bool Init(int bitmap_w, int bitmap_h);
 
   // Creates a new fragment with the given size and data in this map.
@@ -118,7 +118,7 @@ class BitmapFragmentMap {
   // Returns the bitmap for this map.
   // By default, the bitmap is validated if needed before returning (See
   // Validate).
-  TBBitmap* GetBitmap(Validate validate_type = Validate::kAlways);
+  Bitmap* GetBitmap(Validate validate_type = Validate::kAlways);
 
  private:
   friend class BitmapFragmentManager;
@@ -131,14 +131,14 @@ class BitmapFragmentMap {
   int m_bitmap_w = 0;
   int m_bitmap_h = 0;
   uint32_t* m_bitmap_data = nullptr;
-  TBBitmap* m_bitmap = nullptr;
+  Bitmap* m_bitmap = nullptr;
   bool m_need_update = false;
   int m_allocated_pixels = 0;
 };
 
-// Represents a sub part of a TBBitmap.
+// Represents a sub part of a Bitmap.
 // It's owned by BitmapFragmentManager which pack multiple BitmapFragment within
-// TBBitmaps to reduce texture switching.
+// Bitmaps to reduce texture switching.
 class BitmapFragment {
  public:
   int Width() const { return m_rect.w; }
@@ -147,7 +147,7 @@ class BitmapFragment {
   // Returns the bitmap for this fragment.
   // By default, the bitmap is validated if needed before returning (See
   // Validate).
-  TBBitmap* GetBitmap(Validate validate_type = Validate::kAlways) {
+  Bitmap* GetBitmap(Validate validate_type = Validate::kAlways) {
     return m_map->GetBitmap(validate_type);
   }
 
@@ -170,7 +170,7 @@ class BitmapFragment {
 };
 
 // Manages loading bitmaps of arbitrary size, pack as many of them into as few
-// TBBitmap as possible.
+// Bitmap as possible.
 // It also makes sure that only one instance of each file is loaded, so f.ex
 // loading "foo.png" many times still load and allocate one BitmapFragment.
 class BitmapFragmentManager {
@@ -224,7 +224,7 @@ class BitmapFragmentManager {
   // Gets number of fragment maps that is currently used.
   int GetNumMaps() const { return m_fragment_maps.GetNumItems(); }
 
-  // Sets the number of maps (TBBitmaps) this manager should be allowed to
+  // Sets the number of maps (Bitmaps) this manager should be allowed to
   // create.
   // If a new fragment can't fit into any existing bitmap and the limit is
   // reached, the fragment creation will fail. Set to 0 for unlimited (default).

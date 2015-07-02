@@ -20,7 +20,6 @@
 
 namespace tb {
 
-class TBBitmap;
 class FontFace;
 
 // Rendering info used during glyph rendering by FontRenderer.
@@ -84,7 +83,7 @@ class FontGlyph : public TBLinkOf<FontGlyph> {
 
 // Caches glyphs for font faces.
 // Rendered glyphs use bitmap fragments from its fragment manager.
-class FontGlyphCache : private TBRendererListener {
+class FontGlyphCache : private RendererListener {
  public:
   FontGlyphCache();
   ~FontGlyphCache();

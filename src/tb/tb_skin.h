@@ -315,7 +315,7 @@ class SkinListener {
 };
 
 // Skin contains a list of SkinElement.
-class Skin : private TBRendererListener {
+class Skin : private RendererListener {
  public:
   Skin();
   ~Skin() override;

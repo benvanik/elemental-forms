@@ -34,26 +34,31 @@ freely, subject to the following restrictions:
 
 namespace tb {
 
-class TBRenderer;
-class Skin;
-class WidgetReader;
-class Language;
-class FontManager;
+// TODO(benvanik): remove all of these.
 
-extern TBRenderer* g_renderer;
-extern Skin* g_tb_skin;
-extern WidgetReader* g_widgets_reader;
-extern Language* g_tb_lng;
+class FontManager;
 extern FontManager* g_font_manager;
 
-/** Initialize turbo badger. Call this before using any turbo badger API. */
-bool tb_core_init(TBRenderer* renderer, const char* lng_file);
+class Language;
+extern Language* g_tb_lng;
 
-/** Shutdown turbo badger. Call this after deleting the last widget, to free
- * turbo badger internals. */
+class Renderer;
+extern Renderer* g_renderer;
+
+class Skin;
+extern Skin* g_tb_skin;
+
+class WidgetReader;
+extern WidgetReader* g_widgets_reader;
+
+// Initializes turbo badger. Call this before using any turbo badger API.
+bool tb_core_init(Renderer* renderer, const char* lng_file);
+
+// Shuts down turbo badger. Call this after deleting the last widget, to free
+// turbo badger internals.
 void tb_core_shutdown();
 
-/** Returns true if turbo badger is initialized. */
+// Returns true if turbo badger is initialized.
 bool tb_core_is_initialized();
 
 }  // namespace tb

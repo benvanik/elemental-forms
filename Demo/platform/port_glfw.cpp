@@ -63,13 +63,13 @@ class ApplicationBackendGLFW : public ApplicationBackend {
 
   virtual void Run();
   virtual TBWidget* GetRoot() { return &m_root; }
-  virtual TBRenderer* GetRenderer() { return m_renderer; }
+  virtual Renderer* GetRenderer() { return m_renderer; }
 
   int GetWidth() const { return m_root.GetRect().w; }
   int GetHeight() const { return m_root.GetRect().h; }
 
   Application* m_application;
-  TBRendererGL* m_renderer;
+  RendererGL* m_renderer;
   RootWidget m_root;
   GLFWwindow* mainWindow;
   bool has_pending_update;
@@ -484,7 +484,7 @@ bool ApplicationBackendGLFW::Init(Application* app, int width, int height,
   glfwSetDropCallback(mainWindow, drop_callback);
 #endif
 
-  m_renderer = new TBRendererGL();
+  m_renderer = new RendererGL();
   m_root.SetRect(Rect(0, 0, width, height));
 
   // Create the application object for our demo

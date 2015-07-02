@@ -31,42 +31,35 @@
 
 namespace tb {
 
-class TBRendererGL;
+class RendererGL;
 
-class TBBitmapGL : public TBBitmap {
+class BitmapGL : public Bitmap {
  public:
-  TBBitmapGL(TBRendererGL* renderer);
-  ~TBBitmapGL();
+  BitmapGL(RendererGL* renderer);
+  ~BitmapGL() override;
+
   bool Init(int width, int height, uint32_t* data);
-  virtual int Width() { return m_w; }
-  virtual int Height() { return m_h; }
-  virtual void SetData(uint32_t* data);
+  int Width() override { return m_w; }
+  int Height() override { return m_h; }
+  void SetData(uint32_t* data) override;
 
  public:
-  TBRendererGL* m_renderer;
-  int m_w, m_h;
-  GLuint m_texture;
+  RendererGL* m_renderer = nullptr;
+  int m_w = 0, m_h = 0;
+  GLuint m_texture = 0;
 };
 
-class TBRendererGL : public TBRendererBatcher {
+class RendererGL : public RendererBatcher {
  public:
-  TBRendererGL();
+  RendererGL();
 
-  // == TBRenderer
-  // ====================================================================
+  void BeginPaint(int render_target_w, int render_target_h) override;
+  void EndPaint() override;
 
-  virtual void BeginPaint(int render_target_w, int render_target_h);
-  virtual void EndPaint();
+  Bitmap* CreateBitmap(int width, int height, uint32_t* data) override;
 
-  virtual TBBitmap* CreateBitmap(int width, int height, uint32_t* data);
-
-  // == TBRendererBatcher
-  // ===============================================================
-
-  virtual void RenderBatch(Batch* batch);
-  virtual void SetClipRect(const Rect& rect);
-
- public:
+  void RenderBatch(Batch* batch) override;
+  void SetClipRect(const Rect& rect) override;
 };
 
 }  // namespace tb

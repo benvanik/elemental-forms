@@ -85,7 +85,7 @@ class Image {
 // loaded several times.
 // Images are forgotten when there are no longer any Image objects for a given
 // file.
-class ImageManager : private TBRendererListener {
+class ImageManager : private RendererListener {
  public:
   ImageManager();
   ~ImageManager();

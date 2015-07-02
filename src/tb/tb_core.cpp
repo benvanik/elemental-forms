@@ -21,13 +21,13 @@
 
 namespace tb {
 
-TBRenderer* g_renderer = nullptr;
+FontManager* g_font_manager = nullptr;
+Language* g_tb_lng = nullptr;
+Renderer* g_renderer = nullptr;
 Skin* g_tb_skin = nullptr;
 WidgetReader* g_widgets_reader = nullptr;
-Language* g_tb_lng = nullptr;
-FontManager* g_font_manager = nullptr;
 
-bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
+bool tb_core_init(Renderer* renderer, const char* lng_file) {
   g_renderer = renderer;
   g_tb_lng = new Language;
   g_tb_lng->Load(lng_file);
@@ -38,7 +38,7 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
 
 #ifdef TB_SYSTEM_LINUX
   TBSystem::Init();
-#endif
+#endif  // TB_SYSTEM_LINUX
 
   g_tooltip_mng = new TooltipManager();
 
@@ -55,7 +55,8 @@ void tb_core_shutdown() {
 
 #ifdef TB_SYSTEM_LINUX
   TBSystem::Shutdown();
-#endif
+#endif  // TB_SYSTEM_LINUX
+
   delete g_tooltip_mng;
 }
 

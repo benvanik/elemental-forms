@@ -7,21 +7,19 @@
  ******************************************************************************
  */
 
-#include <assert.h>
-#include <stdio.h>
-#include "tb_types.h"
-#include "tb_renderer_gl.h"
+#include <cassert>
+#include <cstdio>
+
 #include "tb_bitmap_fragment.h"
+#include "tb_renderer_gl.h"
 #include "tb_system.h"
+#include "tb_types.h"
 
 namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 uint32_t dbg_bitmap_validations = 0;
 #endif  // TB_RUNTIME_DEBUG_INFO
-
-// == Utilities
-// ===================================================================================
 
 static void Ortho2D(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top) {
 #ifdef TB_RENDERER_GLES_1
@@ -31,35 +29,29 @@ static void Ortho2D(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top) {
 #endif
 }
 
-// == Batching
-// ====================================================================================
-
 GLuint g_current_texture = (GLuint)-1;
-TBRendererBatcher::Batch* g_current_batch = 0;
+RendererBatcher::Batch* g_current_batch = 0;
 
-void BindBitmap(TBBitmap* bitmap) {
-  GLuint texture = bitmap ? static_cast<TBBitmapGL*>(bitmap)->m_texture : 0;
+void BindBitmap(Bitmap* bitmap) {
+  GLuint texture = bitmap ? static_cast<BitmapGL*>(bitmap)->m_texture : 0;
   if (texture != g_current_texture) {
     g_current_texture = texture;
     glBindTexture(GL_TEXTURE_2D, g_current_texture);
   }
 }
 
-// == TBBitmapGL
-// ==================================================================================
+BitmapGL::BitmapGL(RendererGL* renderer) : m_renderer(renderer) {}
 
-TBBitmapGL::TBBitmapGL(TBRendererGL* renderer)
-    : m_renderer(renderer), m_w(0), m_h(0), m_texture(0) {}
-
-TBBitmapGL::~TBBitmapGL() {
+BitmapGL::~BitmapGL() {
   // Must flush and unbind before we delete the texture
   m_renderer->FlushBitmap(this);
-  if (m_texture == g_current_texture) BindBitmap(nullptr);
-
+  if (m_texture == g_current_texture) {
+    BindBitmap(nullptr);
+  }
   glDeleteTextures(1, &m_texture);
 }
 
-bool TBBitmapGL::Init(int width, int height, uint32_t* data) {
+bool BitmapGL::Init(int width, int height, uint32_t* data) {
   assert(width == GetNearestPowerOfTwo(width));
   assert(height == GetNearestPowerOfTwo(height));
 
@@ -76,7 +68,7 @@ bool TBBitmapGL::Init(int width, int height, uint32_t* data) {
   return true;
 }
 
-void TBBitmapGL::SetData(uint32_t* data) {
+void BitmapGL::SetData(uint32_t* data) {
   m_renderer->FlushBitmap(this);
   BindBitmap(this);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA,
@@ -84,17 +76,14 @@ void TBBitmapGL::SetData(uint32_t* data) {
   TB_IF_DEBUG_SETTING(Setting::kDrawRenderBatches, dbg_bitmap_validations++);
 }
 
-// == TBRendererGL
-// ================================================================================
+RendererGL::RendererGL() = default;
 
-TBRendererGL::TBRendererGL() {}
-
-void TBRendererGL::BeginPaint(int render_target_w, int render_target_h) {
+void RendererGL::BeginPaint(int render_target_w, int render_target_h) {
 #ifdef TB_RUNTIME_DEBUG_INFO
   dbg_bitmap_validations = 0;
 #endif
 
-  TBRendererBatcher::BeginPaint(render_target_w, render_target_h);
+  RendererBatcher::BeginPaint(render_target_w, render_target_h);
 
   g_current_texture = (GLuint)-1;
   g_current_batch = nullptr;
@@ -117,8 +106,8 @@ void TBRendererGL::BeginPaint(int render_target_w, int render_target_h) {
   glEnableClientState(GL_VERTEX_ARRAY);
 }
 
-void TBRendererGL::EndPaint() {
-  TBRendererBatcher::EndPaint();
+void RendererGL::EndPaint() {
+  RendererBatcher::EndPaint();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches))
@@ -127,8 +116,8 @@ void TBRendererGL::EndPaint() {
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 
-TBBitmap* TBRendererGL::CreateBitmap(int width, int height, uint32_t* data) {
-  TBBitmapGL* bitmap = new TBBitmapGL(this);
+Bitmap* RendererGL::CreateBitmap(int width, int height, uint32_t* data) {
+  BitmapGL* bitmap = new BitmapGL(this);
   if (!bitmap || !bitmap->Init(width, height, data)) {
     delete bitmap;
     return nullptr;
@@ -136,7 +125,7 @@ TBBitmap* TBRendererGL::CreateBitmap(int width, int height, uint32_t* data) {
   return bitmap;
 }
 
-void TBRendererGL::RenderBatch(Batch* batch) {
+void RendererGL::RenderBatch(Batch* batch) {
   // Bind texture and array pointers
   BindBitmap(batch->bitmap);
   if (g_current_batch != batch) {
@@ -151,7 +140,7 @@ void TBRendererGL::RenderBatch(Batch* batch) {
   glDrawArrays(GL_TRIANGLES, 0, batch->vertex_count);
 }
 
-void TBRendererGL::SetClipRect(const Rect& rect) {
+void RendererGL::SetClipRect(const Rect& rect) {
   glScissor(m_clip_rect.x, m_screen_rect.h - (m_clip_rect.y + m_clip_rect.h),
             m_clip_rect.w, m_clip_rect.h);
 }

@@ -339,7 +339,7 @@ void BitmapFragmentMap::CopyData(BitmapFragment* frag, int data_stride,
   }
 }
 
-TBBitmap* BitmapFragmentMap::GetBitmap(Validate validate_type) {
+Bitmap* BitmapFragmentMap::GetBitmap(Validate validate_type) {
   if (m_bitmap && validate_type == Validate::kFirstTime) {
     return m_bitmap;
   }
@@ -507,7 +507,7 @@ void BitmapFragmentManager::Debug() {
   int x = 0;
   for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
     BitmapFragmentMap* fm = m_fragment_maps[i];
-    if (TBBitmap* bitmap = fm->GetBitmap()) {
+    if (Bitmap* bitmap = fm->GetBitmap()) {
       g_renderer->DrawBitmap(Rect(x, 0, fm->m_bitmap_w, fm->m_bitmap_h),
                              Rect(0, 0, fm->m_bitmap_w, fm->m_bitmap_h),
                              bitmap);

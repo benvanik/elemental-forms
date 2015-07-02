@@ -11,18 +11,18 @@
 
 namespace tb {
 
-void TBRenderer::InvokeContextLost() {
-  TBLinkListOf<TBRendererListener>::Iterator iter =
-      m_listeners.IterateForward();
-  while (TBRendererListener* listener = iter.GetAndStep())
+void Renderer::InvokeContextLost() {
+  auto iter = m_listeners.IterateForward();
+  while (RendererListener* listener = iter.GetAndStep()) {
     listener->OnContextLost();
+  }
 }
 
-void TBRenderer::InvokeContextRestored() {
-  TBLinkListOf<TBRendererListener>::Iterator iter =
-      m_listeners.IterateForward();
-  while (TBRendererListener* listener = iter.GetAndStep())
+void Renderer::InvokeContextRestored() {
+  auto iter = m_listeners.IterateForward();
+  while (RendererListener* listener = iter.GetAndStep()) {
     listener->OnContextRestored();
+  }
 }
 
 }  // namespace tb
