@@ -89,7 +89,7 @@ class ScrollContainer : public TBWidget {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;

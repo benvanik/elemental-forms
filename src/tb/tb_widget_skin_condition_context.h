@@ -15,18 +15,16 @@
 
 namespace tb {
 
-/** Check if a condition is true for a widget when painting a skin. */
-
-class TBWidgetSkinConditionContext : public TBSkinConditionContext {
+// Check if a condition is true for a widget when painting a skin.
+class WidgetSkinConditionContext : public SkinConditionContext {
  public:
-  TBWidgetSkinConditionContext(TBWidget* widget) : m_widget(widget) {}
-  virtual bool GetCondition(SkinTarget target,
-                            const TBSkinCondition::ConditionInfo& info);
+  WidgetSkinConditionContext(TBWidget* widget) : m_widget(widget) {}
+  bool GetCondition(SkinTarget target,
+                    const SkinCondition::ConditionInfo& info) override;
 
  private:
-  bool GetCondition(TBWidget* widget,
-                    const TBSkinCondition::ConditionInfo& info);
-  TBWidget* m_widget;
+  bool GetCondition(TBWidget* widget, const SkinCondition::ConditionInfo& info);
+  TBWidget* m_widget = nullptr;
 };
 
 }  // namespace tb

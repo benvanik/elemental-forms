@@ -84,7 +84,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   // Returns the scrollcontainer used in this list.
   ScrollContainer* GetScrollContainer() { return &m_container; }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
@@ -144,7 +144,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   // Returns the menu window if it's open, or nullptr.
   MenuWindow* GetMenuIfOpen() const;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
 
   void OnSourceChanged() override;
@@ -155,7 +155,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
 
  protected:
   GenericStringItemSource m_default_source;
-  TBSkinImage m_arrow;
+  SkinImage m_arrow;
   int m_value = -1;
   WeakWidgetPointer m_window_pointer;  // Dropdown window, if opened.
 };

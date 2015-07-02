@@ -20,9 +20,9 @@
 namespace tb {
 
 /** TBSimpleLayoutItemWidget is a item containing a layout with the following:
-        -TBSkinImage showing the item image.
+        -SkinImage showing the item image.
         -Label showing the item string.
-        -TBSkinImage showing the arrow for items with a submenu.
+        -SkinImage showing the arrow for items with a submenu.
         It also handles submenu events. */
 
 class TBSimpleLayoutItemWidget : public Layout, private WidgetListener {
@@ -35,8 +35,8 @@ class TBSimpleLayoutItemWidget : public Layout, private WidgetListener {
  private:
   SelectItemSource* m_source;
   Label m_textfield;
-  TBSkinImage m_image;
-  TBSkinImage m_image_arrow;
+  SkinImage m_image;
+  SkinImage m_image_arrow;
   MenuWindow* m_menu;  ///< Points to the submenu window if opened
   virtual void OnWidgetDelete(TBWidget* widget);
   void OpenSubMenu();

@@ -117,8 +117,13 @@ const char* TBNode::GetValueString(const char* request, const char* def) {
     // looked up in GetNode/ResolveNode.
     if (node->GetValue().IsString()) {
       const char* string = node->GetValue().GetString();
-      if (*string == '@' && *TBNode::GetNextNodeSeparator(string) == 0)
-        string = g_tb_lng->GetString(string + 1);
+      if (*string == '@' && *TBNode::GetNextNodeSeparator(string) == 0) {
+        // TODO(benvanik): replace this with something better (std::string all
+        // around?). This is nasty and will break a great many things.
+        static std::string temp;
+        temp = g_tb_lng->GetString(string + 1);
+        string = temp.c_str();
+      }
       return string;
     }
     return node->GetValue().GetString();

@@ -9,7 +9,7 @@ class CodeEditField : public tb::TBEditField {
   enum SpecialStringTypes { Keyword, Variable };
   CodeEditField();
 
-  virtual void OnInflate(const tb::INFLATE_INFO& info);
+  virtual void OnInflate(const tb::InflateInfo& info);
 
  private:
   virtual void DrawString(int32_t x, int32_t y, tb::FontFace* font,

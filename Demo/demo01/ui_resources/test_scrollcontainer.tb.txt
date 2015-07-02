@@ -20,18 +20,18 @@ Layout
 				Button
 					text: "Segoe 28"
 					font: size: 28px
-			Label: text: Button containing TBSkinImage:
+			Label: text: Button containing SkinImage:
 			Layout
 				Button
 					text Click for image!
 					id add img
-					TBSkinImage
+					SkinImage
 						skin Icon16
 				Button
 					axis y
 					text Click for image!
 					id add img
-					TBSkinImage
+					SkinImage
 						skin Icon16
 			Label: text: "Button containing TBEditField:"
 			Layout
@@ -54,9 +54,9 @@ Layout
 				RadioButton
 				CheckBox
 					value 1
-				TBSkinImage
+				SkinImage
 					skin Icon16
-				TBSkinImage
+				SkinImage
 					skin Icon48
 				Button
 				Button: toggle-mode: 1

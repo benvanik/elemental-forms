@@ -29,7 +29,7 @@ class FontFace;
 class Scroller;
 class WidgetListener;
 class TBLongClickTimer;
-struct INFLATE_INFO;
+struct InflateInfo;
 
 enum class Align {
   kLeft,
@@ -867,7 +867,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      the
           widget to the hierarchy if it's not already added. If overridden, you
           must call the super implementation. */
-  virtual void OnInflate(const INFLATE_INFO& info);
+  virtual void OnInflate(const InflateInfo& info);
 
   /** Get hit status tests if this widget should be hit at the given coordinate.
           The default implementation checks the visibility, ignored input flag,
@@ -882,7 +882,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           This can be used to extend the skin conditions support with properties
      specific to different widgets. */
   virtual bool GetCustomSkinCondition(
-      const TBSkinCondition::ConditionInfo& info) {
+      const SkinCondition::ConditionInfo& info) {
     return false;
   }
 

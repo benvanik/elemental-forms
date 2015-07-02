@@ -10,7 +10,7 @@ test_layout_content
 		Button
 			axis y
 			text Foo Bar
-			TBSkinImage
+			SkinImage
 				skin Icon16
 		Button
 			gravity all

@@ -37,13 +37,13 @@ namespace tb {
 class TBRenderer;
 class TBSkin;
 class TBWidgetsReader;
-class TBLanguage;
+class Language;
 class FontManager;
 
 extern TBRenderer* g_renderer;
 extern TBSkin* g_tb_skin;
 extern TBWidgetsReader* g_widgets_reader;
-extern TBLanguage* g_tb_lng;
+extern Language* g_tb_lng;
 extern FontManager* g_font_manager;
 
 /** Initialize turbo badger. Call this before using any turbo badger API. */

@@ -74,7 +74,7 @@ class Label : public TBWidget {
   void SetSqueezable(bool squeezable);
   bool GetSqueezable() { return m_squeezable; }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
   void OnFontChanged() override;
@@ -128,7 +128,7 @@ class Button : public TBWidget, protected MessageHandler {
   void SetValue(int value) override;
   int GetValue() override;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
   bool OnEvent(const TBWidgetEvent& ev) override;
@@ -193,21 +193,18 @@ class LabelContainer : public TBWidget {
   Label m_textfield;
 };
 
-/** TBSkinImage is a widget showing a skin element, constrained in size to its
-   skin.
-        If you need to load and show images dynamically (i.e. not always loaded
-   as the skin),
-        you can use ImageWidget. */
-
-class TBSkinImage : public TBWidget {
+// A widget showing a skin element, constrained in size to its skin.
+// If you need to load and show images dynamically (i.e. not always loaded as
+// the skin), you can use ImageWidget.
+class SkinImage : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBSkinImage, TBWidget);
+  TBOBJECT_SUBCLASS(SkinImage, TBWidget);
 
-  TBSkinImage() {}
-  TBSkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
+  SkinImage() = default;
+  SkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
 
-  virtual PreferredSize OnCalculatePreferredSize(
-      const SizeConstraints& constraints);
+  PreferredSize OnCalculatePreferredSize(
+      const SizeConstraints& constraints) override;
 };
 
 // A widget only showing a skin.
@@ -338,7 +335,7 @@ class ScrollBar : public TBWidget {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
@@ -386,7 +383,7 @@ class Slider : public TBWidget {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 

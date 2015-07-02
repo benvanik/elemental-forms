@@ -5,9 +5,9 @@ WindowInfo
 Layout: axis: y, distribution: available
 	Layout: distribution: gravity
 		Button: id: undo
-			TBSkinImage: skin: arrow.left
+			SkinImage: skin: arrow.left
 		Button: id: redo
-			TBSkinImage: skin: arrow.right
+			SkinImage: skin: arrow.right
 		Button: text: Clear, id: clear
 			desc Click for <color #f44>remove</color> all text
 		Layout
@@ -15,7 +15,7 @@ Layout: axis: y, distribution: available
 			distribution-position right bottom
 			Label: id: info
 			Button: id: menu
-				TBSkinImage: skin: arrow.down
+				SkinImage: skin: arrow.down
 				Label: text: Menu
 				skin Button.flat
 	TBEditField: multiline: 1, styling: 1, gravity: all, id: editfield, autofocus: 1
@@ -31,6 +31,6 @@ Layout: axis: y, distribution: available
 				" • Keyboard navigation using tab.\n" \
 				" • <u>Underline</u>, <color #f44>Red</color>, <color #6f6>Green</color>, <color #aaf>Blue</color>\n\n" \
 				"<color #0794f8>Good to know</color>\n" \
-				" • The text widget handles styling and embedded content (Example: <widget TBSkinImage: skin: 'Icon16'> <widget Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text widgets for now.\n" \
+				" • The text widget handles styling and embedded content (Example: <widget SkinImage: skin: 'Icon16'> <widget Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text widgets for now.\n" \
 				" • You can emulate touch input by holding down shift, ctrl or alt. Touch input behaves differently in some widgets (f.ex long click to open context menu in textfields), and only invoke movement when down.\n" \
 				" • All resources are UTF-8.\n"

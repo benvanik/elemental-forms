@@ -45,7 +45,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   const char* source =
       "Layout: axis: y, distribution: available\n"
       "	Layout: distribution: available, size: available\n"
-      "		TBSkinImage: id: 2\n"
+      "		SkinImage: id: 2\n"
       "		TBEditField: multiline: 1, readonly: 1, id: 1\n"
       "	Layout: distribution-position: right bottom, id: 3\n";
   if (!g_widgets_reader->LoadData(GetContentRoot(), source)) {
@@ -54,7 +54,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   SetText(title);
 
-  GetWidgetByIDAndType<TBSkinImage>(2)->SetSkinBg(settings->icon_skin);
+  GetWidgetByIDAndType<SkinImage>(2)->SetSkinBg(settings->icon_skin);
 
   TBEditField* editfield = GetWidgetByIDAndType<TBEditField>(1);
   editfield->SetStyling(settings->styling);

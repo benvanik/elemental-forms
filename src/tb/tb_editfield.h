@@ -44,7 +44,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 
         Example - Create a image from skin element "Icon48":
 
-                <widget TBSkinImage: skin: "Icon48">
+                <widget SkinImage: skin: "Icon48">
 */
 
 class TBEditFieldContentFactory : public TBTextFragmentContentFactory {
@@ -141,8 +141,7 @@ class TBEditField : public TBWidget,
           "edit-type", matching those of EditType.
           "multiline", matching 1 if multiline mode is enabled.
           "readonly", matching 1 if readonly mode is enabled. */
-  virtual bool GetCustomSkinCondition(
-      const TBSkinCondition::ConditionInfo& info);
+  virtual bool GetCustomSkinCondition(const SkinCondition::ConditionInfo& info);
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text.
@@ -188,7 +187,7 @@ class TBEditField : public TBWidget,
   virtual bool OnEvent(const TBWidgetEvent& ev);
   virtual void OnPaint(const PaintProps& paint_props);
   virtual void OnPaintChildren(const PaintProps& paint_props);
-  virtual void OnInflate(const INFLATE_INFO& info);
+  virtual void OnInflate(const InflateInfo& info);
   virtual void OnAdded();
   virtual void OnFontChanged();
   virtual void OnFocusChanged(bool focused);

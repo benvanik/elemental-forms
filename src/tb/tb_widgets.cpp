@@ -347,7 +347,7 @@ void TBWidget::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
 }
 
 TBSkinElement* TBWidget::GetSkinBgElement() {
-  TBWidgetSkinConditionContext context(this);
+  WidgetSkinConditionContext context(this);
   SkinState state = GetAutoState();
   return g_tb_skin->GetSkinElementStrongOverride(
       m_skin_bg, static_cast<SkinState>(state), context);
@@ -695,7 +695,7 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
         if (opacity > 0) {
           g_renderer->SetOpacity(opacity);
 
-          TBWidgetSkinConditionContext context(child);
+          WidgetSkinConditionContext context(child);
           g_tb_skin->PaintSkinOverlay(child->m_rect, skin_element,
                                       static_cast<SkinState>(state), context);
 
@@ -709,7 +709,7 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   // the skin
   // doesn't have a skin state for focus which would already be painted.
   if (focused_widget && focused_widget->m_parent == this) {
-    TBWidgetSkinConditionContext context(focused_widget);
+    WidgetSkinConditionContext context(focused_widget);
     TBSkinElement* skin_element = focused_widget->GetSkinBgElement();
     if (!skin_element ||
         !skin_element->HasState(SkinState::kFocused, context)) {
@@ -1036,7 +1036,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
 
   // Paint background skin
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
-  TBWidgetSkinConditionContext context(this);
+  WidgetSkinConditionContext context(this);
   TBSkinElement* used_element = g_tb_skin->PaintSkin(
       local_rect, skin_element, static_cast<SkinState>(state), context);
   assert(!!used_element == !!skin_element);

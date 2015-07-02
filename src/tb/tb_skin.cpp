@@ -31,16 +31,16 @@ SkinState StringToState(const char* state_str) {
   return state;
 }
 
-TBSkinCondition::TBSkinCondition(SkinTarget target, SkinProperty prop,
-                                 const TBID& custom_prop, const TBID& value,
-                                 Test test)
+SkinCondition::SkinCondition(SkinTarget target, SkinProperty prop,
+                             const TBID& custom_prop, const TBID& value,
+                             Test test)
     : m_target(target), m_test(test) {
   m_info.prop = prop;
   m_info.custom_prop = custom_prop;
   m_info.value = value;
 }
 
-bool TBSkinCondition::GetCondition(TBSkinConditionContext& context) const {
+bool SkinCondition::GetCondition(SkinConditionContext& context) const {
   bool equal = context.GetCondition(m_target, m_info);
   return equal == (m_test == Test::kEqual);
 }
@@ -209,8 +209,7 @@ TBSkinElement* TBSkin::GetSkinElement(const TBID& skin_id) const {
 }
 
 TBSkinElement* TBSkin::GetSkinElementStrongOverride(
-    const TBID& skin_id, SkinState state,
-    TBSkinConditionContext& context) const {
+    const TBID& skin_id, SkinState state, SkinConditionContext& context) const {
   if (TBSkinElement* skin_element = GetSkinElement(skin_id)) {
     // Avoid eternal recursion when overrides refer to elements referring back.
     if (skin_element->is_getting) return nullptr;
@@ -237,13 +236,13 @@ TBSkinElement* TBSkin::GetSkinElementStrongOverride(
 
 TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, const TBID& skin_id,
                                  SkinState state,
-                                 TBSkinConditionContext& context) {
+                                 SkinConditionContext& context) {
   return PaintSkin(dst_rect, GetSkinElement(skin_id), state, context);
 }
 
 TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, TBSkinElement* element,
                                  SkinState state,
-                                 TBSkinConditionContext& context) {
+                                 SkinConditionContext& context) {
   if (!element || element->is_painting) return nullptr;
 
   // Avoid potential endless recursion in evil skins
@@ -298,8 +297,7 @@ TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, TBSkinElement* element,
 }
 
 void TBSkin::PaintSkinOverlay(const Rect& dst_rect, TBSkinElement* element,
-                              SkinState state,
-                              TBSkinConditionContext& context) {
+                              SkinState state, SkinConditionContext& context) {
   if (!element || element->is_painting) return;
 
   // Avoid potential endless recursion in evil skins
@@ -555,7 +553,7 @@ void TBSkinElement::SetBitmapDPI(const DimensionConverter& dim_conv,
   this->bitmap_dpi = bitmap_dpi;
 }
 
-bool TBSkinElement::HasState(SkinState state, TBSkinConditionContext& context) {
+bool TBSkinElement::HasState(SkinState state, SkinConditionContext& context) {
   return m_override_elements.GetStateElement(
              state, context,
              TBSkinElementState::MatchRule::kOnlySpecificState) ||
@@ -637,13 +635,12 @@ void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
   m_overlay_elements.Load(n->GetNode("overlays"));
 }
 
-bool TBSkinElementState::IsMatch(SkinState state,
-                                 TBSkinConditionContext& context,
+bool TBSkinElementState::IsMatch(SkinState state, SkinConditionContext& context,
                                  MatchRule rule) const {
   if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll)
     return false;
   if (any(state & this->state) || this->state == SkinState::kAll) {
-    for (TBSkinCondition* condition = conditions.GetFirst(); condition;
+    for (SkinCondition* condition = conditions.GetFirst(); condition;
          condition = condition->GetNext()) {
       if (!condition->GetCondition(context)) return false;
     }
@@ -653,12 +650,12 @@ bool TBSkinElementState::IsMatch(SkinState state,
 }
 
 bool TBSkinElementState::IsExactMatch(SkinState state,
-                                      TBSkinConditionContext& context,
+                                      SkinConditionContext& context,
                                       MatchRule rule) const {
   if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll)
     return false;
   if (state == this->state || this->state == SkinState::kAll) {
-    for (TBSkinCondition* condition = conditions.GetFirst(); condition;
+    for (SkinCondition* condition = conditions.GetFirst(); condition;
          condition = condition->GetNext())
       if (!condition->GetCondition(context)) return false;
     return true;
@@ -674,7 +671,7 @@ TBSkinElementStateList::~TBSkinElementStateList() {
 }
 
 TBSkinElementState* TBSkinElementStateList::GetStateElement(
-    SkinState state, TBSkinConditionContext& context,
+    SkinState state, SkinConditionContext& context,
     TBSkinElementState::MatchRule rule) const {
   // First try to get a state element with a exact match to the current state
   if (TBSkinElementState* element_state =
@@ -690,7 +687,7 @@ TBSkinElementState* TBSkinElementStateList::GetStateElement(
 }
 
 TBSkinElementState* TBSkinElementStateList::GetStateElementExactMatch(
-    SkinState state, TBSkinConditionContext& context,
+    SkinState state, SkinConditionContext& context,
     TBSkinElementState::MatchRule rule) const {
   TBSkinElementState* state_element = m_state_elements.GetFirst();
   while (state_element) {
@@ -743,16 +740,16 @@ void TBSkinElementStateList::Load(TBNode* n) {
           }
         }
 
-        auto test = TBSkinCondition::Test::kEqual;
+        auto test = SkinCondition::Test::kEqual;
         if (const char* test_str =
                 condition_node->GetValueString("test", nullptr)) {
           if (strcmp(test_str, "!=") == 0) {
-            test = TBSkinCondition::Test::kNotEqual;
+            test = SkinCondition::Test::kNotEqual;
           }
         }
 
-        if (TBSkinCondition* condition =
-                new TBSkinCondition(target, prop, custom_prop, value, test))
+        if (SkinCondition* condition =
+                new SkinCondition(target, prop, custom_prop, value, test))
           state->conditions.AddLast(condition);
       }
     }

@@ -130,7 +130,7 @@ class Layout : public TBWidget {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;

@@ -13,14 +13,16 @@
 
 namespace tb {
 
-TBLanguage::~TBLanguage() { Clear(); }
+Language::~Language() { Clear(); }
 
-bool TBLanguage::Load(const char* filename) {
-  // Read the file into a node tree (even though it's only a flat list)
+bool Language::Load(const char* filename) {
+  // Read the file into a node tree (even though it's only a flat list).
   TBNode node;
-  if (!node.ReadFile(filename)) return false;
+  if (!node.ReadFile(filename)) {
+    return false;
+  }
 
-  // Go through all nodes and add to the strings hash table
+  // Go through all nodes and add to the strings hash table.
   TBNode* n = node.GetFirstChild();
   while (n) {
     const char* str = n->GetValue().GetString();
@@ -31,16 +33,14 @@ bool TBLanguage::Load(const char* filename) {
   return true;
 }
 
-void TBLanguage::Clear() { strings.DeleteAll(); }
+void Language::Clear() { strings.DeleteAll(); }
 
-const char* TBLanguage::GetString(const TBID& id) {
+std::string Language::GetString(const TBID& id) {
   if (std::string* str = strings.Get(id)) {
-    return str->c_str();
+    return *str;
   }
 #ifdef TB_RUNTIME_DEBUG_INFO
-  static std::string tmp;
-  tmp = tb::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
-  return tmp.c_str();
+  return tb::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
 #else
   return "<TRANSLATE!>";
 #endif

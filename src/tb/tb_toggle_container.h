@@ -51,7 +51,7 @@ class ToggleContainer : public TBWidget {
   void SetValue(int value) override;
   int GetValue() override { return m_value; }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
 
  private:
   void UpdateInternal();

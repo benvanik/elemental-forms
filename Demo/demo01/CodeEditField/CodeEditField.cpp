@@ -8,7 +8,7 @@ TB_WIDGET_FACTORY(CodeEditField, TBValue::Type::kString, WidgetZ::kTop) {}
 
 CodeEditField::CodeEditField() : TBEditField(), inComment(false) {}
 
-void CodeEditField::OnInflate(const INFLATE_INFO& info) {
+void CodeEditField::OnInflate(const InflateInfo& info) {
   TBEditField::OnInflate(info);
 }
 

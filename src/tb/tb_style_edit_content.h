@@ -18,7 +18,6 @@ namespace tb {
 class TBTextFragment;
 
 /** Content for a non-text TBTextFragment. */
-
 class TBTextFragmentContent {
  public:
   virtual ~TBTextFragmentContent() {}

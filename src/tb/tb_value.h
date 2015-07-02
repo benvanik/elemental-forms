@@ -91,13 +91,13 @@ class TBValue {
 
   ~TBValue();
 
-  // Take over ownership of content of source_value.
+  // Takes over ownership of content of source_value.
   // NOTE: If source_value has string or array that are set with Set::kAsStatic,
   // it will make new copies of those.
   // NOTE: value will be nulled on source_value after this call.
   void TakeOver(TBValue& source_value);
 
-  // Copy the content of source_value to this value.
+  // Copies the content of source_value to this value.
   // NOTE: This value will become Type::kNull if source_value holds an object.
   // We can't copy objects.
   void Copy(const TBValue& source_value);
@@ -106,19 +106,19 @@ class TBValue {
   void SetInt(int val);
   void SetFloat(float val);
 
-  // Set the passed in string.
+  // Sets the passed in string.
   void SetString(const char* val, Set set);
   void SetString(const std::string& val) {
     SetString(val.c_str(), Set::kNewCopy);
   }
 
-  // Set the passed in object. Takes the ownership of the object!
+  // Sets the passed in object. Takes the ownership of the object!
   void SetObject(TBTypedObject* object);
 
-  // Set the passed in array.
+  // Sets the passed in array.
   void SetArray(TBValueArray* arr, Set set);
 
-  // Set the value either as a string, number or array of numbers, depending of
+  // Sets the value either as a string, number or array of numbers, depending of
   // the string syntax.
   void SetFromStringAuto(const char* str, Set set);
 

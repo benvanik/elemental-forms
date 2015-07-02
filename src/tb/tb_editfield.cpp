@@ -140,7 +140,7 @@ void TBEditField::SetEditType(EditType type) {
 }
 
 bool TBEditField::GetCustomSkinCondition(
-    const TBSkinCondition::ConditionInfo& info) {
+    const SkinCondition::ConditionInfo& info) {
   if (info.custom_prop == TBIDC("edit-type")) {
     switch (m_edit_type) {
       case EditType::kText:
@@ -435,13 +435,13 @@ void TBEditField::DrawRectFill(const Rect& rect, const Color& color) {
 }
 
 void TBEditField::DrawTextSelectionBg(const Rect& rect) {
-  TBWidgetSkinConditionContext context(this);
+  WidgetSkinConditionContext context(this);
   g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
                        static_cast<SkinState>(GetAutoState()), context);
 }
 
 void TBEditField::DrawContentSelectionFg(const Rect& rect) {
-  TBWidgetSkinConditionContext context(this);
+  WidgetSkinConditionContext context(this);
   g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
                        static_cast<SkinState>(GetAutoState()), context);
 }

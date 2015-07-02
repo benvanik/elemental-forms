@@ -15,8 +15,8 @@
 
 namespace tb {
 
-bool TBWidgetSkinConditionContext::GetCondition(
-    SkinTarget target, const TBSkinCondition::ConditionInfo& info) {
+bool WidgetSkinConditionContext::GetCondition(
+    SkinTarget target, const SkinCondition::ConditionInfo& info) {
   switch (target) {
     case SkinTarget::kThis:
       return GetCondition(m_widget, info);
@@ -25,7 +25,9 @@ bool TBWidgetSkinConditionContext::GetCondition(
     case SkinTarget::kAncestors: {
       TBWidget* widget = m_widget->GetParent();
       while (widget) {
-        if (GetCondition(widget, info)) return true;
+        if (GetCondition(widget, info)) {
+          return true;
+        }
         widget = widget->GetParent();
       }
     }
@@ -37,27 +39,30 @@ bool TBWidgetSkinConditionContext::GetCondition(
   return false;
 }
 
-bool TBWidgetSkinConditionContext::GetCondition(
-    TBWidget* widget, const TBSkinCondition::ConditionInfo& info) {
+bool WidgetSkinConditionContext::GetCondition(
+    TBWidget* widget, const SkinCondition::ConditionInfo& info) {
   switch (info.prop) {
     case SkinProperty::kSkin:
       return widget->GetSkinBg() == info.value;
     case SkinProperty::kWindowActive:
-      if (Window* window = widget->GetParentWindow()) return window->IsActive();
+      if (Window* window = widget->GetParentWindow()) {
+        return window->IsActive();
+      }
       return false;
     case SkinProperty::kAxis:
       return TBID(widget->GetAxis() == Axis::kX ? "x" : "y") == info.value;
     case SkinProperty::kAlign:
       if (TabContainer* tc = TBSafeCast<TabContainer>(widget)) {
         TBID widget_align;
-        if (tc->GetAlignment() == Align::kLeft)
+        if (tc->GetAlignment() == Align::kLeft) {
           widget_align = TBIDC("left");
-        else if (tc->GetAlignment() == Align::kTop)
+        } else if (tc->GetAlignment() == Align::kTop) {
           widget_align = TBIDC("top");
-        else if (tc->GetAlignment() == Align::kRight)
+        } else if (tc->GetAlignment() == Align::kRight) {
           widget_align = TBIDC("right");
-        else if (tc->GetAlignment() == Align::kBottom)
+        } else if (tc->GetAlignment() == Align::kBottom) {
           widget_align = TBIDC("bottom");
+        }
         return widget_align == info.value;
       }
       return false;

@@ -342,7 +342,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
       Button* button = TBSafeCast<Button>(ev.target);
-      TBSkinImage* skin_image = new TBSkinImage;
+      SkinImage* skin_image = new SkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
       button->GetContentRoot()->AddChild(skin_image, WidgetZ::kBottom);
       return true;

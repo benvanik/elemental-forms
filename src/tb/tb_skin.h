@@ -21,7 +21,7 @@
 namespace tb {
 
 class TBNode;
-class TBSkinConditionContext;
+class SkinConditionContext;
 
 // Used for some values in TBSkinElement if they has not been specified in the
 // skin.
@@ -75,18 +75,17 @@ enum class SkinProperty {
   kHover,         // Focus is on the target or any child (no value required).
   kCapture,       // Capture is on the target or any child (no value required).
   kFocus,         // Focus is on the target or any child (no value required).
-  kCustom,  // It's a property unknown to skin, that the TBSkinConditionContext
+  kCustom,  // It's a property unknown to skin, that the SkinConditionContext
             // might know about.
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(SkinProperty, "skin", "window active", "axis",
                                "align", "id", "state", "value", "hover",
                                "capture", "focus", "custom");
 
-// TBSkinCondition checks if a condition is true for a given
-// TBSkinConditionContext.
+// Checks if a condition is true for a given SkinConditionContext.
 // This is used to apply different state elements depending on what is currently
 // painting the skin.
-class TBSkinCondition : public TBLinkOf<TBSkinCondition> {
+class SkinCondition : public TBLinkOf<SkinCondition> {
  public:
   // Defines if the condition tested should be equal or not for the condition to
   // be true.
@@ -102,11 +101,11 @@ class TBSkinCondition : public TBLinkOf<TBSkinCondition> {
     TBID value;         // The value to compare.
   };
 
-  TBSkinCondition(SkinTarget target, SkinProperty prop, const TBID& custom_prop,
-                  const TBID& value, Test test);
+  SkinCondition(SkinTarget target, SkinProperty prop, const TBID& custom_prop,
+                const TBID& value, Test test);
 
-  // Return true if the condition is true for the given context.
-  bool GetCondition(TBSkinConditionContext& context) const;
+  // Returns true if the condition is true for the given context.
+  bool GetCondition(SkinConditionContext& context) const;
 
  private:
   SkinTarget m_target;
@@ -114,18 +113,16 @@ class TBSkinCondition : public TBLinkOf<TBSkinCondition> {
   Test m_test;
 };
 
-/** TBSkinConditionContext checks if a condition is true. It is passed to skin
-   painting functions
-        so different state elements can be applied depending on the current
-   situation of the context.
-        F.ex a widget may change appearance if it's under a parent with a
-   certain skin. */
-
-class TBSkinConditionContext {
+// Checks if a condition is true.
+// It is passed to skin painting functions so different state elements can be
+// applied depending on the current situation of the context.
+// F.ex a widget may change appearance if it's under a parent with a certain
+// skin.
+class SkinConditionContext {
  public:
-  /** Return true if the given target and property equals the given value. */
+  // Returns true if the given target and property equals the given value.
   virtual bool GetCondition(SkinTarget target,
-                            const TBSkinCondition::ConditionInfo& info) = 0;
+                            const SkinCondition::ConditionInfo& info) = 0;
 };
 
 /** TBSkinElementState has a skin element id that should be used if its state
@@ -143,15 +140,15 @@ class TBSkinElementState : public TBLinkOf<TBSkinElementState> {
     kOnlySpecificState,
   };
 
-  bool IsMatch(SkinState state, TBSkinConditionContext& context,
+  bool IsMatch(SkinState state, SkinConditionContext& context,
                MatchRule rule = MatchRule::kDefault) const;
 
-  bool IsExactMatch(SkinState state, TBSkinConditionContext& context,
+  bool IsExactMatch(SkinState state, SkinConditionContext& context,
                     MatchRule rule = MatchRule::kDefault) const;
 
   TBID element_id;
   SkinState state;
-  TBLinkListAutoDeleteOf<TBSkinCondition> conditions;
+  TBLinkListAutoDeleteOf<SkinCondition> conditions;
 };
 
 /** List of state elements in a TBSkinElement. */
@@ -161,12 +158,12 @@ class TBSkinElementStateList {
   ~TBSkinElementStateList();
 
   TBSkinElementState* GetStateElement(
-      SkinState state, TBSkinConditionContext& context,
+      SkinState state, SkinConditionContext& context,
       TBSkinElementState::MatchRule rule =
           TBSkinElementState::MatchRule::kDefault) const;
 
   TBSkinElementState* GetStateElementExactMatch(
-      SkinState state, TBSkinConditionContext& context,
+      SkinState state, SkinConditionContext& context,
       TBSkinElementState::MatchRule rule =
           TBSkinElementState::MatchRule::kDefault) const;
 
@@ -297,7 +294,7 @@ class TBSkinElement {
   /** Check if there's a exact or partial match for the given state in either
           override, child or overlay element list.
           State elements with state "all" will be ignored. */
-  bool HasState(SkinState state, TBSkinConditionContext& context);
+  bool HasState(SkinState state, SkinConditionContext& context);
 
   /** Return true if this element has overlay elements. */
   bool HasOverlayElements() const {
@@ -371,7 +368,7 @@ class TBSkin : private TBRendererListener {
           Returns nullptr if there's no match. */
   TBSkinElement* GetSkinElementStrongOverride(
       const TBID& skin_id, SkinState state,
-      TBSkinConditionContext& context) const;
+      SkinConditionContext& context) const;
 
   /** Get the default text color for all skin elements */
   Color GetDefaultTextColor() const { return m_default_text_color; }
@@ -425,17 +422,17 @@ class TBSkin : private TBRendererListener {
           Return the skin element used (after following override elements),
           or nullptr if no skin element was found matching the skin_id. */
   TBSkinElement* PaintSkin(const Rect& dst_rect, const TBID& skin_id,
-                           SkinState state, TBSkinConditionContext& context);
+                           SkinState state, SkinConditionContext& context);
 
   /** Paint the skin at dst_rect. Just like the PaintSkin above, but takes a
      specific
           skin element instead of looking it up from the id. */
   TBSkinElement* PaintSkin(const Rect& dst_rect, TBSkinElement* element,
-                           SkinState state, TBSkinConditionContext& context);
+                           SkinState state, SkinConditionContext& context);
 
   /** Paint the overlay elements for the given skin element and state. */
   void PaintSkinOverlay(const Rect& dst_rect, TBSkinElement* element,
-                        SkinState state, TBSkinConditionContext& context);
+                        SkinState state, SkinConditionContext& context);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   /** Render the skin bitmaps on screen, to analyze fragment positioning. */

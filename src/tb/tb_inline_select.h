@@ -38,7 +38,7 @@ class SelectInline : public TBWidget {
   void SetValue(int value) override { SetValueInternal(value, true); }
   int GetValue() override { return m_value; }
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   void OnSkinChanged() override;
   bool OnEvent(const TBWidgetEvent& ev) override;
 

@@ -100,7 +100,7 @@ SelectDropdown
 			id <id>
 CheckBox
 RadioButton
-TBSkinImage
+SkinImage
 Separator
 ProgressSpinner
 Container

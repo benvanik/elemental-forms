@@ -280,7 +280,7 @@ bool LabelContainer::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-PreferredSize TBSkinImage::OnCalculatePreferredSize(
+PreferredSize SkinImage::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = TBWidget::OnCalculatePreferredSize(constraints);
   // FIX: Make it stretched proportionally if shrunk.

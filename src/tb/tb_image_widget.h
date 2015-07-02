@@ -17,7 +17,7 @@ namespace tb {
 
 // A widget showing a image loaded by ImageManager, constrained in size to its
 // skin.
-// If you need to show a image from the skin, you can use TBSkinImage.
+// If you need to show a image from the skin, you can use SkinImage.
 class ImageWidget : public TBWidget {
  public:
   TBOBJECT_SUBCLASS(ImageWidget, TBWidget);
@@ -32,7 +32,7 @@ class ImageWidget : public TBWidget {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   void OnPaint(const PaintProps& paint_props) override;
 
  private:

@@ -55,7 +55,7 @@ class TabContainer : public TBWidget {
   // Returns the widget that is the current page, or nullptr if none is active.
   TBWidget* GetCurrentPageWidget() const;
 
-  void OnInflate(const INFLATE_INFO& info) override;
+  void OnInflate(const InflateInfo& info) override;
   bool OnEvent(const TBWidgetEvent& ev) override;
   void OnProcess() override;
 
