@@ -82,7 +82,6 @@ class TBEditField : public TBWidget,
                     private TBStyleEditListener,
                     public TBMessageHandler {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBEditField, TBWidget);
 
   TBEditField();

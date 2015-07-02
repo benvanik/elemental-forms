@@ -96,7 +96,6 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 
 class TBLayout : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBLayout, TBWidget);
 
   TBLayout(Axis axis = Axis::kX);

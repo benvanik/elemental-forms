@@ -66,7 +66,6 @@ class TBPopupAlignment {
 
 class TBPopupWindow : public TBWindow, private TBWidgetListener {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBPopupWindow, TBWindow);
 
   TBPopupWindow(TBWidget* target);

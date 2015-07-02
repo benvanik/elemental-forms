@@ -54,7 +54,6 @@ class TBWidgetString {
 
 class TBTextField : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBTextField, TBWidget);
 
   TBTextField();
@@ -95,7 +94,6 @@ class TBTextField : public TBWidget {
 
 class TBButton : public TBWidget, protected TBMessageHandler {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBButton, TBWidget);
 
   TBButton();
@@ -165,7 +163,6 @@ class TBButton : public TBWidget, protected TBMessageHandler {
 
 class TBClickLabel : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBClickLabel, TBWidget);
 
   TBClickLabel();
@@ -202,7 +199,6 @@ class TBClickLabel : public TBWidget {
 
 class TBSkinImage : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSkinImage, TBWidget);
 
   TBSkinImage() {}
@@ -216,7 +212,6 @@ class TBSkinImage : public TBWidget {
         It is disabled by default. */
 class TBSeparator : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSeparator, TBWidget);
 
   TBSeparator();
@@ -226,7 +221,6 @@ class TBSeparator : public TBWidget {
         Typically used to indicate that the application is working. */
 class TBProgressSpinner : public TBWidget, protected TBMessageHandler {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBProgressSpinner, TBWidget);
 
   TBProgressSpinner();
@@ -261,7 +255,6 @@ class TBProgressSpinner : public TBWidget, protected TBMessageHandler {
  */
 class TBRadioCheckBox : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBRadioCheckBox, TBWidget);
 
   TBRadioCheckBox();
@@ -285,7 +278,6 @@ class TBRadioCheckBox : public TBWidget {
         For a labeled checkbox, use a TBClickLabel containing a TBCheckBox. */
 class TBCheckBox : public TBRadioCheckBox {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBCheckBox, TBRadioCheckBox);
 
   TBCheckBox() { SetSkinBg(TBIDC("TBCheckBox"), InvokeInfo::kNoCallbacks); }
@@ -297,7 +289,6 @@ class TBCheckBox : public TBRadioCheckBox {
    TBRadioButton. */
 class TBRadioButton : public TBRadioCheckBox {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBRadioButton, TBRadioCheckBox);
 
   TBRadioButton() {
@@ -309,7 +300,6 @@ class TBRadioButton : public TBRadioCheckBox {
 
 class TBScrollBar : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBScrollBar, TBWidget);
 
   TBScrollBar();
@@ -369,7 +359,6 @@ class TBScrollBar : public TBWidget {
 // FIX: Also add a auto track that keeps it up to date with value (default).
 class TBSlider : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSlider, TBWidget);
 
   TBSlider();
@@ -413,7 +402,6 @@ class TBSlider : public TBWidget {
  * "TBContainer") */
 class TBContainer : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBContainer, TBWidget);
 
   TBContainer();
@@ -422,7 +410,6 @@ class TBContainer : public TBWidget {
 /** TBMover is moving its parent widget when dragged. */
 class TBMover : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBMover, TBWidget);
 
   TBMover();
@@ -434,7 +421,6 @@ class TBMover : public TBWidget {
  * widget. */
 class TBResizer : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBResizer, TBWidget);
 
   TBResizer();
@@ -445,7 +431,6 @@ class TBResizer : public TBWidget {
 /** TBDimmer dim widgets in the background and block input. */
 class TBDimmer : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBDimmer, TBWidget);
 
   TBDimmer();

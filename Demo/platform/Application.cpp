@@ -10,19 +10,19 @@ using namespace tb;
 void Application::Run() { m_backend->Run(); }
 
 bool Application::Init() {
-  TBWidgetsAnimationManager::Init();
+  WidgetAnimationManager::Init();
 
   return true;
 }
 
 void Application::ShutDown() {
-  TBWidgetsAnimationManager::Shutdown();
+  WidgetAnimationManager::Shutdown();
   delete m_backend;
   m_backend = nullptr;
 }
 
 void Application::Process() {
-  TBAnimationManager::Update();
+  AnimationManager::Update();
   GetRoot()->InvokeProcessStates();
   GetRoot()->InvokeProcess();
 }
@@ -33,5 +33,5 @@ void Application::RenderFrame(int window_w, int window_h) {
   g_renderer->EndPaint();
 
   // If animations are running, reinvalidate immediately
-  if (TBAnimationManager::HasAnimationsRunning()) GetRoot()->Invalidate();
+  if (AnimationManager::HasAnimationsRunning()) GetRoot()->Invalidate();
 }

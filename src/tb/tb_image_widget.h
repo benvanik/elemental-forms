@@ -21,7 +21,6 @@ namespace tb {
 
 class TBImageWidget : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBImageWidget, TBWidget);
 
   TBImageWidget() {}

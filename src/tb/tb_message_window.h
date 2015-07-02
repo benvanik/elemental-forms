@@ -47,7 +47,6 @@ class TBMessageWindowSettings {
         window will delete itself. */
 class TBMessageWindow : public TBWindow, private TBWidgetListener {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBMessageWindow, TBWindow);
 
   TBMessageWindow(TBWidget* target, TBID id);

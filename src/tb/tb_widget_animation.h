@@ -15,39 +15,36 @@
 
 namespace tb {
 
-/** Don't use 0.0 for opacity animations since that may break focus code.
-        At the moment a window should appear and start fading in from opacity 0,
-        it would also attempt setting the focus to it, but if opacity is 0 it
-   will
-        think focus should not be set in that window and fail. */
-#define TB_ALMOST_ZERO_OPACITY 0.001f
+// Don't use 0.0 for opacity animations since that may break focus code.
+// At the moment a window should appear and start fading in from opacity 0,
+// it would also attempt setting the focus to it, but if opacity is 0 it will
+// think focus should not be set in that window and fail.
+constexpr float kAlmostZeroOpacity = 0.001f;
 
-/** Base class for widget animations. This animation object will
-        be deleted automatically if the widget is deleted. */
-class TBWidgetAnimationObject : public TBAnimationObject,
-                                public TBLinkOf<TBWidgetAnimationObject> {
+// Base class for widget animations. This animation object will be deleted
+// automatically if the widget is deleted.
+class WidgetAnimation : public Animation, public TBLinkOf<WidgetAnimation> {
  public:
-  // For safe typecasting
-  TBOBJECT_SUBCLASS(TBWidgetAnimationObject, TBAnimationObject);
+  TBOBJECT_SUBCLASS(WidgetAnimation, Animation);
 
-  TBWidgetAnimationObject(TBWidget* widget);
-  virtual ~TBWidgetAnimationObject();
+  WidgetAnimation(TBWidget* widget);
+  ~WidgetAnimation() override;
 
  public:
   TBWidget* m_widget;
 };
 
-/** Animate the opacity of the target widget. */
-class TBWidgetAnimationOpacity : public TBWidgetAnimationObject {
+// Animates the opacity of the target widget.
+class OpacityWidgetAnimation : public WidgetAnimation {
  public:
-  // For safe typecasting
-  TBOBJECT_SUBCLASS(TBWidgetAnimationOpacity, TBWidgetAnimationObject);
+  TBOBJECT_SUBCLASS(OpacityWidgetAnimation, WidgetAnimation);
 
-  TBWidgetAnimationOpacity(TBWidget* widget, float src_opacity,
-                           float dst_opacity, bool die);
-  virtual void OnAnimationStart();
-  virtual void OnAnimationUpdate(float progress);
-  virtual void OnAnimationStop(bool aborted);
+  OpacityWidgetAnimation(TBWidget* widget, float src_opacity, float dst_opacity,
+                         bool die);
+
+  void OnAnimationStart() override;
+  void OnAnimationUpdate(float progress) override;
+  void OnAnimationStop(bool aborted) override;
 
  private:
   float m_src_opacity;
@@ -55,27 +52,28 @@ class TBWidgetAnimationOpacity : public TBWidgetAnimationObject {
   bool m_die;
 };
 
-/** Animate the rectangle of the target widget. */
-class TBWidgetAnimationRect : public TBWidgetAnimationObject {
+// Animates the rectangle of the target widget.
+class RectWidgetAnimation : public WidgetAnimation {
  public:
-  // For safe typecasting
-  TBOBJECT_SUBCLASS(TBWidgetAnimationRect, TBWidgetAnimationObject);
+  TBOBJECT_SUBCLASS(RectWidgetAnimation, WidgetAnimation);
 
   enum class Mode {
     kSrcToDest,  // Animate from source to dest.
     kDeltaIn,    // Animate from current + delta to current.
     kDeltaOut,   // Animate from current to current + delta.
   };
-  /** Animate the widget between the given source and dest rectangle. */
-  TBWidgetAnimationRect(TBWidget* widget, const TBRect& src_rect,
-                        const TBRect& dst_rect);
-  /** Animate the widget between rectangles based on the current widget
-          rectangle and a delta. The reference rectangle will be taken from
-          the target widget on the first OnAnimationUpdate. */
-  TBWidgetAnimationRect(TBWidget* widget, const TBRect& delta_rect, Mode mode);
-  virtual void OnAnimationStart();
-  virtual void OnAnimationUpdate(float progress);
-  virtual void OnAnimationStop(bool aborted);
+
+  // Animates the widget between the given source and dest rectangle.
+  RectWidgetAnimation(TBWidget* widget, const TBRect& src_rect,
+                      const TBRect& dst_rect);
+  // Animates the widget between rectangles based on the current widget
+  // rectangle and a delta. The reference rectangle will be taken from the
+  // target widget on the first OnAnimationUpdate.
+  RectWidgetAnimation(TBWidget* widget, const TBRect& delta_rect, Mode mode);
+
+  void OnAnimationStart() override;
+  void OnAnimationUpdate(float progress) override;
+  void OnAnimationStop(bool aborted) override;
 
  private:
   TBRect m_src_rect;
@@ -84,30 +82,26 @@ class TBWidgetAnimationRect : public TBWidgetAnimationObject {
   Mode m_mode;
 };
 
-class TBWidgetsAnimationManager : public TBWidgetListener {
+class WidgetAnimationManager : public TBWidgetListener {
  public:
-  /** Init the widgets animation manager. */
   static void Init();
-
-  /** Shutdown the widgets animation manager. */
   static void Shutdown();
 
-  /** Abort all animations that are running for the given widget. */
+  // Aborts all animations that are running for the given widget.
   static void AbortAnimations(TBWidget* widget);
 
-  /** Abort all animations matching the given type that are running for the
-     given widget.
-          This example will abort all opacity animations:
-                  AbortAnimations(widget,
-     TBTypedObject::GetTypeId<TBWidgetAnimationOpacity>()) */
+  // Abort all animations matching the given type that are running for the given
+  // widget.
+  // This example will abort all opacity animations:
+  // AbortAnimations(widget,
+  //     TBTypedObject::GetTypeId<OpacityWidgetAnimation>())
   static void AbortAnimations(TBWidget* widget, TB_TYPE_ID type_id);
 
  private:
-  // == TBWidgetListener ==================
-  virtual void OnWidgetDelete(TBWidget* widget);
-  virtual bool OnWidgetDying(TBWidget* widget);
-  virtual void OnWidgetAdded(TBWidget* parent, TBWidget* child);
-  virtual void OnWidgetRemove(TBWidget* parent, TBWidget* child);
+  void OnWidgetDelete(TBWidget* widget) override;
+  bool OnWidgetDying(TBWidget* widget) override;
+  void OnWidgetAdded(TBWidget* parent, TBWidget* child) override;
+  void OnWidgetRemove(TBWidget* parent, TBWidget* child) override;
 };
 
 }  // namespace tb

@@ -36,7 +36,7 @@ Animations, Layout and Painting
 Before painting, it is a good time to run animations, update widgets input states
 and layout, since all that affect the rendering. This is done by calling:
 
-	TBAnimationManager::Update()
+	AnimationManager::Update()
 	root->InvokeProcessStates()
 	root->InvokeProcess()
 

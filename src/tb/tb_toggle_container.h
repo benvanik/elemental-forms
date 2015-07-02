@@ -31,7 +31,6 @@ MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
         with a widget connection, this can happen completly automatically. */
 class TBToggleContainer : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBToggleContainer, TBWidget);
 
   TBToggleContainer();
@@ -68,7 +67,6 @@ class TBToggleContainer : public TBWidget {
         header in TBSection that toggles the section. */
 class TBSectionHeader : public TBButton {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSectionHeader, TBButton);
 
   TBSectionHeader();
@@ -92,7 +90,6 @@ class TBSectionHeader : public TBButton {
 
 class TBSection : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSection, TBWidget);
 
   TBSection();

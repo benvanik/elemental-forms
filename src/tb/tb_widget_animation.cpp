@@ -17,28 +17,27 @@
 
 namespace tb {
 
-TBLinkListOf<TBWidgetAnimationObject> widget_animations;
+TBLinkListOf<WidgetAnimation> widget_animations;
 
-#define LERP(src, dst, progress) (src + (dst - src) * progress)
+inline float Lerp(float src, float dst, float progress) {
+  return src + (dst - src) * progress;
+}
 
-TBWidgetAnimationObject::TBWidgetAnimationObject(TBWidget* widget)
-    : m_widget(widget) {
+WidgetAnimation::WidgetAnimation(TBWidget* widget) : m_widget(widget) {
   widget_animations.AddLast(this);
 }
 
-TBWidgetAnimationObject::~TBWidgetAnimationObject() {
-  widget_animations.Remove(this);
-}
+WidgetAnimation::~WidgetAnimation() { widget_animations.Remove(this); }
 
-TBWidgetAnimationOpacity::TBWidgetAnimationOpacity(TBWidget* widget,
-                                                   float src_opacity,
-                                                   float dst_opacity, bool die)
-    : TBWidgetAnimationObject(widget),
+OpacityWidgetAnimation::OpacityWidgetAnimation(TBWidget* widget,
+                                               float src_opacity,
+                                               float dst_opacity, bool die)
+    : WidgetAnimation(widget),
       m_src_opacity(src_opacity),
       m_dst_opacity(dst_opacity),
       m_die(die) {}
 
-void TBWidgetAnimationOpacity::OnAnimationStart() {
+void OpacityWidgetAnimation::OnAnimationStart() {
   // Make sure we don't stay idle if nothing is scheduled (hack).
   // FIX: fix this properly
   m_widget->Invalidate();
@@ -46,11 +45,11 @@ void TBWidgetAnimationOpacity::OnAnimationStart() {
   m_widget->SetOpacity(m_src_opacity);
 }
 
-void TBWidgetAnimationOpacity::OnAnimationUpdate(float progress) {
-  m_widget->SetOpacity(LERP(m_src_opacity, m_dst_opacity, progress));
+void OpacityWidgetAnimation::OnAnimationUpdate(float progress) {
+  m_widget->SetOpacity(Lerp(m_src_opacity, m_dst_opacity, progress));
 }
 
-void TBWidgetAnimationOpacity::OnAnimationStop(bool aborted) {
+void OpacityWidgetAnimation::OnAnimationStop(bool aborted) {
   // If we're aborted, it may be because the widget is being deleted
   if (m_die && !aborted) {
     TBWidgetSafePointer the_widget(m_widget);
@@ -60,36 +59,37 @@ void TBWidgetAnimationOpacity::OnAnimationStop(bool aborted) {
     m_widget->SetOpacity(m_dst_opacity);
 }
 
-TBWidgetAnimationRect::TBWidgetAnimationRect(TBWidget* widget,
-                                             const TBRect& src_rect,
-                                             const TBRect& dst_rect)
-    : TBWidgetAnimationObject(widget),
+RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget,
+                                         const TBRect& src_rect,
+                                         const TBRect& dst_rect)
+    : WidgetAnimation(widget),
       m_src_rect(src_rect),
       m_dst_rect(dst_rect),
       m_mode(Mode::kSrcToDest) {}
 
-TBWidgetAnimationRect::TBWidgetAnimationRect(TBWidget* widget,
-                                             const TBRect& delta_rect,
-                                             Mode mode)
-    : TBWidgetAnimationObject(widget), m_delta_rect(delta_rect), m_mode(mode) {
+RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget,
+                                         const TBRect& delta_rect, Mode mode)
+    : WidgetAnimation(widget), m_delta_rect(delta_rect), m_mode(mode) {
   assert(mode == Mode::kDeltaIn || mode == Mode::kDeltaOut);
 }
 
-void TBWidgetAnimationRect::OnAnimationStart() {
+void RectWidgetAnimation::OnAnimationStart() {
   // Make sure we don't stay idle if nothing is scheduled (hack).
   // FIX: fix this properly
   m_widget->Invalidate();
 
-  if (m_mode == Mode::kSrcToDest) m_widget->SetRect(m_src_rect);
+  if (m_mode == Mode::kSrcToDest) {
+    m_widget->SetRect(m_src_rect);
+  }
 }
 
-void TBWidgetAnimationRect::OnAnimationUpdate(float progress) {
+void RectWidgetAnimation::OnAnimationUpdate(float progress) {
   if (m_mode == Mode::kDeltaIn || m_mode == Mode::kDeltaOut) {
     m_dst_rect = m_src_rect = m_widget->GetRect();
     if (m_dst_rect.Equals(TBRect())) {
       // Widget hasn't been laid out yet,
       // the animation was started too soon.
-      TBAnimationManager::AbortAnimation(this, true);
+      AnimationManager::AbortAnimation(this, true);
       return;
     }
     if (m_mode == Mode::kDeltaIn) {
@@ -106,37 +106,38 @@ void TBWidgetAnimationRect::OnAnimationUpdate(float progress) {
     m_mode = Mode::kSrcToDest;
   }
   TBRect rect;
-  rect.x = (int)LERP(m_src_rect.x, m_dst_rect.x, progress);
-  rect.y = (int)LERP(m_src_rect.y, m_dst_rect.y, progress);
-  rect.w = (int)LERP(m_src_rect.w, m_dst_rect.w, progress);
-  rect.h = (int)LERP(m_src_rect.h, m_dst_rect.h, progress);
+  rect.x = int(Lerp(float(m_src_rect.x), float(m_dst_rect.x), progress));
+  rect.y = int(Lerp(float(m_src_rect.y), float(m_dst_rect.y), progress));
+  rect.w = int(Lerp(float(m_src_rect.w), float(m_dst_rect.w), progress));
+  rect.h = int(Lerp(float(m_src_rect.h), float(m_dst_rect.h), progress));
   m_widget->SetRect(rect);
 }
 
-void TBWidgetAnimationRect::OnAnimationStop(bool aborted) {
-  if (m_mode == Mode::kSrcToDest)  // m_dst_rect may still be unset if aborted.
+void RectWidgetAnimation::OnAnimationStop(bool aborted) {
+  if (m_mode == Mode::kSrcToDest) {
+    // m_dst_rect may still be unset if aborted.
     m_widget->SetRect(m_dst_rect);
+  }
 }
 
-TBWidgetsAnimationManager widgets_animation_manager;
+WidgetAnimationManager widgets_animation_manager;
 
-void TBWidgetsAnimationManager::Init() {
+void WidgetAnimationManager::Init() {
   TBWidgetListener::AddGlobalListener(&widgets_animation_manager);
 }
 
-void TBWidgetsAnimationManager::Shutdown() {
+void WidgetAnimationManager::Shutdown() {
   TBWidgetListener::RemoveGlobalListener(&widgets_animation_manager);
 }
 
-void TBWidgetsAnimationManager::AbortAnimations(TBWidget* widget) {
+void WidgetAnimationManager::AbortAnimations(TBWidget* widget) {
   AbortAnimations(widget, nullptr);
 }
 
-void TBWidgetsAnimationManager::AbortAnimations(TBWidget* widget,
-                                                TB_TYPE_ID type_id) {
-  TBLinkListOf<TBWidgetAnimationObject>::Iterator iter =
-      widget_animations.IterateForward();
-  while (TBWidgetAnimationObject* wao = iter.GetAndStep()) {
+void WidgetAnimationManager::AbortAnimations(TBWidget* widget,
+                                             TB_TYPE_ID type_id) {
+  auto iter = widget_animations.IterateForward();
+  while (WidgetAnimation* wao = iter.GetAndStep()) {
     if (wao->m_widget == widget) {
       // Skip this animation if we asked for a specific (and
       // different) animation type.
@@ -144,66 +145,64 @@ void TBWidgetsAnimationManager::AbortAnimations(TBWidget* widget,
 
       // Abort the animation. This will both autoremove itself
       // and delete it, so no need to do it here.
-      TBAnimationManager::AbortAnimation(wao, true);
+      AnimationManager::AbortAnimation(wao, true);
     }
   }
 }
 
-void TBWidgetsAnimationManager::OnWidgetDelete(TBWidget* widget) {
+void WidgetAnimationManager::OnWidgetDelete(TBWidget* widget) {
   // Kill and delete all animations running for the widget being deleted.
   AbortAnimations(widget);
 }
 
-bool TBWidgetsAnimationManager::OnWidgetDying(TBWidget* widget) {
+bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
   bool handled = false;
   if (TBWindow* window = TBSafeCast<TBWindow>(widget)) {
-    // Fade out dying windows
-    if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
-            window, 1.f, TB_ALMOST_ZERO_OPACITY, true))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    // Fade out dying windows.
+    if (auto anim =
+            new OpacityWidgetAnimation(window, 1.f, kAlmostZeroOpacity, true))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
   if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
-    // Move out dying message windows
-    if (TBAnimationObject* anim = new TBWidgetAnimationRect(
-            window, TBRect(0, 50, 0, 0), TBWidgetAnimationRect::Mode::kDeltaIn))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
+    // Move out dying message windows.
+    if (auto anim = new RectWidgetAnimation(
+            window, TBRect(0, 50, 0, 0), RectWidgetAnimation::Mode::kDeltaIn))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
   if (TBDimmer* dimmer = TBSafeCast<TBDimmer>(widget)) {
-    // Fade out dying dim layers
-    if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
-            dimmer, 1.f, TB_ALMOST_ZERO_OPACITY, true))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    // Fade out dying dim layers.
+    if (auto anim =
+            new OpacityWidgetAnimation(dimmer, 1.f, kAlmostZeroOpacity, true))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
   return handled;
 }
 
-void TBWidgetsAnimationManager::OnWidgetAdded(TBWidget* parent,
-                                              TBWidget* widget) {
+void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
   if (TBWindow* window = TBSafeCast<TBWindow>(widget)) {
     // Fade in new windows
-    if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
-            window, TB_ALMOST_ZERO_OPACITY, 1.f, false))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    if (auto anim =
+            new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
   if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
     // Move in new message windows
-    if (TBAnimationObject* anim =
-            new TBWidgetAnimationRect(window, TBRect(0, -50, 0, 0),
-                                      TBWidgetAnimationRect::Mode::kDeltaOut))
-      TBAnimationManager::StartAnimation(anim);
+    if (auto anim = new RectWidgetAnimation(
+            window, TBRect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))
+      AnimationManager::StartAnimation(anim);
   }
   if (TBDimmer* dimmer = TBSafeCast<TBDimmer>(widget)) {
     // Fade in dim layer
-    if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
-            dimmer, TB_ALMOST_ZERO_OPACITY, 1.f, false))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    if (auto anim =
+            new OpacityWidgetAnimation(dimmer, kAlmostZeroOpacity, 1.f, false))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
 }
 
-void TBWidgetsAnimationManager::OnWidgetRemove(TBWidget* parent,
-                                               TBWidget* widget) {}
+void WidgetAnimationManager::OnWidgetRemove(TBWidget* parent,
+                                            TBWidget* widget) {}
 
 }  // namespace tb

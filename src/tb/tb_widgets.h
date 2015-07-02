@@ -217,6 +217,27 @@ enum class Gravity {
   kDefault = kLeft | kTop,
 };
 MAKE_ENUM_FLAG_COMBO(Gravity);
+inline std::string to_string(Gravity value) {
+  if (value == Gravity::kNone) {
+    return "none";
+  } else if (value == Gravity::kAll) {
+    return "all";
+  }
+  std::string result;
+  if (any(value & Gravity::kLeft)) {
+    result += " left";
+  }
+  if (any(value & Gravity::kRight)) {
+    result += " right";
+  }
+  if (any(value & Gravity::kTop)) {
+    result += " top";
+  }
+  if (any(value & Gravity::kBottom)) {
+    result += " bottom";
+  }
+  return result.substr(1);
+}
 
 enum class Axis {
   kX,  // Horizontal layout.
@@ -398,7 +419,6 @@ enum class HitStatus {
 
 class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBWidget, TBTypedObject);
 
   TBWidget();

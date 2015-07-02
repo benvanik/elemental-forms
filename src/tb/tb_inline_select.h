@@ -25,7 +25,6 @@ namespace tb {
 */
 class TBInlineSelect : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBInlineSelect, TBWidget);
 
   TBInlineSelect();

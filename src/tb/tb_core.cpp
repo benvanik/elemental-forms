@@ -46,7 +46,7 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
 }
 
 void tb_core_shutdown() {
-  TBAnimationManager::AbortAllAnimations();
+  AnimationManager::AbortAllAnimations();
   delete g_image_manager;
   delete g_widgets_reader;
   delete g_tb_skin;

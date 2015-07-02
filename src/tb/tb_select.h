@@ -23,7 +23,6 @@ class TBMenuWindow;
 
 class TBSelectList : public TBWidget, public TBSelectItemViewer {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSelectList, TBWidget);
 
   TBSelectList();
@@ -121,7 +120,6 @@ class TBSelectList : public TBWidget, public TBSelectItemViewer {
 
 class TBSelectDropdown : public TBButton, public TBSelectItemViewer {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBSelectDropdown, TBButton);
 
   TBSelectDropdown();

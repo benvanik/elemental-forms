@@ -18,7 +18,6 @@ namespace tb {
         some default properties on any TBButton added to it. */
 class TBTabLayout : public TBLayout {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBTabLayout, TBLayout);
 
   virtual void OnChildAdded(TBWidget* child);
@@ -30,7 +29,6 @@ class TBTabLayout : public TBLayout {
 
 class TBTabContainer : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBTabContainer, TBWidget);
 
   TBTabContainer();

@@ -36,7 +36,6 @@ MAKE_ENUM_FLAG_COMBO(WindowSettings);
 
 class TBWindow : public TBWidget {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBWindow, TBWidget);
 
   TBWindow();

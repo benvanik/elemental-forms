@@ -23,7 +23,6 @@ class ResourceEditWindow : public TBWindow,
                            public TBMessageHandler,
                            public TBWidgetListener {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(ResourceEditWindow, TBWindow);
 
   ResourceEditWindow();

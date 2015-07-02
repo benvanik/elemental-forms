@@ -25,7 +25,6 @@ namespace tb {
 
 class TBMenuWindow : public TBPopupWindow {
  public:
-  // For safe typecasting
   TBOBJECT_SUBCLASS(TBMenuWindow, TBPopupWindow);
 
   TBMenuWindow(TBWidget* target, TBID id);

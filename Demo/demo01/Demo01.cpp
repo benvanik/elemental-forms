@@ -443,7 +443,7 @@ AnimationsWindow::AnimationsWindow() {
 
 void AnimationsWindow::Animate() {
   // Abort any still unfinished animations.
-  TBWidgetsAnimationManager::AbortAnimations(this);
+  WidgetAnimationManager::AbortAnimations(this);
 
   AnimationCurve curve = AnimationCurve::kSlowDown;
   double duration = 500;
@@ -458,15 +458,15 @@ void AnimationsWindow::Animate() {
     fade = fade_check->GetValue() ? true : false;
 
   // Start move animation
-  if (TBAnimationObject* anim = new TBWidgetAnimationRect(
+  if (Animation* anim = new RectWidgetAnimation(
           this, GetRect().Offset(-GetRect().x - GetRect().w, 0), GetRect()))
-    TBAnimationManager::StartAnimation(anim, curve, duration);
+    AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {
-    if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
-            this, TB_ALMOST_ZERO_OPACITY, 1, false))
-      TBAnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown,
-                                         duration);
+    if (Animation* anim =
+            new OpacityWidgetAnimation(this, kAlmostZeroOpacity, 1, false))
+      AnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown,
+                                       duration);
   }
 }
 
@@ -671,7 +671,7 @@ bool DemoApplication::Init() {
   if (!Application::Init()) return false;
 
   // Block new animations during Init.
-  TBAnimationBlocker anim_blocker;
+  AnimationBlocker anim_blocker;
 
   // Run unit tests
   int num_failed_tests = TBRunTests();
@@ -778,7 +778,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   // If we want continous updates or got animations running, reinvalidate
   // immediately
-  if (continuous_repaint || TBAnimationManager::HasAnimationsRunning()) {
+  if (continuous_repaint || AnimationManager::HasAnimationsRunning()) {
     GetRoot()->Invalidate();
   }
 }
