@@ -197,11 +197,11 @@ void TBEditField::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBLayout, TBValue::Type::kNull, WidgetZ::kTop) {}
-void TBLayout::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(Layout, TBValue::Type::kNull, WidgetZ::kTop) {}
+void Layout::OnInflate(const INFLATE_INFO& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr))
     SetSpacing(g_tb_skin->GetDimensionConverter()->GetPxFromString(
-        spacing, SPACING_FROM_SKIN));
+        spacing, kSpacingFromSkin));
   SetGravity(Gravity::kAll);
   if (const char* size = info.node->GetValueString("size", nullptr)) {
     SetLayoutSize(from_string(size, LayoutSize::kPreferred));
@@ -262,7 +262,7 @@ void TabContainer::OnInflate(const INFLATE_INFO& info) {
   // calling OnInflate.
   if (TBNode* tabs = info.node->GetNode("tabs")) {
     // Inflate the tabs widgets into the tab layout.
-    TBLayout* tab_layout = GetTabLayout();
+    Layout* tab_layout = GetTabLayout();
     info.reader->LoadNodeTree(tab_layout, tabs);
 
     INFLATE_INFO inflate_info(info.reader, tab_layout->GetContentRoot(), tabs,

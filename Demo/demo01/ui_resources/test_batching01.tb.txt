@@ -1,7 +1,7 @@
-TBLayout
+Layout
 	axis y
 	Label: text: "For enabling \"Continuous repaint\" and test batching speed.
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -28,7 +28,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -55,7 +55,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -82,7 +82,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -109,7 +109,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -136,7 +136,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -163,7 +163,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -190,7 +190,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -217,7 +217,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -244,7 +244,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -271,7 +271,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -298,7 +298,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -325,7 +325,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"
@@ -352,7 +352,7 @@ TBLayout
 		Button: text: "X"
 		Button: text: "Y"
 		Button: text: "Z"
-	TBLayout
+	Layout
 		Button: text: "A"
 		Button: text: "B"
 		Button: text: "C"

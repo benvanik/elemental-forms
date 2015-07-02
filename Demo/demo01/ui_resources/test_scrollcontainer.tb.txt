@@ -1,16 +1,16 @@
 WindowInfo
 	title ScrollContainer with misc widgets
 	size 500 500
-TBLayout
+Layout
 	gravity all
 	distribution available
 	axis y
 	ScrollContainer
-		TBLayout
+		Layout
 			position left top
 			axis y
 			Label: text: Buttons with different fonts:
-			TBLayout
+			Layout
 				Button
 					text: "Orange"
 					font: name: Orange
@@ -21,7 +21,7 @@ TBLayout
 					text: "Segoe 28"
 					font: size: 28px
 			Label: text: Button containing TBSkinImage:
-			TBLayout
+			Layout
 				Button
 					text Click for image!
 					id add img
@@ -34,12 +34,12 @@ TBLayout
 					TBSkinImage
 						skin Icon16
 			Label: text: "Button containing TBEditField:"
-			TBLayout
+			Layout
 				Button
 					TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1, styling: 1
 						text: "A <color #0794f8>Button</color> with styled text that is able to wrap to multiple lines."
 			Label: text: "Showing menu manually, and SelectDropdown:"
-			TBLayout
+			Layout
 				Button
 					text Give me a popup menu!
 					id showpopupmenu1
@@ -49,7 +49,7 @@ TBLayout
 				SelectDropdown
 					text Customized items in Dropdown
 					id advanced dropdown
-			TBLayout
+			Layout
 				overflow scroll
 				RadioButton
 				CheckBox
@@ -61,7 +61,7 @@ TBLayout
 				Button
 				Button: toggle-mode: 1
 			Label: text: "TBEditField:"
-			TBLayout
+			Layout
 				TBEditField
 					text Edit type text
 				TBEditField
@@ -74,7 +74,7 @@ TBLayout
 					text In this field, multiple lines are enabled.
 					multiline 1
 			Label: text: "Slider:"
-			TBLayout
+			Layout
 				Slider
 				Slider
 					min 100
@@ -86,12 +86,12 @@ TBLayout
 					max 100
 					connection master-volume
 			Label: text: "ScrollBar:"
-			TBLayout
+			Layout
 				ScrollBar
 				ScrollBar
 					axis y
 			Label: text: Horizontal layout:
-			TBLayout
+			Layout
 				id horizontal_layout
 				Button
 					text "1 new button"
@@ -106,7 +106,7 @@ TBLayout
 					id new buttons delayed
 					data 10
 			Label: text: Vertical layout:
-			TBLayout
+			Layout
 				id vertical_layout
 				axis y
 				Button

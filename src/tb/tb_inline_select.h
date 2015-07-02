@@ -46,7 +46,7 @@ class SelectInline : public TBWidget {
   void SetValueInternal(int value, bool update_text);
 
   Button m_buttons[2];
-  TBLayout m_layout;
+  Layout m_layout;
   TBEditField m_editfield;
   int m_value = 0;
   int m_min = 0;

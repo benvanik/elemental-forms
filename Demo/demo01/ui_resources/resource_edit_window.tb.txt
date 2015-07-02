@@ -1,13 +1,13 @@
-TBLayout
+Layout
 	distribution gravity
 	size available
-	TBLayout
+	Layout
 		gravity top bottom
 		distribution available
 		distribution-position top left
 		size available
 		axis y
-		TBLayout
+		Layout
 			distribution available
 			Button
 				text @new
@@ -24,13 +24,13 @@ TBLayout
 			id widget_list_search
 		SelectList
 			id widget_list
-	TBLayout
+	Layout
 		distribution available
 		TBEditField
 			id source_edit
 			multiline 1
 			gravity all
-		TBLayout: axis: y, distribution: available, position: left
+		Layout: axis: y, distribution: available, position: left
 			ScrollContainer
 				id scroll_container
 				gravity all

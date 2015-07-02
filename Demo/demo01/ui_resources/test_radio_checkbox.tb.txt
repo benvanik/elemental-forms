@@ -1,23 +1,23 @@
 WindowInfo
 	title Radiobutton & checkbox
-TBLayout: position: left top, axis: y
+Layout: position: left top, axis: y
 	Label: text: "Radiobuttons, anonymous group:"
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		RadioButton
 		RadioButton
 		RadioButton: state: disabled
 	Label: text: "Radiobuttons, group-id: 'R1'":
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		RadioButton: group-id: R1
 		RadioButton: group-id: R1
 		RadioButton: group-id: R1, state: disabled
 	Label: text: "Radiobuttons, group-id: 'R2' value set":
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		RadioButton: group-id: R2, value: 1
 		RadioButton: group-id: R2
 		RadioButton: group-id: R2, state: disabled
 	Label: text: "Checkboxes"
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		CheckBox
 		CheckBox: value: 1
 		CheckBox: state: disabled
@@ -32,7 +32,7 @@ TBLayout: position: left top, axis: y
 	LabelContainer: text: Some text to click, state: disabled
 		RadioButton
 	Label: text: "Regular buttons with group-id: 'R3'":
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		Button: text: "A", group-id: "R3", value: 1
 		Button: text: "B", group-id: "R3"
 		Button: text: "C", group-id: "R3"

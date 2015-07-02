@@ -2,11 +2,11 @@ WindowInfo
 	title Customized list items
 	position 770 50
 	size 300 300
-TBLayout
+Layout
 	axis y
 	distribution gravity
 	gravity all
-	TBLayout
+	Layout
 		distribution gravity
 		TBEditField
 			id filter
@@ -16,7 +16,7 @@ TBLayout
 	SelectList
 		id list
 		gravity all
-	TBLayout
+	Layout
 		distribution gravity
 		TBEditField
 			id add_name

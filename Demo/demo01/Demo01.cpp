@@ -247,18 +247,17 @@ bool LayoutWindow::OnEvent(const TBWidgetEvent& ev) {
             GetWidgetByIDAndType<SelectDropdown>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
-      if (TBLayout* layout = GetWidgetByIDAndType<TBLayout>(i + 1))
+      if (Layout* layout = GetWidgetByIDAndType<Layout>(i + 1))
         layout->SetLayoutPosition(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
-      if (TBLayout* layout = GetWidgetByIDAndType<TBLayout>(i + 1))
+      if (Layout* layout = GetWidgetByIDAndType<Layout>(i + 1))
         layout->SetAxis(axis);
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (TBLayout* layout =
-            GetWidgetByIDAndType<TBLayout>(TBIDC("switch_layout")))
+    if (Layout* layout = GetWidgetByIDAndType<Layout>(TBIDC("switch_layout")))
       layout->SetAxis(axis);
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;

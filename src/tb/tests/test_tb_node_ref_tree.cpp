@@ -149,7 +149,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	landscape: 1\n");
 
     const char* layout_str =
-        "TBLayout: id: 'layout'\n"
+        "Layout: id: 'layout'\n"
         "	distribution: 'available'\n"
         "	@if @test_settings>layout>landscape\n"
         "		axis: 'x'\n"
@@ -163,7 +163,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     g_widgets_reader->LoadData(&root1, layout_str);
-    TBLayout* layout1 = root1.GetWidgetByIDAndType<TBLayout>(TBIDC("layout"));
+    Layout* layout1 = root1.GetWidgetByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
     TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
@@ -173,7 +173,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     g_widgets_reader->LoadData(&root2, layout_str);
-    TBLayout* layout2 = root2.GetWidgetByIDAndType<TBLayout>(TBIDC("layout"));
+    Layout* layout2 = root2.GetWidgetByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);

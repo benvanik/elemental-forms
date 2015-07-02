@@ -37,8 +37,8 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     SetText("Debug settings");
     g_widgets_reader->LoadData(
         this,
-        "TBLayout: axis: y, distribution: available, position: left\n"
-        "	TBLayout: id: 'container', axis: y, size: available\n"
+        "Layout: axis: y, distribution: available, position: left\n"
+        "	Layout: id: 'container', axis: y, size: available\n"
         "	Label: text: 'Event output:'\n"
         "	TBEditField: id: 'output', gravity: all, multiline: 1, wrap: "
         "0\n"

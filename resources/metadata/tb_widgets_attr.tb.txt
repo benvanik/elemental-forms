@@ -60,7 +60,7 @@ TBEditField
 	type text, search, password, email, phone, url, number
 Label
 	text-align left, center, right
-TBLayout
+Layout
 	spacing <dimension>
 	size preferred, available, gravity
 	position center, left, top, right, bottom, gravity

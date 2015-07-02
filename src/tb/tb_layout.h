@@ -14,9 +14,6 @@
 
 namespace tb {
 
-/** This means the spacing should be the default, read from the skin. */
-#define SPACING_FROM_SKIN kInvalidDimension
-
 // Specifies which height widgets in a Axis::kX layout should have, or which
 // width widgets in a Axis::kY layout should have.
 // No matter what, it will still prioritize minimum and maximum for each widget.
@@ -67,7 +64,7 @@ enum class LayoutDistributionPosition {
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistributionPosition, "center", "left top",
                                "right bottom");
 
-// Layout order parameter for TBLayout::SetLayoutOrder.
+// Layout order parameter for Layout::SetLayoutOrder.
 enum class LayoutOrder {
   kBottomToTop,  // From bottom to top widget (default creation order).
   kTopToBottom,  // From top to bottom widget.
@@ -81,90 +78,84 @@ enum class LayoutOverflow {
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 
-/** TBLayout layouts its children along the given axis.
-
-        Each widgets size depend on its preferred size (See
-   TBWidget::GetPreferredSize),
-        gravity, and the specified layout settings (See SetLayoutSize,
-   SetLayoutPosition
-        SetLayoutOverflow, SetLayoutDistribution,
-   SetLayoutDistributionPosition), and
-        the available size.
-
-        Each widget is also separated by the specified spacing (See SetSpacing).
-*/
-
-class TBLayout : public TBWidget {
+// Layout lays out its children along the given axis.
+// Each widgets size depend on its preferred size (See
+// TBWidget::GetPreferredSize), gravity, and the specified layout settings (See
+// SetLayoutSize, SetLayoutPosition SetLayoutOverflow, SetLayoutDistribution,
+// SetLayoutDistributionPosition), and the available size.
+// Each widget is also separated by the specified spacing (See SetSpacing).
+class Layout : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBLayout, TBWidget);
+  TBOBJECT_SUBCLASS(Layout, TBWidget);
 
-  TBLayout(Axis axis = Axis::kX);
+  // This means the spacing should be the default, read from the skin.
+  static const int kSpacingFromSkin = kInvalidDimension;
 
-  /** Set along which axis the content should be layouted */
-  virtual void SetAxis(Axis axis);
-  virtual Axis GetAxis() const { return m_axis; }
+  Layout(Axis axis = Axis::kX);
 
-  /** Set the spacing between widgets in this layout. Setting the default
-     (SPACING_FROM_SKIN)
-          will make it use the spacing specified in the skin. */
+  // Sets along which axis the content should layout.
+  void SetAxis(Axis axis) override;
+  Axis GetAxis() const override { return m_axis; }
+
+  // Sets the spacing between widgets in this layout. Setting the default
+  // (kSpacingFromSkin) will make it use the spacing specified in the skin.
   void SetSpacing(int spacing);
   int GetSpacing() const { return m_spacing; }
 
-  /** Set the overflow scroll. If there is not enough room for all children in
-     this layout,
-          it can scroll in the axis it's laid out. It does so automatically by
-     wheel or panning also
-          for other LayoutOverflow than LayoutOverflow::kScroll. */
+  // Sets the overflow scroll. If there is not enough room for all children in
+  // this layout, it can scroll in the axis it's laid out. It does so
+  // automatically by wheel or panning also for other LayoutOverflow than
+  // LayoutOverflow::kScroll.
   void SetOverflowScroll(int overflow_scroll);
   int GetOverflowScroll() const { return m_overflow_scroll; }
 
-  /** Set if a fadeout should be painter where the layout overflows or not. */
+  // Sets if a fadeout should be painter where the layout overflows or not.
   void SetPaintOverflowFadeout(bool paint_fadeout) {
     m_packed.paint_overflow_fadeout = paint_fadeout;
   }
 
-  /** Set the layout size mode. See LayoutSize. */
   void SetLayoutSize(LayoutSize size);
-
-  /** Set the layout position mode. See LayoutPosition. */
   void SetLayoutPosition(LayoutPosition pos);
-
-  /** Set the layout size mode. See LayoutOverflow. */
   void SetLayoutOverflow(LayoutOverflow overflow);
-
-  /** Set the layout distribution mode. See LayoutDistribution. */
   void SetLayoutDistribution(LayoutDistribution distribution);
-
-  /** Set the layout distribution position mode. See
-   * LayoutDistributionPosition. */
   void SetLayoutDistributionPosition(
       LayoutDistributionPosition distribution_pos);
 
-  /** Set the layout order. The default is LayoutOrder::kBottomToTop, which
-     begins
-          from bottom to top (default creation order). */
+  // Sets the layout order. The default is LayoutOrder::kBottomToTop, which
+  // begins from bottom to top (default creation order).
   void SetLayoutOrder(LayoutOrder order);
 
-  virtual void InvalidateLayout(InvalidationMode il);
+  void InvalidateLayout(InvalidationMode il) override;
 
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints);
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override;
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnPaintChildren(const PaintProps& paint_props);
-  virtual void OnProcess();
-  virtual void OnResized(int old_w, int old_h);
-  virtual void OnInflateChild(TBWidget* child);
-  virtual void GetChildTranslation(int& x, int& y) const;
-  virtual void ScrollTo(int x, int y);
-  virtual TBWidget::ScrollInfo GetScrollInfo();
+  void OnInflate(const INFLATE_INFO& info) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  void OnPaintChildren(const PaintProps& paint_props) override;
+  void OnProcess() override;
+  void OnResized(int old_w, int old_h) override;
+  void OnInflateChild(TBWidget* child) override;
+  void GetChildTranslation(int& x, int& y) const override;
+  void ScrollTo(int x, int y) override;
+  TBWidget::ScrollInfo GetScrollInfo() override;
 
  protected:
-  Axis m_axis;
-  int m_spacing;
-  int m_overflow;
-  int m_overflow_scroll;
+  void ValidateLayout(const SizeConstraints& constraints,
+                      PreferredSize* calculate_ps = nullptr);
+  bool QualifyForExpansion(Gravity gravity) const;
+  int GetWantedHeight(Gravity gravity, const PreferredSize& ps,
+                      int available_height) const;
+  TBWidget* GetNextNonCollapsedWidget(TBWidget* child) const;
+  int GetTrailingSpace(TBWidget* child, int spacing) const;
+  int CalculateSpacing();
+  TBWidget* GetFirstInLayoutOrder() const;
+  TBWidget* GetNextInLayoutOrder(TBWidget* child) const;
+
+  Axis m_axis = Axis::kX;
+  int m_spacing = kSpacingFromSkin;
+  int m_overflow = 0;
+  int m_overflow_scroll = 0;
   union {
     struct {
       uint32_t layout_is_invalid : 1;
@@ -176,19 +167,10 @@ class TBLayout : public TBWidget {
       uint32_t mode_reverse_order : 1;
       uint32_t paint_overflow_fadeout : 1;
     } m_packed;
-    uint32_t m_packed_init;
+    uint32_t m_packed_init = 0;
   };
-  void ValidateLayout(const SizeConstraints& constraints,
-                      PreferredSize* calculate_ps = nullptr);
-  bool QualifyForExpansion(Gravity gravity) const;
-  int GetWantedHeight(Gravity gravity, const PreferredSize& ps,
-                      int available_height) const;
-  TBWidget* GetNextNonCollapsedWidget(TBWidget* child) const;
-  int GetTrailingSpace(TBWidget* child, int spacing) const;
-  int CalculateSpacing();
-  TBWidget* GetFirstInLayoutOrder() const;
-  TBWidget* GetNextInLayoutOrder(TBWidget* child) const;
 };
-};
+
+}  // namespace tb
 
 #endif  // TB_LAYOUT_H

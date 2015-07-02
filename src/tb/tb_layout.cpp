@@ -17,12 +17,7 @@
 
 namespace tb {
 
-TBLayout::TBLayout(Axis axis)
-    : m_axis(axis),
-      m_spacing(SPACING_FROM_SKIN),
-      m_overflow(0),
-      m_overflow_scroll(0),
-      m_packed_init(0) {
+Layout::Layout(Axis axis) : m_axis(axis) {
   m_packed.layout_mode_size = uint32_t(LayoutSize::kGravity);
   m_packed.layout_mode_pos = uint32_t(LayoutPosition::kCenter);
   m_packed.layout_mode_overflow = uint32_t(LayoutOverflow::kClip);
@@ -31,72 +26,75 @@ TBLayout::TBLayout(Axis axis)
   m_packed.paint_overflow_fadeout = 1;
 }
 
-void TBLayout::SetAxis(Axis axis) {
+void Layout::SetAxis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   InvalidateLayout(InvalidationMode::kRecursive);
   InvalidateSkinStates();
 }
 
-void TBLayout::SetSpacing(int spacing) {
+void Layout::SetSpacing(int spacing) {
   if (spacing == m_spacing) return;
   m_spacing = spacing;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBLayout::SetOverflowScroll(int overflow_scroll) {
+void Layout::SetOverflowScroll(int overflow_scroll) {
   overflow_scroll = std::min(overflow_scroll, m_overflow);
   overflow_scroll = std::max(overflow_scroll, 0);
-  if (overflow_scroll == m_overflow_scroll) return;
+  if (overflow_scroll == m_overflow_scroll) {
+    return;
+  }
   m_overflow_scroll = overflow_scroll;
   Invalidate();
-  if (m_axis == Axis::kX)
+  if (m_axis == Axis::kX) {
     OnScroll(m_overflow_scroll, 0);
-  else
+  } else {
     OnScroll(0, m_overflow_scroll);
+  }
 }
 
-void TBLayout::SetLayoutSize(LayoutSize size) {
+void Layout::SetLayoutSize(LayoutSize size) {
   if (uint32_t(size) == m_packed.layout_mode_size) return;
   m_packed.layout_mode_size = uint32_t(size);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutPosition(LayoutPosition pos) {
+void Layout::SetLayoutPosition(LayoutPosition pos) {
   if (uint32_t(pos) == m_packed.layout_mode_pos) return;
   m_packed.layout_mode_pos = uint32_t(pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutOverflow(LayoutOverflow overflow) {
+void Layout::SetLayoutOverflow(LayoutOverflow overflow) {
   if (uint32_t(overflow) == m_packed.layout_mode_overflow) return;
   m_packed.layout_mode_overflow = uint32_t(overflow);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutDistribution(LayoutDistribution distribution) {
+void Layout::SetLayoutDistribution(LayoutDistribution distribution) {
   if (uint32_t(distribution) == m_packed.layout_mode_dist) return;
   m_packed.layout_mode_dist = uint32_t(distribution);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutDistributionPosition(
+void Layout::SetLayoutDistributionPosition(
     LayoutDistributionPosition distribution_pos) {
   if (uint32_t(distribution_pos) == m_packed.layout_mode_dist_pos) return;
   m_packed.layout_mode_dist_pos = uint32_t(distribution_pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutOrder(LayoutOrder order) {
+void Layout::SetLayoutOrder(LayoutOrder order) {
   bool reversed = (order == LayoutOrder::kTopToBottom);
   if (reversed == m_packed.mode_reverse_order) return;
   m_packed.mode_reverse_order = reversed;
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::InvalidateLayout(InvalidationMode il) {
+void Layout::InvalidateLayout(InvalidationMode il) {
   m_packed.layout_is_invalid = 1;
-  // Continue invalidating parents (depending on il)
+  // Continue invalidating parents (depending on il).
   TBWidget::InvalidateLayout(il);
 }
 
@@ -139,7 +137,7 @@ Gravity RotGravity(Gravity gravity, Axis axis) {
   return r;
 }
 
-bool TBLayout::QualifyForExpansion(Gravity gravity) const {
+bool Layout::QualifyForExpansion(Gravity gravity) const {
   if (m_packed.layout_mode_dist == uint32_t(LayoutDistribution::kAvailable)) {
     return true;
   }
@@ -150,8 +148,8 @@ bool TBLayout::QualifyForExpansion(Gravity gravity) const {
   return false;
 }
 
-int TBLayout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
-                              int available_height) const {
+int Layout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
+                            int available_height) const {
   int height = 0;
   switch (LayoutSize(m_packed.layout_mode_size)) {
     case LayoutSize::kGravity:
@@ -170,42 +168,45 @@ int TBLayout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
   return height;
 }
 
-TBWidget* TBLayout::GetNextNonCollapsedWidget(TBWidget* child) const {
+TBWidget* Layout::GetNextNonCollapsedWidget(TBWidget* child) const {
   TBWidget* next = GetNextInLayoutOrder(child);
-  while (next && next->GetVisibility() == Visibility::kGone)
+  while (next && next->GetVisibility() == Visibility::kGone) {
     next = GetNextInLayoutOrder(next);
+  }
   return next;
 }
 
-int TBLayout::GetTrailingSpace(TBWidget* child, int spacing) const {
+int Layout::GetTrailingSpace(TBWidget* child, int spacing) const {
   if (spacing == 0) return 0;
   if (!GetNextNonCollapsedWidget(child)) return 0;
   return spacing;
 }
 
-int TBLayout::CalculateSpacing() {
-  // Get spacing from skin, if not specified
+int Layout::CalculateSpacing() {
+  // Get spacing from skin, if not specified.
   int spacing = m_spacing;
-  if (spacing == SPACING_FROM_SKIN) {
-    if (TBSkinElement* e = GetSkinBgElement()) spacing = e->spacing;
-
-    assert(SPACING_FROM_SKIN == kSkinValueNotSpecified);
-    if (spacing == SPACING_FROM_SKIN /*|| spacing == kSkinValueNotSpecified*/)
+  if (spacing == kSpacingFromSkin) {
+    if (TBSkinElement* e = GetSkinBgElement()) {
+      spacing = e->spacing;
+    }
+    assert(kSpacingFromSkin == kSkinValueNotSpecified);
+    if (spacing == kSpacingFromSkin /*|| spacing == kSkinValueNotSpecified*/) {
       spacing = g_tb_skin->GetDefaultSpacing();
+    }
   }
   return spacing;
 }
 
-TBWidget* TBLayout::GetFirstInLayoutOrder() const {
+TBWidget* Layout::GetFirstInLayoutOrder() const {
   return m_packed.mode_reverse_order ? GetLastChild() : GetFirstChild();
 }
 
-TBWidget* TBLayout::GetNextInLayoutOrder(TBWidget* child) const {
+TBWidget* Layout::GetNextInLayoutOrder(TBWidget* child) const {
   return m_packed.mode_reverse_order ? child->GetPrev() : child->GetNext();
 }
 
-void TBLayout::ValidateLayout(const SizeConstraints& constraints,
-                              PreferredSize* calculate_ps) {
+void Layout::ValidateLayout(const SizeConstraints& constraints,
+                            PreferredSize* calculate_ps) {
   // Layout notes:
   // -All layout code is written for Axis::kX layout.
   //  Instead of duplicating the layout code for both Axis::kX and Axis::kY, we
@@ -216,7 +217,7 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
     if (!m_packed.layout_is_invalid) return;
     m_packed.layout_is_invalid = 0;
   } else {
-    // Maximum size will grow below depending of the childrens maximum size
+    // Maximum size will grow below depending of the childrens maximum size.
     calculate_ps->max_w = calculate_ps->max_h = 0;
   }
 
@@ -224,8 +225,8 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   const Rect padding_rect = GetPaddingRect();
   const Rect layout_rect = RotRect(padding_rect, m_axis);
 
-  const SizeConstraints inner_sc = constraints.ConstrainByPadding(
-      GetRect().w - padding_rect.w, GetRect().h - padding_rect.h);
+  auto inner_sc = constraints.ConstrainByPadding(GetRect().w - padding_rect.w,
+                                                 GetRect().h - padding_rect.h);
 
   // Calculate totals for minimum and preferred width that we need for layout.
   int total_preferred_w = 0;
@@ -233,7 +234,9 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   int total_max_pref_diff_w = 0;
   for (TBWidget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == Visibility::kGone) continue;
+    if (child->GetVisibility() == Visibility::kGone) {
+      continue;
+    }
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
@@ -275,7 +278,7 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   TB_IF_DEBUG_SETTING(Setting::kLayoutSizing,
                       last_layout_time = TBSystem::GetTimeMS());
 
-  // Pre Layout step (calculate distribution position)
+  // Pre Layout step (calculate distribution position).
   int missing_space = std::max(total_preferred_w - layout_rect.w, 0);
   int extra_space = std::max(layout_rect.w - total_preferred_w, 0);
 
@@ -284,10 +287,8 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
       LayoutDistributionPosition(m_packed.layout_mode_dist_pos) !=
           LayoutDistributionPosition::kLeftTop) {
     // To calculate the offset we need to predict the used space. We can do that
-    // by checking
-    // the distribution mode and total_max_pref_diff_w. That's how much the
-    // widgets could possible
-    // expand in the layout below.
+    // by checking the distribution mode and total_max_pref_diff_w. That's how
+    // much the widgets could possible expand in the layout below.
 
     int used_space = total_preferred_w;
     if (LayoutDistribution(m_packed.layout_mode_dist) !=
@@ -306,7 +307,9 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   int used_space = 0;
   for (TBWidget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == Visibility::kGone) continue;
+    if (child->GetVisibility() == Visibility::kGone) {
+      continue;
+    }
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
@@ -338,11 +341,11 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
       extra_space -= added;
     }
 
-    // Calculate height
+    // Calculate height.
     int available_height = layout_rect.h;
     int height = GetWantedHeight(gravity, ps, available_height);
 
-    // Calculate position
+    // Calculate position.
     int pos = layout_rect.y;
     switch (LayoutPosition(m_packed.layout_mode_pos)) {
       case LayoutPosition::kCenter:
@@ -362,18 +365,18 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
         break;
     };
 
-    // Done! Set rect and increase used space
+    // Done! Set rect and increase used space.
     Rect rect(used_space + offset, pos, width, height);
     used_space += width + ending_space;
 
     child->SetRect(RotRect(rect, m_axis));
   }
-  // Update overflow and overflow scroll
+  // Update overflow and overflow scroll.
   m_overflow = std::max(0, used_space - layout_rect.w);
   SetOverflowScroll(m_overflow_scroll);
 }
 
-PreferredSize TBLayout::OnCalculatePreferredContentSize(
+PreferredSize Layout::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   // Do a layout pass (without layouting) to check childrens preferences.
   PreferredSize ps;
@@ -381,7 +384,7 @@ PreferredSize TBLayout::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool TBLayout::OnEvent(const TBWidgetEvent& ev) {
+bool Layout::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
@@ -391,11 +394,11 @@ bool TBLayout::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
+void Layout::OnPaintChildren(const PaintProps& paint_props) {
   Rect padding_rect = GetPaddingRect();
   if (padding_rect.IsEmpty()) return;
 
-  // If we overflow the layout, apply clipping when painting children
+  // If we overflow the layout, apply clipping when painting children.
   Rect old_clip_rect;
   if (m_overflow) {
     // We only want clipping in one axis (the overflowing one) so we
@@ -403,14 +406,15 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
     Rect clip_rect = padding_rect;
     const int fluff = 100;
 
-    if (m_axis == Axis::kX)
+    if (m_axis == Axis::kX) {
       clip_rect =
           clip_rect.Expand(m_overflow_scroll == 0 ? fluff : 0, fluff,
                            m_overflow_scroll == m_overflow ? fluff : 0, fluff);
-    else
+    } else {
       clip_rect =
           clip_rect.Expand(fluff, m_overflow_scroll == 0 ? fluff : 0, fluff,
                            m_overflow_scroll == m_overflow ? fluff : 0);
+    }
 
     old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
@@ -418,17 +422,18 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
                         g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
   }
 
-  // Paint children
+  // Paint children.
   TBWidget::OnPaintChildren(paint_props);
 
   // Paint fadeout image over the overflowed edges
   // to the indicate to used that it's overflowed.
   if (m_overflow && m_packed.paint_overflow_fadeout) {
     TBID skin_x, skin_y;
-    if (m_axis == Axis::kX)
-      skin_x = TBIDC("TBLayout.fadeout_x");
-    else
-      skin_y = TBIDC("TBLayout.fadeout_y");
+    if (m_axis == Axis::kX) {
+      skin_x = TBIDC("Layout.fadeout_x");
+    } else {
+      skin_y = TBIDC("Layout.fadeout_y");
+    }
 
     DrawEdgeFadeout(padding_rect, skin_x, skin_y, m_overflow_scroll,
                     m_overflow_scroll, m_overflow - m_overflow_scroll,
@@ -436,25 +441,27 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
   }
 
   // Restore clipping
-  if (m_overflow) g_renderer->SetClipRect(old_clip_rect, false);
+  if (m_overflow) {
+    g_renderer->SetClipRect(old_clip_rect, false);
+  }
 }
 
-void TBLayout::OnProcess() {
+void Layout::OnProcess() {
   SizeConstraints sc(GetRect().w, GetRect().h);
   ValidateLayout(sc);
 }
 
-void TBLayout::OnResized(int old_w, int old_h) {
+void Layout::OnResized(int old_w, int old_h) {
   InvalidateLayout(InvalidationMode::kTargetOnly);
   SizeConstraints sc(GetRect().w, GetRect().h);
   ValidateLayout(sc);
 }
 
-void TBLayout::OnInflateChild(TBWidget* child) {
+void Layout::OnInflateChild(TBWidget* child) {
   // Do nothing since we're going to layout the child soon.
 }
 
-void TBLayout::GetChildTranslation(int& x, int& y) const {
+void Layout::GetChildTranslation(int& x, int& y) const {
   if (m_axis == Axis::kX) {
     x = -m_overflow_scroll;
     y = 0;
@@ -464,11 +471,11 @@ void TBLayout::GetChildTranslation(int& x, int& y) const {
   }
 }
 
-void TBLayout::ScrollTo(int x, int y) {
+void Layout::ScrollTo(int x, int y) {
   SetOverflowScroll(m_axis == Axis::kX ? x : y);
 }
 
-TBWidget::ScrollInfo TBLayout::GetScrollInfo() {
+TBWidget::ScrollInfo Layout::GetScrollInfo() {
   ScrollInfo info;
   if (m_axis == Axis::kX) {
     info.max_x = m_overflow;

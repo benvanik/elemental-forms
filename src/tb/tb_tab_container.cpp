@@ -24,7 +24,7 @@ void TabLayout::OnChildAdded(TBWidget* child) {
 
 PreferredSize TabLayout::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = TBLayout::OnCalculatePreferredContentSize(constraints);
+  PreferredSize ps = Layout::OnCalculatePreferredContentSize(constraints);
   // Make sure the number of tabs doesn't grow parents.
   // It is only the content that should do that. The tabs
   // will scroll anyway.

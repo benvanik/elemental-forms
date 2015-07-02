@@ -1,16 +1,16 @@
 WindowInfo
 	title Skin conditions
 	position 200 170
-TBLayout: axis: y
+Layout: axis: y
 	Label: text: Normal layout with buttons:
 	Container
-		TBLayout
+		Layout
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"
 	Label: text: Layout with skin "Starry buttons":
 	Container
-		TBLayout: skin: Starry buttons
+		Layout: skin: Starry buttons
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"

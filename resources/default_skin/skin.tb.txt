@@ -358,9 +358,9 @@ elements
 		bitmap radio_pressed.png
 		type image
 		expand 7
-	TBLayout.fadeout_x
+	Layout.fadeout_x
 		bitmap fadeout_x.png
-	TBLayout.fadeout_y
+	Layout.fadeout_y
 		bitmap fadeout_y.png
 	SelectList
 		clone TBEditField

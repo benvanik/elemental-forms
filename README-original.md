@@ -110,7 +110,7 @@ Creating custom widgets
 
 Widgets are cheap to create and layout and using many widgets to get what you want
 is encouraged. A custom widget should typically not implement any layouting and
-drawing of sub-elements if it can be solved by wrapping a TBLayout and other
+drawing of sub-elements if it can be solved by wrapping a Layout and other
 existing widgets.
 
 Any widget may contain other widgets and may control into which sub-widget other

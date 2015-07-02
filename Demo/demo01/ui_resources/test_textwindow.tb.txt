@@ -2,15 +2,15 @@ WindowInfo
 	title Text editing
 	position 280 50
 	size 450 630
-TBLayout: axis: y, distribution: available
-	TBLayout: distribution: gravity
+Layout: axis: y, distribution: available
+	Layout: distribution: gravity
 		Button: id: undo
 			TBSkinImage: skin: arrow.left
 		Button: id: redo
 			TBSkinImage: skin: arrow.right
 		Button: text: Clear, id: clear
 			desc Click for <color #f44>remove</color> all text
-		TBLayout
+		Layout
 			gravity left right
 			distribution-position right bottom
 			Label: id: info

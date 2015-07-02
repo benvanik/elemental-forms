@@ -149,7 +149,7 @@ class Button : public TBWidget, protected MessageHandler {
   void UpdateLabelVisibility();
   bool CanToggle() { return m_toggle_mode || GetGroupID(); }
 
-  class ButtonLayout : public TBLayout {
+  class ButtonLayout : public Layout {
     void OnChildAdded(TBWidget* child) override;
     void OnChildRemove(TBWidget* child) override;
   };
@@ -189,7 +189,7 @@ class LabelContainer : public TBWidget {
   bool OnEvent(const TBWidgetEvent& ev) override;
 
  protected:
-  TBLayout m_layout;
+  Layout m_layout;
   Label m_textfield;
 };
 

@@ -9,9 +9,9 @@ TabContainer
 		Button: text: "Skin"
 		Button: text: "Spinner"
 			TBSkinImage: skin: Icon16
-	TBLayout: axis: y
+	Layout: axis: y
 		Label: text: "Tab alignment:"
-		TBLayout
+		Layout
 			LabelContainer: text: Left
 				RadioButton: group-id: set_align, id: set_align, data: 0
 			LabelContainer: text: Up
@@ -23,15 +23,15 @@ TabContainer
 		Button
 			text Toggle tab axis
 			id toggle_tab_axis
-	TBLayout
-		TBLayout: axis: y, position: right bottom
+	Layout
+		Layout: axis: y, position: right bottom
 			Button: text: Normal button
 			Button: text: Overridden skin, skin: SpecialButton
 			Button: text: Disabled button, state: disabled
 		TBEditField
 			text TBEditField
 			multiline 1
-	TBLayout
+	Layout
 		axis y
 		Button: id: start_spinner, text: Start spinner
 		Button: id: stop_spinner, text: Stop spinner

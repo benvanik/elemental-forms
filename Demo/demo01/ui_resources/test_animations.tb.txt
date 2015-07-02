@@ -1,6 +1,6 @@
 WindowInfo
 	title Animations
-TBLayout: axis: y
+Layout: axis: y
 	Label: text: "Duration (in milliseconds):"
 	SelectInline: id: "duration", min: 0, max: 100000, value: 500
 	Label: text: "Curve:"

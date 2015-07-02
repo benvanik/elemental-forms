@@ -1,14 +1,14 @@
-TBLayout
+Layout
 	distribution available
 	axis y
-	TBLayout
+	Layout
 		Button
 			text Button 1
 		RadioButton
 		CheckBox
 	@if 1
 		Container
-			TBLayout
+			Layout
 				Slider
 					value 0.5
 				ScrollBar

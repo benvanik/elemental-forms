@@ -1,12 +1,12 @@
 WindowInfo
 	title TBWidgetValue connections
-TBLayout
+Layout
 	axis y
 	Label
 		text Numeric widgets sharing a connection
 	Container
 		gravity all
-		TBLayout
+		Layout
 			SelectInline
 				connection master-volume
 				min 0
@@ -27,7 +27,7 @@ TBLayout
 		text Text widgets sharing a connection
 	Container
 		gravity all
-		TBLayout
+		Layout
 			TBEditField
 				placeholder User name
 				connection user-name

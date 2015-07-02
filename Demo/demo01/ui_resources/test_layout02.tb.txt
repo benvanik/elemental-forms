@@ -1,37 +1,37 @@
 WindowInfo
-	title TBLayout distribution
-TBLayout: position: left top, axis: y
+	title Layout distribution
+Layout: position: left top, axis: y
 	Label: text: "distribution: preferred"
-	TBLayout: distribution: preferred
+	Layout: distribution: preferred
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: available"
-	TBLayout: distribution: available
+	Layout: distribution: available
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: gravity"
-	TBLayout: distribution: gravity
+	Layout: distribution: gravity
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
 	Label: text: gravity + trailing layout for right align
-	TBLayout: distribution: gravity
+	Layout: distribution: gravity
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
-		TBLayout: gravity: left right, distribution-position: right bottom
+		Layout: gravity: left right, distribution-position: right bottom
 			TBEditField: placeholder: @search, type: "search"
 	Label: text: "gravity + mixed gravity"
-	TBLayout: distribution: gravity
+	Layout: distribution: gravity
 		Button: text: tab 1
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
 		Button: text: tab 3

@@ -25,7 +25,7 @@ namespace tb {
         -TBSkinImage showing the arrow for items with a submenu.
         It also handles submenu events. */
 
-class TBSimpleLayoutItemWidget : public TBLayout, private WidgetListener {
+class TBSimpleLayoutItemWidget : public Layout, private WidgetListener {
  public:
   TBSimpleLayoutItemWidget(TBID image, SelectItemSource* source,
                            const char* str);

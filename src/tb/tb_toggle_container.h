@@ -88,7 +88,7 @@ class Section : public TBWidget {
   Section();
   ~Section() override;
 
-  TBLayout* GetLayout() { return &m_layout; }
+  Layout* GetLayout() { return &m_layout; }
   SectionHeader* GetHeader() { return &m_header; }
   ToggleContainer* GetContainer() { return &m_toggle_container; }
 
@@ -113,7 +113,7 @@ class Section : public TBWidget {
       const SizeConstraints& constraints) override;
 
  private:
-  TBLayout m_layout;
+  Layout m_layout;
   SectionHeader m_header;
   ToggleContainer m_toggle_container;
   bool m_pending_scroll = false;

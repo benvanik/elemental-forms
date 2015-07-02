@@ -50,7 +50,7 @@ class AdvancedItemSource : public SelectItemSourceList<AdvancedItem> {
         On changes to the item, it calls InvokeItemChanged on the source, so
    that all
         viewers of the source are updated to reflect the change. */
-class AdvancedItemWidget : public TBLayout {
+class AdvancedItemWidget : public Layout {
  public:
   AdvancedItemWidget(AdvancedItem* item, AdvancedItemSource* source,
                      SelectItemObserver* source_viewer, int index);

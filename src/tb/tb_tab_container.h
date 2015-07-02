@@ -14,11 +14,11 @@
 
 namespace tb {
 
-// A TBLayout used in TabContainer to apply some default properties on any
+// A Layout used in TabContainer to apply some default properties on any
 // Button added to it.
-class TabLayout : public TBLayout {
+class TabLayout : public Layout {
  public:
-  TBOBJECT_SUBCLASS(TabLayout, TBLayout);
+  TBOBJECT_SUBCLASS(TabLayout, Layout);
 
   void OnChildAdded(TBWidget* child) override;
   PreferredSize OnCalculatePreferredContentSize(
@@ -60,10 +60,10 @@ class TabContainer : public TBWidget {
   void OnProcess() override;
 
   TBWidget* GetContentRoot() override { return &m_content_root; }
-  TBLayout* GetTabLayout() { return &m_tab_layout; }
+  Layout* GetTabLayout() { return &m_tab_layout; }
 
  protected:
-  TBLayout m_root_layout;
+  Layout m_root_layout;
   TabLayout m_tab_layout;
   TBWidget m_content_root;
   bool m_need_page_update = true;

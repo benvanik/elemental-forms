@@ -6,7 +6,7 @@ definitions
 ScrollContainer: id: "page-scroller"
 	@include definitions>pagesize
 	scroll-mode off
-	TBLayout
+	Layout
 		spacing 0
 		Container
 			@include definitions>pagesize

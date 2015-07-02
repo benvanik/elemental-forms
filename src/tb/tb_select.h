@@ -98,7 +98,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
 
  protected:
   ScrollContainer m_container;
-  TBLayout m_layout;
+  Layout m_layout;
   GenericStringItemSource m_default_source;
   int m_value = -1;
   std::string m_filter;

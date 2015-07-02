@@ -34,7 +34,7 @@ bool AdvancedItemWidget::OnEvent(const TBWidgetEvent& ev) {
     m_source->DeleteItem(m_index);
     return true;
   }
-  return TBLayout::OnEvent(ev);
+  return Layout::OnEvent(ev);
 }
 
 // == AdvancedItemSource ======================================================
@@ -50,7 +50,7 @@ bool AdvancedItemSource::Filter(int index, const char* filter) {
 
 TBWidget* AdvancedItemSource::CreateItemWidget(int index,
                                                SelectItemObserver* viewer) {
-  if (TBLayout* layout =
+  if (Layout* layout =
           new AdvancedItemWidget(GetItem(index), this, viewer, index))
     return layout;
   return nullptr;

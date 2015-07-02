@@ -43,11 +43,11 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   TBWidget* root = target->GetParentRoot();
 
   const char* source =
-      "TBLayout: axis: y, distribution: available\n"
-      "	TBLayout: distribution: available, size: available\n"
+      "Layout: axis: y, distribution: available\n"
+      "	Layout: distribution: available, size: available\n"
       "		TBSkinImage: id: 2\n"
       "		TBEditField: multiline: 1, readonly: 1, id: 1\n"
-      "	TBLayout: distribution-position: right bottom, id: 3\n";
+      "	Layout: distribution-position: right bottom, id: 3\n";
   if (!g_widgets_reader->LoadData(GetContentRoot(), source)) {
     return false;
   }
@@ -98,7 +98,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 }
 
 void MessageWindow::AddButton(TBID id, bool focused) {
-  TBLayout* layout = GetWidgetByIDAndType<TBLayout>(3);
+  Layout* layout = GetWidgetByIDAndType<Layout>(3);
   if (!layout) return;
   Button* btn = new Button();
   btn->SetID(id);
