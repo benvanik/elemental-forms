@@ -39,6 +39,8 @@ class TBNode : public TBLinkOf<TBNode> {
   /** Create a new node with the given name. */
   static TBNode* Create(const char* name);
 
+  void TakeValue(TBValue& value);
+
   /** Read a tree of nodes from file into this node. Returns true on success. */
   bool ReadFile(const std::string& filename,
                 TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
@@ -151,10 +153,10 @@ class TBNode : public TBLinkOf<TBNode> {
                            GET_MISS_POLICY mp = GET_MISS_POLICY_NULL);
   TBNode* GetNodeInternal(const char* name, size_t name_len) const;
   static TBNode* Create(const char* name, size_t name_len);
-  char* m_name;
+  char* m_name = nullptr;
   TBValue m_value;
   TBLinkListOf<TBNode> m_children;
-  TBNode* m_parent;
+  TBNode* m_parent = nullptr;
   uint32_t m_cycle_id;  ///< Used to detect circular references.
 };
 

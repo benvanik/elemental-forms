@@ -191,7 +191,7 @@ class TBNodeTarget : public TBParserTarget {
     } else if (strcmp(name, "@include") == 0) {
       IncludeRef(line_nr, value.GetString());
     } else if (TBNode* n = TBNode::Create(name)) {
-      n->m_value.TakeOver(value);
+      n->TakeValue(value);
       m_target_node->Add(n);
     }
   }
@@ -254,6 +254,10 @@ class TBNodeTarget : public TBParserTarget {
   TBNode* m_target_node;
   std::string m_filename;
 };
+
+void TBNode::TakeValue(TBValue& value) {
+  m_value.TakeOver(value);
+}
 
 bool TBNode::ReadFile(const std::string& filename, TB_NODE_READ_FLAGS flags) {
   if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
