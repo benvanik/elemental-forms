@@ -201,8 +201,8 @@ class TBEditField : public TBWidget,
   virtual void OnMessageReceived(Message* msg);
 
  protected:
-  TBScrollBar m_scrollbar_x;
-  TBScrollBar m_scrollbar_y;
+  ScrollBar m_scrollbar_x;
+  ScrollBar m_scrollbar_y;
   TBWidgetString m_placeholder;
   EditType m_edit_type;
   TBEditFieldScrollRoot m_root;

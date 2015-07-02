@@ -402,19 +402,19 @@ elements
 		bitmap item_separator_y.png
 		type stretch image
 
-	TBScrollBarBgX
+	ScrollBarBgX
 		bitmap scroll_bg_x.png
 		cut 11
 		expand 5
-	TBScrollBarFgX
+	ScrollBarFgX
 		bitmap scroll_fg_x.png
 		cut 11
 		expand 5
-	TBScrollBarBgY
+	ScrollBarBgY
 		bitmap scroll_bg_y.png
 		cut 11
 		expand 5
-	TBScrollBarFgY
+	ScrollBarFgY
 		bitmap scroll_fg_y.png
 		cut 11
 		expand 5

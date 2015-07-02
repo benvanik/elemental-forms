@@ -59,7 +59,7 @@ class ResourceEditWindow : public Window,
  private:
   SelectList* m_widget_list;
   SelectItemSourceList<ResourceItem> m_widget_list_source;
-  TBScrollContainer* m_scroll_container;
+  ScrollContainer* m_scroll_container;
   TBWidget* m_build_container;
   TBEditField* m_source_edit;
   std::string m_resource_filename;

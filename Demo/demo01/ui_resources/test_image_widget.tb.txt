@@ -1,7 +1,7 @@
 WindowInfo
 	title TBImageWidget
 	size 350 500
-TBScrollContainer
+ScrollContainer
 	adapt-content 1
 	TBLayout
 		axis y

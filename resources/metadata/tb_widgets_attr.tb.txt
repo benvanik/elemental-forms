@@ -67,7 +67,7 @@ TBLayout
 	overflow clip, scroll
 	distribution preferred, available, gravity
 	distribution-position center, left, top, right, bottom
-TBScrollContainer
+ScrollContainer
 	adapt-content <bool>
 	adapt-to-content <bool>
 	scroll-mode xy, y, y-auto, auto, off
@@ -81,7 +81,7 @@ TabContainer
 		<sub...>
 TBButton
 	toggle-mode <bool>
-TBScrollBar
+ScrollBar
 TBSlider
 	min <number>
 	max <number>

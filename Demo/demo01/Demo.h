@@ -45,7 +45,7 @@ class ImageWindow : public DemoWindow {
   virtual bool OnEvent(const TBWidgetEvent& ev);
 };
 
-class PageWindow : public DemoWindow, public TBScrollerSnapListener {
+class PageWindow : public DemoWindow, public ScrollerSnapListener {
  public:
   PageWindow();
   virtual bool OnEvent(const TBWidgetEvent& ev);

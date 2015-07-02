@@ -11,7 +11,7 @@ TBLayout
 			TBLayout
 				TBSlider
 					value 0.5
-				TBScrollBar
+				ScrollBar
 	TBEditField
 		multiline 1
 		readonly 1

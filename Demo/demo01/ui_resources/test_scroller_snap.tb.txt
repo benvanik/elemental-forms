@@ -1,9 +1,9 @@
 WindowInfo
-	title TBScrollerSnapListener
+	title ScrollerSnapListener
 definitions
 	pagesize
 		lp: width: 200, height: 300
-TBScrollContainer: id: "page-scroller"
+ScrollContainer: id: "page-scroller"
 	@include definitions>pagesize
 	scroll-mode off
 	TBLayout

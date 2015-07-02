@@ -387,37 +387,34 @@ bool TBRadioCheckBox::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-TBScrollBar::TBScrollBar()
-    : m_axis(Axis::kY)  ///< Make SetAxis below always succeed and set the skin
-      ,
-      m_value(0),
-      m_min(0),
-      m_max(1),
-      m_visible(1),
-      m_to_pixel_factor(0) {
+ScrollBar::ScrollBar()
+    : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
+{
   SetAxis(Axis::kX);
   AddChild(&m_handle);
 }
 
-TBScrollBar::~TBScrollBar() { RemoveChild(&m_handle); }
+ScrollBar::~ScrollBar() { RemoveChild(&m_handle); }
 
-void TBScrollBar::SetAxis(Axis axis) {
+void ScrollBar::SetAxis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   if (axis == Axis::kX) {
-    SetSkinBg(TBIDC("TBScrollBarBgX"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("TBScrollBarFgX"), InvokeInfo::kNoCallbacks);
+    SetSkinBg(TBIDC("ScrollBarBgX"), InvokeInfo::kNoCallbacks);
+    m_handle.SetSkinBg(TBIDC("ScrollBarFgX"), InvokeInfo::kNoCallbacks);
   } else {
-    SetSkinBg(TBIDC("TBScrollBarBgY"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("TBScrollBarFgY"), InvokeInfo::kNoCallbacks);
+    SetSkinBg(TBIDC("ScrollBarBgY"), InvokeInfo::kNoCallbacks);
+    m_handle.SetSkinBg(TBIDC("ScrollBarFgY"), InvokeInfo::kNoCallbacks);
   }
   Invalidate();
 }
 
-void TBScrollBar::SetLimits(double min, double max, double visible) {
+void ScrollBar::SetLimits(double min, double max, double visible) {
   max = std::max(min, max);
   visible = std::max(visible, 0.0);
-  if (min == m_min && max == m_max && m_visible == visible) return;
+  if (min == m_min && max == m_max && m_visible == visible) {
+    return;
+  }
   m_min = min;
   m_max = max;
   m_visible = visible;
@@ -426,18 +423,22 @@ void TBScrollBar::SetLimits(double min, double max, double visible) {
   // If we're currently dragging the scrollbar handle, convert the down point
   // to root and then back after the applying the new limit.
   // This prevents sudden jumps to unexpected positions when scrolling.
-  if (captured_widget == &m_handle)
+  if (captured_widget == &m_handle) {
     m_handle.ConvertToRoot(pointer_down_widget_x, pointer_down_widget_y);
+  }
 
   UpdateHandle();
 
-  if (captured_widget == &m_handle)
+  if (captured_widget == &m_handle) {
     m_handle.ConvertFromRoot(pointer_down_widget_x, pointer_down_widget_y);
+  }
 }
 
-void TBScrollBar::SetValueDouble(double value) {
+void ScrollBar::SetValueDouble(double value) {
   value = Clamp(value, m_min, m_max);
-  if (value == m_value) return;
+  if (value == m_value) {
+    return;
+  }
   m_value = value;
 
   UpdateHandle();
@@ -445,7 +446,7 @@ void TBScrollBar::SetValueDouble(double value) {
   InvokeEvent(ev);
 }
 
-bool TBScrollBar::OnEvent(const TBWidgetEvent& ev) {
+bool ScrollBar::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_widget_x;
@@ -454,12 +455,11 @@ bool TBScrollBar::OnEvent(const TBWidgetEvent& ev) {
       SetValueDouble(m_value + delta_val);
     }
     return true;
-  } else if (ev.type == EventType::kPointerMove && ev.target == this)
+  } else if (ev.type == EventType::kPointerMove && ev.target == this) {
     return true;
-  else if (ev.type == EventType::kPointerDown && ev.target == this) {
-    bool after_handle =
-        (m_axis == Axis::kX ? ev.target_x > m_handle.GetRect().x
-                            : ev.target_y > m_handle.GetRect().y);
+  } else if (ev.type == EventType::kPointerDown && ev.target == this) {
+    bool after_handle = m_axis == Axis::kX ? ev.target_x > m_handle.GetRect().x
+                                           : ev.target_y > m_handle.GetRect().y;
     SetValueDouble(m_value + (after_handle ? m_visible : -m_visible));
     return true;
   } else if (ev.type == EventType::kWheel) {
@@ -470,8 +470,8 @@ bool TBScrollBar::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-void TBScrollBar::UpdateHandle() {
-  // Calculate the mover size and position
+void ScrollBar::UpdateHandle() {
+  // Calculate the mover size and position.
   bool horizontal = m_axis == Axis::kX;
   int available_pixels = horizontal ? GetRect().w : GetRect().h;
   int min_thickness_pixels = std::min(GetRect().h, GetRect().w);
@@ -483,31 +483,31 @@ void TBScrollBar::UpdateHandle() {
     visible_pixels = (int)(visible_proportion * available_pixels);
 
     // Limit the size of the indicator to the slider thickness so that it
-    // doesn't
-    // become too tiny when the visible proportion is very small.
+    // doesn't become too tiny when the visible proportion is very small.
     visible_pixels = std::max(visible_pixels, min_thickness_pixels);
 
     m_to_pixel_factor =
-        (double)(available_pixels - visible_pixels) / (m_max - m_min) /*+ 0.5*/;
+        double(available_pixels - visible_pixels) / (m_max - m_min) /*+ 0.5*/;
   } else {
     m_to_pixel_factor = 0;
 
-    // If we can't scroll anything, make the handle invisible
+    // If we can't scroll anything, make the handle invisible.
     visible_pixels = 0;
   }
 
   int pixel_pos = (int)(m_value * m_to_pixel_factor);
 
   Rect rect;
-  if (horizontal)
+  if (horizontal) {
     rect.Set(pixel_pos, 0, visible_pixels, GetRect().h);
-  else
+  } else {
     rect.Set(0, pixel_pos, GetRect().w, visible_pixels);
+  }
 
   m_handle.SetRect(rect);
 }
 
-void TBScrollBar::OnResized(int old_w, int old_h) { UpdateHandle(); }
+void ScrollBar::OnResized(int old_w, int old_h) { UpdateHandle(); }
 
 TBSlider::TBSlider()
     : m_axis(Axis::kY)  ///< Make SetAxis below always succeed and set the skin

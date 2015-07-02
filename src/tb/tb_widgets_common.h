@@ -296,60 +296,60 @@ class TBRadioButton : public TBRadioCheckBox {
   }
 };
 
-/** TBScrollBar is a scroll bar in the given axis. */
-
-class TBScrollBar : public TBWidget {
+// A scroll bar in the given axis.
+class ScrollBar : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBScrollBar, TBWidget);
+  TBOBJECT_SUBCLASS(ScrollBar, TBWidget);
 
-  TBScrollBar();
-  ~TBScrollBar();
+  ScrollBar();
+  ~ScrollBar() override;
 
-  /** Set along which axis the scrollbar should scroll */
-  virtual void SetAxis(Axis axis);
-  virtual Axis GetAxis() const { return m_axis; }
+  // Sets along which axis the scrollbar should scroll.
+  void SetAxis(Axis axis) override;
+  Axis GetAxis() const override { return m_axis; }
 
-  /** Set the min, max limits for the scrollbar.
-          The visible parameter is how much of the range that is visible.
-          When this is called, the scrollbar might change value and invoke if
-     the current value is
-          outside of the new limits. */
+  // Sets the min, max limits for the scrollbar.
+  // The visible parameter is how much of the range that is visible.
+  // When this is called, the scrollbar might change value and invoke if the
+  // current value is outside of the new limits.
   void SetLimits(double min, double max, double visible);
 
-  /** Return true if the scrollbar has anywhere to go with the current limits.
-   */
+  // Returns true if the scrollbar has anywhere to go with the current limits.
   bool CanScroll() const { return m_visible > 0; }
 
-  /** Return true if the scrollbar can scroll in the positive direction with its
-   * current limits. */
+  // Returns true if the scrollbar can scroll in the positive direction with its
+  // current limits.
   bool CanScrollPositive() const { return m_value < m_max; }
 
-  /** Return true if the scrollbar can scroll in the negative direction with its
-   * current limits. */
+  // Returns true if the scrollbar can scroll in the negative direction with its
+  // current limits.
   bool CanScrollNegative() const { return m_value > m_min; }
 
   double GetMinValue() const { return m_min; }
   double GetMaxValue() const { return m_max; }
   double GetVisible() const { return m_visible; }
 
-  /** Same as SetValue, but with double precision. */
-  virtual void SetValueDouble(double value);
-  virtual double GetValueDouble() { return m_value; }
+  // Same as SetValue, but with double precision.
+  void SetValueDouble(double value) override;
+  double GetValueDouble() override { return m_value; }
 
-  virtual void SetValue(int value) { SetValueDouble(value); }
-  virtual int GetValue() { return (int)GetValueDouble(); }
+  void SetValue(int value) override { SetValueDouble(value); }
+  int GetValue() override { return (int)GetValueDouble(); }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnResized(int old_w, int old_h);
+  void OnInflate(const INFLATE_INFO& info) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  void OnResized(int old_w, int old_h) override;
 
  protected:
+  void UpdateHandle();
+
   TBWidget m_handle;
   Axis m_axis;
-  double m_value;
-  double m_min, m_max, m_visible;
-  double m_to_pixel_factor;
-  void UpdateHandle();
+  double m_value = 0;
+  double m_min = 0;
+  double m_max = 1;
+  double m_visible = 1;
+  double m_to_pixel_factor = 0;
 };
 
 /** TBSlider is a horizontal or vertical slider for a number within a range. */

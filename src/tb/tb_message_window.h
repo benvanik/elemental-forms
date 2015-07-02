@@ -21,50 +21,46 @@ enum class MessageWindowButtons {
   kYesNo,
 };
 
-// MessageWindowSettings contains additional settings for MessageWindow.
+// Contains additional settings for MessageWindow.
 class MessageWindowSettings {
  public:
-  MessageWindowSettings()
-      : msg(MessageWindowButtons::kOk), dimmer(false), styling(false) {}
+  MessageWindowSettings() : msg(MessageWindowButtons::kOk) {}
   MessageWindowSettings(MessageWindowButtons msg, TBID icon_skin)
-      : msg(msg), icon_skin(icon_skin), dimmer(false), styling(false) {}
+      : msg(msg), icon_skin(icon_skin) {}
 
  public:
-  MessageWindowButtons msg;  ///< The type of response for the message.
-  TBID icon_skin;            ///< The icon skin (0 for no icon)
-  bool dimmer;   ///< Set to true to dim background widgets by a TBDimmer.
-  bool styling;  ///< Enable styling in the textfield.
+  MessageWindowButtons msg;  // The type of response for the message.
+  TBID icon_skin;            // The icon skin (0 for no icon)
+  bool dimmer = false;   // Set to true to dim background widgets by a TBDimmer.
+  bool styling = false;  // Enable styling in the textfield.
 };
 
-/** MessageWindow is a window for showing simple messages.
-        Events invoked in this window will travel up through the target widget.
-
-        When the user click any of its buttons, it will invoke a click event
-        (with the window ID), with the clicked buttons id as ref_id.
-        Then it will delete itself.
-
-        If the target widget is deleted while this window is alive, the
-        window will delete itself. */
+// A window for showing simple messages.
+// Events invoked in this window will travel up through the target widget.
+// When the user click any of its buttons, it will invoke a click event
+// (with the window ID), with the clicked buttons id as ref_id.
+// Then it will delete itself.
+// If the target widget is deleted while this window is alive, the window will
+// delete itself.
 class MessageWindow : public Window, private WidgetListener {
  public:
   TBOBJECT_SUBCLASS(MessageWindow, Window);
 
   MessageWindow(TBWidget* target, TBID id);
-  virtual ~MessageWindow();
+  ~MessageWindow() override;
 
   bool Show(const std::string& title, const std::string& message,
             MessageWindowSettings* settings = nullptr);
 
-  virtual TBWidget* GetEventDestination() { return m_target.Get(); }
+  TBWidget* GetEventDestination() override { return m_target.Get(); }
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnDie();
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  void OnDie() override;
 
  private:
   void AddButton(TBID id, bool focused);
-  // WidgetListener
-  virtual void OnWidgetDelete(TBWidget* widget);
-  virtual bool OnWidgetDying(TBWidget* widget);
+  void OnWidgetDelete(TBWidget* widget) override;
+  bool OnWidgetDying(TBWidget* widget) override;
   WeakWidgetPointer m_dimmer;
   WeakWidgetPointer m_target;
 };

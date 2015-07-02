@@ -1,11 +1,11 @@
 WindowInfo
-	title TBScrollContainer with misc widgets
+	title ScrollContainer with misc widgets
 	size 500 500
 TBLayout
 	gravity all
 	distribution available
 	axis y
-	TBScrollContainer
+	ScrollContainer
 		TBLayout
 			position left top
 			axis y
@@ -85,10 +85,10 @@ TBLayout
 					min 0
 					max 100
 					connection master-volume
-			TBTextField: text: "TBScrollbar:"
+			TBTextField: text: "ScrollBar:"
 			TBLayout
-				TBScrollBar
-				TBScrollBar
+				ScrollBar
+				ScrollBar
 					axis y
 			TBTextField: text: Horizontal layout:
 			TBLayout

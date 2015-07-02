@@ -31,7 +31,7 @@ TBLayout
 			multiline 1
 			gravity all
 		TBLayout: axis: y, distribution: available, position: left
-			TBScrollContainer
+			ScrollContainer
 				id scroll_container
 				gravity all
 			TBClickLabel: text: "Adapt to container"

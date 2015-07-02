@@ -365,7 +365,7 @@ TBWidget* TBWidget::FindScrollableWidget(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-TBScroller* TBWidget::FindStartedScroller() {
+Scroller* TBWidget::FindStartedScroller() {
   TBWidget* candidate = this;
   while (candidate) {
     if (candidate->m_scroller && candidate->m_scroller->IsStarted())
@@ -375,8 +375,8 @@ TBScroller* TBWidget::FindStartedScroller() {
   return nullptr;
 }
 
-TBScroller* TBWidget::GetReadyScroller(bool scroll_x, bool scroll_y) {
-  if (TBScroller* scroller = FindStartedScroller()) return scroller;
+Scroller* TBWidget::GetReadyScroller(bool scroll_x, bool scroll_y) {
+  if (Scroller* scroller = FindStartedScroller()) return scroller;
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
   if (TBWidget* scrollable_widget = FindScrollableWidget(scroll_x, scroll_y))
@@ -384,8 +384,8 @@ TBScroller* TBWidget::GetReadyScroller(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-TBScroller* TBWidget::GetScroller() {
-  if (!m_scroller) m_scroller = new TBScroller(this);
+Scroller* TBWidget::GetScroller() {
+  if (!m_scroller) m_scroller = new Scroller(this);
   return m_scroller;
 }
 
@@ -393,7 +393,7 @@ void TBWidget::ScrollToSmooth(int x, int y) {
   ScrollInfo info = GetScrollInfo();
   int dx = x - info.x;
   int dy = y - info.y;
-  if (TBScroller* scroller = GetReadyScroller(dx != 0, dy != 0))
+  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0))
     scroller->OnScrollBy(dx, dy, false);
 }
 
@@ -406,7 +406,7 @@ void TBWidget::ScrollBySmooth(int dx, int dy) {
   // dy = y - info.y;
   if (!dx && !dy) return;
 
-  if (TBScroller* scroller = GetReadyScroller(dx != 0, dy != 0))
+  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0))
     scroller->OnScrollBy(dx, dy, true);
 }
 
@@ -1285,7 +1285,7 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
     }
 
     // Get any active scroller and feed it with pan actions.
-    TBScroller* scroller = captured_widget->GetReadyScroller(dx != 0, dy != 0);
+    Scroller* scroller = captured_widget->GetReadyScroller(dx != 0, dy != 0);
     if (!scroller) return;
 
     int old_translation_x = 0, old_translation_y = 0;
@@ -1455,8 +1455,7 @@ void TBWidget::SetCapturedWidget(TBWidget* widget) {
     // Stop panning when capture change (most likely changing to nullptr because
     // of InvokePointerUp)
     // Notify any active scroller so it may begin scrolling.
-    if (TBScroller* scroller =
-            TBWidget::captured_widget->FindStartedScroller()) {
+    if (Scroller* scroller = TBWidget::captured_widget->FindStartedScroller()) {
       if (TBWidget::captured_widget->m_packed.is_panning)
         scroller->OnPanReleased();
       else

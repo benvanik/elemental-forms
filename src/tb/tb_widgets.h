@@ -26,7 +26,7 @@ namespace tb {
 class Window;
 class TBWidget;
 class FontFace;
-class TBScroller;
+class Scroller;
 class WidgetListener;
 class TBLongClickTimer;
 struct INFLATE_INFO;
@@ -927,7 +927,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           This must result in calling OnScroll if scrolling occured. */
   virtual void ScrollTo(int x, int y) {}
 
-  /** Start the TBScroller for this widget and scroll it to the given position.
+  /** Start the Scroller for this widget and scroll it to the given position.
           Will cancel any on going smooth scroll operation. */
   void ScrollToSmooth(int x, int y);
 
@@ -936,7 +936,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           scroll by delta dx, dy relative to its current position. */
   void ScrollBy(int dx, int dy);
 
-  /** Start the TBScroller for this widget and scroll it by the given delta.
+  /** Start the Scroller for this widget and scroll it by the given delta.
           Consecutive calls will accumulate the scroll speed. */
   void ScrollBySmooth(int dx, int dy);
 
@@ -980,9 +980,9 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           scroll so that rect is visible. Rect is relative to this widget. */
   void ScrollIntoView(const Rect& rect);
 
-  /** Return the TBScroller set up for this widget, or nullptr if creation
+  /** Return the Scroller set up for this widget, or nullptr if creation
    * failed. */
-  TBScroller* GetScroller();
+  Scroller* GetScroller();
 
   // == Setter shared for many types of widgets ============
 
@@ -999,13 +999,13 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Set the value in double precision. It only makes sense to use this instead
           of SetValue() on widgets that store the value as double. F.ex
-     TBScrollBar, TBSlider. */
+     ScrollBar, TBSlider. */
   virtual void SetValueDouble(double value) { SetValue((int)value); }
 
   /** Return the value in double precision. It only makes sense to use this
      instead
           of GetValue() on widgets that store the value as double. F.ex
-     TBScrollBar, TBSlider. */
+     ScrollBar, TBSlider. */
   virtual double GetValueDouble() { return (double)GetValue(); }
 
   /** Set the text of this widget. Implemented by most widgets (that has text).
@@ -1237,7 +1237,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   PreferredSize m_cached_ps;      ///< Cached preferred size.
   SizeConstraints m_cached_sc;    ///< Cached size constraints.
   LayoutParams* m_layout_params;  ///< Layout params, or nullptr.
-  TBScroller* m_scroller;
+  Scroller* m_scroller;
   TBLongClickTimer* m_long_click_timer;
   std::string m_desc_str;
   union {
@@ -1301,8 +1301,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Return this widget or the nearest parent that is scrollable
           in the given axis, or nullptr if there is none. */
   TBWidget* FindScrollableWidget(bool scroll_x, bool scroll_y);
-  TBScroller* FindStartedScroller();
-  TBScroller* GetReadyScroller(bool scroll_x, bool scroll_y);
+  Scroller* FindStartedScroller();
+  Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
   TBWidget* GetWidgetByIDInternal(const TBID& id,
                                   const TB_TYPE_ID type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);

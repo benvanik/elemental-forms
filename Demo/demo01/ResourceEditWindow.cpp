@@ -29,7 +29,7 @@ ResourceEditWindow::ResourceEditWindow()
       this, "Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
-      GetWidgetByIDAndType<TBScrollContainer>(TBIDC("scroll_container"));
+      GetWidgetByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
   m_build_container = m_scroll_container->GetContentRoot();
   m_source_edit = GetWidgetByIDAndType<TBEditField>(TBIDC("source_edit"));
 

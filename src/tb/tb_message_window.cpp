@@ -36,7 +36,9 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   if (!target) return false;
 
   MessageWindowSettings default_settings;
-  if (!settings) settings = &default_settings;
+  if (!settings) {
+    settings = &default_settings;
+  }
 
   TBWidget* root = target->GetParentRoot();
 
@@ -46,7 +48,9 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "		TBSkinImage: id: 2\n"
       "		TBEditField: multiline: 1, readonly: 1, id: 1\n"
       "	TBLayout: distribution-position: right bottom, id: 3\n";
-  if (!g_widgets_reader->LoadData(GetContentRoot(), source)) return false;
+  if (!g_widgets_reader->LoadData(GetContentRoot(), source)) {
+    return false;
+  }
 
   SetText(title);
 
@@ -57,7 +61,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   editfield->SetText(message);
   editfield->SetSkinBg("");
 
-  // Create buttons
+  // Create buttons.
   if (settings->msg == MessageWindowButtons::kOk) {
     AddButton("MessageWindow.ok", true);
   } else if (settings->msg == MessageWindowButtons::kOkCancel) {
@@ -79,15 +83,14 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   // At least when we do full blown multi pass size checking.
   rect.h += editfield->GetStyleEdit()->GetOverflowY();
 
-  // Create background dimmer
+  // Create background dimmer.
   if (settings->dimmer) {
-    if (TBDimmer* dimmer = new TBDimmer) {
-      root->AddChild(dimmer);
-      m_dimmer.Set(dimmer);
-    }
+    TBDimmer* dimmer = new TBDimmer();
+    root->AddChild(dimmer);
+    m_dimmer.Set(dimmer);
   }
 
-  // Center and size to the new height
+  // Center and size to the new height.
   Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
   SetRect(rect.CenterIn(bounds).MoveIn(bounds).Clip(bounds));
   root->AddChild(this);
@@ -97,11 +100,12 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 void MessageWindow::AddButton(TBID id, bool focused) {
   TBLayout* layout = GetWidgetByIDAndType<TBLayout>(3);
   if (!layout) return;
-  if (TBButton* btn = new TBButton) {
-    btn->SetID(id);
-    btn->SetText(g_tb_lng->GetString(btn->GetID()));
-    layout->AddChild(btn);
-    if (focused) btn->SetFocus(FocusReason::kUnknown);
+  TBButton* btn = new TBButton();
+  btn->SetID(id);
+  btn->SetText(g_tb_lng->GetString(btn->GetID()));
+  layout->AddChild(btn);
+  if (focused) {
+    btn->SetFocus(FocusReason::kUnknown);
   }
 }
 
@@ -109,13 +113,15 @@ bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<TBButton>()) {
     WeakWidgetPointer this_widget(this);
 
-    // Invoke the click on the target
+    // Invoke the click on the target.
     TBWidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.target->GetID();
     InvokeEvent(target_ev);
 
-    // If target got deleted, close
-    if (this_widget.Get()) Close();
+    // If target got deleted, close.
+    if (this_widget.Get()) {
+      Close();
+    }
     return true;
   } else if (ev.type == EventType::kKeyDown &&
              ev.special_key == SpecialKey::kEsc) {
@@ -127,17 +133,23 @@ bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
 }
 
 void MessageWindow::OnDie() {
-  if (TBWidget* dimmer = m_dimmer.Get()) dimmer->Die();
+  if (TBWidget* dimmer = m_dimmer.Get()) {
+    dimmer->Die();
+  }
 }
 
 void MessageWindow::OnWidgetDelete(TBWidget* widget) {
   // If the target widget is deleted, close!
-  if (!m_target.Get()) Close();
+  if (!m_target.Get()) {
+    Close();
+  }
 }
 
 bool MessageWindow::OnWidgetDying(TBWidget* widget) {
   // If the target widget or an ancestor of it is dying, close!
-  if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) Close();
+  if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) {
+    Close();
+  }
   return false;
 }
 

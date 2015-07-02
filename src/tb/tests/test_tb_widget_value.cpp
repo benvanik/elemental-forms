@@ -79,12 +79,12 @@ TB_TEST_GROUP(tb_widget_value_text) {
 TB_TEST_GROUP(tb_widget_value_int) {
   TBWidgetValue widget_val(TBIDC("test value int"));
   TBSlider* a;
-  TBScrollBar* b;
+  ScrollBar* b;
   TBInlineSelect* c;
 
   TB_TEST(Init) {
     TB_VERIFY(a = new TBSlider);
-    TB_VERIFY(b = new TBScrollBar);
+    TB_VERIFY(b = new ScrollBar);
     TB_VERIFY(c = new TBInlineSelect);
     a->SetLimits(0, 1000);
     b->SetLimits(0, 1000, 1);

@@ -234,8 +234,8 @@ void TBLayout::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBScrollContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
-void TBScrollContainer::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(ScrollContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
+void ScrollContainer::OnInflate(const INFLATE_INFO& info) {
   SetGravity(Gravity::kAll);
   SetAdaptContentSize(
       info.node->GetValueInt("adapt-content", GetAdaptContentSize()) ? true
@@ -281,8 +281,8 @@ void TabContainer::OnInflate(const INFLATE_INFO& info) {
   }
 }
 
-TB_WIDGET_FACTORY(TBScrollBar, TBValue::Type::kFloat, WidgetZ::kTop) {}
-void TBScrollBar::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(ScrollBar, TBValue::Type::kFloat, WidgetZ::kTop) {}
+void ScrollBar::OnInflate(const INFLATE_INFO& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
   SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);

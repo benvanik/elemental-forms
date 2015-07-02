@@ -82,7 +82,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   void ScrollToSelectedItem();
 
   // Returns the scrollcontainer used in this list.
-  TBScrollContainer* GetScrollContainer() { return &m_container; }
+  ScrollContainer* GetScrollContainer() { return &m_container; }
 
   void OnInflate(const INFLATE_INFO& info) override;
   void OnSkinChanged() override;
@@ -97,7 +97,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   void OnAllItemsRemoved() override;
 
  protected:
-  TBScrollContainer m_container;
+  ScrollContainer m_container;
   TBLayout m_layout;
   GenericStringItemSource m_default_source;
   int m_value = -1;
