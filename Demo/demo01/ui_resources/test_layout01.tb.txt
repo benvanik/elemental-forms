@@ -39,17 +39,17 @@ TBLayout
 		id switch_layout
 		axis y
 		Label: text: "size: preferred"
-		TBContainer
+		Container
 			@include test_layout_content
 				size preferred
 				id 1
 		Label: text: "size: available"
-		TBContainer
+		Container
 			@include test_layout_content
 				size available
 				id 2
 		Label: text: "size: gravity"
-		TBContainer
+		Container
 			@include test_layout_content
 				size gravity
 				id 3

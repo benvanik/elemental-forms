@@ -85,7 +85,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   // Create background dimmer.
   if (settings->dimmer) {
-    TBDimmer* dimmer = new TBDimmer();
+    Dimmer* dimmer = new Dimmer();
     root->AddChild(dimmer);
     m_dimmer.Set(dimmer);
   }

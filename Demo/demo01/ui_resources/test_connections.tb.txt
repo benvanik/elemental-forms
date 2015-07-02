@@ -4,18 +4,18 @@ TBLayout
 	axis y
 	Label
 		text Numeric widgets sharing a connection
-	TBContainer
+	Container
 		gravity all
 		TBLayout
 			SelectInline
 				connection master-volume
 				min 0
 				max 100
-			TBSlider
+			Slider
 				connection master-volume
 				min 0
 				max 100
-			TBSlider
+			Slider
 				axis y
 				connection master-volume
 				min 0
@@ -25,7 +25,7 @@ TBLayout
 				id reset-master-volume
 	Label
 		text Text widgets sharing a connection
-	TBContainer
+	Container
 		gravity all
 		TBLayout
 			TBEditField

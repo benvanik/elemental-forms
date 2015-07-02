@@ -7,9 +7,9 @@ TBLayout
 		TBRadioButton
 		TBCheckBox
 	@if 1
-		TBContainer
+		Container
 			TBLayout
-				TBSlider
+				Slider
 					value 0.5
 				ScrollBar
 	TBEditField

@@ -8,18 +8,18 @@ ScrollContainer: id: "page-scroller"
 	scroll-mode off
 	TBLayout
 		spacing 0
-		TBContainer
+		Container
 			@include definitions>pagesize
 			Label: text: "One - Swipe to next page"
-		TBContainer
+		Container
 			@include definitions>pagesize
 			Label: text: "Two"
-		TBContainer
+		Container
 			@include definitions>pagesize
 			Label: text: "Three"
-		TBContainer
+		Container
 			@include definitions>pagesize
 			Label: text: "Four"
-		TBContainer
+		Container
 			@include definitions>pagesize
 			Label: text: "Five - Last page"

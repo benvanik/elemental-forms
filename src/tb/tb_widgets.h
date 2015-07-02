@@ -999,13 +999,13 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Set the value in double precision. It only makes sense to use this instead
           of SetValue() on widgets that store the value as double. F.ex
-     ScrollBar, TBSlider. */
+     ScrollBar, Slider. */
   virtual void SetValueDouble(double value) { SetValue((int)value); }
 
   /** Return the value in double precision. It only makes sense to use this
      instead
           of GetValue() on widgets that store the value as double. F.ex
-     ScrollBar, TBSlider. */
+     ScrollBar, Slider. */
   virtual double GetValueDouble() { return (double)GetValue(); }
 
   /** Set the text of this widget. Implemented by most widgets (that has text).

@@ -73,14 +73,14 @@ TBLayout
 				TBEditField
 					text In this field, multiple lines are enabled.
 					multiline 1
-			Label: text: "TBSlider:"
+			Label: text: "Slider:"
 			TBLayout
-				TBSlider
-				TBSlider
+				Slider
+				Slider
 					min 100
 					max 200
 					value 150
-				TBSlider
+				Slider
 					axis y
 					min 0
 					max 100

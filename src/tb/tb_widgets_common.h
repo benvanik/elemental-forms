@@ -357,90 +357,91 @@ class ScrollBar : public TBWidget {
   double m_to_pixel_factor = 0;
 };
 
-/** TBSlider is a horizontal or vertical slider for a number within a range. */
-
+// A horizontal or vertical slider for a number within a range.
 // FIX: Add a "track value" showing as a line within the track (to be used for
 // buffering etc).
 // FIX: Also add a auto track that keeps it up to date with value (default).
-class TBSlider : public TBWidget {
+class Slider : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBSlider, TBWidget);
+  TBOBJECT_SUBCLASS(Slider, TBWidget);
 
-  TBSlider();
-  ~TBSlider();
+  Slider();
+  ~Slider() override;
 
-  /** Set along which axis the scrollbar should scroll */
-  virtual void SetAxis(Axis axis);
-  virtual Axis GetAxis() const { return m_axis; }
+  // Sets along which axis the scrollbar should scroll.
+  void SetAxis(Axis axis) override;
+  Axis GetAxis() const override { return m_axis; }
 
-  /** Set the min, max limits for the slider. */
+  // Sets the min, max limits for the slider.
   void SetLimits(double min, double max);
 
   double GetMinValue() const { return m_min; }
   double GetMaxValue() const { return m_max; }
 
-  /** Get a small value (depending on the min and max limits) for stepping by
-   * f.ex. keyboard. */
+  // Gets a small value (depending on the min and max limits) for stepping by
+  // f.ex. keyboard.
   double GetSmallStep() const { return (m_max - m_min) / 100.0; }
 
-  /** Same as SetValue, but with double precision. */
-  virtual void SetValueDouble(double value);
-  virtual double GetValueDouble() { return m_value; }
+  // Same as SetValue, but with double precision.
+  void SetValueDouble(double value) override;
+  double GetValueDouble() override { return m_value; }
 
-  virtual void SetValue(int value) { SetValueDouble(value); }
-  virtual int GetValue() { return (int)GetValueDouble(); }
+  void SetValue(int value) override { SetValueDouble(value); }
+  int GetValue() override { return (int)GetValueDouble(); }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnResized(int old_w, int old_h);
+  void OnInflate(const INFLATE_INFO& info) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  void OnResized(int old_w, int old_h) override;
 
  protected:
   TBWidget m_handle;
   Axis m_axis;
-  double m_value;
-  double m_min, m_max;
-  double m_to_pixel_factor;
+  double m_value = 0;
+  double m_min = 0;
+  double m_max = 1;
+  double m_to_pixel_factor = 0;
   void UpdateHandle();
 };
 
-/** TBContainer is just a TBWidget with border and padding (using skin
- * "TBContainer") */
-class TBContainer : public TBWidget {
+// Container is just a TBWidget with border and padding (using skin
+// "Container").
+class Container : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBContainer, TBWidget);
+  TBOBJECT_SUBCLASS(Container, TBWidget);
 
-  TBContainer();
+  Container();
 };
 
-/** TBMover is moving its parent widget when dragged. */
-class TBMover : public TBWidget {
+// Moves its parent widget when dragged.
+class Mover : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBMover, TBWidget);
+  TBOBJECT_SUBCLASS(Mover, TBWidget);
 
-  TBMover();
+  Mover();
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  bool OnEvent(const TBWidgetEvent& ev) override;
 };
 
-/** TBResizer is a lower right corner resize grip. It will resize its parent
- * widget. */
-class TBResizer : public TBWidget {
+// A lower right corner resize grip.
+// It will resize its parent widget.
+class Resizer : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBResizer, TBWidget);
+  TBOBJECT_SUBCLASS(Resizer, TBWidget);
 
-  TBResizer();
-  virtual HitStatus GetHitStatus(int x, int y);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  Resizer();
+
+  HitStatus GetHitStatus(int x, int y) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
 };
 
-/** TBDimmer dim widgets in the background and block input. */
-class TBDimmer : public TBWidget {
+// Dims widgets in the background and blocks input.
+class Dimmer : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBDimmer, TBWidget);
+  TBOBJECT_SUBCLASS(Dimmer, TBWidget);
 
-  TBDimmer();
+  Dimmer();
 
-  virtual void OnAdded();
+  void OnAdded() override;
 };
 
 }  // namespace tb

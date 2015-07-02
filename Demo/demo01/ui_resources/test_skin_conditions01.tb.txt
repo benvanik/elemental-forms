@@ -3,13 +3,13 @@ WindowInfo
 	position 200 170
 TBLayout: axis: y
 	Label: text: Normal layout with buttons:
-	TBContainer
+	Container
 		TBLayout
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"
 	Label: text: Layout with skin "Starry buttons":
-	TBContainer
+	Container
 		TBLayout: skin: Starry buttons
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"

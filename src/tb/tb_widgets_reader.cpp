@@ -289,8 +289,8 @@ void ScrollBar::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBSlider, TBValue::Type::kFloat, WidgetZ::kTop) {}
-void TBSlider::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(Slider, TBValue::Type::kFloat, WidgetZ::kTop) {}
+void Slider::OnInflate(const INFLATE_INFO& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
   SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
@@ -347,7 +347,7 @@ void Label::OnInflate(const INFLATE_INFO& info) {
 TB_WIDGET_FACTORY(TBSkinImage, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBSeparator, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBProgressSpinner, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Container, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(SectionHeader, TBValue::Type::kInt, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(Section, TBValue::Type::kInt, WidgetZ::kTop) {}
 

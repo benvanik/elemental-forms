@@ -234,7 +234,7 @@ void Window::OnResized(int old_w, int old_h) {
   // Apply gravity on children.
   TBWidget::OnResized(old_w, old_h);
   // Manually move our own decoration children.
-  // FIX: Put a layout in the TBMover so we can add things there nicely.
+  // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = GetTitleHeight();
   m_mover.SetRect(Rect(0, 0, GetRect().w, title_height));
   PreferredSize ps = m_resizer.GetPreferredSize();

@@ -170,7 +170,7 @@ bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
       AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
-  if (TBDimmer* dimmer = TBSafeCast<TBDimmer>(widget)) {
+  if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
     // Fade out dying dim layers.
     if (auto anim =
             new OpacityWidgetAnimation(dimmer, 1.f, kAlmostZeroOpacity, true))
@@ -193,7 +193,7 @@ void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
             window, Rect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))
       AnimationManager::StartAnimation(anim);
   }
-  if (TBDimmer* dimmer = TBSafeCast<TBDimmer>(widget)) {
+  if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
     // Fade in dim layer
     if (auto anim =
             new OpacityWidgetAnimation(dimmer, kAlmostZeroOpacity, 1.f, false))

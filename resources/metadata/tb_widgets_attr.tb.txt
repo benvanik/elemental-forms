@@ -82,7 +82,7 @@ TabContainer
 Button
 	toggle-mode <bool>
 ScrollBar
-TBSlider
+Slider
 	min <number>
 	max <number>
 SelectInline
@@ -103,7 +103,7 @@ TBRadioButton
 TBSkinImage
 TBSeparator
 TBProgressSpinner
-TBContainer
+Container
 SectionHeader
 Section
 ToggleContainer

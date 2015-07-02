@@ -514,43 +514,41 @@ void ScrollBar::UpdateHandle() {
 
 void ScrollBar::OnResized(int old_w, int old_h) { UpdateHandle(); }
 
-TBSlider::TBSlider()
-    : m_axis(Axis::kY)  ///< Make SetAxis below always succeed and set the skin
-      ,
-      m_value(0),
-      m_min(0),
-      m_max(1),
-      m_to_pixel_factor(0) {
+Slider::Slider()
+    : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
+{
   SetIsFocusable(true);
   SetAxis(Axis::kX);
   AddChild(&m_handle);
 }
 
-TBSlider::~TBSlider() { RemoveChild(&m_handle); }
+Slider::~Slider() { RemoveChild(&m_handle); }
 
-void TBSlider::SetAxis(Axis axis) {
+void Slider::SetAxis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   if (axis == Axis::kX) {
-    SetSkinBg(TBIDC("TBSliderBgX"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("TBSliderFgX"), InvokeInfo::kNoCallbacks);
+    SetSkinBg(TBIDC("SliderBgX"), InvokeInfo::kNoCallbacks);
+    m_handle.SetSkinBg(TBIDC("SliderFgX"), InvokeInfo::kNoCallbacks);
   } else {
-    SetSkinBg(TBIDC("TBSliderBgY"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("TBSliderFgY"), InvokeInfo::kNoCallbacks);
+    SetSkinBg(TBIDC("SliderBgY"), InvokeInfo::kNoCallbacks);
+    m_handle.SetSkinBg(TBIDC("SliderFgY"), InvokeInfo::kNoCallbacks);
   }
   Invalidate();
 }
 
-void TBSlider::SetLimits(double min, double max) {
+void Slider::SetLimits(double min, double max) {
   min = std::min(min, max);
-  if (min == m_min && max == m_max) return;
+  if (min == m_min && max == m_max) {
+    return;
+  }
   m_min = min;
   m_max = max;
   SetValueDouble(m_value);
   UpdateHandle();
 }
 
-void TBSlider::SetValueDouble(double value) {
+void Slider::SetValueDouble(double value) {
   value = Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
@@ -560,7 +558,7 @@ void TBSlider::SetValueDouble(double value) {
   InvokeEvent(ev);
 }
 
-bool TBSlider::OnEvent(const TBWidgetEvent& ev) {
+bool Slider::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_widget_x;
@@ -577,26 +575,28 @@ bool TBSlider::OnEvent(const TBWidgetEvent& ev) {
   } else if (ev.type == EventType::kKeyDown) {
     double step = (m_axis == Axis::kX ? GetSmallStep() : -GetSmallStep());
     if (ev.special_key == SpecialKey::kLeft ||
-        ev.special_key == SpecialKey::kUp)
+        ev.special_key == SpecialKey::kUp) {
       SetValueDouble(GetValueDouble() - step);
-    else if (ev.special_key == SpecialKey::kRight ||
-             ev.special_key == SpecialKey::kDown)
+    } else if (ev.special_key == SpecialKey::kRight ||
+               ev.special_key == SpecialKey::kDown) {
       SetValueDouble(GetValueDouble() + step);
-    else
+    } else {
       return false;
+    }
     return true;
   } else if (ev.type == EventType::kKeyUp) {
     if (ev.special_key == SpecialKey::kLeft ||
         ev.special_key == SpecialKey::kUp ||
         ev.special_key == SpecialKey::kRight ||
-        ev.special_key == SpecialKey::kDown)
+        ev.special_key == SpecialKey::kDown) {
       return true;
+    }
   }
   return false;
 }
 
-void TBSlider::UpdateHandle() {
-  // Calculate the handle position
+void Slider::UpdateHandle() {
+  // Calculate the handle position.
   bool horizontal = m_axis == Axis::kX;
   int available_pixels = horizontal ? GetRect().w : GetRect().h;
 
@@ -609,26 +609,28 @@ void TBSlider::UpdateHandle() {
 
     int pixel_pos = (int)((m_value - m_min) * m_to_pixel_factor);
 
-    if (horizontal)
+    if (horizontal) {
       rect.Set(pixel_pos, (GetRect().h - ps.pref_h) / 2, ps.pref_w, ps.pref_h);
-    else
+    } else {
       rect.Set((GetRect().w - ps.pref_w) / 2,
                GetRect().h - handle_pixels - pixel_pos, ps.pref_w, ps.pref_h);
-  } else
+    }
+  } else {
     m_to_pixel_factor = 0;
+  }
 
   m_handle.SetRect(rect);
 }
 
-void TBSlider::OnResized(int old_w, int old_h) { UpdateHandle(); }
+void Slider::OnResized(int old_w, int old_h) { UpdateHandle(); }
 
-TBContainer::TBContainer() {
-  SetSkinBg(TBIDC("TBContainer"), InvokeInfo::kNoCallbacks);
+Container::Container() {
+  SetSkinBg(TBIDC("Container"), InvokeInfo::kNoCallbacks);
 }
 
-TBMover::TBMover() { SetSkinBg(TBIDC("TBMover"), InvokeInfo::kNoCallbacks); }
+Mover::Mover() { SetSkinBg(TBIDC("Mover"), InvokeInfo::kNoCallbacks); }
 
-bool TBMover::OnEvent(const TBWidgetEvent& ev) {
+bool Mover::OnEvent(const TBWidgetEvent& ev) {
   TBWidget* target = GetParent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
@@ -648,18 +650,18 @@ bool TBMover::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-TBResizer::TBResizer() {
-  SetSkinBg(TBIDC("TBResizer"), InvokeInfo::kNoCallbacks);
-}
+Resizer::Resizer() { SetSkinBg(TBIDC("Resizer"), InvokeInfo::kNoCallbacks); }
 
-HitStatus TBResizer::GetHitStatus(int x, int y) {
+HitStatus Resizer::GetHitStatus(int x, int y) {
   // Shave off some of the upper left diagonal half from the hit area.
   const int extra_hit_area = 3;
-  if (x < GetRect().w - y - extra_hit_area) return HitStatus::kNoHit;
+  if (x < GetRect().w - y - extra_hit_area) {
+    return HitStatus::kNoHit;
+  }
   return TBWidget::GetHitStatus(x, y);
 }
 
-bool TBResizer::OnEvent(const TBWidgetEvent& ev) {
+bool Resizer::OnEvent(const TBWidgetEvent& ev) {
   TBWidget* target = GetParent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
@@ -679,12 +681,12 @@ bool TBResizer::OnEvent(const TBWidgetEvent& ev) {
   return true;
 }
 
-TBDimmer::TBDimmer() {
-  SetSkinBg(TBIDC("TBDimmer"), InvokeInfo::kNoCallbacks);
+Dimmer::Dimmer() {
+  SetSkinBg(TBIDC("Dimmer"), InvokeInfo::kNoCallbacks);
   SetGravity(Gravity::kAll);
 }
 
-void TBDimmer::OnAdded() {
+void Dimmer::OnAdded() {
   SetRect(Rect(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h));
 }
 

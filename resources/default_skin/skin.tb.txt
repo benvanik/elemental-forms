@@ -152,7 +152,7 @@ elements
 	TabContainer.tablayout_y
 		padding 10 0
 	TabContainer.container
-		clone TBContainer
+		clone Container
 	TabContainer.tab
 		strong-overrides
 			element TabContainer.tab_top
@@ -319,7 +319,7 @@ elements
 		children
 
 	# == Misc skins ====================================================================================
-	TBContainer
+	Container
 		bitmap container.png
 		type stretch border
 		cut 12
@@ -419,30 +419,30 @@ elements
 		cut 11
 		expand 5
 
-	TBSliderBgX
+	SliderBgX
 		bitmap slider_bg_x.png
 		cut 9
 		min-height 19
 		max-height 19
 		min-width 50
-	TBSliderFgX
+	SliderFgX
 		bitmap slider_handle.png
 		expand 5
 
-	TBSliderBgY
+	SliderBgY
 		bitmap slider_bg_y.png
 		cut 9
 		min-width 19
 		max-width 19
 		min-height 50
-	TBSliderFgY
-		clone TBSliderFgX
+	SliderFgY
+		clone SliderFgX
 
-	TBResizer
+	Resizer
 		bitmap resizer.png
 	SelectInline
 		max-width 110
-	TBDimmer
+	Dimmer
 		background-color #00000088
 
 	TBProgressSpinner

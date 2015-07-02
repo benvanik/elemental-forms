@@ -31,7 +31,7 @@ class MessageWindowSettings {
  public:
   MessageWindowButtons msg;  // The type of response for the message.
   TBID icon_skin;            // The icon skin (0 for no icon)
-  bool dimmer = false;   // Set to true to dim background widgets by a TBDimmer.
+  bool dimmer = false;   // Set to true to dim background widgets by a Dimmer.
   bool styling = false;  // Enable styling in the textfield.
 };
 

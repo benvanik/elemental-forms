@@ -9,7 +9,7 @@ TBLayout: axis: y, distribution: gravity
 					"widget (f.ex TBLayout) but sometimes the default is enough.\n" \
 					"The default preferred size is calculated to the largest child " \
 					"(or the skin if there are no children)."
-	TBContainer: gravity: all
+	Container: gravity: all
 		Label: text: "all", gravity: all
 		Label: text: "top, left, right", gravity: top left right
 		Label: text: "bottom, left, right", gravity: bottom left right

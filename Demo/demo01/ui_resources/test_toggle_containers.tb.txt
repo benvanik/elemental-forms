@@ -5,7 +5,7 @@ TBLayout: axis: y
 		text: "ToggleContainer used with TBWidgetValue connections to automatically toggle a group of items (no programming needed)."
 
 	TBLayout: position: top left
-		TBContainer
+		Container
 			TBLayout: axis: y
 				TBClickLabel: text: "Check to enable stuff:"
 					TBCheckBox: connection: toggle_demo_1
@@ -29,7 +29,7 @@ TBLayout: axis: y
 						TBClickLabel: text: "Option 2"
 							TBRadioButton: group-id: group2
 
-		TBContainer
+		Container
 			TBLayout: axis: y
 				TBClickLabel: text: "Check to show stuff:"
 					TBCheckBox: connection: toggle_demo_3

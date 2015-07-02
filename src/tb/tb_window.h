@@ -110,8 +110,8 @@ class Window : public TBWidget {
   void SetWindowActiveState(bool active);
   void Deactivate();
 
-  TBMover m_mover;
-  TBResizer m_resizer;
+  Mover m_mover;
+  Resizer m_resizer;
   Label m_textfield;
   Button m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;
