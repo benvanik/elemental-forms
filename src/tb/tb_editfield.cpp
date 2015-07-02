@@ -351,7 +351,7 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
       int layout_width = m_virtual_width;
       if (constraints.available_w != SizeConstraints::NO_RESTRICTION) {
         layout_width = constraints.available_w;
-        if (TBSkinElement* bg_skin = GetSkinBgElement())
+        if (SkinElement* bg_skin = GetSkinBgElement())
           layout_width -= bg_skin->padding_left + bg_skin->padding_right;
       }
 

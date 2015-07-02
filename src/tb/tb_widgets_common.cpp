@@ -321,7 +321,7 @@ void ProgressSpinner::SetValue(int value) {
 
 void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
   if (IsRunning()) {
-    TBSkinElement* e = g_tb_skin->GetSkinElement(m_skin_fg);
+    SkinElement* e = g_tb_skin->GetSkinElement(m_skin_fg);
     if (e && e->bitmap) {
       int size = e->bitmap->Height();
       int num_frames = e->bitmap->Width() / e->bitmap->Height();

@@ -21,7 +21,7 @@ int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
 
 void DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y, int left,
                      int top, int right, int bottom) {
-  if (TBSkinElement* skin = g_tb_skin->GetSkinElement(skin_x)) {
+  if (SkinElement* skin = g_tb_skin->GetSkinElement(skin_x)) {
     if (skin->bitmap) {
       int bw = skin->bitmap->Width();
       int bh = skin->bitmap->Height();
@@ -37,7 +37,7 @@ void DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y, int left,
       }
     }
   }
-  if (TBSkinElement* skin = g_tb_skin->GetSkinElement(skin_y)) {
+  if (SkinElement* skin = g_tb_skin->GetSkinElement(skin_y)) {
     if (skin->bitmap) {
       int bw = skin->bitmap->Width();
       int bh = skin->bitmap->Height();

@@ -23,7 +23,7 @@ namespace tb {
 class TBNode;
 class SkinConditionContext;
 
-// Used for some values in TBSkinElement if they has not been specified in the
+// Used for some values in SkinElement if they has not been specified in the
 // skin.
 constexpr int kSkinValueNotSpecified = kInvalidDimension;
 
@@ -40,7 +40,7 @@ enum class SkinState {
 };
 MAKE_ENUM_FLAG_COMBO(SkinState);
 
-// Type of painting that should be done for a TBSkinElement.
+// Type of painting that should be done for a SkinElement.
 enum class SkinElementType {
   kStretchBox,
   kStretchBorder,
@@ -125,12 +125,9 @@ class SkinConditionContext {
                             const SkinCondition::ConditionInfo& info) = 0;
 };
 
-/** TBSkinElementState has a skin element id that should be used if its state
-   and condition
-        matches that which is being painted.
-*/
-
-class TBSkinElementState : public TBLinkOf<TBSkinElementState> {
+// SkinElementState has a skin element id that should be used if its state and
+// condition matches that which is being painted.
+class SkinElementState : public TBLinkOf<SkinElementState> {
  public:
   // Defines how to match states.
   enum class MatchRule {
@@ -151,323 +148,299 @@ class TBSkinElementState : public TBLinkOf<TBSkinElementState> {
   TBLinkListAutoDeleteOf<SkinCondition> conditions;
 };
 
-/** List of state elements in a TBSkinElement. */
-
-class TBSkinElementStateList {
+// List of state elements in a SkinElement.
+class SkinElementStateList {
  public:
-  ~TBSkinElementStateList();
+  ~SkinElementStateList();
 
-  TBSkinElementState* GetStateElement(
+  SkinElementState* GetStateElement(
       SkinState state, SkinConditionContext& context,
-      TBSkinElementState::MatchRule rule =
-          TBSkinElementState::MatchRule::kDefault) const;
+      SkinElementState::MatchRule rule =
+          SkinElementState::MatchRule::kDefault) const;
 
-  TBSkinElementState* GetStateElementExactMatch(
+  SkinElementState* GetStateElementExactMatch(
       SkinState state, SkinConditionContext& context,
-      TBSkinElementState::MatchRule rule =
-          TBSkinElementState::MatchRule::kDefault) const;
+      SkinElementState::MatchRule rule =
+          SkinElementState::MatchRule::kDefault) const;
 
   bool HasStateElements() const { return m_state_elements.HasLinks(); }
-  const TBSkinElementState* GetFirstElement() const {
+  const SkinElementState* GetFirstElement() const {
     return m_state_elements.GetFirst();
   }
 
   void Load(TBNode* n);
 
  private:
-  TBLinkListOf<TBSkinElementState> m_state_elements;
+  TBLinkListOf<SkinElementState> m_state_elements;
 };
 
-/** Skin element.
-        Contains a bitmap fragment (or nullptr) and info specifying how it
-   should be painted.
-        Also contains padding and other look-specific widget properties. */
-class TBSkinElement {
+// Skin element.
+// Contains a bitmap fragment (or nullptr) and info specifying how it should be
+// painted.
+// Also contains padding and other look-specific widget properties.
+class SkinElement {
  public:
-  TBSkinElement();
-  ~TBSkinElement();
+  SkinElement();
+  ~SkinElement();
 
-  // Skin properties
-  TBID id;           ///< ID of the skin element
-  std::string name;  ///< Name of the skin element, f.ex "SelectDropdown.arrow"
-  std::string bitmap_file;  ///< File name of the bitmap (might be empty)
-  BitmapFragment*
-      bitmap;   ///< Bitmap fragment containing the graphics, or nullptr.
-  uint8_t cut;  ///< How the bitmap should be sliced using StretchBox.
-  int16_t
-      expand;  ///< How much the skin should expand outside the widgets rect.
-  SkinElementType type;  ///< Skin element type
-  bool is_painting;      ///< If the skin is being painted (avoiding eternal ///
-  /// recursing)
-  bool is_getting;  ///< If the skin is being got (avoiding eternal recursion)
-  int16_t padding_left;    ///< Left padding for any content in the element
-  int16_t padding_top;     ///< Top padding for any content in the element
-  int16_t padding_right;   ///< Right padding for any content in the element
-  int16_t padding_bottom;  ///< Bottom padding for any content in the element
-  int16_t width;           ///< Intrinsic width or kSkinValueNotSpecified
-  int16_t height;          ///< Intrinsic height or kSkinValueNotSpecified
-  int16_t pref_width;      ///< Preferred width or kSkinValueNotSpecified
-  int16_t pref_height;     ///< Preferred height or kSkinValueNotSpecified
-  int16_t min_width;       ///< Minimum width or kSkinValueNotSpecified
-  int16_t min_height;      ///< Minimum height or kSkinValueNotSpecified
-  int16_t max_width;       ///< Maximum width or kSkinValueNotSpecified
-  int16_t max_height;      ///< Maximum height or kSkinValueNotSpecified
-  int16_t spacing;        ///< Spacing used on layout or kSkinValueNotSpecified.
-  int16_t content_ofs_x;  ///< X offset of the content in the widget.
-  int16_t content_ofs_y;  ///< Y offset of the content in the widget.
-  int16_t img_ofs_x;  ///< X offset for type image. Relative to image position
-                      ///(img_position_x).
-  int16_t img_ofs_y;  ///< Y offset for type image. Relative to image position
-                      ///(img_position_y).
-  int8_t
-      img_position_x;  ///< Horizontal position for type image. 0-100 (left to
-                       ///< right in available space). Default 50.
-  int8_t img_position_y;  ///< Vertical position for type image. 0-100 (top to
-  /// bottom
-  ///< in available space). Default 50.
-  int8_t flip_x;  ///< The skin is flipped horizontally
-  int8_t flip_y;  ///< The skin is flipped vertically
-  float opacity;  ///< Opacity that should be used for the whole widget (0.f -
-  /// 1.f).
-  Color text_color;    ///< Color of the text in the widget.
-  Color bg_color;      ///< Color of the background in the widget.
-  int16_t bitmap_dpi;  ///< The DPI of the bitmap that was loaded.
-  TBValue tag;  ///< This value is free to use for anything. It's not used
-  /// internally.
+  TBID id;           // ID of the skin element.
+  std::string name;  // Name of the skin element, f.ex "SelectDropdown.arrow".
+  std::string bitmap_file;  // File name of the bitmap (might be empty).
+  BitmapFragment* bitmap =
+      nullptr;      // Bitmap fragment containing the graphics, or nullptr.
+  uint8_t cut = 0;  // How the bitmap should be sliced using StretchBox.
+  int16_t expand =
+      0;  // How much the skin should expand outside the widgets rect.
+  SkinElementType type = SkinElementType::kStretchBox;  // Skin element type.
+  bool is_painting =
+      false;  // If the skin is being painted (avoiding eternal recursing).
+  bool is_getting =
+      false;  // If the skin is being got (avoiding eternal recursion).
+  int16_t padding_left = 0;    // Left padding for any content in the element.
+  int16_t padding_top = 0;     // Top padding for any content in the element.
+  int16_t padding_right = 0;   // Right padding for any content in the element.
+  int16_t padding_bottom = 0;  // Bottom padding for any content in the element.
+  int16_t width =
+      kSkinValueNotSpecified;  // Intrinsic width or kSkinValueNotSpecified
+  int16_t height =
+      kSkinValueNotSpecified;  // Intrinsic height or kSkinValueNotSpecified
+  int16_t pref_width =
+      kSkinValueNotSpecified;  // Preferred width or kSkinValueNotSpecified
+  int16_t pref_height =
+      kSkinValueNotSpecified;  // Preferred height or kSkinValueNotSpecified
+  int16_t min_width =
+      kSkinValueNotSpecified;  // Minimum width or kSkinValueNotSpecified
+  int16_t min_height =
+      kSkinValueNotSpecified;  // Minimum height or kSkinValueNotSpecified
+  int16_t max_width =
+      kSkinValueNotSpecified;  // Maximum width or kSkinValueNotSpecified
+  int16_t max_height =
+      kSkinValueNotSpecified;  // Maximum height or kSkinValueNotSpecified
+  int16_t spacing = kSkinValueNotSpecified;  // Spacing used on layout or
+                                             // kSkinValueNotSpecified.
+  int16_t content_ofs_x = 0;  // X offset of the content in the widget.
+  int16_t content_ofs_y = 0;  // Y offset of the content in the widget.
+  int16_t img_ofs_x = 0;  // X offset for type image. Relative to image position
+                          // (img_position_x).
+  int16_t img_ofs_y = 0;  // Y offset for type image. Relative to image position
+                          // (img_position_y).
+  int8_t img_position_x = 50;  // Horizontal position for type image. 0-100
+                               // (left to right in available space). Default
+                               // 50.
+  int8_t img_position_y = 50;  // Vertical position for type image. 0-100 (top
+                               // to bottom in available space). Default 50.
+  int8_t flip_x = 0;           // The skin is flipped horizontally.
+  int8_t flip_y = 0;           // The skin is flipped vertically.
+  float opacity =
+      1.0f;  // Opacity that should be used for the whole widget (0.f - 1.f).
+  Color text_color = Color(0, 0, 0, 0);  // Color of the text in the widget.
+  Color bg_color = Color(0, 0, 0, 0);  // Color of the background in the widget.
+  int16_t bitmap_dpi = 0;              // The DPI of the bitmap that was loaded.
+  TBValue
+      tag;  // This value is free to use for anything. It's not used internally.
 
-  /** Get the minimum width, or kSkinValueNotSpecified if not specified. */
+  // Gets the minimum width, or kSkinValueNotSpecified if not specified.
   int GetMinWidth() const { return min_width; }
 
-  /** Get the minimum height, or kSkinValueNotSpecified if not specified. */
+  // Gets the minimum height, or kSkinValueNotSpecified if not specified.
   int GetMinHeight() const { return min_height; }
 
-  /** Get the intrinsic minimum width. It will be calculated based on the skin
-   * properties. */
+  // Gets the intrinsic minimum width. It will be calculated based on the skin
+  // properties.
   int GetIntrinsicMinWidth() const;
 
-  /** Get the intrinsic minimum height. It will be calculated based on the skin
-   * properties. */
+  // Gets the intrinsic minimum height. It will be calculated based on the skin
+  // properties.
   int GetIntrinsicMinHeight() const;
 
-  /** Get the maximum width, or kSkinValueNotSpecified if not specified. */
+  // Gets the maximum width, or kSkinValueNotSpecified if not specified.
   int GetMaxWidth() const { return max_width; }
 
-  /** Get the maximum height, or kSkinValueNotSpecified if not specified. */
+  // Gets the maximum height, or kSkinValueNotSpecified if not specified.
   int GetMaxHeight() const { return max_height; }
 
-  /** Get the preferred width, or kSkinValueNotSpecified if not specified. */
+  // Gets the preferred width, or kSkinValueNotSpecified if not specified.
   int GetPrefWidth() const { return pref_width; }
 
-  /** Get the preferred height, or kSkinValueNotSpecified if not specified. */
+  // Gets the preferred height, or kSkinValueNotSpecified if not specified.
   int GetPrefHeight() const { return pref_height; }
 
-  /** Get the intrinsic width. If not specified using the "width" attribute, it
-     will be
-          calculated based on the skin properties. If it can't be calculated it
-     will return
-          kSkinValueNotSpecified. */
+  // Gets the intrinsic width. If not specified using the "width" attribute, it
+  // will be calculated based on the skin properties. If it can't be calculated
+  // it will return kSkinValueNotSpecified.
   int GetIntrinsicWidth() const;
 
-  /** Get the intrinsic height. If not specified using the "height" attribute,
-     it will be
-          calculated based on the skin properties. If it can't be calculated it
-     will return
-          kSkinValueNotSpecified. */
+  // Gets the intrinsic height. If not specified using the "height" attribute,
+  // it will be calculated based on the skin properties. If it can't be
+  // calculated it will return kSkinValueNotSpecified.
   int GetIntrinsicHeight() const;
 
-  /** Set the DPI that the bitmap was loaded in. This may modify properties
-          to compensate for the bitmap resolution. */
+  // Sets the DPI that the bitmap was loaded in. This may modify properties to
+  // compensate for the bitmap resolution.
   void SetBitmapDPI(const DimensionConverter& dim_conv, int bitmap_dpi);
 
-  /** List of override elements (See TBSkin::PaintSkin) */
-  TBSkinElementStateList m_override_elements;
+  // List of override elements (See Skin::PaintSkin).
+  SkinElementStateList m_override_elements;
 
-  /** List of strong-override elements (See TBSkin::PaintSkin) */
-  TBSkinElementStateList m_strong_override_elements;
+  // List of strong-override elements (See Skin::PaintSkin).
+  SkinElementStateList m_strong_override_elements;
 
-  /** List of child elements (See TBSkin::PaintSkin) */
-  TBSkinElementStateList m_child_elements;
+  // List of child elements (See Skin::PaintSkin).
+  SkinElementStateList m_child_elements;
 
-  /** List of overlay elements (See TBSkin::PaintSkin) */
-  TBSkinElementStateList m_overlay_elements;
+  // List of overlay elements (See Skin::PaintSkin).
+  SkinElementStateList m_overlay_elements;
 
-  /** Check if there's a exact or partial match for the given state in either
-          override, child or overlay element list.
-          State elements with state "all" will be ignored. */
+  // Checks if there's a exact or partial match for the given state in either
+  // override, child or overlay element list. State elements with state "all"
+  // will be ignored.
   bool HasState(SkinState state, SkinConditionContext& context);
 
-  /** Return true if this element has overlay elements. */
+  // Returns true if this element has overlay elements.
   bool HasOverlayElements() const {
     return m_overlay_elements.HasStateElements();
   }
 
-  void Load(TBNode* n, TBSkin* skin, const char* skin_path);
+  void Load(TBNode* n, Skin* skin, const char* skin_path);
 };
 
-class TBSkinListener {
+class SkinListener {
  public:
-  /** Called when a skin element has been loaded from the given TBNode.
-          NOTE: This may be called multiple times on elements that occur
-     multiple times
-          in the skin or is overridden in an override skin.
-          This method can be used to f.ex feed custom properties into
-     element->tag. */
-  virtual void OnSkinElementLoaded(TBSkin* skin, TBSkinElement* element,
+  // Called when a skin element has been loaded from the given TBNode.
+  // NOTE: this may be called multiple times on elements that occur multiple
+  // times in the skin or is overridden in an override skin.
+  // This method can be used to f.ex feed custom properties into element->tag.
+  virtual void OnSkinElementLoaded(Skin* skin, SkinElement* element,
                                    TBNode* node) = 0;
 };
 
-/** TBSkin contains a list of TBSkinElement. */
-class TBSkin : private TBRendererListener {
+// Skin contains a list of SkinElement.
+class Skin : private TBRendererListener {
  public:
-  TBSkin();
-  virtual ~TBSkin();
+  Skin();
+  ~Skin() override;
 
-  /** Set the listener for this skin. */
-  void SetListener(TBSkinListener* listener) { m_listener = listener; }
-  TBSkinListener* GetListener() const { return m_listener; }
+  void SetListener(SkinListener* listener) { m_listener = listener; }
+  SkinListener* GetListener() const { return m_listener; }
 
-  /** Load the skin file and the bitmaps it refers to.
-
-          If override_skin_file is specified, it will also be loaded into this
-     skin after
-          loading skin_file. Elements using the same name will override any
-     previosly
-          read data for the same element. Known limitation: Clone can currently
-     only
-          clone elements in the same file!
-
-          Returns true on success, and all bitmaps referred to also loaded
-     successfully. */
+  // Loads the skin file and the bitmaps it refers to.
+  // If override_skin_file is specified, it will also be loaded into this skin
+  // after loading skin_file. Elements using the same name will override any
+  // previosly read data for the same element.
+  // Known limitation: Clone can currently only clone elements in the same file!
+  // Returns true on success, and all bitmaps referred to also loaded
+  // successfully.
   bool Load(const char* skin_file, const char* override_skin_file = nullptr);
 
-  /** Unload all bitmaps used in this skin. */
+  // Unloads all bitmaps used in this skin.
   void UnloadBitmaps();
 
-  /** Reload all bitmaps used in this skin. Calls UnloadBitmaps first to ensure
-     no bitmaps
-          are loaded before loading new ones. */
+  // Reloads all bitmaps used in this skin. Calls UnloadBitmaps first to ensure
+  // no bitmaps are loaded before loading new ones.
   bool ReloadBitmaps();
 
-  /** Get the dimension converter used for the current skin. This dimension
-     converter
-          converts to px by the same factor as the skin (based on the skin DPI
-     settings). */
+  // Gets the dimension converter used for the current skin. This dimension
+  // converter converts to px by the same factor as the skin (based on the skin
+  // DPI settings).
   const DimensionConverter* GetDimensionConverter() const {
     return &m_dim_conv;
   }
 
-  /** Get the skin element with the given id.
-          Returns nullptr if there's no match. */
-  TBSkinElement* GetSkinElement(const TBID& skin_id) const;
+  // Gets the skin element with the given id.
+  // Returns nullptr if there's no match.
+  SkinElement* GetSkinElement(const TBID& skin_id) const;
 
-  /** Get the skin element with the given id and state.
-          This is like calling GetSkinElement and also following any strong
-     overrides that
-          match the current state (if any). See details about strong overrides
-     in PaintSkin.
-          Returns nullptr if there's no match. */
-  TBSkinElement* GetSkinElementStrongOverride(
+  // Gets the skin element with the given id and state.
+  // This is like calling GetSkinElement and also following any strong overrides
+  // that match the current state (if any). See details about strong overrides
+  // in PaintSkin.
+  // Returns nullptr if there's no match.
+  SkinElement* GetSkinElementStrongOverride(
       const TBID& skin_id, SkinState state,
       SkinConditionContext& context) const;
 
-  /** Get the default text color for all skin elements */
   Color GetDefaultTextColor() const { return m_default_text_color; }
-
-  /** Get the default disabled opacity for all skin elements */
   float GetDefaultDisabledOpacity() const { return m_default_disabled_opacity; }
-
-  /** Get the default placeholder opacity for all skin elements */
   float GetDefaultPlaceholderOpacity() const {
     return m_default_placeholder_opacity;
   }
-
-  /** Get the default layout spacing in pixels. */
   int GetDefaultSpacing() const { return m_default_spacing; }
 
-  /** Paint the skin at dst_rect.
+  // Paints the skin at dst_rect.
+  //
+  // Strong override elements:
+  //   - Strong override elements are like override elements, but they don't
+  //     only apply when painting. They also override padding and other things
+  //     that might affect the layout of the widget having the skin set.
+  //
+  // Override elements:
+  //   - If there is a override element with the exact matching state, it will
+  //     paint the override *instead* if the base skin. If no exact match was
+  //     found, it will check for a partial match and paint that *instead* of
+  //     the base skin.
+  //
+  // Child elements:
+  //   - It will paint *all* child elements that match the current state ("all"
+  //     can be specified as state so it will always be painted). The elements
+  //     are painted in the order they are specified in the skin.
+  //
+  // Special elements:
+  //   - There's some special generic skin elements used by TBWidget (see
+  //     TBWidget::SetSkinBg).
+  //
+  // Overlay elements:
+  //   - Overlay elements are painted separately, from PaintSkinOverlay (when
+  //     all sibling widgets has been painted). As with child elements, all
+  //     overlay elements that match the current state will be painted in the
+  //     order they are specified in the skin.
+  //
+  // Returns the skin element used (after following override elements), or
+  // nullptr if no skin element was found matching the skin_id.
+  SkinElement* PaintSkin(const Rect& dst_rect, const TBID& skin_id,
+                         SkinState state, SkinConditionContext& context);
 
-          Strong override elements:
-          -Strong override elements are like override elements, but they don't
-     only apply
-           when painting. They also override padding and other things that might
-     affect
-           the layout of the widget having the skin set.
+  // Paints the skin at dst_rect. Just like the PaintSkin above, but takes a
+  // specific skin element instead of looking it up from the id.
+  SkinElement* PaintSkin(const Rect& dst_rect, SkinElement* element,
+                         SkinState state, SkinConditionContext& context);
 
-          Override elements:
-          -If there is a override element with the exact matching state, it will
-     paint
-           the override *instead* if the base skin. If no exact match was found,
-     it will
-           check for a partial match and paint that *instead* of the base skin.
-
-          Child elements:
-          -It will paint *all* child elements that match the current state
-     ("all" can be specified
-           as state so it will always be painted). The elements are painted in
-     the order they are
-           specified in the skin.
-
-          Special elements:
-          -There's some special generic skin elements used by TBWidget (see
-     TBWidget::SetSkinBg)
-
-          Overlay elements:
-          -Overlay elements are painted separately, from PaintSkinOverlay (when
-     all sibling
-           widgets has been painted). As with child elements, all overlay
-     elements that match
-           the current state will be painted in the order they are specified in
-     the skin.
-
-          Return the skin element used (after following override elements),
-          or nullptr if no skin element was found matching the skin_id. */
-  TBSkinElement* PaintSkin(const Rect& dst_rect, const TBID& skin_id,
-                           SkinState state, SkinConditionContext& context);
-
-  /** Paint the skin at dst_rect. Just like the PaintSkin above, but takes a
-     specific
-          skin element instead of looking it up from the id. */
-  TBSkinElement* PaintSkin(const Rect& dst_rect, TBSkinElement* element,
-                           SkinState state, SkinConditionContext& context);
-
-  /** Paint the overlay elements for the given skin element and state. */
-  void PaintSkinOverlay(const Rect& dst_rect, TBSkinElement* element,
+  // Paints the overlay elements for the given skin element and state.
+  void PaintSkinOverlay(const Rect& dst_rect, SkinElement* element,
                         SkinState state, SkinConditionContext& context);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  /** Render the skin bitmaps on screen, to analyze fragment positioning. */
+  // Renders the skin bitmaps on screen, to analyze fragment positioning.
   void Debug();
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 
-  /** Get the fragment manager. */
   BitmapFragmentManager* GetFragmentManager() { return &m_frag_manager; }
 
-  // Implementing TBRendererListener
-  virtual void OnContextLost();
-  virtual void OnContextRestored();
+  void OnContextLost() override;
+  void OnContextRestored() override;
 
  private:
-  friend class TBSkinElement;
-  TBSkinListener* m_listener;
-  TBHashTableAutoDeleteOf<TBSkinElement>
-      m_elements;                        ///< All skin elements for this skin.
-  BitmapFragmentManager m_frag_manager;  ///< Fragment manager
-  DimensionConverter m_dim_conv;         ///< Dimension converter
-  Color m_default_text_color;  ///< Default text color for all skin elements
-  float m_default_disabled_opacity;     ///< Disabled opacity
-  float m_default_placeholder_opacity;  ///< Placeholder opacity
-  int16_t m_default_spacing;            ///< Default layout spacing
+  friend class SkinElement;
+
   bool LoadInternal(const char* skin_file);
   bool ReloadBitmapsInternal();
-  void PaintElement(const Rect& dst_rect, TBSkinElement* element);
-  void PaintElementBGColor(const Rect& dst_rect, TBSkinElement* element);
-  void PaintElementImage(const Rect& dst_rect, TBSkinElement* element);
-  void PaintElementTile(const Rect& dst_rect, TBSkinElement* element);
-  void PaintElementStretchImage(const Rect& dst_rect, TBSkinElement* element);
-  void PaintElementStretchBox(const Rect& dst_rect, TBSkinElement* element,
+  void PaintElement(const Rect& dst_rect, SkinElement* element);
+  void PaintElementBGColor(const Rect& dst_rect, SkinElement* element);
+  void PaintElementImage(const Rect& dst_rect, SkinElement* element);
+  void PaintElementTile(const Rect& dst_rect, SkinElement* element);
+  void PaintElementStretchImage(const Rect& dst_rect, SkinElement* element);
+  void PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
                               bool fill_center);
-  Rect GetFlippedRect(const Rect& src_rect, TBSkinElement* element) const;
+  Rect GetFlippedRect(const Rect& src_rect, SkinElement* element) const;
   int GetPxFromNode(TBNode* node, int def_value) const;
+
+  SkinListener* m_listener = nullptr;
+  TBHashTableAutoDeleteOf<SkinElement> m_elements;
+  BitmapFragmentManager m_frag_manager;
+  DimensionConverter m_dim_conv;
+  Color m_default_text_color;
+  float m_default_disabled_opacity = 0.3f;
+  float m_default_placeholder_opacity = 0.2f;
+  int16_t m_default_spacing = 0;
 };
 
 }  // namespace tb

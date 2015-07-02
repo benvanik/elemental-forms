@@ -190,7 +190,7 @@ PreferredSize Window::OnCalculatePreferredSize(
   PreferredSize ps = OnCalculatePreferredContentSize(constraints);
 
   // Add window skin padding
-  if (TBSkinElement* e = GetSkinBgElement()) {
+  if (SkinElement* e = GetSkinBgElement()) {
     ps.min_w += e->padding_left + e->padding_right;
     ps.pref_w += e->padding_left + e->padding_right;
     ps.min_h += e->padding_top + e->padding_bottom;

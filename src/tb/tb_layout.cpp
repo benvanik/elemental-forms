@@ -186,7 +186,7 @@ int Layout::CalculateSpacing() {
   // Get spacing from skin, if not specified.
   int spacing = m_spacing;
   if (spacing == kSpacingFromSkin) {
-    if (TBSkinElement* e = GetSkinBgElement()) {
+    if (SkinElement* e = GetSkinBgElement()) {
       spacing = e->spacing;
     }
     assert(kSpacingFromSkin == kSkinValueNotSpecified);

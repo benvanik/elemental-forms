@@ -35,13 +35,13 @@ freely, subject to the following restrictions:
 namespace tb {
 
 class TBRenderer;
-class TBSkin;
+class Skin;
 class WidgetReader;
 class Language;
 class FontManager;
 
 extern TBRenderer* g_renderer;
-extern TBSkin* g_tb_skin;
+extern Skin* g_tb_skin;
 extern WidgetReader* g_widgets_reader;
 extern Language* g_tb_lng;
 extern FontManager* g_font_manager;

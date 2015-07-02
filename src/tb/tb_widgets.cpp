@@ -346,7 +346,7 @@ void TBWidget::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   if (info == InvokeInfo::kNormal) OnSkinChanged();
 }
 
-TBSkinElement* TBWidget::GetSkinBgElement() {
+SkinElement* TBWidget::GetSkinBgElement() {
   WidgetSkinConditionContext context(this);
   SkinState state = GetAutoState();
   return g_tb_skin->GetSkinElementStrongOverride(
@@ -685,7 +685,7 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
     if (clip_rect.Intersects(child->m_rect) &&
         child->GetVisibility() == Visibility::kVisible) {
-      TBSkinElement* skin_element = child->GetSkinBgElement();
+      SkinElement* skin_element = child->GetSkinBgElement();
       if (skin_element && skin_element->HasOverlayElements()) {
         // Update the renderer with the widgets opacity
         SkinState state = child->GetAutoState();
@@ -710,7 +710,7 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   // doesn't have a skin state for focus which would already be painted.
   if (focused_widget && focused_widget->m_parent == this) {
     WidgetSkinConditionContext context(focused_widget);
-    TBSkinElement* skin_element = focused_widget->GetSkinBgElement();
+    SkinElement* skin_element = focused_widget->GetSkinBgElement();
     if (!skin_element ||
         !skin_element->HasState(SkinState::kFocused, context)) {
       SkinState state = focused_widget->GetAutoState();
@@ -776,7 +776,7 @@ void TBWidget::OnInflateChild(TBWidget* child) {
 
 Rect TBWidget::GetPaddingRect() {
   Rect padding_rect(0, 0, m_rect.w, m_rect.h);
-  if (TBSkinElement* e = GetSkinBgElement()) {
+  if (SkinElement* e = GetSkinBgElement()) {
     padding_rect.x += e->padding_left;
     padding_rect.y += e->padding_top;
     padding_rect.w -= e->padding_left + e->padding_right;
@@ -800,7 +800,7 @@ PreferredSize TBWidget::OnCalculatePreferredContentSize(
   bool has_layouting_children = false;
   PreferredSize ps;
 
-  TBSkinElement* bg_skin = GetSkinBgElement();
+  SkinElement* bg_skin = GetSkinBgElement();
   int horizontal_padding =
       bg_skin ? bg_skin->padding_left + bg_skin->padding_right : 0;
   int vertical_padding =
@@ -834,7 +834,7 @@ PreferredSize TBWidget::OnCalculatePreferredSize(
   assert(ps.pref_w >= ps.min_w);
   assert(ps.pref_h >= ps.min_h);
 
-  if (TBSkinElement* e = GetSkinBgElement()) {
+  if (SkinElement* e = GetSkinBgElement()) {
     // Override the widgets preferences with skin attributes that has been
     // specified.
     // If not set by the widget, calculate based on the intrinsic size of the
@@ -970,7 +970,7 @@ void TBWidget::InvokeSkinUpdatesInternal(bool force_update) {
   // changed.
   // If that happens, call OnSkinChanged so the widget can react to that, and
   // invalidate layout to apply new skin properties.
-  if (TBSkinElement* skin_elm = GetSkinBgElement()) {
+  if (SkinElement* skin_elm = GetSkinBgElement()) {
     if (skin_elm->id != m_skin_bg_expected) {
       OnSkinChanged();
       m_skin_bg_expected = skin_elm->id;
@@ -1002,7 +1002,7 @@ void TBWidget::InvokeProcessStates(bool force_update) {
 }
 
 float TBWidget::CalculateOpacityInternal(SkinState state,
-                                         TBSkinElement* skin_element) const {
+                                         SkinElement* skin_element) const {
   float opacity = m_opacity;
   if (skin_element) {
     opacity *= skin_element->opacity;
@@ -1020,7 +1020,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
     return;
 
   SkinState state = GetAutoState();
-  TBSkinElement* skin_element = GetSkinBgElement();
+  SkinElement* skin_element = GetSkinBgElement();
 
   // Multiply current opacity with widget opacity, skin opacity and state
   // opacity.
@@ -1037,7 +1037,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
   // Paint background skin
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
   WidgetSkinConditionContext context(this);
-  TBSkinElement* used_element = g_tb_skin->PaintSkin(
+  SkinElement* used_element = g_tb_skin->PaintSkin(
       local_rect, skin_element, static_cast<SkinState>(state), context);
   assert(!!used_element == !!skin_element);
 

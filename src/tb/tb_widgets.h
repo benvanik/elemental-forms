@@ -628,7 +628,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   TBID GetSkinBg() const { return m_skin_bg; }
 
   /** Return the skin background element, or nullptr. */
-  TBSkinElement* GetSkinBgElement();
+  SkinElement* GetSkinBgElement();
 
   /** Set if this widget is a group root. Grouped widgets (such as
      RadioButton) will toggle all other
@@ -1317,7 +1317,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Returns the opacity for this widget multiplied with its skin opacity and
    * state opacity. */
   float CalculateOpacityInternal(SkinState state,
-                                 TBSkinElement* skin_element) const;
+                                 SkinElement* skin_element) const;
 };
 
 }  // namespace tb
