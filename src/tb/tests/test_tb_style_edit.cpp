@@ -8,20 +8,20 @@
  */
 
 #include "tb_test.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
 
-TB_TEST_GROUP(tb_editfield) {
-  TBEditField* edit;
+TB_TEST_GROUP(tb_text_box) {
+  TextBox* edit;
   StyleEdit* sedit;
 
   // == Setup & helpers =====================================================
 
   TB_TEST(Setup) {
-    TB_VERIFY(edit = new TBEditField());
+    TB_VERIFY(edit = new TextBox());
     edit->SetMultiline(true);
     sedit = edit->GetStyleEdit();
 

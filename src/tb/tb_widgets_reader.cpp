@@ -9,7 +9,6 @@
 
 #include "tb_widgets_reader.h"
 
-#include "tb_editfield.h"
 #include "tb_font_renderer.h"
 #include "tb_image_widget.h"
 #include "tb_inline_select.h"
@@ -17,6 +16,7 @@
 #include "tb_scroll_container.h"
 #include "tb_select.h"
 #include "tb_tab_container.h"
+#include "tb_text_box.h"
 #include "tb_toggle_container.h"
 #include "tb_widgets_common.h"
 
@@ -186,8 +186,8 @@ void SelectInline::OnInflate(const InflateInfo& info) {
 
 TB_WIDGET_FACTORY(LabelContainer, TBValue::Type::kString, WidgetZ::kBottom) {}
 
-TB_WIDGET_FACTORY(TBEditField, TBValue::Type::kString, WidgetZ::kTop) {}
-void TBEditField::OnInflate(const InflateInfo& info) {
+TB_WIDGET_FACTORY(TextBox, TBValue::Type::kString, WidgetZ::kTop) {}
+void TextBox::OnInflate(const InflateInfo& info) {
   SetMultiline(info.node->GetValueInt("multiline", 0) ? true : false);
   SetStyling(info.node->GetValueInt("styling", 0) ? true : false);
   SetReadOnly(info.node->GetValueInt("readonly", 0) ? true : false);

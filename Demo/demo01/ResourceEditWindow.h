@@ -5,7 +5,7 @@
 #include "tb_select.h"
 #include "tb_widgets_common.h"
 #include "tb_widgets_listener.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 #include "tb_msg.h"
 
 using namespace tb;
@@ -61,7 +61,7 @@ class ResourceEditWindow : public Window,
   SelectItemSourceList<ResourceItem> m_widget_list_source;
   ScrollContainer* m_scroll_container;
   TBWidget* m_build_container;
-  TBEditField* m_source_edit;
+  TextBox* m_source_text_box;
   std::string m_resource_filename;
   WeakWidgetPointer m_selected_widget;
   void AddWidgetListItemsRecursive(TBWidget* widget, int depth);

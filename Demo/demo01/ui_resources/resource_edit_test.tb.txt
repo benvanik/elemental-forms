@@ -12,10 +12,10 @@ Layout
 				Slider
 					value 0.5
 				ScrollBar
-	TBEditField
+	TextBox
 		multiline 1
 		readonly 1
-	TBEditField
+	TextBox
 		text Hello world\nHello world
 		adapt-to-content 1
 		multiline 1

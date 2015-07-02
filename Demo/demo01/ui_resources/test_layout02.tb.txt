@@ -7,21 +7,21 @@ Layout: position: left top, axis: y
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
-		TBEditField: placeholder: @search, gravity: left right, type: "search"
+		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: available"
 	Layout: distribution: available
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
-		TBEditField: placeholder: @search, gravity: left right, type: "search"
+		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: gravity"
 	Layout: distribution: gravity
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
-		TBEditField: placeholder: @search, gravity: left right, type: "search"
+		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: gravity + trailing layout for right align
 	Layout: distribution: gravity
 		Button: text: tab 1
@@ -29,11 +29,11 @@ Layout: position: left top, axis: y
 		Button: text: tab 3
 		Button: text: tab 4
 		Layout: gravity: left right, distribution-position: right bottom
-			TBEditField: placeholder: @search, type: "search"
+			TextBox: placeholder: @search, type: "search"
 	Label: text: "gravity + mixed gravity"
 	Layout: distribution: gravity
 		Button: text: tab 1
-		TBEditField: placeholder: @search, gravity: left right, type: "search"
+		TextBox: placeholder: @search, gravity: left right, type: "search"
 		Button: text: tab 3
 		Button: text: tab 4
-		TBEditField: placeholder: @search, gravity: left right, type: "search"
+		TextBox: placeholder: @search, gravity: left right, type: "search"

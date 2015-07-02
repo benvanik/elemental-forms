@@ -22,7 +22,7 @@
 #include "tb_window.h"
 
 #ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 #endif  // TB_ALWAYS_SHOW_EDIT_FOCUS
 
 namespace tb {
@@ -184,7 +184,7 @@ SkinState TBWidget::GetAutoState() const {
     state |= SkinState::kHovered;
   if (this == focused_widget && show_focus_state) state |= SkinState::kFocused;
 #ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
-  else if (this == focused_widget && IsOfType<TBEditField>())
+  else if (this == focused_widget && IsOfType<TextBox>())
     state |= SkinState::kFocused;
 #endif
   return state;

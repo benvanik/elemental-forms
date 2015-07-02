@@ -5,7 +5,7 @@ Layout
 	axis y
 	distribution gravity
 	gravity all
-	TBEditField
+	TextBox
 		id filter
 		gravity left right
 		placeholder @search

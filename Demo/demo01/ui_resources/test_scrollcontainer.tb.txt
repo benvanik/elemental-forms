@@ -33,10 +33,10 @@ Layout
 					id add img
 					SkinImage
 						skin Icon16
-			Label: text: "Button containing TBEditField:"
+			Label: text: "Button containing TextBox:"
 			Layout
 				Button
-					TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1, styling: 1
+					TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1, styling: 1
 						text: "A <color #0794f8>Button</color> with styled text that is able to wrap to multiple lines."
 			Label: text: "Showing menu manually, and SelectDropdown:"
 			Layout
@@ -60,17 +60,17 @@ Layout
 					skin Icon48
 				Button
 				Button: toggle-mode: 1
-			Label: text: "TBEditField:"
+			Label: text: "TextBox:"
 			Layout
-				TBEditField
+				TextBox
 					text Edit type text
-				TBEditField
+				TextBox
 					type search
 					text Edit type search
-				TBEditField
+				TextBox
 					type password
 					text pwd goes here
-				TBEditField
+				TextBox
 					text In this field, multiple lines are enabled.
 					multiline 1
 			Label: text: "Slider:"

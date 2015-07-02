@@ -10,8 +10,8 @@
 #ifndef TB_INLINE_SELECT_H
 #define TB_INLINE_SELECT_H
 
-#include "tb_editfield.h"
 #include "tb_select_item.h"
+#include "tb_text_box.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {
@@ -47,7 +47,7 @@ class SelectInline : public TBWidget {
 
   Button m_buttons[2];
   Layout m_layout;
-  TBEditField m_editfield;
+  TextBox m_text_box;
   int m_value = 0;
   int m_min = 0;
   int m_max = 100;

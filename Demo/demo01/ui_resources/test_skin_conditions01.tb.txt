@@ -14,5 +14,5 @@ Layout: axis: y
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"
-	TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1
+	TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1
 		text The skin has a condition to show a upper left positioned overlay "Star" if placed under a ancestor widget with skin "Starry buttons". The Star skin has conditions to change bitmap if the window is active and the parent widget or any child to it is hovered.

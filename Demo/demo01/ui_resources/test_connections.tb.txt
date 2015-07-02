@@ -28,12 +28,12 @@ Layout
 	Container
 		gravity all
 		Layout
-			TBEditField
+			TextBox
 				placeholder User name
 				connection user-name
 				min 0
 				max 100
-			TBEditField
+			TextBox
 				placeholder User name
 				connection user-name
 				min 0

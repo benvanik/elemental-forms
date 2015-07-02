@@ -3,7 +3,7 @@
 #include "tb_message_window.h"
 #include "tb_system.h"
 #include "tb_select.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 #include "tb_tempbuffer.h"
 #include "tb_scroll_container.h"
 #include <stdio.h>
@@ -21,7 +21,7 @@ ResourceEditWindow::ResourceEditWindow()
     : m_widget_list(nullptr),
       m_scroll_container(nullptr),
       m_build_container(nullptr),
-      m_source_edit(nullptr) {
+      m_source_text_box(nullptr) {
   // Register as global listener to intercept events in the build container
   WidgetListener::AddGlobalListener(this);
 
@@ -31,7 +31,7 @@ ResourceEditWindow::ResourceEditWindow()
   m_scroll_container =
       GetWidgetByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
   m_build_container = m_scroll_container->GetContentRoot();
-  m_source_edit = GetWidgetByIDAndType<TBEditField>(TBIDC("source_edit"));
+  m_source_text_box = GetWidgetByIDAndType<TextBox>(TBIDC("source_edit"));
 
   m_widget_list = GetWidgetByIDAndType<SelectList>(TBIDC("widget_list"));
   m_widget_list->SetSource(&m_widget_list_source);
@@ -51,13 +51,13 @@ void ResourceEditWindow::Load(const char* resource_file) {
   SetText(resource_file);
 
   // Set the text of the source view
-  m_source_edit->SetText("");
+  m_source_text_box->SetText("");
 
   if (TBFile* file = TBFile::Open(m_resource_filename, TBFile::Mode::kRead)) {
     TBTempBuffer buffer;
     if (buffer.Reserve(file->Size())) {
       size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
-      m_source_edit->SetText(buffer.GetData(), size_read);
+      m_source_text_box->SetText(buffer.GetData(), size_read);
     }
     delete file;
   } else  // Error, show message
@@ -79,11 +79,11 @@ void ResourceEditWindow::RefreshFromSource() {
 
   // Create new widgets from source
   g_widgets_reader->LoadData(m_build_container,
-                             m_source_edit->GetText().c_str());
+                             m_source_text_box->GetText().c_str());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
-  m_source_edit->SetFocus(FocusReason::kUnknown);
+  m_source_text_box->SetFocus(FocusReason::kUnknown);
 }
 
 void ResourceEditWindow::UpdateWidgetList(bool immediately) {
@@ -147,7 +147,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
       if (ResourceItem* item =
               m_widget_list_source.GetItem(m_widget_list->GetValue()))
         SetSelectedWidget(item->GetWidget());
-  } else if (ev.type == EventType::kChanged && ev.target == m_source_edit) {
+  } else if (ev.type == EventType::kChanged && ev.target == m_source_text_box) {
     RefreshFromSource();
     return true;
   } else if (ev.type == EventType::kClick &&
@@ -156,7 +156,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
     if (Window* win = new Window()) {
       win->SetText("Test window");
       g_widgets_reader->LoadData(win->GetContentRoot(),
-                                 m_source_edit->GetText().c_str());
+                                 m_source_text_box->GetText().c_str());
       Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
       win->SetRect(
           win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(

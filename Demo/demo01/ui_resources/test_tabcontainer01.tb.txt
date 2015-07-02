@@ -28,8 +28,8 @@ TabContainer
 			Button: text: Normal button
 			Button: text: Overridden skin, skin: SpecialButton
 			Button: text: Disabled button, state: disabled
-		TBEditField
-			text TBEditField
+		TextBox
+			text TextBox
 			multiline 1
 	Layout
 		axis y

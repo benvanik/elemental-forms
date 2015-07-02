@@ -23,7 +23,7 @@ TB_FORCE_LINK_TEST_GROUP(tb_node_ref_tree);
 TB_FORCE_LINK_TEST_GROUP(tb_object);
 TB_FORCE_LINK_TEST_GROUP(tb_parser);
 TB_FORCE_LINK_TEST_GROUP(tb_space_allocator);
-TB_FORCE_LINK_TEST_GROUP(tb_editfield);
+TB_FORCE_LINK_TEST_GROUP(tb_text_box);
 TB_FORCE_LINK_TEST_GROUP(tb_tempbuffer);
 TB_FORCE_LINK_TEST_GROUP(tb_test);
 TB_FORCE_LINK_TEST_GROUP(tb_value);

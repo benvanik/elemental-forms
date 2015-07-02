@@ -49,7 +49,7 @@ TBWidget
 	autofocus <bool>
 	<sub...>
 LabelContainer
-TBEditField
+TextBox
 	multiline <bool>
 	styling <bool>
 	readonly <bool>

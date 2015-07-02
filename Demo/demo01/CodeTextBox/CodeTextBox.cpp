@@ -1,29 +1,28 @@
-#include "CodeEditField.h"
+#include "CodeTextBox.h"
 
 #include "tb_widgets_reader.h"
 #include <ctype.h>
 
 using namespace tb;
-TB_WIDGET_FACTORY(CodeEditField, TBValue::Type::kString, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(CodeTextBox, TBValue::Type::kString, WidgetZ::kTop) {}
 
-CodeEditField::CodeEditField() : TBEditField(), inComment(false) {}
+CodeTextBox::CodeTextBox() : TextBox(), inComment(false) {}
 
-void CodeEditField::OnInflate(const InflateInfo& info) {
-  TBEditField::OnInflate(info);
+void CodeTextBox::OnInflate(const InflateInfo& info) {
+  TextBox::OnInflate(info);
 }
 
-void CodeEditField::DrawString(int32_t x, int32_t y, FontFace* font,
-                               const Color& color, const char* str,
-                               size_t len) {
+void CodeTextBox::DrawString(int32_t x, int32_t y, FontFace* font,
+                             const Color& color, const char* str, size_t len) {
   Color finalColor(color);
   StringHasColorOverride(str, len, finalColor);
-  TBEditField::DrawString(x, y, font, finalColor, str, len);
+  TextBox::DrawString(x, y, font, finalColor, str, len);
 }
 
-void CodeEditField::OnBreak() { inComment = false; }
+void CodeTextBox::OnBreak() { inComment = false; }
 
-bool CodeEditField::StringHasColorOverride(const char* str, size_t len,
-                                           Color& colour) {
+bool CodeTextBox::StringHasColorOverride(const char* str, size_t len,
+                                         Color& colour) {
   if (strlen(str) >= 2) {
     if (str[0] == '/' && str[1] == '/') {
       inComment = true;

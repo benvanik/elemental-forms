@@ -6,7 +6,7 @@ ScrollContainer
 	Layout
 		axis y
 		spacing 20
-		TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1
+		TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1
 			text: "Some images shown by TBImageWidget. This test requires enabling TB_IMAGE (see tb_config.h).\n" \
 					"Images are unloaded when all references are removed (this window is closed)."
 		ImageWidget: filename: "Demo/demo01/images/image_8.jpg", skin: ImageFrame

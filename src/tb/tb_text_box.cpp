@@ -7,7 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 
 #include <algorithm>
 
@@ -26,8 +26,8 @@ namespace tb {
 const int CARET_BLINK_TIME = 500;
 const int SELECTION_SCROLL_DELAY = 1000 / 30;
 
-/** Get the delta that should be scrolled if dragging the pointer outside the
- * range min-max */
+// Gets the delta that should be scrolled if dragging the pointer outside the
+// range min-max.
 int GetSelectionScrollSpeed(int pointerpos, int min, int max) {
   int d = 0;
   if (pointerpos < min)
@@ -39,10 +39,7 @@ int GetSelectionScrollSpeed(int pointerpos, int min, int max) {
   return (pointerpos < min) ? -d : d;
 }
 
-TBEditField::TBEditField()
-    : m_edit_type(EditType::kText),
-      m_adapt_to_content_size(false),
-      m_virtual_width(250) {
+TextBox::TextBox() {
   SetIsFocusable(true);
   SetWantLongClick(true);
   AddChild(&m_scrollbar_x);
@@ -59,51 +56,56 @@ TBEditField::TBEditField()
   m_scrollbar_x.SetOpacity(0);
   m_scrollbar_y.SetOpacity(0);
 
-  SetSkinBg(TBIDC("TBEditField"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("TextBox"), InvokeInfo::kNoCallbacks);
   m_style_edit.SetListener(this);
 
   m_root.SetRect(GetVisibleRect());
 
   m_placeholder.SetTextAlign(TextAlign::kLeft);
 
-  m_content_factory.editfield = this;
+  m_content_factory.text_box = this;
   m_style_edit.SetContentFactory(&m_content_factory);
 }
 
-TBEditField::~TBEditField() {
+TextBox::~TextBox() {
   RemoveChild(&m_root);
   RemoveChild(&m_scrollbar_y);
   RemoveChild(&m_scrollbar_x);
 }
 
-Rect TBEditField::GetVisibleRect() {
+Rect TextBox::GetVisibleRect() {
   Rect rect = GetPaddingRect();
-  if (m_scrollbar_y.GetOpacity()) rect.w -= m_scrollbar_y.GetRect().w;
-  if (m_scrollbar_x.GetOpacity()) rect.h -= m_scrollbar_x.GetRect().h;
+  if (m_scrollbar_y.GetOpacity()) {
+    rect.w -= m_scrollbar_y.GetRect().w;
+  }
+  if (m_scrollbar_x.GetOpacity()) {
+    rect.h -= m_scrollbar_x.GetRect().h;
+  }
   return rect;
 }
 
-void TBEditField::UpdateScrollbarVisibility(bool multiline) {
+void TextBox::UpdateScrollbarVisibility(bool multiline) {
   bool enable_vertical = multiline && !m_adapt_to_content_size;
   m_scrollbar_y.SetOpacity(enable_vertical ? 1.f : 0.f);
   m_root.SetRect(GetVisibleRect());
 }
 
-void TBEditField::SetAdaptToContentSize(bool adapt) {
+void TextBox::SetAdaptToContentSize(bool adapt) {
   if (m_adapt_to_content_size == adapt) return;
   m_adapt_to_content_size = adapt;
   UpdateScrollbarVisibility(GetMultiline());
 }
 
-void TBEditField::SetVirtualWidth(int virtual_width) {
+void TextBox::SetVirtualWidth(int virtual_width) {
   if (m_virtual_width == virtual_width) return;
   m_virtual_width = virtual_width;
 
-  if (m_adapt_to_content_size && m_style_edit.packed.wrapping)
+  if (m_adapt_to_content_size && m_style_edit.packed.wrapping) {
     InvalidateLayout(InvalidationMode::kRecursive);
+  }
 }
 
-void TBEditField::SetMultiline(bool multiline) {
+void TextBox::SetMultiline(bool multiline) {
   if (multiline == GetMultiline()) return;
   UpdateScrollbarVisibility(multiline);
   m_style_edit.SetMultiline(multiline);
@@ -112,26 +114,26 @@ void TBEditField::SetMultiline(bool multiline) {
   TBWidget::Invalidate();
 }
 
-void TBEditField::SetStyling(bool styling) { m_style_edit.SetStyling(styling); }
+void TextBox::SetStyling(bool styling) { m_style_edit.SetStyling(styling); }
 
-void TBEditField::SetReadOnly(bool readonly) {
+void TextBox::SetReadOnly(bool readonly) {
   if (readonly == GetReadOnly()) return;
   m_style_edit.SetReadOnly(readonly);
   InvalidateSkinStates();
   TBWidget::Invalidate();
 }
 
-void TBEditField::SetWrapping(bool wrapping) {
+void TextBox::SetWrapping(bool wrapping) {
   if (wrapping == GetWrapping()) return;
 
   m_style_edit.SetWrapping(wrapping);
 
   // Invalidate the layout when the wrap mode change and we should adapt our
-  // size to it
+  // size to it.
   if (m_adapt_to_content_size) InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBEditField::SetEditType(EditType type) {
+void TextBox::SetEditType(EditType type) {
   if (m_edit_type == type) return;
   m_edit_type = type;
   m_style_edit.SetPassword(type == EditType::kPassword);
@@ -139,8 +141,7 @@ void TBEditField::SetEditType(EditType type) {
   TBWidget::Invalidate();
 }
 
-bool TBEditField::GetCustomSkinCondition(
-    const SkinCondition::ConditionInfo& info) {
+bool TextBox::GetCustomSkinCondition(const SkinCondition::ConditionInfo& info) {
   if (info.custom_prop == TBIDC("edit-type")) {
     switch (m_edit_type) {
       case EditType::kText:
@@ -158,22 +159,24 @@ bool TBEditField::GetCustomSkinCondition(
       case EditType::kNumber:
         return info.value == TBIDC("number");
     };
-  } else if (info.custom_prop == TBIDC("multiline"))
+  } else if (info.custom_prop == TBIDC("multiline")) {
     return !((uint32_t)info.value) == !GetMultiline();
-  else if (info.custom_prop == TBIDC("readonly"))
+  } else if (info.custom_prop == TBIDC("readonly")) {
     return !((uint32_t)info.value) == !GetReadOnly();
+  }
   return false;
 }
 
-void TBEditField::ScrollTo(int x, int y) {
+void TextBox::ScrollTo(int x, int y) {
   int old_x = m_scrollbar_x.GetValue();
   int old_y = m_scrollbar_y.GetValue();
   m_style_edit.SetScrollPos(x, y);
-  if (old_x != m_scrollbar_x.GetValue() || old_y != m_scrollbar_y.GetValue())
+  if (old_x != m_scrollbar_x.GetValue() || old_y != m_scrollbar_y.GetValue()) {
     TBWidget::Invalidate();
+  }
 }
 
-TBWidget::ScrollInfo TBEditField::GetScrollInfo() {
+TBWidget::ScrollInfo TextBox::GetScrollInfo() {
   ScrollInfo info;
   info.min_x = static_cast<int>(m_scrollbar_x.GetMinValue());
   info.min_y = static_cast<int>(m_scrollbar_y.GetMinValue());
@@ -184,7 +187,7 @@ TBWidget::ScrollInfo TBEditField::GetScrollInfo() {
   return info;
 }
 
-bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
+bool TextBox::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target == &m_scrollbar_x) {
     m_style_edit.SetScrollPos(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
     OnScroll(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
@@ -264,12 +267,14 @@ bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-void TBEditField::OnPaint(const PaintProps& paint_props) {
+void TextBox::OnPaint(const PaintProps& paint_props) {
   Rect visible_rect = GetVisibleRect();
 
   bool clip = m_scrollbar_x.CanScroll() || m_scrollbar_y.CanScroll();
   Rect old_clip;
-  if (clip) old_clip = g_renderer->SetClipRect(visible_rect, true);
+  if (clip) {
+    old_clip = g_renderer->SetClipRect(visible_rect, true);
+  }
 
   int trans_x = visible_rect.x, trans_y = visible_rect.y;
   g_renderer->Translate(trans_x, trans_y);
@@ -291,33 +296,34 @@ void TBEditField::OnPaint(const PaintProps& paint_props) {
   }
   g_renderer->Translate(-trans_x, -trans_y);
 
-  if (clip) g_renderer->SetClipRect(old_clip, false);
+  if (clip) {
+    g_renderer->SetClipRect(old_clip, false);
+  }
 }
 
-void TBEditField::OnPaintChildren(const PaintProps& paint_props) {
+void TextBox::OnPaintChildren(const PaintProps& paint_props) {
   TBWidget::OnPaintChildren(paint_props);
 
   // Draw fadeout skin at the needed edges.
   DrawEdgeFadeout(
-      GetVisibleRect(), TBIDC("TBEditField.fadeout_x"),
-      TBIDC("TBEditField.fadeout_y"), m_scrollbar_x.GetValue(),
-      m_scrollbar_y.GetValue(),
-      (int)(m_scrollbar_x.GetMaxValue() - m_scrollbar_x.GetValueDouble()),
-      (int)(m_scrollbar_y.GetMaxValue() - m_scrollbar_y.GetValueDouble()));
+      GetVisibleRect(), TBIDC("TextBox.fadeout_x"), TBIDC("TextBox.fadeout_y"),
+      m_scrollbar_x.GetValue(), m_scrollbar_y.GetValue(),
+      int(m_scrollbar_x.GetMaxValue() - m_scrollbar_x.GetValueDouble()),
+      int(m_scrollbar_y.GetMaxValue() - m_scrollbar_y.GetValueDouble()));
 }
 
-void TBEditField::OnAdded() {
+void TextBox::OnAdded() {
   m_style_edit.SetFont(GetCalculatedFontDescription());
 }
 
-void TBEditField::OnFontChanged() {
+void TextBox::OnFontChanged() {
   m_style_edit.SetFont(GetCalculatedFontDescription());
 }
 
-void TBEditField::OnFocusChanged(bool focused) { m_style_edit.Focus(focused); }
+void TextBox::OnFocusChanged(bool focused) { m_style_edit.Focus(focused); }
 
-void TBEditField::OnResized(int old_w, int old_h) {
-  // Make the scrollbars move
+void TextBox::OnResized(int old_w, int old_h) {
+  // Make the scrollbars move.
   TBWidget::OnResized(old_w, old_h);
 
   Rect visible_rect = GetVisibleRect();
@@ -326,7 +332,7 @@ void TBEditField::OnResized(int old_w, int old_h) {
   UpdateScrollbars();
 }
 
-PreferredSize TBEditField::OnCalculatePreferredContentSize(
+PreferredSize TextBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   int font_height = GetFont()->GetHeight();
   PreferredSize ps;
@@ -335,24 +341,22 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
     int old_layout_height = m_style_edit.layout_height;
     if (m_style_edit.packed.wrapping) {
       // If we have wrapping enabled, we have to set a virtual width and format
-      // the text
-      // so we can get the actual content width with a constant result every
-      // time.
+      // the text so we can get the actual content width with a constant result
+      // every time.
       // If the layouter does not respect our size constraints in the end, we
-      // may
-      // get a completly different content height due to different wrapping.
+      // may get a completly different content height due to different wrapping.
       // To fix that, we need to layout in 2 passes.
 
       // A hacky fix is to do something we probably shouldn't: use the old
-      // layout width
-      // as virtual width for the new.
+      // layout width as virtual width for the new.
       // int layout_width = old_layout_width > 0 ? std::max(old_layout_width,
       // m_virtual_width) : m_virtual_width;
       int layout_width = m_virtual_width;
       if (constraints.available_w != SizeConstraints::NO_RESTRICTION) {
         layout_width = constraints.available_w;
-        if (SkinElement* bg_skin = GetSkinBgElement())
+        if (SkinElement* bg_skin = GetSkinBgElement()) {
           layout_width -= bg_skin->padding_left + bg_skin->padding_right;
+        }
       }
 
       m_style_edit.SetLayoutSize(layout_width, old_layout_height, true);
@@ -360,8 +364,9 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
     }
     int width = m_style_edit.GetContentWidth();
     int height = m_style_edit.GetContentHeight();
-    if (m_style_edit.packed.wrapping)
+    if (m_style_edit.packed.wrapping) {
       m_style_edit.SetLayoutSize(old_layout_width, old_layout_height, true);
+    }
     height = std::max(height, font_height);
 
     ps.min_w = ps.pref_w /*= ps.max_w*/ =
@@ -373,13 +378,14 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
     if (m_style_edit.packed.multiline_on) {
       ps.pref_w = font_height * 10;
       ps.pref_h = font_height * 5;
-    } else
+    } else {
       ps.max_h = ps.pref_h;
+    }
   }
   return ps;
 }
 
-void TBEditField::OnMessageReceived(Message* msg) {
+void TextBox::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("blink")) {
     m_style_edit.caret.on = !m_style_edit.caret.on;
     m_style_edit.caret.Invalidate();
@@ -397,101 +403,109 @@ void TBEditField::OnMessageReceived(Message* msg) {
     m_scrollbar_y.SetValue(m_scrollbar_y.GetValue() + dy);
 
     // Handle mouse move at the new scroll position, so selection is updated
-    if (dx || dy)
+    if (dx || dy) {
       m_style_edit.MouseMove(
           Point(pointer_move_widget_x, pointer_move_widget_y));
+    }
 
     // Post another setscroll message so we continue scrolling if we still
     // should.
-    if (m_style_edit.select_state)
+    if (m_style_edit.select_state) {
       PostMessageDelayed(TBIDC("selscroll"), nullptr, SELECTION_SCROLL_DELAY);
+    }
   }
 }
 
-void TBEditField::OnChange() {
+void TextBox::OnChange() {
   // Invalidate the layout when the content change and we should adapt our size
-  // to it
-  if (m_adapt_to_content_size) InvalidateLayout(InvalidationMode::kRecursive);
+  // to it.
+  if (m_adapt_to_content_size) {
+    InvalidateLayout(InvalidationMode::kRecursive);
+  }
 
   TBWidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool TBEditField::OnEnter() { return false; }
+bool TextBox::OnEnter() { return false; }
 
-void TBEditField::Invalidate(const Rect& rect) { TBWidget::Invalidate(); }
+void TextBox::Invalidate(const Rect& rect) { TBWidget::Invalidate(); }
 
-void TBEditField::DrawString(int32_t x, int32_t y, FontFace* font,
-                             const Color& color, const char* str, size_t len) {
+void TextBox::DrawString(int32_t x, int32_t y, FontFace* font,
+                         const Color& color, const char* str, size_t len) {
   font->DrawString(x, y, color, str, len);
 }
 
-void TBEditField::DrawRect(const Rect& rect, const Color& color) {
+void TextBox::DrawRect(const Rect& rect, const Color& color) {
   g_renderer->DrawRect(rect, color);
 }
 
-void TBEditField::DrawRectFill(const Rect& rect, const Color& color) {
+void TextBox::DrawRectFill(const Rect& rect, const Color& color) {
   g_renderer->DrawRectFill(rect, color);
 }
 
-void TBEditField::DrawTextSelectionBg(const Rect& rect) {
+void TextBox::DrawTextSelectionBg(const Rect& rect) {
   WidgetSkinConditionContext context(this);
-  g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
+  g_tb_skin->PaintSkin(rect, TBIDC("TextBox.selection"),
                        static_cast<SkinState>(GetAutoState()), context);
 }
 
-void TBEditField::DrawContentSelectionFg(const Rect& rect) {
+void TextBox::DrawContentSelectionFg(const Rect& rect) {
   WidgetSkinConditionContext context(this);
-  g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
+  g_tb_skin->PaintSkin(rect, TBIDC("TextBox.selection"),
                        static_cast<SkinState>(GetAutoState()), context);
 }
 
-void TBEditField::DrawCaret(const Rect& rect) {
-  if (GetIsFocused() && !m_style_edit.packed.read_only)
+void TextBox::DrawCaret(const Rect& rect) {
+  if (GetIsFocused() && !m_style_edit.packed.read_only) {
     DrawTextSelectionBg(rect);
+  }
 }
 
-void TBEditField::Scroll(int32_t dx, int32_t dy) {
+void TextBox::Scroll(int32_t dx, int32_t dy) {
   TBWidget::Invalidate();
   m_scrollbar_x.SetValue(m_style_edit.scroll_x);
   m_scrollbar_y.SetValue(m_style_edit.scroll_y);
 }
 
-void TBEditField::UpdateScrollbars() {
+void TextBox::UpdateScrollbars() {
   int32_t w = m_style_edit.layout_width;
   int32_t h = m_style_edit.layout_height;
   m_scrollbar_x.SetLimits(0, m_style_edit.GetContentWidth() - w, w);
   m_scrollbar_y.SetLimits(0, m_style_edit.GetContentHeight() - h, h);
 }
 
-void TBEditField::CaretBlinkStart() {
+void TextBox::CaretBlinkStart() {
   // Post the delayed blink message if we don't already have one
-  if (!GetMessageByID(TBIDC("blink")))
+  if (!GetMessageByID(TBIDC("blink"))) {
     PostMessageDelayed(TBIDC("blink"), nullptr, CARET_BLINK_TIME);
+  }
 }
 
-void TBEditField::CaretBlinkStop() {
+void TextBox::CaretBlinkStop() {
   // Remove the blink message if we have one
-  if (Message* msg = GetMessageByID(TBIDC("blink"))) DeleteMessage(msg);
+  if (Message* msg = GetMessageByID(TBIDC("blink"))) {
+    DeleteMessage(msg);
+  }
 }
 
-void TBEditFieldScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
+void TextBoxScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
   // Avoid setting clipping (can be expensive) if we have no children to paint
   // anyway.
   if (!GetFirstChild()) return;
-  // Clip children
+  // Clip children.
   Rect old_clip_rect = g_renderer->SetClipRect(GetPaddingRect(), true);
   TBWidget::OnPaintChildren(paint_props);
   g_renderer->SetClipRect(old_clip_rect, false);
 }
 
-void TBEditFieldScrollRoot::GetChildTranslation(int& x, int& y) const {
-  TBEditField* edit_field = static_cast<TBEditField*>(GetParent());
-  x = (int)-edit_field->GetStyleEdit()->scroll_x;
-  y = (int)-edit_field->GetStyleEdit()->scroll_y;
+void TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
+  TextBox* edit_field = static_cast<TextBox*>(GetParent());
+  x = -edit_field->GetStyleEdit()->scroll_x;
+  y = -edit_field->GetStyleEdit()->scroll_y;
 }
 
-HitStatus TBEditFieldScrollRoot::GetHitStatus(int x, int y) {
+HitStatus TextBoxScrollRoot::GetHitStatus(int x, int y) {
   // Return no hit on this widget, but maybe on any of the children.
   if (TBWidget::GetHitStatus(x, y) != HitStatus::kNoHit &&
       GetWidgetAt(x, y, false)) {
@@ -503,12 +517,12 @@ HitStatus TBEditFieldScrollRoot::GetHitStatus(int x, int y) {
 class TextFragmentContentWidget : public TextFragmentContent {
  public:
   TextFragmentContentWidget(TBWidget* parent, TBWidget* widget);
-  virtual ~TextFragmentContentWidget();
+  ~TextFragmentContentWidget() override;
 
-  virtual void UpdatePos(int x, int y);
-  virtual int32_t GetWidth(FontFace* font, TextFragment* fragment);
-  virtual int32_t GetHeight(FontFace* font, TextFragment* fragment);
-  virtual int32_t GetBaseline(FontFace* font, TextFragment* fragment);
+  void UpdatePos(int x, int y) override;
+  int32_t GetWidth(FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(FontFace* font, TextFragment* fragment) override;
+  int32_t GetBaseline(FontFace* font, TextFragment* fragment) override;
 
  private:
   TBWidget* m_widget;
@@ -548,23 +562,19 @@ int32_t TextFragmentContentWidget::GetBaseline(FontFace* font,
   return (height + fragment->block->CalculateBaseline(font)) / 2;
 }
 
-int TBEditFieldContentFactory::GetContent(const char* text) {
+int TextBoxContentFactory::GetContent(const char* text) {
   return TextFragmentContentFactory::GetContent(text);
 }
 
-TextFragmentContent* TBEditFieldContentFactory::CreateFragmentContent(
+TextFragmentContent* TextBoxContentFactory::CreateFragmentContent(
     const char* text, size_t text_len) {
   if (strncmp(text, "<widget ", std::min(text_len, 8ull)) == 0) {
     // Create a wrapper for the generated widget.
     // Its size will adapt to the content.
-    if (TBWidget* widget = new TBWidget()) {
-      if (TextFragmentContentWidget* cw =
-              new TextFragmentContentWidget(editfield, widget)) {
-        g_widgets_reader->LoadData(widget, text + 8, text_len - 9);
-        return cw;
-      }
-      delete widget;
-    }
+    auto widget = new TBWidget();
+    auto cw = new TextFragmentContentWidget(text_box, widget);
+    g_widgets_reader->LoadData(widget, text + 8, text_len - 9);
+    return cw;
   }
 
   return TextFragmentContentFactory::CreateFragmentContent(text, text_len);

@@ -93,7 +93,7 @@
     <ClCompile Include="..\Demo\thirdparty\glfw\src\win32_window.c" />
     <ClCompile Include="..\Demo\thirdparty\glfw\src\window.c" />
     <ClCompile Include="..\Demo\thirdparty\glfw\src\winmm_joystick.c" />
-    <ClCompile Include="demo01\CodeEditField\CodeEditField.cpp" />
+    <ClCompile Include="demo01\CodeTextBox\CodeTextBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Demo\demo01\Demo.h" />
@@ -102,7 +102,7 @@
     <ClInclude Include="..\Demo\platform\Application.h" />
     <ClInclude Include="..\Demo\platform\glfw_extra.h" />
     <ClInclude Include="..\Demo\thirdparty\glfw\src\win32_platform.h" />
-    <ClInclude Include="demo01\CodeEditField\CodeEditField.h" />
+    <ClInclude Include="demo01\CodeTextBox\CodeTextBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libturbobadger.vcxproj">

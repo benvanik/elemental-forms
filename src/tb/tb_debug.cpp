@@ -12,9 +12,9 @@
 #include <cstdio>
 
 #include "tb_core.h"
-#include "tb_editfield.h"
 #include "tb_font_renderer.h"
 #include "tb_tempbuffer.h"
+#include "tb_text_box.h"
 #include "tb_widgets_reader.h"
 #include "tb_window.h"
 
@@ -29,7 +29,7 @@ TBDebugInfo::TBDebugInfo() = default;
 /** Window showing runtime debug settings. */
 class DebugSettingsWindow : public Window, public WidgetListener {
  public:
-  TBEditField* output;
+  TextBox* output;
 
   TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
 
@@ -40,7 +40,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
         "Layout: axis: y, distribution: available, position: left\n"
         "	Layout: id: 'container', axis: y, size: available\n"
         "	Label: text: 'Event output:'\n"
-        "	TBEditField: id: 'output', gravity: all, multiline: 1, wrap: "
+        "	TextBox: id: 'output', gravity: all, multiline: 1, wrap: "
         "0\n"
         "		lp: pref-height: 100dp");
 
@@ -53,7 +53,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     AddCheckbox(TBDebugInfo::Setting::kDrawFontBitmapFragments,
                 "Render font bitmap fragments");
 
-    output = GetWidgetByIDAndType<TBEditField>(TBIDC("output"));
+    output = GetWidgetByIDAndType<TextBox>(TBIDC("output"));
 
     Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
     SetRect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(

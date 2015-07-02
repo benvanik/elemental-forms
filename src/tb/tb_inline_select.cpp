@@ -21,7 +21,7 @@ SelectInline::SelectInline() {
   SetSkinBg(TBIDC("SelectInline"));
   AddChild(&m_layout);
   m_layout.AddChild(&m_buttons[0]);
-  m_layout.AddChild(&m_editfield);
+  m_layout.AddChild(&m_text_box);
   m_layout.AddChild(&m_buttons[1]);
   m_layout.SetRect(GetPaddingRect());
   m_layout.SetGravity(Gravity::kAll);
@@ -36,14 +36,14 @@ SelectInline::SelectInline() {
   m_buttons[1].SetID(TBIDC("inc"));
   m_buttons[0].SetAutoRepeat(true);
   m_buttons[1].SetAutoRepeat(true);
-  m_editfield.SetTextAlign(TextAlign::kCenter);
-  m_editfield.SetEditType(EditType::kNumber);
-  m_editfield.SetText("0");
+  m_text_box.SetTextAlign(TextAlign::kCenter);
+  m_text_box.SetEditType(EditType::kNumber);
+  m_text_box.SetText("0");
 }
 
 SelectInline::~SelectInline() {
   m_layout.RemoveChild(&m_buttons[1]);
-  m_layout.RemoveChild(&m_editfield);
+  m_layout.RemoveChild(&m_text_box);
   m_layout.RemoveChild(&m_buttons[0]);
   RemoveChild(&m_layout);
 }
@@ -61,7 +61,7 @@ void SelectInline::SetValueInternal(int value, bool update_text) {
   m_value = value;
 
   if (update_text) {
-    m_editfield.SetText(std::to_string(m_value));
+    m_text_box.SetText(std::to_string(m_value));
   }
 
   TBWidgetEvent ev(EventType::kChanged);
@@ -89,8 +89,8 @@ bool SelectInline::OnEvent(const TBWidgetEvent& ev) {
              ev.target->GetID() == TBIDC("inc")) {
     SetValue(GetValue() + 1);
     return true;
-  } else if (ev.type == EventType::kChanged && ev.target == &m_editfield) {
-    auto text = m_editfield.GetText();
+  } else if (ev.type == EventType::kChanged && ev.target == &m_text_box) {
+    auto text = m_text_box.GetText();
     SetValueInternal(atoi(text.c_str()), false);
   }
   return false;

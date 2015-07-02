@@ -8,7 +8,7 @@
  */
 
 #include "tb_test.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 #include "tb_widgets_common.h"
 #include "tb_select.h"
 #include "tb_inline_select.h"
@@ -23,9 +23,9 @@ TB_TEST_GROUP(tb_widget_value_text) {
   TBWidget* a, *b, *c;
 
   TB_TEST(Init) {
-    TB_VERIFY(a = new TBEditField);
-    TB_VERIFY(b = new TBEditField);
-    TB_VERIFY(c = new TBEditField);
+    TB_VERIFY(a = new TextBox);
+    TB_VERIFY(b = new TextBox);
+    TB_VERIFY(c = new TextBox);
   }
 
   TB_TEST(connect) {

@@ -8,7 +8,7 @@
 #include "tb_inline_select.h"
 #include "tb_select.h"
 #include "tb_menu_window.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 #include "tb_tab_container.h"
 #include "tb_bitmap_fragment.h"
 #include "tb_widget_animation.h"
@@ -17,7 +17,7 @@
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
 #include "utf8.h"
-#include "CodeEditField\CodeEditField.h"
+#include "CodeTextBox\CodeTextBox.h"
 
 static Application* application;
 
@@ -133,8 +133,7 @@ class EditWindow : public DemoWindow {
   virtual void OnProcessStates() {
     // Update the disabled state of undo/redo buttons, and caret info.
 
-    if (TBEditField* edit =
-            GetWidgetByIDAndType<TBEditField>(TBIDC("editfield"))) {
+    if (TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"))) {
       if (TBWidget* undo = GetWidgetByID("undo"))
         undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
       if (TBWidget* redo = GetWidgetByID("redo"))
@@ -147,7 +146,7 @@ class EditWindow : public DemoWindow {
   }
   virtual bool OnEvent(const TBWidgetEvent& ev) {
     if (ev.type == EventType::kClick) {
-      TBEditField* edit = GetWidgetByIDAndType<TBEditField>(TBIDC("editfield"));
+      TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
 
       if (ev.target->GetID() == TBIDC("clear")) {

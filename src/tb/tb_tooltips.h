@@ -10,14 +10,14 @@
 #ifndef TB_TOOLTIPS_H
 #define TB_TOOLTIPS_H
 
-#include "tb_editfield.h"
 #include "tb_popup_window.h"
+#include "tb_text_box.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {
 
 // Implements functionality of tooltip popups, based on PopupWindow and
-// contains TBEditField as content viewer.
+// contains TextBox as content viewer.
 class TooltipWindow : public PopupWindow {
  public:
   TBOBJECT_SUBCLASS(TooltipWindow, PopupWindow);
@@ -32,7 +32,7 @@ class TooltipWindow : public PopupWindow {
  private:
   Rect GetAlignedRect(int x, int y);
 
-  TBEditField m_content;
+  TextBox m_content;
   int m_offset_x = 0;
   int m_offset_y = 0;
 };

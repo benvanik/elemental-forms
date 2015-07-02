@@ -11,8 +11,8 @@
 
 #include <cassert>
 
-#include "tb_editfield.h"
 #include "tb_language.h"
+#include "tb_text_box.h"
 #include "tb_widgets_reader.h"
 
 namespace tb {
@@ -46,7 +46,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "Layout: axis: y, distribution: available\n"
       "	Layout: distribution: available, size: available\n"
       "		SkinImage: id: 2\n"
-      "		TBEditField: multiline: 1, readonly: 1, id: 1\n"
+      "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	Layout: distribution-position: right bottom, id: 3\n";
   if (!g_widgets_reader->LoadData(GetContentRoot(), source)) {
     return false;
@@ -56,10 +56,10 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   GetWidgetByIDAndType<SkinImage>(2)->SetSkinBg(settings->icon_skin);
 
-  TBEditField* editfield = GetWidgetByIDAndType<TBEditField>(1);
-  editfield->SetStyling(settings->styling);
-  editfield->SetText(message);
-  editfield->SetSkinBg("");
+  TextBox* text_box = GetWidgetByIDAndType<TextBox>(1);
+  text_box->SetStyling(settings->styling);
+  text_box->SetText(message);
+  text_box->SetSkinBg("");
 
   // Create buttons.
   if (settings->msg == MessageWindowButtons::kOk) {
@@ -78,10 +78,10 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   // Get how much we overflow the textfield has given the current width, and
   // grow our height to show all we can.
-  // FIX: It would be better to use adapt-to-content on the editfield to achieve
+  // FIX: It would be better to use adapt-to-content on the text_box to achieve
   // the most optimal size.
   // At least when we do full blown multi pass size checking.
-  rect.h += editfield->GetStyleEdit()->GetOverflowY();
+  rect.h += text_box->GetStyleEdit()->GetOverflowY();
 
   // Create background dimmer.
   if (settings->dimmer) {

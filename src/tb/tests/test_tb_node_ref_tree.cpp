@@ -11,7 +11,7 @@
 #include "tb_node_ref_tree.h"
 #include "tb_widgets_reader.h"
 #include "tb_layout.h"
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 
 #ifdef TB_UNIT_TESTING
 
@@ -122,9 +122,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     TBWidget root;
     g_widgets_reader->LoadData(&root,
-                               "TBEditField: id: 'edit'\n"
+                               "TextBox: id: 'edit'\n"
                                "	@include @test_styles>VeryNice");
-    TBEditField* edit = root.GetWidgetByIDAndType<TBEditField>(TBIDC("edit"));
+    TextBox* edit = root.GetWidgetByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }
@@ -135,9 +135,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
                                "SomeDeclarations\n"
                                "	skin: 'SpecialSkin'\n"
                                "	text: 'hello'\n"
-                               "TBEditField: id: 'edit'\n"
+                               "TextBox: id: 'edit'\n"
                                "	@include SomeDeclarations");
-    TBEditField* edit = root.GetWidgetByIDAndType<TBEditField>(TBIDC("edit"));
+    TextBox* edit = root.GetWidgetByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }

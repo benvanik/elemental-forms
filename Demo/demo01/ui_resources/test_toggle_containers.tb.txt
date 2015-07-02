@@ -1,7 +1,7 @@
 WindowInfo
 	title ToggleContainer
 Layout: axis: y
-	TBEditField: gravity: all, adapt-to-content: 1, multiline: 1, readonly: 1, skin: 0, virtual-width: 400
+	TextBox: gravity: all, adapt-to-content: 1, multiline: 1, readonly: 1, skin: 0, virtual-width: 400
 		text: "ToggleContainer used with TBWidgetValue connections to automatically toggle a group of items (no programming needed)."
 
 	Layout: position: top left

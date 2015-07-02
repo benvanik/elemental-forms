@@ -18,7 +18,7 @@ Layout
 			Button
 				text Test
 				id test
-		TBEditField
+		TextBox
 			placeholder @search
 			type search
 			id widget_list_search
@@ -26,7 +26,7 @@ Layout
 			id widget_list
 	Layout
 		distribution available
-		TBEditField
+		TextBox
 			id source_edit
 			multiline 1
 			gravity all

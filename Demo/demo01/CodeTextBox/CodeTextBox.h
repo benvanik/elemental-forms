@@ -1,13 +1,13 @@
 #pragma once
 
-#include "tb_editfield.h"
+#include "tb_text_box.h"
 
 #include <vector>
 
-class CodeEditField : public tb::TBEditField {
+class CodeTextBox : public tb::TextBox {
  public:
   enum SpecialStringTypes { Keyword, Variable };
-  CodeEditField();
+  CodeTextBox();
 
   virtual void OnInflate(const tb::InflateInfo& info);
 

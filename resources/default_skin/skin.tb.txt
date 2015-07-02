@@ -248,26 +248,26 @@ elements
 		cut 13
 		expand 6
 
-	# == TBEditField skin. Create strong overrides for the search type to add magnifier glass icon =====
-	TBEditField.selection
+	# == TextBox skin. Create strong overrides for the search type to add magnifier glass icon =====
+	TextBox.selection
 		cut 2
 		bitmap selection.png
-	TBEditField
+	TextBox
 		bitmap editfield.png
 		cut 12
 		expand 4
 		padding 4
 		strong-overrides
-			element TBEditField.search
+			element TextBox.search
 				condition: target: this, property: edit-type, value: "search"
 
-	TBEditField.search
-		clone TBEditField
+	TextBox.search
+		clone TextBox
 		padding 4 4 4 24
 		min-width 50
 		children
-			element TBEditField.search.icon
-	TBEditField.search.icon
+			element TextBox.search.icon
+	TextBox.search.icon
 		bitmap search.png
 		type image
 		img-position-x 0
@@ -363,7 +363,7 @@ elements
 	Layout.fadeout_y
 		bitmap fadeout_y.png
 	SelectList
-		clone TBEditField
+		clone TextBox
 		padding 2
 	SelectDropdown
 		clone Button

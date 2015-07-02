@@ -3,7 +3,7 @@ WindowInfo
 	size 350 350
 Layout: axis: y, distribution: gravity
 	Layout: distribution: available, gravity: left right
-		TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1
+		TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1
 			text: "Any widget may contain children and by default applies basic gravity positioning.\n" \
 					"To achieve more advanced layout, you would normally wrap a layouting " \
 					"widget (f.ex Layout) but sometimes the default is enough.\n" \
