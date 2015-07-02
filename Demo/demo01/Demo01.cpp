@@ -120,7 +120,7 @@ bool DemoWindow::OnEvent(const TBWidgetEvent& ev) {
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
-  return TBWindow::OnEvent(ev);
+  return Window::OnEvent(ev);
 }
 
 // == EditWindow ==============================================================
@@ -533,9 +533,9 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("delayedmsg")) {
       PostMessageDelayed(TBIDC("delayedmsg"), nullptr, 2000);
       return true;
-    } else if (ev.target->GetID() == TBIDC("TBWindow.close")) {
-      // Intercept the TBWindow.close message and stop it from bubbling
-      // to TBWindow (prevent the window from closing)
+    } else if (ev.target->GetID() == TBIDC("Window.close")) {
+      // Intercept the Window.close message and stop it from bubbling
+      // to Window (prevent the window from closing)
       MessageWindow* msg_win =
           new MessageWindow(this, TBIDC("confirm_close_dialog"));
       MessageWindowSettings settings(MessageWindowButtons::kYesNo,

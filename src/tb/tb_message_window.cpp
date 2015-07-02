@@ -123,7 +123,7 @@ bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
-  return TBWindow::OnEvent(ev);
+  return Window::OnEvent(ev);
 }
 
 void MessageWindow::OnDie() {

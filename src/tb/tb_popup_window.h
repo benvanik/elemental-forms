@@ -64,9 +64,9 @@ class TBPopupAlignment {
    that
         are not sent through this popup. */
 
-class TBPopupWindow : public TBWindow, private TBWidgetListener {
+class TBPopupWindow : public Window, private TBWidgetListener {
  public:
-  TBOBJECT_SUBCLASS(TBPopupWindow, TBWindow);
+  TBOBJECT_SUBCLASS(TBPopupWindow, Window);
 
   TBPopupWindow(TBWidget* target);
   ~TBPopupWindow();

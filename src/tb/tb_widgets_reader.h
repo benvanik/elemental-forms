@@ -160,7 +160,7 @@ class TBWidgetFactory : public TBLinkOf<TBWidgetFactory> {
         lp>max-height		TBWidget::SetLayoutParams	dimension
         lp>pref-height		TBWidget::SetLayoutParams	dimension
         autofocus			The TBWidget will be focused
-   automatically the first time its TBWindow is activated.
+   automatically the first time its Window is activated.
         font>name			Font name
         font>size			Font size
 */

@@ -261,7 +261,7 @@ bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
       // That way events in submenus will reach the caller properly, and seem
       // like it was
       // invoked on the top menu.
-      TBWindow* window = GetParentWindow();
+      Window* window = GetParentWindow();
       while (TBMenuWindow* menu_win = TBSafeCast<TBMenuWindow>(window)) {
         target_list = menu_win->GetList();
         window = menu_win->GetEventDestination()->GetParentWindow();

@@ -23,7 +23,7 @@
 
 namespace tb {
 
-class TBWindow;
+class Window;
 class TBWidget;
 class TBFontFace;
 class TBScroller;
@@ -633,7 +633,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Set if this widget is a group root. Grouped widgets (such as
      TBRadioButton) will toggle all other
           widgets with the same group_id under the nearest parent group root.
-     TBWindow is a group root by default. */
+     Window is a group root by default. */
   void SetIsGroupRoot(bool group_root) { m_packed.is_group_root = group_root; }
   bool GetIsGroupRoot() const { return m_packed.is_group_root; }
 
@@ -677,7 +677,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           If SetFocus is called on a widget in a inactive window, it will
      succeed (return true),
           but it won't actually become focused until that window is activated
-     (See TBWindow::SetLastFocus).
+     (See Window::SetLastFocus).
 
           Returns true if successfully focused, or if set as last focus in its
      window. */
@@ -691,7 +691,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Move focus from the currently focused widget to another focusable widget.
      It will search
-          for a focusable widget in the same TBWindow (or top root if there is
+          for a focusable widget in the same Window (or top root if there is
      no window) forward or
           backwards in the widget order. */
   bool MoveFocus(bool forward);
@@ -895,10 +895,10 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Get this widget or a parent widget that is the absolute root parent. */
   TBWidget* GetParentRoot();
 
-  /** Get the closest parent widget that is a TBWindow or nullptr if there is
+  /** Get the closest parent widget that is a Window or nullptr if there is
      none.
           If this widget is a window itself, this will be returned. */
-  TBWindow* GetParentWindow();
+  Window* GetParentWindow();
 
   /** Get the parent widget, or nullptr if this widget is not added. */
   inline TBWidget* GetParent() const { return m_parent; }

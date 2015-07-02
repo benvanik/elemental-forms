@@ -466,7 +466,7 @@ bool TBWidget::SetFocus(FocusReason reason, InvokeInfo info) {
     return false;
 
   // Update windows last focus
-  TBWindow* window = GetParentWindow();
+  Window* window = GetParentWindow();
   if (window) {
     window->SetLastFocus(this);
     // If not active, just return. We should get focus when the window is
@@ -647,10 +647,10 @@ TBWidget* TBWidget::GetParentRoot() {
   return tmp;
 }
 
-TBWindow* TBWidget::GetParentWindow() {
+Window* TBWidget::GetParentWindow() {
   TBWidget* tmp = this;
-  while (tmp && !tmp->IsOfType<TBWindow>()) tmp = tmp->m_parent;
-  return static_cast<TBWindow*>(tmp);
+  while (tmp && !tmp->IsOfType<Window>()) tmp = tmp->m_parent;
+  return static_cast<Window*>(tmp);
 }
 
 void TBWidget::AddListener(TBWidgetListener* listener) {
@@ -1155,7 +1155,7 @@ bool TBWidget::InvokePointerDown(int x, int y, int click_count,
       captured_widget->StartLongClickTimer(touch);
 
     // Get the closest parent window and bring it to the top
-    TBWindow* window =
+    Window* window =
         captured_widget ? captured_widget->GetParentWindow() : nullptr;
     if (window) window->Activate();
   }

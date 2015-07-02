@@ -27,11 +27,11 @@ TBDebugInfo g_tb_debug;
 TBDebugInfo::TBDebugInfo() = default;
 
 /** Window showing runtime debug settings. */
-class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
+class DebugSettingsWindow : public Window, public TBWidgetListener {
  public:
   TBEditField* output;
 
-  TBOBJECT_SUBCLASS(DebugSettingsWindow, TBWindow);
+  TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
 
   DebugSettingsWindow(TBWidget* root) {
     SetText("Debug settings");
@@ -86,7 +86,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
       GetParentRoot()->Invalidate();
       return true;
     }
-    return TBWindow::OnEvent(ev);
+    return Window::OnEvent(ev);
   }
 
   virtual void OnPaint(const PaintProps& paint_props) {
@@ -127,7 +127,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     if (ev.IsPointerEvent()) return false;
 
     // Always ignore activity in this window (or we might get endless recursion)
-    if (TBWindow* window = widget->GetParentWindow())
+    if (Window* window = widget->GetParentWindow())
       if (TBSafeCast<DebugSettingsWindow>(window)) return false;
 
     TBTempBuffer buf;

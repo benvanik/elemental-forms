@@ -20,7 +20,7 @@ class DemoApplication : public Application {
   virtual void RenderFrame(int window_w, int window_h);
 };
 
-class DemoWindow : public TBWindow {
+class DemoWindow : public Window {
  public:
   DemoWindow();
   bool LoadResourceFile(const std::string& filename);

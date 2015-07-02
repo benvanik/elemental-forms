@@ -14,28 +14,34 @@
 
 namespace tb {
 
-TBWindow::TBWindow() : m_settings(WindowSettings::kDefault) {
-  SetSkinBg(TBIDC("TBWindow"), InvokeInfo::kNoCallbacks);
+Window::Window() {
+  SetSkinBg(TBIDC("Window"), InvokeInfo::kNoCallbacks);
   AddChild(&m_mover);
   AddChild(&m_resizer);
-  m_mover.SetSkinBg(TBIDC("TBWindow.mover"));
+  m_mover.SetSkinBg(TBIDC("Window.mover"));
   m_mover.AddChild(&m_textfield);
   m_textfield.SetIgnoreInput(true);
   m_mover.AddChild(&m_close_button);
-  m_close_button.SetSkinBg(TBIDC("TBWindow.close"));
+  m_close_button.SetSkinBg(TBIDC("Window.close"));
   m_close_button.SetIsFocusable(false);
-  m_close_button.SetID(TBIDC("TBWindow.close"));
+  m_close_button.SetID(TBIDC("Window.close"));
   SetIsGroupRoot(true);
 }
 
-TBWindow::~TBWindow() {
-  if (m_resizer.GetParent()) RemoveChild(&m_resizer);
-  if (m_mover.GetParent()) RemoveChild(&m_mover);
-  if (m_close_button.GetParent()) m_mover.RemoveChild(&m_close_button);
+Window::~Window() {
+  if (m_resizer.GetParent()) {
+    RemoveChild(&m_resizer);
+  }
+  if (m_mover.GetParent()) {
+    RemoveChild(&m_mover);
+  }
+  if (m_close_button.GetParent()) {
+    m_mover.RemoveChild(&m_close_button);
+  }
   m_mover.RemoveChild(&m_textfield);
 }
 
-Rect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
+Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
   PreferredSize ps = GetPreferredSize();
   int new_w = ps.pref_w;
   int new_h = ps.pref_h;
@@ -53,20 +59,20 @@ Rect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
   return Rect(GetRect().x, GetRect().y, new_w, new_h);
 }
 
-void TBWindow::ResizeToFitContent(ResizeFit fit) {
+void Window::ResizeToFitContent(ResizeFit fit) {
   SetRect(GetResizeToFitContentRect(fit));
 }
 
-void TBWindow::Close() { Die(); }
+void Window::Close() { Die(); }
 
-bool TBWindow::IsActive() const { return GetState(SkinState::kSelected); }
+bool Window::IsActive() const { return GetState(SkinState::kSelected); }
 
-TBWindow* TBWindow::GetTopMostOtherWindow(bool only_activable_windows) {
-  TBWindow* other_window = nullptr;
+Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
+  Window* other_window = nullptr;
   TBWidget* sibling = GetParent()->GetLastChild();
   while (sibling && !other_window) {
     if (sibling != this) {
-      other_window = TBSafeCast<TBWindow>(sibling);
+      other_window = TBSafeCast<Window>(sibling);
     }
     if (only_activable_windows && other_window &&
         !any(other_window->m_settings & WindowSettings::kCanActivate)) {
@@ -77,53 +83,58 @@ TBWindow* TBWindow::GetTopMostOtherWindow(bool only_activable_windows) {
   return other_window;
 }
 
-void TBWindow::Activate() {
+void Window::Activate() {
   if (!GetParent() || !any(m_settings & WindowSettings::kCanActivate)) {
     return;
   }
   if (IsActive()) {
-    // Already active, but we may still have lost focus,
-    // so ensure it comes back to us.
+    // Already active, but we may still have lost focus, so ensure it comes back
+    // to us.
     EnsureFocus();
     return;
   }
 
-  // Deactivate currently active window
-  TBWindow* active_window = GetTopMostOtherWindow(true);
+  // Deactivate currently active window.
+  Window* active_window = GetTopMostOtherWindow(true);
   if (active_window) {
-    active_window->DeActivate();
+    active_window->Deactivate();
   }
 
-  // Activate this window
+  // Activate this window.
   SetZ(WidgetZ::kTop);
   SetWindowActiveState(true);
   EnsureFocus();
 }
 
-bool TBWindow::EnsureFocus() {
+bool Window::EnsureFocus() {
   // If we already have focus, we're done.
-  if (focused_widget && IsAncestorOf(focused_widget)) return true;
+  if (focused_widget && IsAncestorOf(focused_widget)) {
+    return true;
+  }
 
   // Focus last focused widget (if we have one)
   bool success = false;
-  if (m_last_focus.Get())
+  if (m_last_focus.Get()) {
     success = m_last_focus.Get()->SetFocus(FocusReason::kUnknown);
+  }
   // We didn't have one or failed, so try focus any child.
-  if (!success) success = SetFocusRecursive(FocusReason::kUnknown);
+  if (!success) {
+    success = SetFocusRecursive(FocusReason::kUnknown);
+  }
   return success;
 }
 
-void TBWindow::DeActivate() {
+void Window::Deactivate() {
   if (!IsActive()) return;
   SetWindowActiveState(false);
 }
 
-void TBWindow::SetWindowActiveState(bool active) {
+void Window::SetWindowActiveState(bool active) {
   SetState(SkinState::kSelected, active);
   m_mover.SetState(SkinState::kSelected, active);
 }
 
-void TBWindow::SetSettings(WindowSettings settings) {
+void Window::SetSettings(WindowSettings settings) {
   if (settings == m_settings) return;
   m_settings = settings;
 
@@ -159,14 +170,14 @@ void TBWindow::SetSettings(WindowSettings settings) {
   Invalidate();
 }
 
-int TBWindow::GetTitleHeight() {
+int Window::GetTitleHeight() {
   if (any(m_settings & WindowSettings::kTitleBar)) {
     return m_mover.GetPreferredSize().pref_h;
   }
   return 0;
 }
 
-Rect TBWindow::GetPaddingRect() {
+Rect Window::GetPaddingRect() {
   Rect padding_rect = TBWidget::GetPaddingRect();
   int title_height = GetTitleHeight();
   padding_rect.y += title_height;
@@ -174,7 +185,7 @@ Rect TBWindow::GetPaddingRect() {
   return padding_rect;
 }
 
-PreferredSize TBWindow::OnCalculatePreferredSize(
+PreferredSize Window::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = OnCalculatePreferredContentSize(constraints);
 
@@ -192,33 +203,37 @@ PreferredSize TBWindow::OnCalculatePreferredSize(
   return ps;
 }
 
-bool TBWindow::OnEvent(const TBWidgetEvent& ev) {
+bool Window::OnEvent(const TBWidgetEvent& ev) {
   if (ev.target == &m_close_button) {
-    if (ev.type == EventType::kClick) Close();
+    if (ev.type == EventType::kClick) {
+      Close();
+    }
     return true;
   }
   return false;
 }
 
-void TBWindow::OnAdded() {
+void Window::OnAdded() {
   // If we was added last, call Activate to update status etc.
-  if (GetParent()->GetLastChild() == this) Activate();
+  if (GetParent()->GetLastChild() == this) {
+    Activate();
+  }
 }
 
-void TBWindow::OnRemove() {
-  DeActivate();
+void Window::OnRemove() {
+  Deactivate();
 
   // Active the top most other window
-  if (TBWindow* active_window = GetTopMostOtherWindow(true))
+  if (Window* active_window = GetTopMostOtherWindow(true))
     active_window->Activate();
 }
 
-void TBWindow::OnChildAdded(TBWidget* child) { m_resizer.SetZ(WidgetZ::kTop); }
+void Window::OnChildAdded(TBWidget* child) { m_resizer.SetZ(WidgetZ::kTop); }
 
-void TBWindow::OnResized(int old_w, int old_h) {
-  // Apply gravity on children
+void Window::OnResized(int old_w, int old_h) {
+  // Apply gravity on children.
   TBWidget::OnResized(old_w, old_h);
-  // Manually move our own decoration children
+  // Manually move our own decoration children.
   // FIX: Put a layout in the TBMover so we can add things there nicely.
   int title_height = GetTitleHeight();
   m_mover.SetRect(Rect(0, 0, GetRect().w, title_height));

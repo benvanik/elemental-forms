@@ -156,7 +156,7 @@ void WidgetAnimationManager::OnWidgetDelete(TBWidget* widget) {
 
 bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
   bool handled = false;
-  if (TBWindow* window = TBSafeCast<TBWindow>(widget)) {
+  if (Window* window = TBSafeCast<Window>(widget)) {
     // Fade out dying windows.
     if (auto anim =
             new OpacityWidgetAnimation(window, 1.f, kAlmostZeroOpacity, true))
@@ -181,7 +181,7 @@ bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
 }
 
 void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
-  if (TBWindow* window = TBSafeCast<TBWindow>(widget)) {
+  if (Window* window = TBSafeCast<Window>(widget)) {
     // Fade in new windows
     if (auto anim =
             new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false))

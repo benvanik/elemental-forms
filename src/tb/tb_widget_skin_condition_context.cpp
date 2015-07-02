@@ -43,8 +43,7 @@ bool TBWidgetSkinConditionContext::GetCondition(
     case SkinProperty::kSkin:
       return widget->GetSkinBg() == info.value;
     case SkinProperty::kWindowActive:
-      if (TBWindow* window = widget->GetParentWindow())
-        return window->IsActive();
+      if (Window* window = widget->GetParentWindow()) return window->IsActive();
       return false;
     case SkinProperty::kAxis:
       return TBID(widget->GetAxis() == Axis::kX ? "x" : "y") == info.value;

@@ -20,7 +20,7 @@ TBLayout: axis: y, distribution-position: "left top", distribution: "available"
 			TBButton: skin: "TBButton.flat", text: "TBToggleContainer"
 				id: "test-layout"
 				data: "test_toggle_containers.tb.txt"
-			TBButton: skin: "TBButton.flat", text: "Close with dim & alert", id: "TBWindow.close"
+			TBButton: skin: "TBButton.flat", text: "Close with dim & alert", id: "Window.close"
 			TBButton: skin: "TBButton.flat", text: "ResourceEditWindow", id: "test-resource-edit"
 
 	TBSection: value: 0, text: "Layout tests"

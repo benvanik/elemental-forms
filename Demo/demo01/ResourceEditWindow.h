@@ -19,11 +19,11 @@ class ResourceItem : public TBGenericStringItem {
   TBWidget* m_widget;
 };
 
-class ResourceEditWindow : public TBWindow,
+class ResourceEditWindow : public Window,
                            public MessageHandler,
                            public TBWidgetListener {
  public:
-  TBOBJECT_SUBCLASS(ResourceEditWindow, TBWindow);
+  TBOBJECT_SUBCLASS(ResourceEditWindow, Window);
 
   ResourceEditWindow();
   ~ResourceEditWindow();
@@ -41,7 +41,7 @@ class ResourceEditWindow : public TBWindow,
   void Load(const char* resource_file);
   void RefreshFromSource();
 
-  // == TBWindow
+  // == Window
   // ======================================================================
   virtual bool OnEvent(const TBWidgetEvent& ev);
   virtual void OnPaintChildren(const PaintProps& paint_props);

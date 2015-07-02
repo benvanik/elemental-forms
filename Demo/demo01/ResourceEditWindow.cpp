@@ -153,7 +153,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
-    if (TBWindow* win = new TBWindow()) {
+    if (Window* win = new Window()) {
       win->SetText("Test window");
       g_widgets_reader->LoadData(win->GetContentRoot(),
                                  m_source_edit->GetText().c_str());
@@ -171,11 +171,11 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
   } else if (ev.type == EventType::kFileDrop) {
     return OnDropFileEvent(ev);
   }
-  return TBWindow::OnEvent(ev);
+  return Window::OnEvent(ev);
 }
 
 void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
-  TBWindow::OnPaintChildren(paint_props);
+  Window::OnPaintChildren(paint_props);
 
   // Paint the selection of the selected widget
   if (TBWidget* selected_widget = GetSelectedWidget()) {

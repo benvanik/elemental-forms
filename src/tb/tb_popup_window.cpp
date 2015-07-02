@@ -93,7 +93,7 @@ bool TBPopupWindow::OnEvent(const TBWidgetEvent& ev) {
     Close();
     return true;
   }
-  return TBWindow::OnEvent(ev);
+  return Window::OnEvent(ev);
 }
 
 void TBPopupWindow::OnWidgetFocusChanged(TBWidget* widget, bool focused) {

@@ -273,46 +273,46 @@ elements
 		img-position-x 0
 		img-ofs-x 5
 
-	# == TBWindow skin =================================================================================
-	TBWindow
+	# == Window skin =================================================================================
+	Window
 		bitmap window.png
 		cut 16
 		expand 12
 		padding 10
 		overrides
-			element TBWindow.selected
+			element Window.selected
 				state selected
-	TBWindow.selected
+	Window.selected
 		bitmap window_active.png
 		cut 16
 		expand 12
-	TBWindow.close
+	Window.close
 		bitmap window_close.png
 		type image
 		children
-			element TBWindow.close.pressed
+			element Window.close.pressed
 				state pressed
-	TBWindow.close.pressed
+	Window.close.pressed
 		bitmap window_close_pressed.png
 		type image
-	TBWindow.mover
+	Window.mover
 		text-color #b8b8b8
 		bitmap window_mover_bg_tile.png
 		type tile
 		expand -1
 		padding 4
 		overrides
-			element TBWindow.mover.active
+			element Window.mover.active
 				state selected
 		children
-			element TBWindow.mover.overlay
+			element Window.mover.overlay
 				state all
-	TBWindow.mover.overlay
+	Window.mover.overlay
 		bitmap window_mover_overlay.png
 		cut 12
 		expand 3
-	TBWindow.mover.active
-		clone TBWindow.mover
+	Window.mover.active
+		clone Window.mover
 		text-color #fefefe
 		overrides
 		overlays
@@ -372,7 +372,7 @@ elements
 	TBSelectDropdown.window
 		clone TBPopupWindow
 	TBPopupWindow
-		clone TBWindow
+		clone Window
 		padding 2
 	TBMenuWindow
 		clone TBPopupWindow

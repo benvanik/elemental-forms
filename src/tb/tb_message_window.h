@@ -45,9 +45,9 @@ class MessageWindowSettings {
 
         If the target widget is deleted while this window is alive, the
         window will delete itself. */
-class MessageWindow : public TBWindow, private TBWidgetListener {
+class MessageWindow : public Window, private TBWidgetListener {
  public:
-  TBOBJECT_SUBCLASS(MessageWindow, TBWindow);
+  TBOBJECT_SUBCLASS(MessageWindow, Window);
 
   MessageWindow(TBWidget* target, TBID id);
   virtual ~MessageWindow();
