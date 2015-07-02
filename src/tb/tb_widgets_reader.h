@@ -18,15 +18,15 @@ namespace tb {
 class TBNode;
 class TBWidget;
 class WidgetFactory;
-class TBWidgetsReader;
+class WidgetReader;
 
 // Contains info passed to TBWidget::OnInflate during resource loading.
 struct InflateInfo {
-  InflateInfo(TBWidgetsReader* reader, TBWidget* target, TBNode* node,
+  InflateInfo(WidgetReader* reader, TBWidget* target, TBNode* node,
               TBValue::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
-  TBWidgetsReader* reader;
+  WidgetReader* reader;
   // The widget that that will be parent to the inflated widget.
   TBWidget* target;
   // The node containing properties.
@@ -52,7 +52,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 };
 
 // Creates a new WidgetFactory for the given class name so it can be created
-// from resources (using TBWidgetsReader).
+// from resources (using WidgetReader).
 //
 // classname   - The name of the class.
 // sync_type   - The data type that should be synchronized through WidgetValue.
@@ -142,10 +142,10 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 //                  first time its Window is activated.
 // font>name			  Font name
 // font>size			  Font size
-class TBWidgetsReader {
+class WidgetReader {
  public:
-  static TBWidgetsReader* Create();
-  ~TBWidgetsReader();
+  static WidgetReader* Create();
+  ~WidgetReader();
 
   // Adds a widget factory. Does not take ownership of the factory.
   // The easiest way to add factories for custom widget types, is using the
@@ -161,7 +161,7 @@ class TBWidgetsReader {
 
   bool LoadFile(TBWidget* target, const char* filename);
   bool LoadData(TBWidget* target, const char* data);
-  bool LoadData(TBWidget* target, const char* data, int data_len);
+  bool LoadData(TBWidget* target, const char* data, size_t data_len);
   void LoadNodeTree(TBWidget* target, TBNode* node);
 
  private:

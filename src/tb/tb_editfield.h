@@ -33,10 +33,10 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 /** The default content factory for embedded content in TBEditField with styling
    enabled.
 
-        Creates all that TBTextFragmentContentFactory creates by default,
+        Creates all that TextFragmentContentFactory creates by default,
         and any type of widget from a inline resource string.
 
-        Syntax: <widget xxx> Where xxx is parsed by TBWidgetsReader.
+        Syntax: <widget xxx> Where xxx is parsed by WidgetReader.
 
         Example - Create a button with id "hello":
 
@@ -47,12 +47,12 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
                 <widget SkinImage: skin: "Icon48">
 */
 
-class TBEditFieldContentFactory : public TBTextFragmentContentFactory {
+class TBEditFieldContentFactory : public TextFragmentContentFactory {
  public:
-  class TBEditField* editfield;
-  virtual int GetContent(const char* text);
-  virtual TBTextFragmentContent* CreateFragmentContent(const char* text,
-                                                       int text_len);
+  class TBEditField* editfield = nullptr;
+  int GetContent(const char* text) override;
+  TextFragmentContent* CreateFragmentContent(const char* text,
+                                             size_t text_len) override;
 };
 
 /** TBEditFieldScrollRoot - Internal for TBEditField.
@@ -79,7 +79,7 @@ class TBEditFieldScrollRoot : public TBWidget {
 */
 
 class TBEditField : public TBWidget,
-                    private TBStyleEditListener,
+                    private StyleEditListener,
                     public MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TBEditField, TBWidget);
@@ -128,8 +128,8 @@ class TBEditField : public TBWidget,
   void SetVirtualWidth(int virtual_width);
   int GetVirtualWidth() const { return m_virtual_width; }
 
-  /** Get the TBStyleEdit object that contains more functions and settings. */
-  TBStyleEdit* GetStyleEdit() { return &m_style_edit; }
+  /** Get the StyleEdit object that contains more functions and settings. */
+  StyleEdit* GetStyleEdit() { return &m_style_edit; }
 
   /** Set the edit type that is a hint for virtual keyboards about what the
           content should be. */
@@ -206,12 +206,12 @@ class TBEditField : public TBWidget,
   EditType m_edit_type;
   TBEditFieldScrollRoot m_root;
   TBEditFieldContentFactory m_content_factory;
-  TBStyleEdit m_style_edit;
+  StyleEdit m_style_edit;
   bool m_adapt_to_content_size;
   int m_virtual_width;
   void UpdateScrollbarVisibility(bool multiline);
 
-  // == TBStyleEditListener =======================
+  // == StyleEditListener =======================
   virtual void OnChange();
   virtual bool OnEnter();
   virtual void Invalidate(const Rect& rect);

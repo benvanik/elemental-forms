@@ -15,83 +15,79 @@
 
 namespace tb {
 
-class TBTextFragment;
+class TextFragment;
 
-/** Content for a non-text TBTextFragment. */
-class TBTextFragmentContent {
+// Content for a non-text TextFragment.
+class TextFragmentContent {
  public:
-  virtual ~TBTextFragmentContent() {}
+  virtual ~TextFragmentContent() = default;
 
-  /** Update the position of the content, relative to the first line of text (no
-   * scrolling applied). */
+  // Updates the position of the content, relative to the first line of text (no
+  // scrolling applied).
   virtual void UpdatePos(int x, int y) {}
 
-  virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
-                     int32_t translate_y, TBTextProps* props) {}
-  virtual void Click(TBTextFragment* fragment, int button,
+  virtual void Paint(TextFragment* fragment, int32_t translate_x,
+                     int32_t translate_y, TextProps* props) {}
+  virtual void Click(TextFragment* fragment, int button,
                      ModifierKeys modifierkeys) {}
-  virtual int32_t GetWidth(FontFace* font, TBTextFragment* fragment) {
+  virtual int32_t GetWidth(FontFace* font, TextFragment* fragment) { return 0; }
+  virtual int32_t GetHeight(FontFace* font, TextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetHeight(FontFace* font, TBTextFragment* fragment) {
-    return 0;
-  }
-  virtual int32_t GetBaseline(FontFace* font, TBTextFragment* fragment) {
+  virtual int32_t GetBaseline(FontFace* font, TextFragment* fragment) {
     return GetHeight(font, fragment);
   }
   virtual bool GetAllowBreakBefore() { return true; }
   virtual bool GetAllowBreakAfter() { return true; }
 
-  /** Get type of fragment content. All standard fragments return 0. */
+  // Gets type of fragment content. All standard fragments return 0.
   virtual uint32_t GetType() { return 0; }
 };
 
-/** A horizontal line for TBStyleEdit. */
-
-class TBTextFragmentContentHR : public TBTextFragmentContent {
+// A horizontal line for StyleEdit.
+class TextFragmentContentHR : public TextFragmentContent {
  public:
-  TBTextFragmentContentHR(int32_t width_in_percent, int32_t height);
+  TextFragmentContentHR(int32_t width_in_percent, int32_t height);
 
-  virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
-                     int32_t translate_y, TBTextProps* props);
-  virtual int32_t GetWidth(FontFace* font, TBTextFragment* fragment);
-  virtual int32_t GetHeight(FontFace* font, TBTextFragment* fragment);
+  void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
+             TextProps* props) override;
+  int32_t GetWidth(FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(FontFace* font, TextFragment* fragment) override;
 
  private:
-  int32_t width_in_percent, height;
+  int32_t width_in_percent;
+  int32_t height;
 };
 
-/** Fragment content that enables underline in a TBStyleEdit */
-
-class TBTextFragmentContentUnderline : public TBTextFragmentContent {
+// Fragment content that enables underline in a StyleEdit.
+class TextFragmentContentUnderline : public TextFragmentContent {
  public:
-  TBTextFragmentContentUnderline() {}
-  virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
-                     int32_t translate_y, TBTextProps* props);
-  virtual bool GetAllowBreakBefore() { return true; }
-  virtual bool GetAllowBreakAfter() { return false; }
+  TextFragmentContentUnderline() = default;
+  void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
+             TextProps* props) override;
+  bool GetAllowBreakBefore() override { return true; }
+  bool GetAllowBreakAfter() override { return false; }
 };
 
-/** Fragment content that changes color in a TBStyleEdit */
-
-class TBTextFragmentContentTextColor : public TBTextFragmentContent {
+// Fragment content that changes color in a StyleEdit.
+class TextFragmentContentTextColor : public TextFragmentContent {
  public:
+  TextFragmentContentTextColor(const Color& color) : color(color) {}
+  void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
+             TextProps* props) override;
+  bool GetAllowBreakBefore() override { return true; }
+  bool GetAllowBreakAfter() override { return false; }
+
   Color color;
-  TBTextFragmentContentTextColor(const Color& color) : color(color) {}
-  virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
-                     int32_t translate_y, TBTextProps* props);
-  virtual bool GetAllowBreakBefore() { return true; }
-  virtual bool GetAllowBreakAfter() { return false; }
 };
 
-/** Fragment content that ends a change of style in a TBStyleEdit */
-
-class TBTextFragmentContentStylePop : public TBTextFragmentContent {
+// Fragment content that ends a change of style in a StyleEdit.
+class TextFragmentContentStylePop : public TextFragmentContent {
  public:
-  virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
-                     int32_t translate_y, TBTextProps* props);
-  virtual bool GetAllowBreakBefore() { return false; }
-  virtual bool GetAllowBreakAfter() { return true; }
+  void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
+             TextProps* props) override;
+  bool GetAllowBreakBefore() override { return false; }
+  bool GetAllowBreakAfter() override { return true; }
 };
 
 }  // namespace tb

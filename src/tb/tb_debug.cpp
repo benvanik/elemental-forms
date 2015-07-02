@@ -157,7 +157,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     buf.AppendString("\n");
 
     // Append the line to the output textfield
-    TBStyleEdit* se = output->GetStyleEdit();
+    StyleEdit* se = output->GetStyleEdit();
     se->selection.SelectNothing();
     se->AppendText(buf.GetData(), std::string::npos, true);
     se->ScrollIfNeeded(false, true);

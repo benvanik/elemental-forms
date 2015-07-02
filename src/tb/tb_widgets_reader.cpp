@@ -24,8 +24,8 @@ namespace tb {
 
 TB_WIDGET_FACTORY(TBWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
 void TBWidget::OnInflate(const InflateInfo& info) {
-  TBWidgetsReader::SetIDFromNode(GetID(), info.node->GetNode("id"));
-  TBWidgetsReader::SetIDFromNode(GetGroupID(), info.node->GetNode("group-id"));
+  WidgetReader::SetIDFromNode(GetID(), info.node->GetNode("id"));
+  WidgetReader::SetIDFromNode(GetGroupID(), info.node->GetNode("group-id"));
 
   if (info.sync_type == TBValue::Type::kFloat) {
     SetValueDouble(info.node->GetValueFloat("value", 0));
@@ -326,7 +326,7 @@ void ReadItems(TBNode* node, GenericStringItemSource* target_source) {
       const char* item_str = n->GetValueString("text", "");
       TBID item_id;
       if (TBNode* n_id = n->GetNode("id")) {
-        TBWidgetsReader::SetIDFromNode(item_id, n_id);
+        WidgetReader::SetIDFromNode(item_id, n_id);
       }
 
       auto item = new GenericStringItem(item_str, item_id);
@@ -398,8 +398,8 @@ void WidgetFactory::Register() {
   g_registered_factories = this;
 }
 
-TBWidgetsReader* TBWidgetsReader::Create() {
-  TBWidgetsReader* w_reader = new TBWidgetsReader();
+WidgetReader* WidgetReader::Create() {
+  WidgetReader* w_reader = new WidgetReader();
   if (!w_reader->Init()) {
     delete w_reader;
     return nullptr;
@@ -407,7 +407,7 @@ TBWidgetsReader* TBWidgetsReader::Create() {
   return w_reader;
 }
 
-bool TBWidgetsReader::Init() {
+bool WidgetReader::Init() {
   for (WidgetFactory* wf = g_registered_factories; wf;
        wf = wf->next_registered_wf) {
     if (!AddFactory(wf)) {
@@ -417,9 +417,9 @@ bool TBWidgetsReader::Init() {
   return true;
 }
 
-TBWidgetsReader::~TBWidgetsReader() {}
+WidgetReader::~WidgetReader() {}
 
-bool TBWidgetsReader::LoadFile(TBWidget* target, const char* filename) {
+bool WidgetReader::LoadFile(TBWidget* target, const char* filename) {
   TBNode node;
   if (!node.ReadFile(filename)) {
     return false;
@@ -428,29 +428,29 @@ bool TBWidgetsReader::LoadFile(TBWidget* target, const char* filename) {
   return true;
 }
 
-bool TBWidgetsReader::LoadData(TBWidget* target, const char* data) {
+bool WidgetReader::LoadData(TBWidget* target, const char* data) {
   TBNode node;
   node.ReadData(data);
   LoadNodeTree(target, &node);
   return true;
 }
 
-bool TBWidgetsReader::LoadData(TBWidget* target, const char* data,
-                               int data_len) {
+bool WidgetReader::LoadData(TBWidget* target, const char* data,
+                            size_t data_len) {
   TBNode node;
   node.ReadData(data, data_len);
   LoadNodeTree(target, &node);
   return true;
 }
 
-void TBWidgetsReader::LoadNodeTree(TBWidget* target, TBNode* node) {
+void WidgetReader::LoadNodeTree(TBWidget* target, TBNode* node) {
   // Iterate through all nodes and create widgets
   for (TBNode* child = node->GetFirstChild(); child; child = child->GetNext()) {
     CreateWidget(target, child);
   }
 }
 
-void TBWidgetsReader::SetIDFromNode(TBID& id, TBNode* node) {
+void WidgetReader::SetIDFromNode(TBID& id, TBNode* node) {
   if (!node) return;
   if (node->GetValue().IsString()) {
     id.Set(node->GetValue().GetString());
@@ -459,7 +459,7 @@ void TBWidgetsReader::SetIDFromNode(TBID& id, TBNode* node) {
   }
 }
 
-bool TBWidgetsReader::CreateWidget(TBWidget* target, TBNode* node) {
+bool WidgetReader::CreateWidget(TBWidget* target, TBNode* node) {
   // Find a widget creator from the node name.
   WidgetFactory* wc = nullptr;
   for (wc = factories.GetFirst(); wc; wc = wc->GetNext()) {

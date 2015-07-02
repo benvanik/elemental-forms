@@ -23,7 +23,7 @@ namespace tb {
 
 TBRenderer* g_renderer = nullptr;
 TBSkin* g_tb_skin = nullptr;
-TBWidgetsReader* g_widgets_reader = nullptr;
+WidgetReader* g_widgets_reader = nullptr;
 Language* g_tb_lng = nullptr;
 FontManager* g_font_manager = nullptr;
 
@@ -33,7 +33,7 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
   g_tb_lng->Load(lng_file);
   g_font_manager = new FontManager();
   g_tb_skin = new TBSkin();
-  g_widgets_reader = TBWidgetsReader::Create();
+  g_widgets_reader = WidgetReader::Create();
   g_image_manager = new ImageManager();
 
 #ifdef TB_SYSTEM_LINUX

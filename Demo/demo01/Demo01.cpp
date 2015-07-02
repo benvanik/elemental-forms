@@ -141,7 +141,7 @@ class EditWindow : public DemoWindow {
         redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
       if (Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::format_string(
-            "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOfs()));
+            "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOffset()));
       }
     }
   }

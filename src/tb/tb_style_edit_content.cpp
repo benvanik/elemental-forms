@@ -16,78 +16,83 @@
 
 namespace tb {
 
-int TBTextFragmentContentFactory::GetContent(const char* text) {
+int TextFragmentContentFactory::GetContent(const char* text) {
   if (text[0] == '<') {
     int i = 0;
-    while (text[i] != '>' && text[i] > 31) i++;
+    while (text[i] != '>' && text[i] > 31) {
+      ++i;
+    }
     if (text[i] == '>') {
-      i++;
+      ++i;
       return i;
     }
   }
   return 0;
 }
 
-TBTextFragmentContent* TBTextFragmentContentFactory::CreateFragmentContent(
-    const char* text, int text_len) {
-  if (strncmp(text, "<hr>", text_len) == 0)
-    return new TBTextFragmentContentHR(100, 2);
-  else if (strncmp(text, "<u>", text_len) == 0)
-    return new TBTextFragmentContentUnderline();
-  else if (strncmp(text, "<color ", std::min(text_len, 7)) == 0) {
+TextFragmentContent* TextFragmentContentFactory::CreateFragmentContent(
+    const char* text, size_t text_len) {
+  if (strncmp(text, "<hr>", text_len) == 0) {
+    return new TextFragmentContentHR(100, 2);
+  } else if (strncmp(text, "<u>", text_len) == 0) {
+    return new TextFragmentContentUnderline();
+  } else if (strncmp(text, "<color ", std::min(text_len, 7ull)) == 0) {
     Color color;
     color.SetFromString(text + 7, text_len - 8);
-    return new TBTextFragmentContentTextColor(color);
-  } else if (strncmp(text, "</", std::min(text_len, 2)) == 0)
-    return new TBTextFragmentContentStylePop();
+    return new TextFragmentContentTextColor(color);
+  } else if (strncmp(text, "</", std::min(text_len, 2ull)) == 0) {
+    return new TextFragmentContentStylePop();
+  }
   return nullptr;
 }
 
-TBTextFragmentContentHR::TBTextFragmentContentHR(int32_t width_in_percent,
-                                                 int32_t height)
+TextFragmentContentHR::TextFragmentContentHR(int32_t width_in_percent,
+                                             int32_t height)
     : width_in_percent(width_in_percent), height(height) {}
 
-void TBTextFragmentContentHR::Paint(TBTextFragment* fragment,
-                                    int32_t translate_x, int32_t translate_y,
-                                    TBTextProps* props) {
+void TextFragmentContentHR::Paint(TextFragment* fragment, int32_t translate_x,
+                                  int32_t translate_y, TextProps* props) {
   int x = translate_x + fragment->xpos;
   int y = translate_y + fragment->ypos;
 
-  int w = fragment->block->styledit->layout_width * width_in_percent / 100;
-  x += (fragment->block->styledit->layout_width - w) / 2;
+  int w = fragment->block->style_edit->layout_width * width_in_percent / 100;
+  x += (fragment->block->style_edit->layout_width - w) / 2;
 
-  TBStyleEditListener* listener = fragment->block->styledit->listener;
+  StyleEditListener* listener = fragment->block->style_edit->listener;
   listener->DrawRectFill(Rect(x, y, w, height), props->data->text_color);
 }
 
-int32_t TBTextFragmentContentHR::GetWidth(FontFace* font,
-                                          TBTextFragment* fragment) {
-  return std::max(fragment->block->styledit->layout_width, 0);
+int32_t TextFragmentContentHR::GetWidth(FontFace* font,
+                                        TextFragment* fragment) {
+  return std::max(fragment->block->style_edit->layout_width, 0);
 }
 
-int32_t TBTextFragmentContentHR::GetHeight(FontFace* font,
-                                           TBTextFragment* fragment) {
+int32_t TextFragmentContentHR::GetHeight(FontFace* font,
+                                         TextFragment* fragment) {
   return height;
 }
 
-void TBTextFragmentContentUnderline::Paint(TBTextFragment* fragment,
-                                           int32_t translate_x,
-                                           int32_t translate_y,
-                                           TBTextProps* props) {
-  if (TBTextProps::Data* data = props->Push()) data->underline = true;
+void TextFragmentContentUnderline::Paint(TextFragment* fragment,
+                                         int32_t translate_x,
+                                         int32_t translate_y,
+                                         TextProps* props) {
+  if (TextProps::Data* data = props->Push()) {
+    data->underline = true;
+  }
 }
 
-void TBTextFragmentContentTextColor::Paint(TBTextFragment* fragment,
-                                           int32_t translate_x,
-                                           int32_t translate_y,
-                                           TBTextProps* props) {
-  if (TBTextProps::Data* data = props->Push()) data->text_color = color;
+void TextFragmentContentTextColor::Paint(TextFragment* fragment,
+                                         int32_t translate_x,
+                                         int32_t translate_y,
+                                         TextProps* props) {
+  if (TextProps::Data* data = props->Push()) {
+    data->text_color = color;
+  }
 }
 
-void TBTextFragmentContentStylePop::Paint(TBTextFragment* fragment,
-                                          int32_t translate_x,
-                                          int32_t translate_y,
-                                          TBTextProps* props) {
+void TextFragmentContentStylePop::Paint(TextFragment* fragment,
+                                        int32_t translate_x,
+                                        int32_t translate_y, TextProps* props) {
   props->Pop();
 }
 

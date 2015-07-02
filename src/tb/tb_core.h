@@ -36,13 +36,13 @@ namespace tb {
 
 class TBRenderer;
 class TBSkin;
-class TBWidgetsReader;
+class WidgetReader;
 class Language;
 class FontManager;
 
 extern TBRenderer* g_renderer;
 extern TBSkin* g_tb_skin;
-extern TBWidgetsReader* g_widgets_reader;
+extern WidgetReader* g_widgets_reader;
 extern Language* g_tb_lng;
 extern FontManager* g_font_manager;
 

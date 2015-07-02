@@ -16,7 +16,7 @@ using namespace tb;
 
 TB_TEST_GROUP(tb_editfield) {
   TBEditField* edit;
-  TBStyleEdit* sedit;
+  StyleEdit* sedit;
 
   // == Setup & helpers =====================================================
 
@@ -109,9 +109,9 @@ TB_TEST_GROUP(tb_editfield) {
 
   TB_TEST(settext_undoredo_ins_scattered) {
     sedit->InsertText("AAA");
-    sedit->caret.SetGlobalOfs(2);
+    sedit->caret.SetGlobalOffset(2);
     sedit->InsertText(".");
-    sedit->caret.SetGlobalOfs(1);
+    sedit->caret.SetGlobalOffset(1);
     sedit->InsertText(".");
     TB_VERIFY_STR(edit->GetText(), "A.A.A");
 
@@ -150,7 +150,7 @@ TB_TEST_GROUP(tb_editfield) {
 
   TB_TEST(settext_undoredo_ins_linebreak_1) {
     sedit->InsertText("ONETWO");
-    sedit->caret.SetGlobalOfs(3);
+    sedit->caret.SetGlobalOffset(3);
     sedit->InsertText("\n");
     TB_VERIFY_STR(edit->GetText(), "ONE\nTWO");
 

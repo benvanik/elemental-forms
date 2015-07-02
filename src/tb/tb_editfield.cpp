@@ -500,66 +500,66 @@ HitStatus TBEditFieldScrollRoot::GetHitStatus(int x, int y) {
   return HitStatus::kNoHit;
 }
 
-class TBTextFragmentContentWidget : public TBTextFragmentContent {
+class TextFragmentContentWidget : public TextFragmentContent {
  public:
-  TBTextFragmentContentWidget(TBWidget* parent, TBWidget* widget);
-  virtual ~TBTextFragmentContentWidget();
+  TextFragmentContentWidget(TBWidget* parent, TBWidget* widget);
+  virtual ~TextFragmentContentWidget();
 
   virtual void UpdatePos(int x, int y);
-  virtual int32_t GetWidth(FontFace* font, TBTextFragment* fragment);
-  virtual int32_t GetHeight(FontFace* font, TBTextFragment* fragment);
-  virtual int32_t GetBaseline(FontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetWidth(FontFace* font, TextFragment* fragment);
+  virtual int32_t GetHeight(FontFace* font, TextFragment* fragment);
+  virtual int32_t GetBaseline(FontFace* font, TextFragment* fragment);
 
  private:
   TBWidget* m_widget;
 };
 
-TBTextFragmentContentWidget::TBTextFragmentContentWidget(TBWidget* parent,
-                                                         TBWidget* widget)
+TextFragmentContentWidget::TextFragmentContentWidget(TBWidget* parent,
+                                                     TBWidget* widget)
     : m_widget(widget) {
   parent->GetContentRoot()->AddChild(widget);
 }
 
-TBTextFragmentContentWidget::~TBTextFragmentContentWidget() {
+TextFragmentContentWidget::~TextFragmentContentWidget() {
   m_widget->GetParent()->RemoveChild(m_widget);
   delete m_widget;
 }
 
-void TBTextFragmentContentWidget::UpdatePos(int x, int y) {
+void TextFragmentContentWidget::UpdatePos(int x, int y) {
   m_widget->SetRect(
       Rect(x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)));
 }
 
-int32_t TBTextFragmentContentWidget::GetWidth(FontFace* font,
-                                              TBTextFragment* fragment) {
+int32_t TextFragmentContentWidget::GetWidth(FontFace* font,
+                                            TextFragment* fragment) {
   return m_widget->GetRect().w ? m_widget->GetRect().w
                                : m_widget->GetPreferredSize().pref_w;
 }
 
-int32_t TBTextFragmentContentWidget::GetHeight(FontFace* font,
-                                               TBTextFragment* fragment) {
+int32_t TextFragmentContentWidget::GetHeight(FontFace* font,
+                                             TextFragment* fragment) {
   return m_widget->GetRect().h ? m_widget->GetRect().h
                                : m_widget->GetPreferredSize().pref_h;
 }
 
-int32_t TBTextFragmentContentWidget::GetBaseline(FontFace* font,
-                                                 TBTextFragment* fragment) {
+int32_t TextFragmentContentWidget::GetBaseline(FontFace* font,
+                                               TextFragment* fragment) {
   int height = GetHeight(font, fragment);
   return (height + fragment->block->CalculateBaseline(font)) / 2;
 }
 
 int TBEditFieldContentFactory::GetContent(const char* text) {
-  return TBTextFragmentContentFactory::GetContent(text);
+  return TextFragmentContentFactory::GetContent(text);
 }
 
-TBTextFragmentContent* TBEditFieldContentFactory::CreateFragmentContent(
-    const char* text, int text_len) {
-  if (strncmp(text, "<widget ", std::min(text_len, 8)) == 0) {
+TextFragmentContent* TBEditFieldContentFactory::CreateFragmentContent(
+    const char* text, size_t text_len) {
+  if (strncmp(text, "<widget ", std::min(text_len, 8ull)) == 0) {
     // Create a wrapper for the generated widget.
     // Its size will adapt to the content.
     if (TBWidget* widget = new TBWidget()) {
-      if (TBTextFragmentContentWidget* cw =
-              new TBTextFragmentContentWidget(editfield, widget)) {
+      if (TextFragmentContentWidget* cw =
+              new TextFragmentContentWidget(editfield, widget)) {
         g_widgets_reader->LoadData(widget, text + 8, text_len - 9);
         return cw;
       }
@@ -567,7 +567,7 @@ TBTextFragmentContent* TBEditFieldContentFactory::CreateFragmentContent(
     }
   }
 
-  return TBTextFragmentContentFactory::CreateFragmentContent(text, text_len);
+  return TextFragmentContentFactory::CreateFragmentContent(text, text_len);
 }
 
 }  // namespace tb
