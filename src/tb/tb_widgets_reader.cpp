@@ -96,7 +96,7 @@ void TBWidget::OnInflate(const INFLATE_INFO& info) {
   if (TBNode* lp = info.node->GetNode("lp")) {
     LayoutParams layout_params;
     if (GetLayoutParams()) layout_params = *GetLayoutParams();
-    const TBDimensionConverter* dc = g_tb_skin->GetDimensionConverter();
+    const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr))
       layout_params.SetWidth(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -145,13 +145,13 @@ void TBWidget::OnInflate(const INFLATE_INFO& info) {
   info.target->OnInflateChild(this);
 
   if (TBNode* rect_node = info.node->GetNode("rect")) {
-    const TBDimensionConverter* dc = g_tb_skin->GetDimensionConverter();
+    const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
     TBValue& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
-      SetRect(TBRect(dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
-                     dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
-                     dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
-                     dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)));
+      SetRect(Rect(dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
+                   dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
+                   dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
+                   dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)));
     }
   }
 }
@@ -308,15 +308,12 @@ void ReadItems(TBNode* node, TBGenericStringItemSource* target_source) {
       if (strcmp(n->GetName(), "item") != 0) continue;
       const char* item_str = n->GetValueString("text", "");
       TBID item_id;
-      if (TBNode* n_id = n->GetNode("id"))
+      if (TBNode* n_id = n->GetNode("id")) {
         TBWidgetsReader::SetIDFromNode(item_id, n_id);
-
-      TBGenericStringItem* item = new TBGenericStringItem(item_str, item_id);
-      if (!item || !target_source->AddItem(item)) {
-        // Out of memory
-        delete item;
-        break;
       }
+
+      auto item = new TBGenericStringItem(item_str, item_id);
+      target_source->AddItem(item);
     }
   }
 }

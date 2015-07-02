@@ -32,13 +32,13 @@ class TBPopupAlignment {
 
   /** Align relative to the given position (coordinates relative to the root
    * widget). */
-  TBPopupAlignment(const TBPoint& pos_in_root, Align align = Align::kBottom)
+  TBPopupAlignment(const Point& pos_in_root, Align align = Align::kBottom)
       : pos_in_root(pos_in_root), align(align), expand_to_target_width(true) {}
 
   /** Align relative to the given position (coordinates relative to the root
      widget).
           Applies an additional offset. */
-  TBPopupAlignment(const TBPoint& pos_in_root, const TBPoint& pos_offset)
+  TBPopupAlignment(const Point& pos_in_root, const Point& pos_offset)
       : pos_in_root(pos_in_root),
         pos_offset(pos_offset),
         align(Align::kBottom),
@@ -47,10 +47,10 @@ class TBPopupAlignment {
   /** Calculate a good rect for the given popup window using its preferred size
      and
           the preferred alignment information stored in this class. */
-  TBRect GetAlignedRect(TBWidget* popup, TBWidget* target) const;
+  Rect GetAlignedRect(TBWidget* popup, TBWidget* target) const;
 
-  TBPoint pos_in_root;
-  TBPoint pos_offset;
+  Point pos_in_root;
+  Point pos_offset;
 
   Align align;
   /** If true, the width of the popup will be at least the same as the target

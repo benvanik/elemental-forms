@@ -59,13 +59,13 @@ void TBScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
   // don't damage any expanded skins on the other axis. Add some fluff.
   const int fluff = 100;
   TBScrollContainer* sc = static_cast<TBScrollContainer*>(GetParent());
-  TBRect clip_rect = GetPaddingRect().Expand(
+  Rect clip_rect = GetPaddingRect().Expand(
       sc->m_scrollbar_x.CanScrollNegative() ? 0 : fluff,
       sc->m_scrollbar_y.CanScrollNegative() ? 0 : fluff,
       sc->m_scrollbar_x.CanScrollPositive() ? 0 : fluff,
       sc->m_scrollbar_y.CanScrollPositive() ? 0 : fluff);
 
-  TBRect old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
+  Rect old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
   TB_IF_DEBUG_SETTING(Setting::kLayoutClipping,
                       g_renderer->DrawRect(clip_rect, TBColor(255, 0, 0, 200)));
@@ -143,14 +143,14 @@ void TBScrollContainer::InvalidateLayout(InvalidationMode il) {
   if (m_adapt_to_content_size) TBWidget::InvalidateLayout(il);
 }
 
-TBRect TBScrollContainer::GetPaddingRect() {
+Rect TBScrollContainer::GetPaddingRect() {
   int visible_w = GetRect().w;
   int visible_h = GetRect().h;
   if (m_scrollbar_x.GetOpacity())
     visible_h -= m_scrollbar_x.GetPreferredSize().pref_h;
   if (m_scrollbar_y.GetOpacity())
     visible_w -= m_scrollbar_y.GetPreferredSize().pref_w;
-  return TBRect(0, 0, visible_w, visible_h);
+  return Rect(0, 0, visible_w, visible_h);
 }
 
 PreferredSize TBScrollContainer::OnCalculatePreferredContentSize(
@@ -235,10 +235,10 @@ void TBScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
   // Layout scrollbars (no matter if they are visible or not)
   int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
   int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
-  m_scrollbar_x.SetRect(TBRect(0, GetRect().h - scrollbar_x_h,
-                               GetRect().w - scrollbar_y_w, scrollbar_x_h));
+  m_scrollbar_x.SetRect(Rect(0, GetRect().h - scrollbar_x_h,
+                             GetRect().w - scrollbar_y_w, scrollbar_x_h));
   m_scrollbar_y.SetRect(
-      TBRect(GetRect().w - scrollbar_y_w, 0, scrollbar_y_w, GetRect().h));
+      Rect(GetRect().w - scrollbar_y_w, 0, scrollbar_y_w, GetRect().h));
 
   if (TBWidget* content_child = m_root.GetFirstChild()) {
     int horizontal_padding =
@@ -256,7 +256,7 @@ void TBScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
                                      GetRect().h, scrollbar_x_h, scrollbar_y_w);
     m_scrollbar_x.SetOpacity(visibility.x_on ? 1.f : 0.f);
     m_scrollbar_y.SetOpacity(visibility.y_on ? 1.f : 0.f);
-    m_root.SetRect(TBRect(0, 0, visibility.visible_w, visibility.visible_h));
+    m_root.SetRect(Rect(0, 0, visibility.visible_w, visibility.visible_h));
 
     int content_w, content_h;
     if (m_adapt_content_size) {
@@ -269,7 +269,7 @@ void TBScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
       content_h = ps.pref_h;
     }
 
-    content_child->SetRect(TBRect(0, 0, content_w, content_h));
+    content_child->SetRect(Rect(0, 0, content_w, content_h));
     double limit_max_w = std::max(0, content_w - m_root.GetRect().w);
     double limit_max_h = std::max(0, content_h - m_root.GetRect().h);
     m_scrollbar_x.SetLimits(0, limit_max_w, m_root.GetRect().w);

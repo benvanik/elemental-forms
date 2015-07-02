@@ -170,7 +170,7 @@ class TBBitmapFragment {
 
  public:
   TBBitmapFragmentMap* m_map;
-  TBRect m_rect;
+  Rect m_rect;
   TBFragmentSpaceAllocator* m_row;
   TBFragmentSpaceAllocator::Space* m_space;
   TBID m_id;

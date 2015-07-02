@@ -235,13 +235,13 @@ TBSkinElement* TBSkin::GetSkinElementStrongOverride(
   return nullptr;
 }
 
-TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, const TBID& skin_id,
+TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, const TBID& skin_id,
                                  SkinState state,
                                  TBSkinConditionContext& context) {
   return PaintSkin(dst_rect, GetSkinElement(skin_id), state, context);
 }
 
-TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, TBSkinElement* element,
+TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, TBSkinElement* element,
                                  SkinState state,
                                  TBSkinConditionContext& context) {
   if (!element || element->is_painting) return nullptr;
@@ -297,7 +297,7 @@ TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, TBSkinElement* element,
   return return_element;
 }
 
-void TBSkin::PaintSkinOverlay(const TBRect& dst_rect, TBSkinElement* element,
+void TBSkin::PaintSkinOverlay(const Rect& dst_rect, TBSkinElement* element,
                               SkinState state,
                               TBSkinConditionContext& context) {
   if (!element || element->is_painting) return;
@@ -319,7 +319,7 @@ void TBSkin::PaintSkinOverlay(const TBRect& dst_rect, TBSkinElement* element,
   element->is_painting = false;
 }
 
-void TBSkin::PaintElement(const TBRect& dst_rect, TBSkinElement* element) {
+void TBSkin::PaintElement(const Rect& dst_rect, TBSkinElement* element) {
   PaintElementBGColor(dst_rect, element);
   if (!element->bitmap) return;
   if (element->type == SkinElementType::kImage)
@@ -334,10 +334,10 @@ void TBSkin::PaintElement(const TBRect& dst_rect, TBSkinElement* element) {
     PaintElementStretchBox(dst_rect, element, true);
 }
 
-TBRect TBSkin::GetFlippedRect(const TBRect& src_rect,
-                              TBSkinElement* element) const {
+Rect TBSkin::GetFlippedRect(const Rect& src_rect,
+                            TBSkinElement* element) const {
   // Turning the source rect "inside out" will flip the result when rendered.
-  TBRect tmp_rect = src_rect;
+  Rect tmp_rect = src_rect;
   if (element->flip_x) {
     tmp_rect.x += tmp_rect.w;
     tmp_rect.w = -tmp_rect.w;
@@ -349,15 +349,14 @@ TBRect TBSkin::GetFlippedRect(const TBRect& src_rect,
   return tmp_rect;
 }
 
-void TBSkin::PaintElementBGColor(const TBRect& dst_rect,
-                                 TBSkinElement* element) {
+void TBSkin::PaintElementBGColor(const Rect& dst_rect, TBSkinElement* element) {
   if (element->bg_color == 0) return;
   g_renderer->DrawRectFill(dst_rect, element->bg_color);
 }
 
-void TBSkin::PaintElementImage(const TBRect& dst_rect, TBSkinElement* element) {
-  TBRect src_rect(0, 0, element->bitmap->Width(), element->bitmap->Height());
-  TBRect rect = dst_rect.Expand(element->expand, element->expand);
+void TBSkin::PaintElementImage(const Rect& dst_rect, TBSkinElement* element) {
+  Rect src_rect(0, 0, element->bitmap->Width(), element->bitmap->Height());
+  Rect rect = dst_rect.Expand(element->expand, element->expand);
   rect.Set(rect.x + element->img_ofs_x +
                (rect.w - src_rect.w) * element->img_position_x / 100,
            rect.y + element->img_ofs_y +
@@ -367,26 +366,25 @@ void TBSkin::PaintElementImage(const TBRect& dst_rect, TBSkinElement* element) {
                          element->bitmap);
 }
 
-void TBSkin::PaintElementTile(const TBRect& dst_rect, TBSkinElement* element) {
-  TBRect rect = dst_rect.Expand(element->expand, element->expand);
+void TBSkin::PaintElementTile(const Rect& dst_rect, TBSkinElement* element) {
+  Rect rect = dst_rect.Expand(element->expand, element->expand);
   g_renderer->DrawBitmapTile(rect, element->bitmap->GetBitmap());
 }
 
-void TBSkin::PaintElementStretchImage(const TBRect& dst_rect,
+void TBSkin::PaintElementStretchImage(const Rect& dst_rect,
                                       TBSkinElement* element) {
   if (dst_rect.IsEmpty()) return;
-  TBRect rect = dst_rect.Expand(element->expand, element->expand);
-  TBRect src_rect = GetFlippedRect(
-      TBRect(0, 0, element->bitmap->Width(), element->bitmap->Height()),
-      element);
+  Rect rect = dst_rect.Expand(element->expand, element->expand);
+  Rect src_rect = GetFlippedRect(
+      Rect(0, 0, element->bitmap->Width(), element->bitmap->Height()), element);
   g_renderer->DrawBitmap(rect, src_rect, element->bitmap);
 }
 
-void TBSkin::PaintElementStretchBox(const TBRect& dst_rect,
+void TBSkin::PaintElementStretchBox(const Rect& dst_rect,
                                     TBSkinElement* element, bool fill_center) {
   if (dst_rect.IsEmpty()) return;
 
-  TBRect rect = dst_rect.Expand(element->expand, element->expand);
+  Rect rect = dst_rect.Expand(element->expand, element->expand);
 
   // Stretch the dst_cut (if rect is smaller than the skin size)
   // FIX: the expand should also be stretched!
@@ -404,47 +402,47 @@ void TBSkin::PaintElementStretchBox(const TBRect& dst_rect,
   if (element->flip_y) dst_cut_h = -dst_cut_h;
 
   // Corners
-  g_renderer->DrawBitmap(TBRect(rect.x, rect.y, dst_cut_w, dst_cut_h),
-                         TBRect(0, 0, cut, cut), element->bitmap);
+  g_renderer->DrawBitmap(Rect(rect.x, rect.y, dst_cut_w, dst_cut_h),
+                         Rect(0, 0, cut, cut), element->bitmap);
   g_renderer->DrawBitmap(
-      TBRect(rect.x + rect.w - dst_cut_w, rect.y, dst_cut_w, dst_cut_h),
-      TBRect(bw - cut, 0, cut, cut), element->bitmap);
+      Rect(rect.x + rect.w - dst_cut_w, rect.y, dst_cut_w, dst_cut_h),
+      Rect(bw - cut, 0, cut, cut), element->bitmap);
   g_renderer->DrawBitmap(
-      TBRect(rect.x, rect.y + rect.h - dst_cut_h, dst_cut_w, dst_cut_h),
-      TBRect(0, bh - cut, cut, cut), element->bitmap);
+      Rect(rect.x, rect.y + rect.h - dst_cut_h, dst_cut_w, dst_cut_h),
+      Rect(0, bh - cut, cut, cut), element->bitmap);
   g_renderer->DrawBitmap(
-      TBRect(rect.x + rect.w - dst_cut_w, rect.y + rect.h - dst_cut_h,
-             dst_cut_w, dst_cut_h),
-      TBRect(bw - cut, bh - cut, cut, cut), element->bitmap);
+      Rect(rect.x + rect.w - dst_cut_w, rect.y + rect.h - dst_cut_h, dst_cut_w,
+           dst_cut_h),
+      Rect(bw - cut, bh - cut, cut, cut), element->bitmap);
 
   // Left & right edge
   if (has_left_right_edges) {
     g_renderer->DrawBitmap(
-        TBRect(rect.x, rect.y + dst_cut_h, dst_cut_w, rect.h - dst_cut_h * 2),
-        TBRect(0, cut, cut, bh - cut * 2), element->bitmap);
-    g_renderer->DrawBitmap(
-        TBRect(rect.x + rect.w - dst_cut_w, rect.y + dst_cut_h, dst_cut_w,
-               rect.h - dst_cut_h * 2),
-        TBRect(bw - cut, cut, cut, bh - cut * 2), element->bitmap);
+        Rect(rect.x, rect.y + dst_cut_h, dst_cut_w, rect.h - dst_cut_h * 2),
+        Rect(0, cut, cut, bh - cut * 2), element->bitmap);
+    g_renderer->DrawBitmap(Rect(rect.x + rect.w - dst_cut_w, rect.y + dst_cut_h,
+                                dst_cut_w, rect.h - dst_cut_h * 2),
+                           Rect(bw - cut, cut, cut, bh - cut * 2),
+                           element->bitmap);
   }
 
   // Top & bottom edge
   if (has_top_bottom_edges) {
     g_renderer->DrawBitmap(
-        TBRect(rect.x + dst_cut_w, rect.y, rect.w - dst_cut_w * 2, dst_cut_h),
-        TBRect(cut, 0, bw - cut * 2, cut), element->bitmap);
-    g_renderer->DrawBitmap(
-        TBRect(rect.x + dst_cut_w, rect.y + rect.h - dst_cut_h,
-               rect.w - dst_cut_w * 2, dst_cut_h),
-        TBRect(cut, bh - cut, bw - cut * 2, cut), element->bitmap);
+        Rect(rect.x + dst_cut_w, rect.y, rect.w - dst_cut_w * 2, dst_cut_h),
+        Rect(cut, 0, bw - cut * 2, cut), element->bitmap);
+    g_renderer->DrawBitmap(Rect(rect.x + dst_cut_w, rect.y + rect.h - dst_cut_h,
+                                rect.w - dst_cut_w * 2, dst_cut_h),
+                           Rect(cut, bh - cut, bw - cut * 2, cut),
+                           element->bitmap);
   }
 
   // Center
   if (fill_center && has_top_bottom_edges && has_left_right_edges)
-    g_renderer->DrawBitmap(
-        TBRect(rect.x + dst_cut_w, rect.y + dst_cut_h, rect.w - dst_cut_w * 2,
-               rect.h - dst_cut_h * 2),
-        TBRect(cut, cut, bw - cut * 2, bh - cut * 2), element->bitmap);
+    g_renderer->DrawBitmap(Rect(rect.x + dst_cut_w, rect.y + dst_cut_h,
+                                rect.w - dst_cut_w * 2, rect.h - dst_cut_h * 2),
+                           Rect(cut, cut, bw - cut * 2, bh - cut * 2),
+                           element->bitmap);
 }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -532,7 +530,7 @@ int TBSkinElement::GetIntrinsicHeight() const {
   return kSkinValueNotSpecified;
 }
 
-void TBSkinElement::SetBitmapDPI(const TBDimensionConverter& dim_conv,
+void TBSkinElement::SetBitmapDPI(const DimensionConverter& dim_conv,
                                  int bitmap_dpi) {
   if (this->bitmap_dpi) {
     // We have already applied the modifications so abort. This may
@@ -583,7 +581,7 @@ void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
   name = n->GetName();
   id = n->GetName();
 
-  const TBDimensionConverter* dim_conv = skin->GetDimensionConverter();
+  const DimensionConverter* dim_conv = skin->GetDimensionConverter();
 
   if (TBNode* padding_node = n->GetNode("padding")) {
     TBValue& val = padding_node->GetValue();

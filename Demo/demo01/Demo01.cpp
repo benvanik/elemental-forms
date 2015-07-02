@@ -72,10 +72,10 @@ void DemoWindow::LoadResource(TBNode& node) {
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
 
-  const TBRect parent_rect(0, 0, GetParent()->GetRect().w,
-                           GetParent()->GetRect().h);
-  const TBDimensionConverter* dc = g_tb_skin->GetDimensionConverter();
-  TBRect window_rect = GetResizeToFitContentRect();
+  const Rect parent_rect(0, 0, GetParent()->GetRect().w,
+                         GetParent()->GetRect().h);
+  auto dc = g_tb_skin->GetDimensionConverter();
+  Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
   TBNode* tmp = node.GetNode("WindowInfo>size");

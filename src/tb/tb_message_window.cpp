@@ -70,7 +70,7 @@ bool TBMessageWindow::Show(const std::string& title, const std::string& message,
 
   // Size to fit content. This will use the default size of the textfield.
   ResizeToFitContent();
-  TBRect rect = GetRect();
+  Rect rect = GetRect();
 
   // Get how much we overflow the textfield has given the current width, and
   // grow our height to show all we can.
@@ -88,7 +88,7 @@ bool TBMessageWindow::Show(const std::string& title, const std::string& message,
   }
 
   // Center and size to the new height
-  TBRect bounds(0, 0, root->GetRect().w, root->GetRect().h);
+  Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
   SetRect(rect.CenterIn(bounds).MoveIn(bounds).Clip(bounds));
   root->AddChild(this);
   return true;

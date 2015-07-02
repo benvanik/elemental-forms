@@ -57,7 +57,7 @@ void TBTextFragmentContentHR::Paint(TBTextFragment* fragment,
   x += (fragment->block->styledit->layout_width - w) / 2;
 
   TBStyleEditListener* listener = fragment->block->styledit->listener;
-  listener->DrawRectFill(TBRect(x, y, w, height), props->data->text_color);
+  listener->DrawRectFill(Rect(x, y, w, height), props->data->text_color);
 }
 
 int32_t TBTextFragmentContentHR::GetWidth(TBFontFace* font,

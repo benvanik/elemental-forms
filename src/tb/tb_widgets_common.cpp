@@ -28,7 +28,7 @@ int TBWidgetString::GetHeight(TBWidget* widget) {
   return widget->GetFont()->GetHeight();
 }
 
-void TBWidgetString::Paint(TBWidget* widget, const TBRect& rect,
+void TBWidgetString::Paint(TBWidget* widget, const Rect& rect,
                            const TBColor& color) {
   TBFontFace* font = widget->GetFont();
   int string_w = GetWidth(widget);
@@ -326,7 +326,7 @@ void TBProgressSpinner::OnPaint(const PaintProps& paint_props) {
       int num_frames = e->bitmap->Width() / e->bitmap->Height();
       int current_frame = m_frame % num_frames;
       g_renderer->DrawBitmap(GetPaddingRect(),
-                             TBRect(current_frame * size, 0, size, size),
+                             Rect(current_frame * size, 0, size, size),
                              e->bitmap);
     }
   }
@@ -499,7 +499,7 @@ void TBScrollBar::UpdateHandle() {
 
   int pixel_pos = (int)(m_value * m_to_pixel_factor);
 
-  TBRect rect;
+  Rect rect;
   if (horizontal)
     rect.Set(pixel_pos, 0, visible_pixels, GetRect().h);
   else
@@ -596,7 +596,7 @@ void TBSlider::UpdateHandle() {
   bool horizontal = m_axis == Axis::kX;
   int available_pixels = horizontal ? GetRect().w : GetRect().h;
 
-  TBRect rect;
+  Rect rect;
   if (m_max - m_min > 0) {
     PreferredSize ps = m_handle.GetPreferredSize();
     int handle_pixels = horizontal ? ps.pref_w : ps.pref_h;
@@ -630,7 +630,7 @@ bool TBMover::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
     int dx = ev.target_x - pointer_down_widget_x;
     int dy = ev.target_y - pointer_down_widget_y;
-    TBRect rect = target->GetRect().Offset(dx, dy);
+    Rect rect = target->GetRect().Offset(dx, dy);
     if (target->GetParent()) {
       // Apply limit.
       rect.x = Clamp(rect.x, -pointer_down_widget_x,
@@ -661,7 +661,7 @@ bool TBResizer::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
     int dx = ev.target_x - pointer_down_widget_x;
     int dy = ev.target_y - pointer_down_widget_y;
-    TBRect rect = target->GetRect();
+    Rect rect = target->GetRect();
     rect.w += dx;
     rect.h += dy;
     // Apply limit. We should not use minimum size since we can squeeze
@@ -680,7 +680,7 @@ TBDimmer::TBDimmer() {
 }
 
 void TBDimmer::OnAdded() {
-  SetRect(TBRect(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h));
+  SetRect(Rect(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h));
 }
 
 }  // namespace tb

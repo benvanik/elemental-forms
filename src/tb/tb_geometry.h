@@ -14,30 +14,26 @@
 
 namespace tb {
 
-/** Simple point class. */
-
-class TBPoint {
+class Point {
  public:
   int x, y;
-  TBPoint() : x(0), y(0) {}
-  TBPoint(int x, int y) : x(x), y(y) {}
+  Point() : x(0), y(0) {}
+  Point(int x, int y) : x(x), y(y) {}
 };
 
-/** Simple rectangle class. */
-
-class TBRect {
+class Rect {
  public:
   int x, y, w, h;
-  TBRect() : x(0), y(0), w(0), h(0) {}
-  TBRect(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
+  Rect() : x(0), y(0), w(0), h(0) {}
+  Rect(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 
   inline bool IsEmpty() const { return w <= 0 || h <= 0; }
   inline bool IsInsideOut() const { return w < 0 || h < 0; }
-  inline bool Equals(const TBRect& rect) const {
+  inline bool Equals(const Rect& rect) const {
     return rect.x == x && rect.y == y && rect.w == w && rect.h == h;
   }
-  bool Intersects(const TBRect& rect) const;
-  bool Contains(const TBPoint& p) const {
+  bool Intersects(const Rect& rect) const;
+  bool Contains(const Point& p) const {
     return p.x >= x && p.y >= y && p.x < x + w && p.y < y + h;
   }
 
@@ -49,84 +45,79 @@ class TBRect {
     this->h = h;
   }
 
-  inline TBRect Shrink(int left, int top, int right, int bottom) const {
-    return TBRect(x + left, y + top, w - left - right, h - top - bottom);
+  inline Rect Shrink(int left, int top, int right, int bottom) const {
+    return Rect(x + left, y + top, w - left - right, h - top - bottom);
   }
-  inline TBRect Expand(int left, int top, int right, int bottom) const {
+  inline Rect Expand(int left, int top, int right, int bottom) const {
     return Shrink(-left, -top, -right, -bottom);
   }
-  inline TBRect Shrink(int tx, int ty) const {
-    return TBRect(x + tx, y + ty, w - tx * 2, h - ty * 2);
+  inline Rect Shrink(int tx, int ty) const {
+    return Rect(x + tx, y + ty, w - tx * 2, h - ty * 2);
   }
-  inline TBRect Expand(int tx, int ty) const { return Shrink(-tx, -ty); }
-  inline TBRect Offset(int dx, int dy) const {
-    return TBRect(x + dx, y + dy, w, h);
+  inline Rect Expand(int tx, int ty) const { return Shrink(-tx, -ty); }
+  inline Rect Offset(int dx, int dy) const {
+    return Rect(x + dx, y + dy, w, h);
   }
 
-  /** Return a rect moved inside bounding_rect. If the rect doesn't fit inside
-          bounding_rect, it will be placed so the x and/or y matches
-     bounding_rect. */
-  TBRect MoveIn(const TBRect& bounding_rect) const;
+  // Returns a rect moved inside bounding_rect. If the rect doesn't fit inside
+  // bounding_rect, it will be placed so the x and/or y matches bounding_rect.
+  Rect MoveIn(const Rect& bounding_rect) const;
 
-  /** Return a rect centered in bounding_rect. */
-  TBRect CenterIn(const TBRect& bounding_rect) const;
+  // Returns a rect centered in bounding_rect.
+  Rect CenterIn(const Rect& bounding_rect) const;
 
-  TBRect Union(const TBRect& rect) const;
-  TBRect Clip(const TBRect& clip_rect) const;
+  Rect Union(const Rect& rect) const;
+  Rect Clip(const Rect& clip_rect) const;
 };
 
-/** TBRegion does calculations on regions represented by a list of rectangles.
- */
-
-class TBRegion {
+// Performs calculations on regions represented by a list of rectangles.
+class RectRegion {
  public:
-  TBRegion();
-  ~TBRegion();
+  RectRegion();
+  ~RectRegion();
 
-  /** Remove the rect at the given index. */
+  // Removes the rect at the given index.
   void RemoveRect(int index);
 
-  /** Remove the rect at the given index.
-          This method will change the order of rectangles after index. */
+  // Remove the rect at the given index.
+  // This method will change the order of rectangles after index.
   void RemoveRectFast(int index);
 
-  /** Remove all rectangles so the region becomes empty.
-          If free_memory is false, the internal buffers will be reused
-          if more rectangles are added again under its life time. */
+  // Removes all rectangles so the region becomes empty.
+  // If free_memory is false, the internal buffers will be reused if more
+  // rectangles are added again under its life time.
   void RemoveAll(bool free_memory = true);
 
-  /** Set the region to the given rect. */
-  bool Set(const TBRect& rect);
+  // Sets the region to the given rect.
+  bool Set(const Rect& rect);
 
-  /** Add the rect without doing any overlap check.
-          If coalesce is true, it will coalesce the rectangle
-          with existing rectangles if possible (until there's
-          nothing more to coalesce it with). */
-  bool AddRect(const TBRect& rect, bool coalesce);
+  // Adds the rect without doing any overlap check.
+  // If coalesce is true, it will coalesce the rectangle with existing
+  // rectangles if possible (until there's nothing more to coalesce it with).
+  bool AddRect(const Rect& rect, bool coalesce);
 
-  /** Include the rect in the region.
-          This will add only the parts that's not already in the region so the
-     result doesn't
-          contain overlap parts. This assumes there's no overlap in the region
-     already! */
-  bool IncludeRect(const TBRect& include_rect);
+  // Includes the rect in the region.
+  // This will add only the parts that's not already in the region so the
+  // result doesn't contain overlap parts. This assumes there's no overlap in
+  // the region already!
+  bool IncludeRect(const Rect& include_rect);
 
-  /** Exclude the rect from the region. */
-  bool ExcludeRect(const TBRect& exclude_rect);
+  // Excludes the rect from the region.
+  bool ExcludeRect(const Rect& exclude_rect);
 
-  /** Add the rectangles that's left of rect after excluding exclude_rect. */
-  bool AddExcludingRects(const TBRect& rect, const TBRect& exclude_rect,
+  // Adds the rectangles that's left of rect after excluding exclude_rect.
+  bool AddExcludingRects(const Rect& rect, const Rect& exclude_rect,
                          bool coalesce);
 
   bool IsEmpty() const { return m_num_rects == 0; }
   int GetNumRects() const { return m_num_rects; }
-  const TBRect& GetRect(int index) const;
+  const Rect& GetRect(int index) const;
 
  private:
-  TBRect* m_rects;
-  int m_num_rects;
-  int m_capacity;
-  bool GrowIfNeeded();
+  Rect* m_rects = nullptr;
+  int m_num_rects = 0;
+  int m_capacity = 0;
+  void GrowIfNeeded();
 };
 
 };  // namespace tb

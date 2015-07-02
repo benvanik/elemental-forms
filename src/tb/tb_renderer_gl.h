@@ -64,7 +64,7 @@ class TBRendererGL : public TBRendererBatcher {
   // ===============================================================
 
   virtual void RenderBatch(Batch* batch);
-  virtual void SetClipRect(const TBRect& rect);
+  virtual void SetClipRect(const Rect& rect);
 
  public:
 };

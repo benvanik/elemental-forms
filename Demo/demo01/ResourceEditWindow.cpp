@@ -36,7 +36,7 @@ ResourceEditWindow::ResourceEditWindow()
   m_widget_list = GetWidgetByIDAndType<TBSelectList>(TBIDC("widget_list"));
   m_widget_list->SetSource(&m_widget_list_source);
 
-  SetRect(TBRect(100, 50, 900, 600));
+  SetRect(Rect(100, 50, 900, 600));
 }
 
 ResourceEditWindow::~ResourceEditWindow() {
@@ -157,7 +157,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
       win->SetText("Test window");
       g_widgets_reader->LoadData(win->GetContentRoot(),
                                  m_source_edit->GetText().c_str());
-      TBRect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
+      Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
       win->SetRect(
           win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
               bounds));
@@ -179,8 +179,8 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
 
   // Paint the selection of the selected widget
   if (TBWidget* selected_widget = GetSelectedWidget()) {
-    TBRect widget_rect(0, 0, selected_widget->GetRect().w,
-                       selected_widget->GetRect().h);
+    Rect widget_rect(0, 0, selected_widget->GetRect().w,
+                     selected_widget->GetRect().h);
     selected_widget->ConvertToRoot(widget_rect.x, widget_rect.y);
     ConvertFromRoot(widget_rect.x, widget_rect.y);
     g_renderer->DrawRect(widget_rect, TBColor(255, 205, 0));

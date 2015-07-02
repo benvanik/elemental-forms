@@ -86,7 +86,7 @@ class TBWindow : public TBWidget {
 
   /** Get a suitable rect for the window based on the contents and the given
    * fit. */
-  TBRect GetResizeToFitContentRect(ResizeFit fit = ResizeFit::kPreferred);
+  Rect GetResizeToFitContentRect(ResizeFit fit = ResizeFit::kPreferred);
 
   /** Resize the window to fit the its content. This is the same as doing
           SetRect(GetResizeToFitContentRect(fit)). */
@@ -102,7 +102,7 @@ class TBWindow : public TBWidget {
           shouldn't have any title bar) */
   int GetTitleHeight();
 
-  virtual TBRect GetPaddingRect();
+  virtual Rect GetPaddingRect();
   virtual PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints);
 

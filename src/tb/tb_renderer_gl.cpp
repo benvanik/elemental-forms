@@ -151,7 +151,7 @@ void TBRendererGL::RenderBatch(Batch* batch) {
   glDrawArrays(GL_TRIANGLES, 0, batch->vertex_count);
 }
 
-void TBRendererGL::SetClipRect(const TBRect& rect) {
+void TBRendererGL::SetClipRect(const Rect& rect) {
   glScissor(m_clip_rect.x, m_screen_rect.h - (m_clip_rect.y + m_clip_rect.h),
             m_clip_rect.w, m_clip_rect.h);
 }

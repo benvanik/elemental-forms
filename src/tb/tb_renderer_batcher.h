@@ -68,21 +68,21 @@ class TBRendererBatcher : public TBRenderer {
   virtual void SetOpacity(float opacity);
   virtual float GetOpacity();
 
-  virtual TBRect SetClipRect(const TBRect& rect, bool add_to_current);
-  virtual TBRect GetClipRect();
+  virtual Rect SetClipRect(const Rect& rect, bool add_to_current);
+  virtual Rect GetClipRect();
 
-  virtual void DrawBitmap(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmapFragment* bitmap_fragment);
-  virtual void DrawBitmap(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmap* bitmap);
-  virtual void DrawBitmapColored(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const TBColor& color,
                                  TBBitmapFragment* bitmap_fragment);
-  virtual void DrawBitmapColored(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const TBColor& color, TBBitmap* bitmap);
-  virtual void DrawBitmapTile(const TBRect& dst_rect, TBBitmap* bitmap);
-  virtual void DrawRect(const TBRect& dst_rect, const TBColor& color);
-  virtual void DrawRectFill(const TBRect& dst_rect, const TBColor& color);
+  virtual void DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap);
+  virtual void DrawRect(const Rect& dst_rect, const TBColor& color);
+  virtual void DrawRectFill(const Rect& dst_rect, const TBColor& color);
   virtual void FlushBitmap(TBBitmap* bitmap);
   virtual void FlushBitmapFragment(TBBitmapFragment* bitmap_fragment);
 
@@ -91,19 +91,19 @@ class TBRendererBatcher : public TBRenderer {
 
   virtual TBBitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;
   virtual void RenderBatch(Batch* batch) = 0;
-  virtual void SetClipRect(const TBRect& rect) = 0;
+  virtual void SetClipRect(const Rect& rect) = 0;
 
  protected:
   uint8_t m_opacity;
-  TBRect m_screen_rect;
-  TBRect m_clip_rect;
+  Rect m_screen_rect;
+  Rect m_clip_rect;
   int m_translation_x;
   int m_translation_y;
 
   float m_u, m_v, m_uu, m_vv;  ///< Some temp variables
   Batch batch;  ///< The one and only batch. this should be improved.
 
-  void AddQuadInternal(const TBRect& dst_rect, const TBRect& src_rect,
+  void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
                        uint32_t color, TBBitmap* bitmap,
                        TBBitmapFragment* fragment);
   void FlushAllInternal();

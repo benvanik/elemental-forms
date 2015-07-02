@@ -340,10 +340,9 @@ void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
     if (cp == 0xFFFF) continue;
     if (TBFontGlyph* glyph = GetGlyph(cp, true)) {
       if (glyph->frag) {
-        TBRect dst_rect(x + glyph->metrics.x,
-                        y + glyph->metrics.y + GetAscent(),
-                        glyph->frag->Width(), glyph->frag->Height());
-        TBRect src_rect(0, 0, glyph->frag->Width(), glyph->frag->Height());
+        Rect dst_rect(x + glyph->metrics.x, y + glyph->metrics.y + GetAscent(),
+                      glyph->frag->Width(), glyph->frag->Height());
+        Rect src_rect(0, 0, glyph->frag->Width(), glyph->frag->Height());
         if (glyph->has_rgb)
           g_renderer->DrawBitmap(dst_rect, src_rect, glyph->frag);
         else
@@ -353,7 +352,7 @@ void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
     } else if (!m_font_renderer)  // This is the test font. Use same glyph width
                                   // as height and draw square.
     {
-      g_renderer->DrawRect(TBRect(x, y, m_metrics.height / 3, m_metrics.height),
+      g_renderer->DrawRect(Rect(x, y, m_metrics.height / 3, m_metrics.height),
                            color);
       x += m_metrics.height / 3 + 1;
     }

@@ -16,7 +16,7 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_dimension_converter) {
-  TBDimensionConverter dim_conv;
+  DimensionConverter dim_conv;
 
   TB_TEST(Init) { dim_conv.SetDPI(100, 200); }
 

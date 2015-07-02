@@ -35,7 +35,7 @@ TBWindow::~TBWindow() {
   m_mover.RemoveChild(&m_textfield);
 }
 
-TBRect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
+Rect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
   PreferredSize ps = GetPreferredSize();
   int new_w = ps.pref_w;
   int new_h = ps.pref_h;
@@ -50,7 +50,7 @@ TBRect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
     new_w = std::min(new_w, GetParent()->GetRect().w);
     new_h = std::min(new_h, GetParent()->GetRect().h);
   }
-  return TBRect(GetRect().x, GetRect().y, new_w, new_h);
+  return Rect(GetRect().x, GetRect().y, new_w, new_h);
 }
 
 void TBWindow::ResizeToFitContent(ResizeFit fit) {
@@ -166,8 +166,8 @@ int TBWindow::GetTitleHeight() {
   return 0;
 }
 
-TBRect TBWindow::GetPaddingRect() {
-  TBRect padding_rect = TBWidget::GetPaddingRect();
+Rect TBWindow::GetPaddingRect() {
+  Rect padding_rect = TBWidget::GetPaddingRect();
   int title_height = GetTitleHeight();
   padding_rect.y += title_height;
   padding_rect.h -= title_height;
@@ -221,14 +221,14 @@ void TBWindow::OnResized(int old_w, int old_h) {
   // Manually move our own decoration children
   // FIX: Put a layout in the TBMover so we can add things there nicely.
   int title_height = GetTitleHeight();
-  m_mover.SetRect(TBRect(0, 0, GetRect().w, title_height));
+  m_mover.SetRect(Rect(0, 0, GetRect().w, title_height));
   PreferredSize ps = m_resizer.GetPreferredSize();
-  m_resizer.SetRect(TBRect(GetRect().w - ps.pref_w, GetRect().h - ps.pref_h,
-                           ps.pref_w, ps.pref_h));
-  TBRect mover_rect = m_mover.GetPaddingRect();
+  m_resizer.SetRect(Rect(GetRect().w - ps.pref_w, GetRect().h - ps.pref_h,
+                         ps.pref_w, ps.pref_h));
+  Rect mover_rect = m_mover.GetPaddingRect();
   int button_size = mover_rect.h;
-  m_close_button.SetRect(TBRect(mover_rect.x + mover_rect.w - button_size,
-                                mover_rect.y, button_size, button_size));
+  m_close_button.SetRect(Rect(mover_rect.x + mover_rect.w - button_size,
+                              mover_rect.y, button_size, button_size));
   if (any(m_settings & WindowSettings::kCloseButton)) {
     mover_rect.w -= button_size;
   }

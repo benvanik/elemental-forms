@@ -124,9 +124,9 @@ SizeConstraints RotSizeConstraints(const SizeConstraints& sc, Axis axis) {
                           : SizeConstraints(sc.available_h, sc.available_w);
 }
 
-TBRect RotRect(const TBRect& rect, Axis axis) {
+Rect RotRect(const Rect& rect, Axis axis) {
   if (axis == Axis::kX) return rect;
-  return TBRect(rect.y, rect.x, rect.h, rect.w);
+  return Rect(rect.y, rect.x, rect.h, rect.w);
 }
 
 Gravity RotGravity(Gravity gravity, Axis axis) {
@@ -221,8 +221,8 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   }
 
   const int spacing = CalculateSpacing();
-  const TBRect padding_rect = GetPaddingRect();
-  const TBRect layout_rect = RotRect(padding_rect, m_axis);
+  const Rect padding_rect = GetPaddingRect();
+  const Rect layout_rect = RotRect(padding_rect, m_axis);
 
   const SizeConstraints inner_sc = constraints.ConstrainByPadding(
       GetRect().w - padding_rect.w, GetRect().h - padding_rect.h);
@@ -363,7 +363,7 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
     };
 
     // Done! Set rect and increase used space
-    TBRect rect(used_space + offset, pos, width, height);
+    Rect rect(used_space + offset, pos, width, height);
     used_space += width + ending_space;
 
     child->SetRect(RotRect(rect, m_axis));
@@ -392,15 +392,15 @@ bool TBLayout::OnEvent(const TBWidgetEvent& ev) {
 }
 
 void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
-  TBRect padding_rect = GetPaddingRect();
+  Rect padding_rect = GetPaddingRect();
   if (padding_rect.IsEmpty()) return;
 
   // If we overflow the layout, apply clipping when painting children
-  TBRect old_clip_rect;
+  Rect old_clip_rect;
   if (m_overflow) {
     // We only want clipping in one axis (the overflowing one) so we
     // don't damage any expanded skins on the other axis. Add some fluff.
-    TBRect clip_rect = padding_rect;
+    Rect clip_rect = padding_rect;
     const int fluff = 100;
 
     if (m_axis == Axis::kX)

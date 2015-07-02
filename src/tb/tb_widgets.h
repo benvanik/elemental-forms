@@ -427,18 +427,18 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Set the rect for this widget in its parent. The rect is relative to the
      parent widget.
           The skin may expand outside this rect to draw f.ex shadows. */
-  void SetRect(const TBRect& rect);
-  inline TBRect GetRect() const { return m_rect; }
+  void SetRect(const Rect& rect);
+  inline Rect GetRect() const { return m_rect; }
 
   /** Set position of this widget in its parent. The position is relative to the
    * parent widget. */
-  void SetPosition(const TBPoint& pos) {
-    SetRect(TBRect(pos.x, pos.y, m_rect.w, m_rect.h));
+  void SetPosition(const Point& pos) {
+    SetRect(Rect(pos.x, pos.y, m_rect.w, m_rect.h));
   }
 
   /** Set size of this widget. */
   void SetSize(int width, int height) {
-    SetRect(TBRect(m_rect.x, m_rect.y, width, height));
+    SetRect(Rect(m_rect.x, m_rect.y, width, height));
   }
 
   /** Invalidate should be called if the widget need to be repainted,
@@ -978,7 +978,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** If this is a widget that scroll children (see GetChildTranslation), it
      will
           scroll so that rect is visible. Rect is relative to this widget. */
-  void ScrollIntoView(const TBRect& rect);
+  void ScrollIntoView(const Rect& rect);
 
   /** Return the TBScroller set up for this widget, or nullptr if creation
    * failed. */
@@ -1051,7 +1051,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      scrollbars
           managed by this widget. Anything that removes space from the content
      area. */
-  virtual TBRect GetPaddingRect();
+  virtual Rect GetPaddingRect();
 
   /** Calculate the preferred content size for this widget. This is the size of
      the actual
@@ -1219,7 +1219,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
  private:
   friend class TBWidgetListener;  ///< It does iteration of m_listeners for us.
   TBWidget* m_parent;             ///< The parent of this widget
-  TBRect m_rect;  ///< The rectangle of this widget, relative to the parent. See
+  Rect m_rect;  ///< The rectangle of this widget, relative to the parent. See
   /// SetRect.
   TBID m_id;                ///< ID for GetWidgetByID and others.
   TBID m_group_id;          ///< ID for button groups (such as TBRadioButton)

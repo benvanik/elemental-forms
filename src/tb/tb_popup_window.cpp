@@ -15,8 +15,7 @@
 
 namespace tb {
 
-TBRect TBPopupAlignment::GetAlignedRect(TBWidget* popup,
-                                        TBWidget* target) const {
+Rect TBPopupAlignment::GetAlignedRect(TBWidget* popup, TBWidget* target) const {
   TBWidget* root = target->GetParentRoot();
 
   SizeConstraints sc(root->GetRect().w, root->GetRect().h);
@@ -67,7 +66,7 @@ TBRect TBPopupAlignment::GetAlignedRect(TBWidget* popup,
     x = x - w < 0 ? x + avoid_w : x - w;
     y = std::min(y, root->GetRect().h - h);
   }
-  return TBRect(x, y, w, h);
+  return Rect(x, y, w, h);
 }
 
 TBPopupWindow::TBPopupWindow(TBWidget* target) : m_target(target) {

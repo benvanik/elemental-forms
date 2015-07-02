@@ -423,7 +423,7 @@ static void window_refresh_callback(GLFWwindow* window) {
 
 static void window_size_callback(GLFWwindow* window, int w, int h) {
   ApplicationBackendGLFW* backend = GetBackend(window);
-  if (backend->GetRoot()) backend->GetRoot()->SetRect(TBRect(0, 0, w, h));
+  if (backend->GetRoot()) backend->GetRoot()->SetRect(Rect(0, 0, w, h));
 }
 
 #if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 1)
@@ -485,7 +485,7 @@ bool ApplicationBackendGLFW::Init(Application* app, int width, int height,
 #endif
 
   m_renderer = new TBRendererGL();
-  m_root.SetRect(TBRect(0, 0, width, height));
+  m_root.SetRect(Rect(0, 0, width, height));
 
   // Create the application object for our demo
 

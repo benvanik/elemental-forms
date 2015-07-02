@@ -66,14 +66,15 @@ TBValueArray::TBValueArray() {}
 TBValueArray::~TBValueArray() {}
 
 TBValue* TBValueArray::AddValue() {
-  TBValue* v;
-  if ((v = new TBValue()) && m_list.Add(v)) return v;
-  delete v;
-  return nullptr;
+  TBValue* v = new TBValue();
+  m_list.Add(v);
+  return v;
 }
 
 TBValue* TBValueArray::GetValue(int index) {
-  if (index >= 0 && index < m_list.GetNumItems()) return m_list[index];
+  if (index >= 0 && index < m_list.GetNumItems()) {
+    return m_list[index];
+  }
   return nullptr;
 }
 

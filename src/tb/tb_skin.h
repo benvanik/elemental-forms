@@ -281,7 +281,7 @@ class TBSkinElement {
 
   /** Set the DPI that the bitmap was loaded in. This may modify properties
           to compensate for the bitmap resolution. */
-  void SetBitmapDPI(const TBDimensionConverter& dim_conv, int bitmap_dpi);
+  void SetBitmapDPI(const DimensionConverter& dim_conv, int bitmap_dpi);
 
   /** List of override elements (See TBSkin::PaintSkin) */
   TBSkinElementStateList m_override_elements;
@@ -356,7 +356,7 @@ class TBSkin : private TBRendererListener {
      converter
           converts to px by the same factor as the skin (based on the skin DPI
      settings). */
-  const TBDimensionConverter* GetDimensionConverter() const {
+  const DimensionConverter* GetDimensionConverter() const {
     return &m_dim_conv;
   }
 
@@ -425,17 +425,17 @@ class TBSkin : private TBRendererListener {
 
           Return the skin element used (after following override elements),
           or nullptr if no skin element was found matching the skin_id. */
-  TBSkinElement* PaintSkin(const TBRect& dst_rect, const TBID& skin_id,
+  TBSkinElement* PaintSkin(const Rect& dst_rect, const TBID& skin_id,
                            SkinState state, TBSkinConditionContext& context);
 
   /** Paint the skin at dst_rect. Just like the PaintSkin above, but takes a
      specific
           skin element instead of looking it up from the id. */
-  TBSkinElement* PaintSkin(const TBRect& dst_rect, TBSkinElement* element,
+  TBSkinElement* PaintSkin(const Rect& dst_rect, TBSkinElement* element,
                            SkinState state, TBSkinConditionContext& context);
 
   /** Paint the overlay elements for the given skin element and state. */
-  void PaintSkinOverlay(const TBRect& dst_rect, TBSkinElement* element,
+  void PaintSkinOverlay(const Rect& dst_rect, TBSkinElement* element,
                         SkinState state, TBSkinConditionContext& context);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -456,21 +456,21 @@ class TBSkin : private TBRendererListener {
   TBHashTableAutoDeleteOf<TBSkinElement>
       m_elements;                          ///< All skin elements for this skin.
   TBBitmapFragmentManager m_frag_manager;  ///< Fragment manager
-  TBDimensionConverter m_dim_conv;         ///< Dimension converter
+  DimensionConverter m_dim_conv;           ///< Dimension converter
   TBColor m_default_text_color;  ///< Default text color for all skin elements
   float m_default_disabled_opacity;     ///< Disabled opacity
   float m_default_placeholder_opacity;  ///< Placeholder opacity
   int16_t m_default_spacing;            ///< Default layout spacing
   bool LoadInternal(const char* skin_file);
   bool ReloadBitmapsInternal();
-  void PaintElement(const TBRect& dst_rect, TBSkinElement* element);
-  void PaintElementBGColor(const TBRect& dst_rect, TBSkinElement* element);
-  void PaintElementImage(const TBRect& dst_rect, TBSkinElement* element);
-  void PaintElementTile(const TBRect& dst_rect, TBSkinElement* element);
-  void PaintElementStretchImage(const TBRect& dst_rect, TBSkinElement* element);
-  void PaintElementStretchBox(const TBRect& dst_rect, TBSkinElement* element,
+  void PaintElement(const Rect& dst_rect, TBSkinElement* element);
+  void PaintElementBGColor(const Rect& dst_rect, TBSkinElement* element);
+  void PaintElementImage(const Rect& dst_rect, TBSkinElement* element);
+  void PaintElementTile(const Rect& dst_rect, TBSkinElement* element);
+  void PaintElementStretchImage(const Rect& dst_rect, TBSkinElement* element);
+  void PaintElementStretchBox(const Rect& dst_rect, TBSkinElement* element,
                               bool fill_center);
-  TBRect GetFlippedRect(const TBRect& src_rect, TBSkinElement* element) const;
+  Rect GetFlippedRect(const Rect& src_rect, TBSkinElement* element) const;
   int GetPxFromNode(TBNode* node, int def_value) const;
 };
 

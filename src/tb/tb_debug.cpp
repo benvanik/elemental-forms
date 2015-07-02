@@ -55,7 +55,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
 
     output = GetWidgetByIDAndType<TBEditField>(TBIDC("output"));
 
-    TBRect bounds(0, 0, root->GetRect().w, root->GetRect().h);
+    Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
     SetRect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
         bounds));
 
@@ -166,7 +166,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     const int height_limit = 2000;
     int current_height = se->GetContentHeight();
     if (current_height > height_limit) {
-      se->caret.Place(TBPoint(0, current_height - height_limit));
+      se->caret.Place(Point(0, current_height - height_limit));
       se->selection.SelectToCaret(se->blocks.GetFirst(), 0);
       se->Delete();
     }

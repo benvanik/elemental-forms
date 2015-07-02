@@ -22,10 +22,10 @@ class TBListBackend {
  public:
   TBListBackend() : m_data(nullptr) {}
   ~TBListBackend() { RemoveAll(); }
-  bool Reserve(int num);
-  bool GrowIfNeeded();
-  bool Add(void* data);
-  bool Add(void* data, int index);
+  void Reserve(int num);
+  void GrowIfNeeded();
+  void Add(void* data);
+  void Add(void* data, int index);
   void Set(void* data, int index);
   void* Get(int index) const;
   void* operator[](int index) const { return Get(index); }
@@ -52,23 +52,17 @@ class TBListBackend {
 template <class T>
 class TBListOf {
  public:
-  /** Make sure there is space for at least num items in the list. Returns false
-   * on OOM failure. */
-  bool Reserve(int num) { return m_list.Reserve(num); }
+  // Ensures there is space for at least num items in the list.
+  void Reserve(int num) { m_list.Reserve(num); }
 
-  /** Make sure there is space for at least one more item in the list. Returns
-     false on OOM failure.
-          There's no need to call this, but it can make OOM handling easier in
-     some situations since you
-          can guarantee there is space is in a list *before* you allocate an
-     object to insert into it. */
-  bool GrowIfNeeded() { return m_list.GrowIfNeeded(); }
+  // Ensures there is space for at least one more item in the list.
+  void GrowIfNeeded() { m_list.GrowIfNeeded(); }
 
-  /** Add data at the end of the list. Returns false on OOM failure. */
-  bool Add(T* data) { return m_list.Add(data); }
+  // Adds data at the end of the list.
+  void Add(T* data) { m_list.Add(data); }
 
-  /** Add data at the given index in the list. Returns false on OOM failure. */
-  bool Add(T* data, int index) { return m_list.Add(data, index); }
+  // Adds data at the given index in the list.
+  void Add(T* data, int index) { m_list.Add(data, index); }
 
   /** Replace the item at the index with the new data */
   void Set(T* data, int index) { m_list.Set(data, index); }

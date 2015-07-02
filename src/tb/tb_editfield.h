@@ -88,7 +88,7 @@ class TBEditField : public TBWidget,
   ~TBEditField();
 
   /** Get the visible rect (the GetPaddingRect() minus any scrollbars) */
-  TBRect GetVisibleRect();
+  Rect GetVisibleRect();
 
   /** Set if multiple lines should be allowed or not.
           Will also set wrapping (to true if multiline, and false if not). */
@@ -215,14 +215,14 @@ class TBEditField : public TBWidget,
   // == TBStyleEditListener =======================
   virtual void OnChange();
   virtual bool OnEnter();
-  virtual void Invalidate(const TBRect& rect);
+  virtual void Invalidate(const Rect& rect);
   virtual void DrawString(int32_t x, int32_t y, TBFontFace* font,
                           const TBColor& color, const char* str, size_t len);
-  virtual void DrawRect(const TBRect& rect, const TBColor& color);
-  virtual void DrawRectFill(const TBRect& rect, const TBColor& color);
-  virtual void DrawTextSelectionBg(const TBRect& rect);
-  virtual void DrawContentSelectionFg(const TBRect& rect);
-  virtual void DrawCaret(const TBRect& rect);
+  virtual void DrawRect(const Rect& rect, const TBColor& color);
+  virtual void DrawRectFill(const Rect& rect, const TBColor& color);
+  virtual void DrawTextSelectionBg(const Rect& rect);
+  virtual void DrawContentSelectionFg(const Rect& rect);
+  virtual void DrawCaret(const Rect& rect);
   virtual void Scroll(int32_t dx, int32_t dy);
   virtual void UpdateScrollbars();
   virtual void CaretBlinkStart();

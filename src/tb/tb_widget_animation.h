@@ -64,21 +64,21 @@ class RectWidgetAnimation : public WidgetAnimation {
   };
 
   // Animates the widget between the given source and dest rectangle.
-  RectWidgetAnimation(TBWidget* widget, const TBRect& src_rect,
-                      const TBRect& dst_rect);
+  RectWidgetAnimation(TBWidget* widget, const Rect& src_rect,
+                      const Rect& dst_rect);
   // Animates the widget between rectangles based on the current widget
   // rectangle and a delta. The reference rectangle will be taken from the
   // target widget on the first OnAnimationUpdate.
-  RectWidgetAnimation(TBWidget* widget, const TBRect& delta_rect, Mode mode);
+  RectWidgetAnimation(TBWidget* widget, const Rect& delta_rect, Mode mode);
 
   void OnAnimationStart() override;
   void OnAnimationUpdate(float progress) override;
   void OnAnimationStop(bool aborted) override;
 
  private:
-  TBRect m_src_rect;
-  TBRect m_dst_rect;
-  TBRect m_delta_rect;
+  Rect m_src_rect;
+  Rect m_dst_rect;
+  Rect m_delta_rect;
   Mode m_mode;
 };
 

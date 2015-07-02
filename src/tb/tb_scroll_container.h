@@ -89,7 +89,7 @@ class TBScrollContainer : public TBWidget {
 
   virtual void InvalidateLayout(InvalidationMode il);
 
-  virtual TBRect GetPaddingRect();
+  virtual Rect GetPaddingRect();
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints);
 

@@ -99,10 +99,10 @@ TBWidget::~TBWidget() {
               .HasLinks());  // There's still listeners added to this widget!
 }
 
-void TBWidget::SetRect(const TBRect& rect) {
+void TBWidget::SetRect(const Rect& rect) {
   if (m_rect.Equals(rect)) return;
 
-  TBRect old_rect = m_rect;
+  Rect old_rect = m_rect;
   m_rect = rect;
 
   if (old_rect.w != m_rect.w || old_rect.h != m_rect.h)
@@ -429,7 +429,7 @@ void TBWidget::ScrollByRecursive(int& dx, int& dy) {
 }
 
 void TBWidget::ScrollIntoViewRecursive() {
-  TBRect scroll_to_rect = m_rect;
+  Rect scroll_to_rect = m_rect;
   TBWidget* tmp = this;
   while (tmp->m_parent) {
     tmp->m_parent->ScrollIntoView(scroll_to_rect);
@@ -439,12 +439,12 @@ void TBWidget::ScrollIntoViewRecursive() {
   }
 }
 
-void TBWidget::ScrollIntoView(const TBRect& rect) {
+void TBWidget::ScrollIntoView(const Rect& rect) {
   const ScrollInfo info = GetScrollInfo();
   int new_x = info.x;
   int new_y = info.y;
 
-  const TBRect visible_rect = GetPaddingRect().Offset(info.x, info.y);
+  const Rect visible_rect = GetPaddingRect().Offset(info.x, info.y);
 
   if (rect.y <= visible_rect.y)
     new_y = rect.y;
@@ -673,7 +673,7 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   GetChildTranslation(child_translation_x, child_translation_y);
   g_renderer->Translate(child_translation_x, child_translation_y);
 
-  TBRect clip_rect = g_renderer->GetClipRect();
+  Rect clip_rect = g_renderer->GetClipRect();
 
   // Invoke paint on all children that are in the current visible rect.
   for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
@@ -729,7 +729,7 @@ void TBWidget::OnResized(int old_w, int old_h) {
   int dh = m_rect.h - old_h;
   for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
     if (child->GetVisibility() == Visibility::kGone) continue;
-    TBRect rect = child->m_rect;
+    Rect rect = child->m_rect;
     if (any(child->m_gravity & Gravity::kLeft) &&
         any(child->m_gravity & Gravity::kRight)) {
       rect.w += dw;
@@ -751,8 +751,8 @@ void TBWidget::OnInflateChild(TBWidget* child) {
 
   // If the child pull towards only one edge (per axis), stick to that edge
   // and use the preferred size. Otherwise fill up all available space.
-  TBRect padding_rect = GetPaddingRect();
-  TBRect child_rect = padding_rect;
+  Rect padding_rect = GetPaddingRect();
+  Rect child_rect = padding_rect;
   Gravity gravity = child->GetGravity();
   bool fill_x = any(gravity & Gravity::kLeft) && any(gravity & Gravity::kRight);
   bool fill_y = any(gravity & Gravity::kTop) && any(gravity & Gravity::kBottom);
@@ -774,8 +774,8 @@ void TBWidget::OnInflateChild(TBWidget* child) {
   child->SetRect(child_rect);
 }
 
-TBRect TBWidget::GetPaddingRect() {
-  TBRect padding_rect(0, 0, m_rect.w, m_rect.h);
+Rect TBWidget::GetPaddingRect() {
+  Rect padding_rect(0, 0, m_rect.w, m_rect.h);
   if (TBSkinElement* e = GetSkinBgElement()) {
     padding_rect.x += e->padding_left;
     padding_rect.y += e->padding_top;
@@ -1035,7 +1035,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
   g_renderer->Translate(trns_x, trns_y);
 
   // Paint background skin
-  TBRect local_rect(0, 0, m_rect.w, m_rect.h);
+  Rect local_rect(0, 0, m_rect.w, m_rect.h);
   TBWidgetSkinConditionContext context(this);
   TBSkinElement* used_element = g_tb_skin->PaintSkin(
       local_rect, skin_element, static_cast<SkinState>(state), context);

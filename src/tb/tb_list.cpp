@@ -17,22 +17,21 @@
 
 namespace tb {
 
-bool TBListBackend::Add(void* data) {
-  if (!GrowIfNeeded()) return false;
+void TBListBackend::Add(void* data) {
+  GrowIfNeeded();
   m_data->list[m_data->num] = data;
   m_data->num++;
-  return true;
 }
 
-bool TBListBackend::Add(void* data, int index) {
+void TBListBackend::Add(void* data, int index) {
   assert(index >= 0 && index <= GetNumItems());
-  if (!GrowIfNeeded()) return false;
-  if (index < m_data->num)
-    memmove(&m_data->list[index + 1], &m_data->list[index],
-            (m_data->num - index) * sizeof(void*));
+  GrowIfNeeded();
+  if (index < m_data->num) {
+    std::memmove(&m_data->list[index + 1], &m_data->list[index],
+                 (m_data->num - index) * sizeof(void*));
+  }
   m_data->list[index] = data;
   m_data->num++;
-  return true;
 }
 
 void TBListBackend::Set(void* data, int index) {
@@ -84,27 +83,25 @@ void* TBListBackend::Get(int index) const {
   return m_data->list[index];
 }
 
-bool TBListBackend::Reserve(int new_capacity) {
+void TBListBackend::Reserve(int new_capacity) {
   assert(new_capacity > 0);
   if (new_capacity > GetCapacity()) {
     int num = GetNumItems();
-    if (char* new_data = (char*)realloc(
-            m_data, sizeof(TBLIST_DATA) + sizeof(void*) * (new_capacity))) {
-      m_data = (TBLIST_DATA*)new_data;
-      m_data->num = num;
-      m_data->capacity = new_capacity;
-      m_data->list = (void**)(new_data + sizeof(TBLIST_DATA));
-      return true;
-    }
-    return false;
+    char* new_data = (char*)realloc(
+        m_data, sizeof(TBLIST_DATA) + sizeof(void*) * (new_capacity));
+    m_data = (TBLIST_DATA*)new_data;
+    m_data->num = num;
+    m_data->capacity = new_capacity;
+    m_data->list = (void**)(new_data + sizeof(TBLIST_DATA));
+    return;
   }
-  return true;
 }
 
-bool TBListBackend::GrowIfNeeded() {
+void TBListBackend::GrowIfNeeded() {
   int capacity = GetCapacity();
-  if (GetNumItems() == capacity) return Reserve(Clamp(4, capacity * 2, 1024));
-  return true;
+  if (GetNumItems() == capacity) {
+    Reserve(Clamp(4, capacity * 2, 1024));
+  }
 }
 
 }  // namespace tb

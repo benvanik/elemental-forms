@@ -85,30 +85,30 @@ class TBRenderer {
           pushing a new cliprect that should clip inside the last clip rect,
           and false when restoring.
           It will return the clip rect that was in use before this call. */
-  virtual TBRect SetClipRect(const TBRect& rect, bool add_to_current) = 0;
+  virtual Rect SetClipRect(const Rect& rect, bool add_to_current) = 0;
 
   /** Get the current clip rect. Note: This may be different from the rect
           sent to SetClipRect, due to intersecting with the previous cliprect!
      */
-  virtual TBRect GetClipRect() = 0;
+  virtual Rect GetClipRect() = 0;
 
   /** Draw the src_rect part of the fragment stretched to dst_rect.
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
-  virtual void DrawBitmap(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmapFragment* bitmap_fragment) = 0;
 
   /** Draw the src_rect part of the bitmap stretched to dst_rect.
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
-  virtual void DrawBitmap(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmap* bitmap) = 0;
 
   /** Draw the src_rect part of the fragment stretched to dst_rect.
           The bitmap will be used as a mask for the color.
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
-  virtual void DrawBitmapColored(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const TBColor& color,
                                  TBBitmapFragment* bitmap_fragment) = 0;
 
@@ -116,17 +116,17 @@ class TBRenderer {
           The bitmap will be used as a mask for the color.
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
-  virtual void DrawBitmapColored(const TBRect& dst_rect, const TBRect& src_rect,
+  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const TBColor& color, TBBitmap* bitmap) = 0;
 
   /** Draw the bitmap tiled into dst_rect. */
-  virtual void DrawBitmapTile(const TBRect& dst_rect, TBBitmap* bitmap) = 0;
+  virtual void DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap) = 0;
 
   /** Draw a 1px thick rectangle outline. */
-  virtual void DrawRect(const TBRect& dst_rect, const TBColor& color) = 0;
+  virtual void DrawRect(const Rect& dst_rect, const TBColor& color) = 0;
 
   /** Draw a filled rectangle. */
-  virtual void DrawRectFill(const TBRect& dst_rect, const TBColor& color) = 0;
+  virtual void DrawRectFill(const Rect& dst_rect, const TBColor& color) = 0;
 
   /** Make sure the given bitmap fragment is flushed from any batching, because
      it may

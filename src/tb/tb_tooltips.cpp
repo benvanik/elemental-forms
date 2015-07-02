@@ -62,14 +62,14 @@ bool TBTooltipWindow::Show(int mouse_x, int mouse_y) {
   return true;
 }
 
-TBRect TBTooltipWindow::GetAlignedRect(int x, int y) {
+Rect TBTooltipWindow::GetAlignedRect(int x, int y) {
   TBWidget* root = GetParentRoot();
 
   SizeConstraints sc(root->GetRect().w, root->GetRect().h);
 
   PreferredSize ps = GetPreferredSize(sc);
 
-  TBPoint pos(x, y);
+  Point pos(x, y);
   int w = std::min(ps.pref_w, root->GetRect().w);
   int h = std::min(ps.pref_h, root->GetRect().h);
 
@@ -78,7 +78,7 @@ TBRect TBTooltipWindow::GetAlignedRect(int x, int y) {
   if (pos.y + h > root->GetRect().h)
     y = pos.y - TBTooltipManager::tooltip_point_offset_y - h;
 
-  return TBRect(x, y, w, h);
+  return Rect(x, y, w, h);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
       int y = TBWidget::pointer_move_widget_y;
       tipped_widget->ConvertToRoot(x, y);
       y += tooltip_point_offset_y;
-      TBPoint tt_point = m_tooltip->GetOffsetPoint();
+      Point tt_point = m_tooltip->GetOffsetPoint();
       if (abs(tt_point.x - x) > (int)tooltip_hide_point_dist ||
           abs(tt_point.y - y) > (int)tooltip_hide_point_dist) {
         KillToolTip();

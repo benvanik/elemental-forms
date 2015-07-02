@@ -59,16 +59,15 @@ void OpacityWidgetAnimation::OnAnimationStop(bool aborted) {
     m_widget->SetOpacity(m_dst_opacity);
 }
 
-RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget,
-                                         const TBRect& src_rect,
-                                         const TBRect& dst_rect)
+RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget, const Rect& src_rect,
+                                         const Rect& dst_rect)
     : WidgetAnimation(widget),
       m_src_rect(src_rect),
       m_dst_rect(dst_rect),
       m_mode(Mode::kSrcToDest) {}
 
 RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget,
-                                         const TBRect& delta_rect, Mode mode)
+                                         const Rect& delta_rect, Mode mode)
     : WidgetAnimation(widget), m_delta_rect(delta_rect), m_mode(mode) {
   assert(mode == Mode::kDeltaIn || mode == Mode::kDeltaOut);
 }
@@ -86,7 +85,7 @@ void RectWidgetAnimation::OnAnimationStart() {
 void RectWidgetAnimation::OnAnimationUpdate(float progress) {
   if (m_mode == Mode::kDeltaIn || m_mode == Mode::kDeltaOut) {
     m_dst_rect = m_src_rect = m_widget->GetRect();
-    if (m_dst_rect.Equals(TBRect())) {
+    if (m_dst_rect.Equals(Rect())) {
       // Widget hasn't been laid out yet,
       // the animation was started too soon.
       AnimationManager::AbortAnimation(this, true);
@@ -105,7 +104,7 @@ void RectWidgetAnimation::OnAnimationUpdate(float progress) {
     }
     m_mode = Mode::kSrcToDest;
   }
-  TBRect rect;
+  Rect rect;
   rect.x = int(Lerp(float(m_src_rect.x), float(m_dst_rect.x), progress));
   rect.y = int(Lerp(float(m_src_rect.y), float(m_dst_rect.y), progress));
   rect.w = int(Lerp(float(m_src_rect.w), float(m_dst_rect.w), progress));
@@ -167,7 +166,7 @@ bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
   if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
     // Move out dying message windows.
     if (auto anim = new RectWidgetAnimation(
-            window, TBRect(0, 50, 0, 0), RectWidgetAnimation::Mode::kDeltaIn))
+            window, Rect(0, 50, 0, 0), RectWidgetAnimation::Mode::kDeltaIn))
       AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
@@ -191,7 +190,7 @@ void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
   if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
     // Move in new message windows
     if (auto anim = new RectWidgetAnimation(
-            window, TBRect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))
+            window, Rect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))
       AnimationManager::StartAnimation(anim);
   }
   if (TBDimmer* dimmer = TBSafeCast<TBDimmer>(widget)) {

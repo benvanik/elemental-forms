@@ -207,7 +207,7 @@ void TBSelection::Select(const TBTextOfs& new_start,
   Invalidate();
 }
 
-void TBSelection::Select(const TBPoint& from, const TBPoint& to) {
+void TBSelection::Select(const Point& from, const Point& to) {
   Invalidate();
   styledit->caret.Place(from);
   start.Set(styledit->caret.pos);
@@ -387,7 +387,7 @@ TBCaret::TBCaret(TBStyleEdit* styledit)
 void TBCaret::Invalidate() {
   if (styledit->listener)
     styledit->listener->Invalidate(
-        TBRect(x - styledit->scroll_x, y - styledit->scroll_y, width, height));
+        Rect(x - styledit->scroll_x, y - styledit->scroll_y, width, height));
 }
 
 void TBCaret::UpdatePos() {
@@ -451,7 +451,7 @@ bool TBCaret::Move(bool forward, bool word) {
   return Place(pos.block, pos.ofs, true, forward);
 }
 
-bool TBCaret::Place(const TBPoint& point) {
+bool TBCaret::Place(const Point& point) {
   TBBlock* block = styledit->FindBlock(point.y);
   TBTextFragment* fragment =
       block->FindFragment(point.x, point.y - block->ypos);
@@ -520,7 +520,7 @@ void TBCaret::Paint(int32_t translate_x, int32_t translate_y) {
   //	if (on && !(styledit->select_state && styledit->selection.IsSelected()))
   if (on || styledit->select_state) {
     styledit->listener->DrawCaret(
-        TBRect(translate_x + x, translate_y + y, width, height));
+        Rect(translate_x + x, translate_y + y, width, height));
   }
 }
 
@@ -988,12 +988,12 @@ TBTextFragment* TBBlock::FindFragment(int32_t x, int32_t y) const {
 void TBBlock::Invalidate() {
   if (styledit->listener)
     styledit->listener->Invalidate(
-        TBRect(0, -styledit->scroll_y + ypos, styledit->layout_width, height));
+        Rect(0, -styledit->scroll_y + ypos, styledit->layout_width, height));
 }
 
 void TBBlock::BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                                   TBTextProps* props, TBRegion& bg_region,
-                                   TBRegion& fg_region) {
+                                   TBTextProps* props, RectRegion& bg_region,
+                                   RectRegion& fg_region) {
   if (!styledit->selection.IsBlockSelected(this)) return;
 
   TBTextFragment* fragment = fragments.GetFirst();
@@ -1007,7 +1007,7 @@ void TBBlock::BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
 void TBBlock::Paint(int32_t translate_x, int32_t translate_y,
                     TBTextProps* props) {
   TMPDEBUG(styledit->listener->DrawRect(
-      TBRect(translate_x, translate_y + ypos, styledit->layout_width, height),
+      Rect(translate_x, translate_y + ypos, styledit->layout_width, height),
       TBColor(255, 200, 0, 128)));
 
   TBTextFragment* fragment = fragments.GetFirst();
@@ -1032,8 +1032,8 @@ void TBTextFragment::UpdateContentPos() {
 void TBTextFragment::BuildSelectionRegion(int32_t translate_x,
                                           int32_t translate_y,
                                           TBTextProps* props,
-                                          TBRegion& bg_region,
-                                          TBRegion& fg_region) {
+                                          RectRegion& bg_region,
+                                          RectRegion& fg_region) {
   if (!block->styledit->selection.IsFragmentSelected(this)) return;
 
   int x = translate_x + xpos;
@@ -1042,7 +1042,7 @@ void TBTextFragment::BuildSelectionRegion(int32_t translate_x,
 
   if (content) {
     // Selected embedded content should add to the foreground region.
-    fg_region.IncludeRect(TBRect(x, y, GetWidth(font), GetHeight(font)));
+    fg_region.IncludeRect(Rect(x, y, GetWidth(font), GetHeight(font)));
     return;
   }
 
@@ -1057,7 +1057,7 @@ void TBTextFragment::BuildSelectionRegion(int32_t translate_x,
   int s1x = GetStringWidth(font, block->str.c_str() + ofs, sofs1 - ofs);
   int s2x = GetStringWidth(font, block->str.c_str() + sofs1, sofs2 - sofs1);
 
-  bg_region.IncludeRect(TBRect(x + s1x, y, s2x, GetHeight(font)));
+  bg_region.IncludeRect(Rect(x + s1x, y, s2x, GetHeight(font)));
 }
 
 void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
@@ -1073,7 +1073,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
     content->Paint(this, translate_x, translate_y, props);
     return;
   }
-  TMPDEBUG(listener->DrawRect(TBRect(x, y, GetWidth(font), GetHeight(font)),
+  TMPDEBUG(listener->DrawRect(Rect(x, y, GetWidth(font), GetHeight(font)),
                               TBColor(255, 255, 255, 128)));
 
   if (IsBreak()) {
@@ -1101,7 +1101,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
     int line_h = font->GetHeight() / 16;
     line_h = std::max(line_h, 1);
     listener->DrawRectFill(
-        TBRect(x, y + GetBaseline(font) + 1, GetWidth(font), line_h), color);
+        Rect(x, y + GetBaseline(font) + 1, GetWidth(font), line_h), color);
   }
 }
 
@@ -1337,7 +1337,7 @@ void TBStyleEdit::Reformat(bool update_fragments) {
     block = block->GetNext();
   }
   EndLockScrollbars();
-  listener->Invalidate(TBRect(0, 0, layout_width, layout_height));
+  listener->Invalidate(Rect(0, 0, layout_width, layout_height));
 }
 
 int32_t TBStyleEdit::GetContentWidth() {
@@ -1355,7 +1355,7 @@ int32_t TBStyleEdit::GetContentWidth() {
 
 int32_t TBStyleEdit::GetContentHeight() const { return content_height; }
 
-void TBStyleEdit::Paint(const TBRect& rect, const TBFontDescription& font_desc,
+void TBStyleEdit::Paint(const Rect& rect, const TBFontDescription& font_desc,
                         const TBColor& text_color) {
   TBTextProps props(font_desc, text_color);
 
@@ -1368,7 +1368,7 @@ void TBStyleEdit::Paint(const TBRect& rect, const TBFontDescription& font_desc,
   }
 
   // Get the selection region for all visible blocks
-  TBRegion bg_region, fg_region;
+  RectRegion bg_region, fg_region;
   if (selection.IsSelected()) {
     TBBlock* block = first_visible_block;
     while (block) {
@@ -1480,31 +1480,31 @@ bool TBStyleEdit::KeyDown(int key, SpecialKey special_key,
     caret.Move(true, any(modifierkeys & ModifierKeys::kCtrl));
   } else if (special_key == SpecialKey::kUp) {
     handled =
-        caret.Place(TBPoint(caret.wanted_x, old_caret_pos.block->ypos +
-                                                old_caret_elm->line_ypos - 1));
+        caret.Place(Point(caret.wanted_x, old_caret_pos.block->ypos +
+                                              old_caret_elm->line_ypos - 1));
   } else if (special_key == SpecialKey::kDown) {
-    handled = caret.Place(TBPoint(
+    handled = caret.Place(Point(
         caret.wanted_x, old_caret_pos.block->ypos + old_caret_elm->line_ypos +
                             old_caret_elm->line_height + 1));
   } else if (special_key == SpecialKey::kPageUp) {
-    caret.Place(TBPoint(caret.wanted_x, caret.y - layout_height));
+    caret.Place(Point(caret.wanted_x, caret.y - layout_height));
   } else if (special_key == SpecialKey::kPageDown) {
-    caret.Place(TBPoint(caret.wanted_x,
-                        caret.y + layout_height + old_caret_elm->line_height));
+    caret.Place(Point(caret.wanted_x,
+                      caret.y + layout_height + old_caret_elm->line_height));
   } else if (special_key == SpecialKey::kHome &&
              any(modifierkeys & ModifierKeys::kCtrl)) {
-    caret.Place(TBPoint(0, 0));
+    caret.Place(Point(0, 0));
   } else if (special_key == SpecialKey::kEnd &&
              any(modifierkeys & ModifierKeys::kCtrl)) {
     caret.Place(
-        TBPoint(32000, blocks.GetLast()->ypos + blocks.GetLast()->height));
+        Point(32000, blocks.GetLast()->ypos + blocks.GetLast()->height));
   } else if (special_key == SpecialKey::kHome) {
-    caret.Place(TBPoint(0, caret.y));
+    caret.Place(Point(0, caret.y));
   } else if (special_key == SpecialKey::kEnd) {
-    caret.Place(TBPoint(32000, caret.y));
+    caret.Place(Point(32000, caret.y));
   } else if (key == '8' && any(modifierkeys & ModifierKeys::kCtrl)) {
     packed.show_whitespace = !packed.show_whitespace;
-    listener->Invalidate(TBRect(0, 0, layout_width, layout_height));
+    listener->Invalidate(Rect(0, 0, layout_width, layout_height));
   } else if (!packed.read_only && (special_key == SpecialKey::kDelete ||
                                    special_key == SpecialKey::kBackspace)) {
     if (!selection.IsSelected()) {
@@ -1598,19 +1598,19 @@ void TBStyleEdit::Redo() {
   }
 }
 
-bool TBStyleEdit::MouseDown(const TBPoint& point, int button, int clicks,
+bool TBStyleEdit::MouseDown(const Point& point, int button, int clicks,
                             ModifierKeys modifierkeys, bool touch) {
   if (button != 1) return false;
 
   if (touch) {
-    mousedown_point = TBPoint(point.x + scroll_x, point.y + scroll_y);
+    mousedown_point = Point(point.x + scroll_x, point.y + scroll_y);
   } else if (packed.selection_on) {
     // if (modifierkeys & P_SHIFT) // Select to new caretpos
     //{
     //}
     // else // Start selection
     {
-      mousedown_point = TBPoint(point.x + scroll_x, point.y + scroll_y);
+      mousedown_point = Point(point.x + scroll_x, point.y + scroll_y);
       selection.SelectNothing();
 
       // clicks is 1 to infinite, and here we support only doubleclick, so make
@@ -1628,7 +1628,7 @@ bool TBStyleEdit::MouseDown(const TBPoint& point, int button, int clicks,
   return true;
 }
 
-bool TBStyleEdit::MouseUp(const TBPoint& point, int button,
+bool TBStyleEdit::MouseUp(const Point& point, int button,
                           ModifierKeys modifierkeys, bool touch) {
   if (button != 1) return false;
 
@@ -1649,9 +1649,9 @@ bool TBStyleEdit::MouseUp(const TBPoint& point, int button,
   return true;
 }
 
-bool TBStyleEdit::MouseMove(const TBPoint& point) {
+bool TBStyleEdit::MouseMove(const Point& point) {
   if (select_state) {
-    TBPoint p(point.x + scroll_x, point.y + scroll_y);
+    Point p(point.x + scroll_x, point.y + scroll_y);
     selection.Select(mousedown_point, p);
 
     if (select_state == 2) {

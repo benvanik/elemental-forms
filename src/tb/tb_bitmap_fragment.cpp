@@ -202,8 +202,8 @@ TBBitmapFragment* TBBitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   if (!m_rows.GetNumItems()) {
     // Create a row covering the entire bitmap.
     TBFragmentSpaceAllocator* row;
-    if (!m_rows.GrowIfNeeded() ||
-        !(row = new TBFragmentSpaceAllocator(0, m_bitmap_w, m_bitmap_h)))
+    m_rows.GrowIfNeeded();
+    if (!(row = new TBFragmentSpaceAllocator(0, m_bitmap_w, m_bitmap_h)))
       return nullptr;
     m_rows.Add(row);
   }
@@ -228,8 +228,8 @@ TBBitmapFragment* TBBitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   // for fragment
   if (best_row->IsAllAvailable() && needed_h < best_row->height) {
     TBFragmentSpaceAllocator* row;
-    if (!m_rows.GrowIfNeeded() ||
-        !(row = new TBFragmentSpaceAllocator(best_row->y + needed_h, m_bitmap_w,
+    m_rows.GrowIfNeeded();
+    if (!(row = new TBFragmentSpaceAllocator(best_row->y + needed_h, m_bitmap_w,
                                              best_row->height - needed_h)))
       return nullptr;
     // Keep the rows sorted from top to bottom
@@ -307,7 +307,7 @@ void TBBitmapFragmentMap::CopyData(TBBitmapFragment* frag, int data_stride,
   }
   // Copy the bitmap data to the border around the fragment
   if (border) {
-    TBRect rect = frag->m_rect.Expand(border, border);
+    Rect rect = frag->m_rect.Expand(border, border);
     // Copy vertical edges
     dst = m_bitmap_data + rect.x + (rect.y + 1) * m_bitmap_w;
     src = frag_data;
@@ -399,7 +399,8 @@ TBBitmapFragment* TBBitmapFragmentManager::CreateNewFragment(
   // know it will fit.
   bool allow_another_map = (m_num_maps_limit == 0 ||
                             m_fragment_maps.GetNumItems() < m_num_maps_limit);
-  if (!frag && allow_another_map && m_fragment_maps.GrowIfNeeded()) {
+  if (!frag && allow_another_map) {
+    m_fragment_maps.GrowIfNeeded();
     int po2w = TBGetNearestPowerOfTwo(std::max(data_w, m_default_map_w));
     int po2h = TBGetNearestPowerOfTwo(std::max(data_h, m_default_map_h));
     if (dedicated_map) {
@@ -485,8 +486,8 @@ void TBBitmapFragmentManager::Debug() {
   for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
     TBBitmapFragmentMap* fm = m_fragment_maps[i];
     if (TBBitmap* bitmap = fm->GetBitmap())
-      g_renderer->DrawBitmap(TBRect(x, 0, fm->m_bitmap_w, fm->m_bitmap_h),
-                             TBRect(0, 0, fm->m_bitmap_w, fm->m_bitmap_h),
+      g_renderer->DrawBitmap(Rect(x, 0, fm->m_bitmap_w, fm->m_bitmap_h),
+                             Rect(0, 0, fm->m_bitmap_w, fm->m_bitmap_h),
                              bitmap);
     x += fm->m_bitmap_w + 5;
   }

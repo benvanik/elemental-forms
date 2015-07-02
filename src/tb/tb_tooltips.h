@@ -27,13 +27,13 @@ class TBTooltipWindow : public TBPopupWindow {
 
   bool Show(int mouse_x, int mouse_y);
 
-  TBPoint GetOffsetPoint() const { return TBPoint(m_offset_x, m_offset_y); }
+  Point GetOffsetPoint() const { return Point(m_offset_x, m_offset_y); }
 
  private:
   int m_offset_x;
   int m_offset_y;
 
-  TBRect GetAlignedRect(int x, int y);
+  Rect GetAlignedRect(int x, int y);
 
   TBEditField m_content;
 };

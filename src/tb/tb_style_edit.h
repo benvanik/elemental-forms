@@ -34,15 +34,15 @@ class TBStyleEditListener {
 
   virtual void OnChange(){};
   virtual bool OnEnter() { return false; };
-  virtual void Invalidate(const TBRect& rect) = 0;
+  virtual void Invalidate(const Rect& rect) = 0;
   virtual void DrawString(int32_t x, int32_t y, TBFontFace* font,
                           const TBColor& color, const char* str,
                           size_t len = std::string::npos) = 0;
-  virtual void DrawRect(const TBRect& rect, const TBColor& color) = 0;
-  virtual void DrawRectFill(const TBRect& rect, const TBColor& color) = 0;
-  virtual void DrawTextSelectionBg(const TBRect& rect) = 0;
-  virtual void DrawContentSelectionFg(const TBRect& rect) = 0;
-  virtual void DrawCaret(const TBRect& rect) = 0;
+  virtual void DrawRect(const Rect& rect, const TBColor& color) = 0;
+  virtual void DrawRectFill(const Rect& rect, const TBColor& color) = 0;
+  virtual void DrawTextSelectionBg(const Rect& rect) = 0;
+  virtual void DrawContentSelectionFg(const Rect& rect) = 0;
+  virtual void DrawCaret(const Rect& rect) = 0;
   virtual void Scroll(int32_t dx, int32_t dy) = 0;
   virtual void UpdateScrollbars() = 0;
   virtual void CaretBlinkStart() = 0;
@@ -100,7 +100,7 @@ class TBSelection {
   TBSelection(TBStyleEdit* styledit);
   void Invalidate() const;
   void Select(const TBTextOfs& new_start, const TBTextOfs& new_stop);
-  void Select(const TBPoint& from, const TBPoint& to);
+  void Select(const Point& from, const Point& to);
   void Select(size_t glob_ofs_from, size_t glob_ofs_to);
   void SelectToCaret(TBBlock* old_caret_block, size_t old_caret_ofs);
   void SelectAll();
@@ -130,7 +130,7 @@ class TBCaret {
   void Invalidate();
   void UpdatePos();
   bool Move(bool forward, bool word);
-  bool Place(const TBPoint& point);
+  bool Place(const Point& point);
   bool Place(TBBlock* block, size_t ofs, bool allow_snap = true,
              bool snap_forward = false);
   void Place(CaretPosition place);
@@ -232,8 +232,8 @@ class TBBlock : public TBLinkOf<TBBlock> {
 
   void Invalidate();
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                            TBTextProps* props, TBRegion& bg_region,
-                            TBRegion& fg_region);
+                            TBTextProps* props, RectRegion& bg_region,
+                            RectRegion& fg_region);
   void Paint(int32_t translate_x, int32_t translate_y, TBTextProps* props);
 
  public:
@@ -310,8 +310,8 @@ class TBTextFragment : public TBLinkOf<TBTextFragment> {
   void UpdateContentPos();
 
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                            TBTextProps* props, TBRegion& bg_region,
-                            TBRegion& fg_region);
+                            TBTextProps* props, RectRegion& bg_region,
+                            RectRegion& fg_region);
   void Paint(int32_t translate_x, int32_t translate_y, TBTextProps* props);
   void Click(int button, ModifierKeys modifierkeys);
 
@@ -359,14 +359,14 @@ class TBStyleEdit {
 
   void SetFont(const TBFontDescription& font_desc);
 
-  void Paint(const TBRect& rect, const TBFontDescription& font_desc,
+  void Paint(const Rect& rect, const TBFontDescription& font_desc,
              const TBColor& text_color);
   bool KeyDown(int key, SpecialKey special_key, ModifierKeys modifierkeys);
-  bool MouseDown(const TBPoint& point, int button, int clicks,
+  bool MouseDown(const Point& point, int button, int clicks,
                  ModifierKeys modifierkeys, bool touch);
-  bool MouseUp(const TBPoint& point, int button, ModifierKeys modifierkeys,
+  bool MouseUp(const Point& point, int button, ModifierKeys modifierkeys,
                bool touch);
-  bool MouseMove(const TBPoint& point);
+  bool MouseMove(const Point& point);
   void Focus(bool focus);
 
   void Clear(bool init_new = true);
@@ -455,7 +455,7 @@ class TBStyleEdit {
   int32_t scroll_y;
 
   int8_t select_state;
-  TBPoint mousedown_point;
+  Point mousedown_point;
   TBTextFragment* mousedown_fragment;
 
   /** DEPRECATED! This will be removed when using different fonts is properly
