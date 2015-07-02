@@ -139,8 +139,7 @@ class EditWindow : public DemoWindow {
         undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
       if (TBWidget* redo = GetWidgetByID("redo"))
         redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
-      if (TBTextField* info =
-              GetWidgetByIDAndType<TBTextField>(TBIDC("info"))) {
+      if (Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::format_string(
             "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOfs()));
       }
@@ -289,8 +288,7 @@ bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
             GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
       for (TBWidget* child = tc->GetTabLayout()->GetFirstChild(); child;
            child = child->GetNext()) {
-        if (TBButton* button = TBSafeCast<TBButton>(child))
-          button->SetAxis(axis);
+        if (Button* button = TBSafeCast<Button>(child)) button->SetAxis(axis);
       }
     }
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
@@ -344,14 +342,14 @@ ScrollContainerWindow::ScrollContainerWindow() {
 bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
-      TBButton* button = TBSafeCast<TBButton>(ev.target);
+      Button* button = TBSafeCast<Button>(ev.target);
       TBSkinImage* skin_image = new TBSkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
       button->GetContentRoot()->AddChild(skin_image, WidgetZ::kBottom);
       return true;
     } else if (ev.target->GetID() == TBIDC("new buttons")) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
-        TBButton* button = new TBButton;
+        Button* button = new Button;
         button->SetID(TBIDC("remove button"));
         button->SetText(tb::format_string("Remove %d", i));
         ev.target->GetParent()->AddChild(button);
@@ -387,7 +385,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
     if (TBWidget* target = GetWidgetByID(msg->data->id1)) {
-      TBButton* button = new TBButton;
+      Button* button = new Button;
       button->SetID(TBIDC("remove button"));
       button->SetText(tb::format_string("Remove %d", msg->data->v1.GetInt()));
       target->AddChild(button);
@@ -449,8 +447,8 @@ void AnimationsWindow::Animate() {
 
   if (SelectList* curve_select = GetWidgetByIDAndType<SelectList>("curve"))
     curve = static_cast<AnimationCurve>(curve_select->GetValue());
-  if (TBInlineSelect* duration_select =
-          GetWidgetByIDAndType<TBInlineSelect>("duration"))
+  if (SelectInline* duration_select =
+          GetWidgetByIDAndType<SelectInline>("duration"))
     duration = duration_select->GetValueDouble();
   if (TBCheckBox* fade_check = GetWidgetByIDAndType<TBCheckBox>("fade"))
     fade = fade_check->GetValue() ? true : false;

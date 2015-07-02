@@ -39,7 +39,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
         this,
         "TBLayout: axis: y, distribution: available, position: left\n"
         "	TBLayout: id: 'container', axis: y, size: available\n"
-        "	TBTextField: text: 'Event output:'\n"
+        "	Label: text: 'Event output:'\n"
         "	TBEditField: id: 'output', gravity: all, multiline: 1, wrap: "
         "0\n"
         "		lp: pref-height: 100dp");

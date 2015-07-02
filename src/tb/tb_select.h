@@ -112,9 +112,9 @@ class SelectList : public TBWidget, public SelectItemObserver {
 
 // Shows a button that opens a popup with a SelectList with items provided by a
 // SelectItemSource.
-class SelectDropdown : public TBButton, public SelectItemObserver {
+class SelectDropdown : public Button, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(SelectDropdown, TBButton);
+  TBOBJECT_SUBCLASS(SelectDropdown, Button);
 
   SelectDropdown();
   ~SelectDropdown() override;

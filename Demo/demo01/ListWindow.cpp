@@ -15,8 +15,8 @@ AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
   g_widgets_reader->LoadFile(GetContentRoot(),
                              "Demo/demo01/ui_resources/test_list_item.tb.txt");
   TBCheckBox* checkbox = GetWidgetByIDAndType<TBCheckBox>(TBIDC("check"));
-  TBTextField* name = GetWidgetByIDAndType<TBTextField>(TBIDC("name"));
-  TBTextField* info = GetWidgetByIDAndType<TBTextField>(TBIDC("info"));
+  Label* name = GetWidgetByIDAndType<Label>(TBIDC("name"));
+  Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"));
   checkbox->SetValue(item->GetChecked() ? true : false);
   name->SetText(item->str);
   info->SetText(item->GetMale() ? "Male" : "Female");

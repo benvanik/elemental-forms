@@ -106,7 +106,7 @@ class SelectItemSource {
   virtual TBID GetItemID(int index) { return TBID(); }
 
   // Creates the item representation widget(s).
-  // By default, it will create a TBTextField for string-only items, and other
+  // By default, it will create a Label for string-only items, and other
   // types for items that also has image or submenu.
   virtual TBWidget* CreateItemWidget(int index, SelectItemObserver* observer);
 

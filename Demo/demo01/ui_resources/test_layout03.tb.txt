@@ -10,12 +10,12 @@ TBLayout: axis: y, distribution: gravity
 					"The default preferred size is calculated to the largest child " \
 					"(or the skin if there are no children)."
 	TBContainer: gravity: all
-		TBTextField: text: "all", gravity: all
-		TBTextField: text: "top, left, right", gravity: top left right
-		TBTextField: text: "bottom, left, right", gravity: bottom left right
-		TBTextField: text: "left, top, bottom", gravity: left top bottom
-		TBTextField: text: "right, top, bottom", gravity: right top bottom
-		TBButton: text: Upper left
-		TBButton: text: Upper right, gravity: right
-		TBButton: text: Lower left, gravity: bottom
-		TBButton: text: Lower right, gravity: bottom right
+		Label: text: "all", gravity: all
+		Label: text: "top, left, right", gravity: top left right
+		Label: text: "bottom, left, right", gravity: bottom left right
+		Label: text: "left, top, bottom", gravity: left top bottom
+		Label: text: "right, top, bottom", gravity: right top bottom
+		Button: text: Upper left
+		Button: text: Upper right, gravity: right
+		Button: text: Lower left, gravity: bottom
+		Button: text: Lower right, gravity: bottom right

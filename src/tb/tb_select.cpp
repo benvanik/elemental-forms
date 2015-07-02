@@ -162,7 +162,7 @@ void SelectList::ValidateList() {
 
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
-    TBWidget* widget = new TBTextField();
+    TBWidget* widget = new Label();
     widget->SetText(
         tb::format_string(g_tb_lng->GetString(m_header_lng_string_id),
                           num_sorted_items, m_source->GetNumItems()));

@@ -60,7 +60,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     TBWidget root;
     g_widgets_reader->LoadData(
-        &root, "TBButton: id: 'fire', skin: '@test_styles>FireButton>skin'");
+        &root, "Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
     TBWidget* button = root.GetWidgetByID(TBIDC("fire"));
     TB_VERIFY(button->GetSkinBg() == TBIDC("FireButtonSkin"));
@@ -82,11 +82,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TBWidget root;
     g_widgets_reader->LoadData(
         &root,
-        "TBInlineSelect: id: 'select', value: '@test_bar>bar_value'\n"
-        "TBButton: id: 'button_circular', text: '@test_bar>bar_circular'\n"
-        "TBButton: id: 'button_broken_node', text: "
+        "SelectInline: id: 'select', value: '@test_bar>bar_value'\n"
+        "Button: id: 'button_circular', text: '@test_bar>bar_circular'\n"
+        "Button: id: 'button_broken_node', text: "
         "'@test_bar>bar_broken_node'\n"
-        "TBButton: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
+        "Button: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
 
     // Reference from resource to one tree to another tree.
     TBWidget* select = root.GetWidgetByID(TBIDC("select"));

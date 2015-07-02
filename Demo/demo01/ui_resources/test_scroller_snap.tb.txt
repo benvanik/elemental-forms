@@ -10,16 +10,16 @@ ScrollContainer: id: "page-scroller"
 		spacing 0
 		TBContainer
 			@include definitions>pagesize
-			TBTextField: text: "One - Swipe to next page"
+			Label: text: "One - Swipe to next page"
 		TBContainer
 			@include definitions>pagesize
-			TBTextField: text: "Two"
+			Label: text: "Two"
 		TBContainer
 			@include definitions>pagesize
-			TBTextField: text: "Three"
+			Label: text: "Three"
 		TBContainer
 			@include definitions>pagesize
-			TBTextField: text: "Four"
+			Label: text: "Four"
 		TBContainer
 			@include definitions>pagesize
-			TBTextField: text: "Five - Last page"
+			Label: text: "Five - Last page"

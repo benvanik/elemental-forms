@@ -61,12 +61,12 @@ class ToggleContainer : public TBWidget {
   int m_value = 0;
 };
 
-// Just a thin wrapper for a TBButton that is in toggle mode with the skin
+// Just a thin wrapper for a Button that is in toggle mode with the skin
 // SectionHeader by default.
 // It is used as the clickable header in Section that toggles the section.
-class SectionHeader : public TBButton {
+class SectionHeader : public Button {
  public:
-  TBOBJECT_SUBCLASS(SectionHeader, TBButton);
+  TBOBJECT_SUBCLASS(SectionHeader, Button);
 
   SectionHeader();
 

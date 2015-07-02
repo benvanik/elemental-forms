@@ -17,8 +17,8 @@ namespace tb {
 // FIX: axis should affect the buttons arrow skin!
 // FIX: unfocus should set the correct text!
 
-TBInlineSelect::TBInlineSelect() : m_value(0), m_min(0), m_max(100) {
-  SetSkinBg(TBIDC("TBInlineSelect"));
+SelectInline::SelectInline() {
+  SetSkinBg(TBIDC("SelectInline"));
   AddChild(&m_layout);
   m_layout.AddChild(&m_buttons[0]);
   m_layout.AddChild(&m_editfield);
@@ -26,8 +26,8 @@ TBInlineSelect::TBInlineSelect() : m_value(0), m_min(0), m_max(100) {
   m_layout.SetRect(GetPaddingRect());
   m_layout.SetGravity(Gravity::kAll);
   m_layout.SetSpacing(0);
-  m_buttons[0].SetSkinBg(TBIDC("TBButton.flat"));
-  m_buttons[1].SetSkinBg(TBIDC("TBButton.flat"));
+  m_buttons[0].SetSkinBg(TBIDC("Button.flat"));
+  m_buttons[1].SetSkinBg(TBIDC("Button.flat"));
   m_buttons[0].GetContentRoot()->AddChild(new TBSkinImage(TBIDC("arrow.left")));
   m_buttons[1].GetContentRoot()->AddChild(
       new TBSkinImage(TBIDC("arrow.right")));
@@ -42,21 +42,21 @@ TBInlineSelect::TBInlineSelect() : m_value(0), m_min(0), m_max(100) {
   m_editfield.SetText("0");
 }
 
-TBInlineSelect::~TBInlineSelect() {
+SelectInline::~SelectInline() {
   m_layout.RemoveChild(&m_buttons[1]);
   m_layout.RemoveChild(&m_editfield);
   m_layout.RemoveChild(&m_buttons[0]);
   RemoveChild(&m_layout);
 }
 
-void TBInlineSelect::SetLimits(int min, int max) {
+void SelectInline::SetLimits(int min, int max) {
   assert(min <= max);
   m_min = min;
   m_max = max;
   SetValue(m_value);
 }
 
-void TBInlineSelect::SetValueInternal(int value, bool update_text) {
+void SelectInline::SetValueInternal(int value, bool update_text) {
   value = Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
@@ -72,9 +72,9 @@ void TBInlineSelect::SetValueInternal(int value, bool update_text) {
   //          If needed, check if we are alive using a safe pointer first.
 }
 
-void TBInlineSelect::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
+void SelectInline::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
-bool TBInlineSelect::OnEvent(const TBWidgetEvent& ev) {
+bool SelectInline::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kUp ||
         ev.special_key == SpecialKey::kDown) {

@@ -24,11 +24,11 @@ enum class TextAlign {
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(TextAlign, "left", "right", "center");
 
-// TBWidgetString holds a string that can be painted as one line with the set
+// WidgetString holds a string that can be painted as one line with the set
 // alignment.
-class TBWidgetString {
+class WidgetString {
  public:
-  TBWidgetString();
+  WidgetString();
 
   void Paint(TBWidget* widget, const Rect& rect, const Color& color);
 
@@ -40,119 +40,124 @@ class TBWidgetString {
 
   bool empty() const { return m_text.empty(); }
 
-  /** Set which alignment the text should have if the space
-          given when painting is larger than the text. */
+  // Sets which alignment the text should have if the space given when painting
+  // is larger than the text.
   void SetTextAlign(TextAlign align) { m_text_align = align; }
   TextAlign GetTextAlign() { return m_text_align; }
 
  public:
   std::string m_text;
-  TextAlign m_text_align;
+  TextAlign m_text_align = TextAlign::kCenter;
 };
 
-/** TBTextField is a one line text field that is not editable. */
-
-class TBTextField : public TBWidget {
+// A one line text field that is not editable.
+class Label : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBTextField, TBWidget);
+  TBOBJECT_SUBCLASS(Label, TBWidget);
 
-  TBTextField();
+  Label();
 
-  /** Set the text of the text field. */
+  // Sets the text of the text field.
   void SetText(const char* text) override;
   using TBWidget::SetText;
   std::string GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
 
-  /** Set which alignment the text should have if the space
-          given when painting is larger than the text. */
+  // Sets which alignment the text should have if the space given when painting
+  // is larger than the text.
   void SetTextAlign(TextAlign align) { m_text.SetTextAlign(align); }
   TextAlign GetTextAlign() { return m_text.GetTextAlign(); }
 
-  /** Set if this text field should be allowed to squeeze below its
-          preferred size. If squeezable it may shrink to width 0. */
+  // Sets if this text field should be allowed to squeeze below its preferred
+  // size. If squeezable it may shrink to width 0.
   void SetSqueezable(bool squeezable);
   bool GetSqueezable() { return m_squeezable; }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints);
-  virtual void OnFontChanged();
-  virtual void OnPaint(const PaintProps& paint_props);
+  void OnInflate(const INFLATE_INFO& info) override;
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override;
+  void OnFontChanged() override;
+  void OnPaint(const PaintProps& paint_props) override;
 
  protected:
-  TBWidgetString m_text;
-  int m_cached_text_width;  ///< Cached width of m_text
-  bool m_squeezable;
+  // This value on m_cached_text_width means it needs to be updated again.
+  static const int kTextWidthCacheNeedsUpdate = -1;
+
+  WidgetString m_text;
+  int m_cached_text_width = kTextWidthCacheNeedsUpdate;
+  bool m_squeezable = false;
 };
 
-/** TBButton is a regular button widget.
-        Has a text field in its internal layout by default. Other widgets can be
-   added
-        under GetContentRoot(). */
-
-class TBButton : public TBWidget, protected MessageHandler {
+// A regular button widget.
+// Has a text field in its internal layout by default. Other widgets can be
+// added under GetContentRoot().
+class Button : public TBWidget, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(TBButton, TBWidget);
+  TBOBJECT_SUBCLASS(Button, TBWidget);
 
-  TBButton();
-  ~TBButton();
+  Button();
+  ~Button() override;
 
-  /** Set along which axis the content should layouted (If the button has more
-   * content than the text) */
-  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
-  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
+  // Sets along which axis the content should layout (if the button has more
+  // content than the text).
+  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
+  Axis GetAxis() const override { return m_layout.GetAxis(); }
 
-  /** Set if the text field should be allowed to squeeze below its
-          preferred size. If squeezable it may shrink to width 0. */
+  // Sets if the text field should be allowed to squeeze below its preferred
+  // size. If squeezable it may shrink to width 0.
   void SetSqueezable(bool squeezable) { m_textfield.SetSqueezable(squeezable); }
   bool GetSqueezable() { return m_textfield.GetSqueezable(); }
 
-  /** Set to true if the button should fire repeatedly while pressed. */
+  // Sets if the button should fire repeatedly while pressed.
   void SetAutoRepeat(bool auto_repeat_click) {
     m_auto_repeat_click = auto_repeat_click;
   }
   bool GetAutoRepeat() { return m_auto_repeat_click; }
 
-  /** Set to true if the button should toggle on and off, instead of just fire
-          click events. When it's on, it will have value 1 pressed state. */
+  // Sets if the button should toggle on and off, instead of just fire click
+  // events. When it's on, it will have value 1 pressed state.
   void SetToggleMode(bool toggle_mode_on) { m_toggle_mode = toggle_mode_on; }
   bool GetToggleMode() const { return m_toggle_mode; }
 
-  /** Set the text of the button. */
+  // Sets the text of the button.
   void SetText(const char* text) override;
   using TBWidget::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
-  virtual void SetValue(int value);
-  virtual int GetValue();
+  void SetValue(int value) override;
+  int GetValue() override;
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual void OnCaptureChanged(bool captured);
-  virtual void OnSkinChanged();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual HitStatus GetHitStatus(int x, int y);
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints) {
+  void OnInflate(const INFLATE_INFO& info) override;
+  void OnCaptureChanged(bool captured) override;
+  void OnSkinChanged() override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  HitStatus GetHitStatus(int x, int y) override;
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override {
     return m_layout.GetPreferredSize();
   }
 
-  virtual TBWidget* GetContentRoot() { return &m_layout; }
+  TBWidget* GetContentRoot() override { return &m_layout; }
 
-  virtual void OnMessageReceived(Message* msg);
+  void OnMessageReceived(Message* msg) override;
 
  protected:
-  void UpdateTextFieldVisibility();
+  static const int kAutoClickFirstDelayMillis = 500;
+  static const int kAutoClickRepeattDelayMillis = 100;
+
+  void UpdateLabelVisibility();
   bool CanToggle() { return m_toggle_mode || GetGroupID(); }
+
   class ButtonLayout : public TBLayout {
-    virtual void OnChildAdded(TBWidget* child);
-    virtual void OnChildRemove(TBWidget* child);
+    void OnChildAdded(TBWidget* child) override;
+    void OnChildRemove(TBWidget* child) override;
   };
+
   ButtonLayout m_layout;
-  TBTextField m_textfield;
-  bool m_auto_repeat_click;
-  bool m_toggle_mode;
+  Label m_textfield;
+  bool m_auto_repeat_click = false;
+  bool m_toggle_mode = false;
 };
 
 /** TBClickLabel has a text field in its internal layout by default. Pointer
@@ -188,7 +193,7 @@ class TBClickLabel : public TBWidget {
 
  protected:
   TBLayout m_layout;
-  TBTextField m_textfield;
+  Label m_textfield;
 };
 
 /** TBSkinImage is a widget showing a skin element, constrained in size to its

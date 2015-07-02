@@ -2,7 +2,7 @@ TBLayout
 	distribution available
 	axis y
 	TBLayout
-		TBButton
+		Button
 			text Button 1
 		TBRadioButton
 		TBCheckBox

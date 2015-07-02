@@ -100,7 +100,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 void MessageWindow::AddButton(TBID id, bool focused) {
   TBLayout* layout = GetWidgetByIDAndType<TBLayout>(3);
   if (!layout) return;
-  TBButton* btn = new TBButton();
+  Button* btn = new Button();
   btn->SetID(id);
   btn->SetText(g_tb_lng->GetString(btn->GetID()));
   layout->AddChild(btn);
@@ -110,7 +110,7 @@ void MessageWindow::AddButton(TBID id, bool focused) {
 }
 
 bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EventType::kClick && ev.target->IsOfType<TBButton>()) {
+  if (ev.type == EventType::kClick && ev.target->IsOfType<Button>()) {
     WeakWidgetPointer this_widget(this);
 
     // Invoke the click on the target.

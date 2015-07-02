@@ -1,39 +1,39 @@
 WindowInfo
 	title TBLayout distribution
 TBLayout: position: left top, axis: y
-	TBTextField: text: "distribution: preferred"
+	Label: text: "distribution: preferred"
 	TBLayout: distribution: preferred
-		TBButton: text: tab 1
-		TBButton: text: tab 2
-		TBButton: text: tab 3
-		TBButton: text: tab 4
+		Button: text: tab 1
+		Button: text: tab 2
+		Button: text: tab 3
+		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
-	TBTextField: text: "distribution: available"
+	Label: text: "distribution: available"
 	TBLayout: distribution: available
-		TBButton: text: tab 1
-		TBButton: text: tab 2
-		TBButton: text: tab 3
-		TBButton: text: tab 4
+		Button: text: tab 1
+		Button: text: tab 2
+		Button: text: tab 3
+		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
-	TBTextField: text: "distribution: gravity"
+	Label: text: "distribution: gravity"
 	TBLayout: distribution: gravity
-		TBButton: text: tab 1
-		TBButton: text: tab 2
-		TBButton: text: tab 3
-		TBButton: text: tab 4
+		Button: text: tab 1
+		Button: text: tab 2
+		Button: text: tab 3
+		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
-	TBTextField: text: gravity + trailing layout for right align
+	Label: text: gravity + trailing layout for right align
 	TBLayout: distribution: gravity
-		TBButton: text: tab 1
-		TBButton: text: tab 2
-		TBButton: text: tab 3
-		TBButton: text: tab 4
+		Button: text: tab 1
+		Button: text: tab 2
+		Button: text: tab 3
+		Button: text: tab 4
 		TBLayout: gravity: left right, distribution-position: right bottom
 			TBEditField: placeholder: @search, type: "search"
-	TBTextField: text: "gravity + mixed gravity"
+	Label: text: "gravity + mixed gravity"
 	TBLayout: distribution: gravity
-		TBButton: text: tab 1
+		Button: text: tab 1
 		TBEditField: placeholder: @search, gravity: left right, type: "search"
-		TBButton: text: tab 3
-		TBButton: text: tab 4
+		Button: text: tab 3
+		Button: text: tab 4
 		TBEditField: placeholder: @search, gravity: left right, type: "search"

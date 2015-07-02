@@ -3,22 +3,22 @@ WindowInfo
 # Declare a branch of layout nodes that is included in all three containers below.
 test_layout_content
 	TBLayout
-		TBButton
+		Button
 			text Default
 		TBCheckBox
 			value 1
-		TBButton
+		Button
 			axis y
 			text Foo Bar
 			TBSkinImage
 				skin Icon16
-		TBButton
+		Button
 			gravity all
 			text Gravity all
-		TBButton
+		Button
 			gravity top
 			text Gravity top
-		TBButton
+		Button
 			gravity bottom
 			text Gravity bottom
 TBLayout
@@ -32,23 +32,23 @@ TBLayout
 				item: text: "LAYOUT_POSITION_LEFT_TOP"
 				item: text: "LAYOUT_POSITION_RIGHT_BOTTOM"
 				item: text: "LAYOUT_POSITION_GRAVITY"
-		TBButton
+		Button
 			text Toggle axis
 			id toggle axis
 	TBLayout
 		id switch_layout
 		axis y
-		TBTextField: text: "size: preferred"
+		Label: text: "size: preferred"
 		TBContainer
 			@include test_layout_content
 				size preferred
 				id 1
-		TBTextField: text: "size: available"
+		Label: text: "size: available"
 		TBContainer
 			@include test_layout_content
 				size available
 				id 2
-		TBTextField: text: "size: gravity"
+		Label: text: "size: gravity"
 		TBContainer
 			@include test_layout_content
 				size gravity

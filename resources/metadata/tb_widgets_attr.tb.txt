@@ -58,7 +58,7 @@ TBEditField
 	virtual-width <dimension>
 	placeholder <string/lngstring>
 	type text, search, password, email, phone, url, number
-TBTextField
+Label
 	text-align left, center, right
 TBLayout
 	spacing <dimension>
@@ -79,13 +79,13 @@ TabContainer
 		<sub...>
 	root
 		<sub...>
-TBButton
+Button
 	toggle-mode <bool>
 ScrollBar
 TBSlider
 	min <number>
 	max <number>
-TBInlineSelect
+SelectInline
 	min <number>
 	max <number>
 SelectList

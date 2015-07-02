@@ -30,7 +30,7 @@ bool SectionHeader::OnEvent(const TBWidgetEvent& ev) {
       section->SetPendingScrollIntoView(GetValue() ? true : false);
     }
   }
-  return TBButton::OnEvent(ev);
+  return Button::OnEvent(ev);
 }
 
 Section::Section() {

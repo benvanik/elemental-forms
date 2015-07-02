@@ -26,7 +26,7 @@ namespace tb {
         In UI resources, you can refer to strings from language lookup by
    preceding a string with @.
 
-        Ex: TBButton: text: @close   (Create a button with text from lookup of
+        Ex: Button: text: @close   (Create a button with text from lookup of
    "close")
 */
 

@@ -156,15 +156,15 @@ void TBWidget::OnInflate(const INFLATE_INFO& info) {
   }
 }
 
-TB_WIDGET_FACTORY(TBButton, TBValue::Type::kNull, WidgetZ::kBottom) {}
-void TBButton::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(Button, TBValue::Type::kNull, WidgetZ::kBottom) {}
+void Button::OnInflate(const INFLATE_INFO& info) {
   SetToggleMode(info.node->GetValueInt("toggle-mode", GetToggleMode()) ? true
                                                                        : false);
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBInlineSelect, TBValue::Type::kInt, WidgetZ::kTop) {}
-void TBInlineSelect::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(SelectInline, TBValue::Type::kInt, WidgetZ::kTop) {}
+void SelectInline::OnInflate(const INFLATE_INFO& info) {
   int min = info.node->GetValueInt("min", GetMinValue());
   int max = info.node->GetValueInt("max", GetMaxValue());
   SetLimits(min, max);
@@ -335,8 +335,8 @@ void SelectDropdown::OnInflate(const INFLATE_INFO& info) {
 TB_WIDGET_FACTORY(TBCheckBox, TBValue::Type::kInt, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBRadioButton, TBValue::Type::kInt, WidgetZ::kTop) {}
 
-TB_WIDGET_FACTORY(TBTextField, TBValue::Type::kString, WidgetZ::kTop) {}
-void TBTextField::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(Label, TBValue::Type::kString, WidgetZ::kTop) {}
+void Label::OnInflate(const INFLATE_INFO& info) {
   if (const char* text_align =
           info.node->GetValueString("text-align", nullptr)) {
     SetTextAlign(from_string(text_align, GetTextAlign()));

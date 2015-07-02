@@ -1,9 +1,9 @@
 WindowInfo
 	title Animations
 TBLayout: axis: y
-	TBTextField: text: "Duration (in milliseconds):"
-	TBInlineSelect: id: "duration", min: 0, max: 100000, value: 500
-	TBTextField: text: "Curve:"
+	Label: text: "Duration (in milliseconds):"
+	SelectInline: id: "duration", min: 0, max: 100000, value: 500
+	Label: text: "Curve:"
 	SelectList: id: "curve", value: 1
 		items
 			item: text: "Linear"
@@ -13,4 +13,4 @@ TBLayout: axis: y
 			item: text: "Smooth"
 	TBClickLabel: text: Fade
 		TBCheckBox: id: fade, value: 1
-	TBButton: text: "Animate!", id: "Animate!", skin: "SpecialButton"
+	Button: text: "Animate!", id: "Animate!", skin: "SpecialButton"

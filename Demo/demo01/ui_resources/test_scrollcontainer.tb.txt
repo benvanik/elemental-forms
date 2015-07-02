@@ -9,38 +9,38 @@ TBLayout
 		TBLayout
 			position left top
 			axis y
-			TBTextField: text: Buttons with different fonts:
+			Label: text: Buttons with different fonts:
 			TBLayout
-				TBButton
+				Button
 					text: "Orange"
 					font: name: Orange
-				TBButton
+				Button
 					text: "Segoe 14"
 					font: size: 14px
-				TBButton
+				Button
 					text: "Segoe 28"
 					font: size: 28px
-			TBTextField: text: TBButton containing TBSkinImage:
+			Label: text: Button containing TBSkinImage:
 			TBLayout
-				TBButton
+				Button
 					text Click for image!
 					id add img
 					TBSkinImage
 						skin Icon16
-				TBButton
+				Button
 					axis y
 					text Click for image!
 					id add img
 					TBSkinImage
 						skin Icon16
-			TBTextField: text: "TBButton containing TBEditField:"
+			Label: text: "Button containing TBEditField:"
 			TBLayout
-				TBButton
+				Button
 					TBEditField: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1, styling: 1
-						text: "A <color #0794f8>TBButton</color> with styled text that is able to wrap to multiple lines."
-			TBTextField: text: "Showing menu manually, and SelectDropdown:"
+						text: "A <color #0794f8>Button</color> with styled text that is able to wrap to multiple lines."
+			Label: text: "Showing menu manually, and SelectDropdown:"
 			TBLayout
-				TBButton
+				Button
 					text Give me a popup menu!
 					id showpopupmenu1
 				SelectDropdown
@@ -58,9 +58,9 @@ TBLayout
 					skin Icon16
 				TBSkinImage
 					skin Icon48
-				TBButton
-				TBButton: toggle-mode: 1
-			TBTextField: text: "TBEditField:"
+				Button
+				Button: toggle-mode: 1
+			Label: text: "TBEditField:"
 			TBLayout
 				TBEditField
 					text Edit type text
@@ -73,7 +73,7 @@ TBLayout
 				TBEditField
 					text In this field, multiple lines are enabled.
 					multiline 1
-			TBTextField: text: "TBSlider:"
+			Label: text: "TBSlider:"
 			TBLayout
 				TBSlider
 				TBSlider
@@ -85,39 +85,39 @@ TBLayout
 					min 0
 					max 100
 					connection master-volume
-			TBTextField: text: "ScrollBar:"
+			Label: text: "ScrollBar:"
 			TBLayout
 				ScrollBar
 				ScrollBar
 					axis y
-			TBTextField: text: Horizontal layout:
+			Label: text: Horizontal layout:
 			TBLayout
 				id horizontal_layout
-				TBButton
+				Button
 					text "1 new button"
 					id new buttons
 					data 1
-				TBButton
+				Button
 					text "100 new buttons!"
 					id new buttons
 					data 100
-				TBButton
+				Button
 					text "10 new with delay!"
 					id new buttons delayed
 					data 10
-			TBTextField: text: Vertical layout:
+			Label: text: Vertical layout:
 			TBLayout
 				id vertical_layout
 				axis y
-				TBButton
+				Button
 					text "1 new button"
 					id new buttons
 					data 1
-				TBButton
+				Button
 					text "100 new buttons!"
 					id new buttons
 					data 100
-				TBButton
+				Button
 					text "10 new with delay!"
 					id new buttons delayed
 					data 10

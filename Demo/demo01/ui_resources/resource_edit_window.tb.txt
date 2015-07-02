@@ -9,13 +9,13 @@ TBLayout
 		axis y
 		TBLayout
 			distribution available
-			TBButton
+			Button
 				text @new
 				state disabled
-			TBButton
+			Button
 				text @save
 				state disabled
-			TBButton
+			Button
 				text Test
 				id test
 		TBEditField

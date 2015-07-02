@@ -18,18 +18,18 @@
 
 namespace tb {
 
-TBWidgetString::TBWidgetString() : m_text_align(TextAlign::kCenter) {}
+WidgetString::WidgetString() = default;
 
-int TBWidgetString::GetWidth(TBWidget* widget) {
+int WidgetString::GetWidth(TBWidget* widget) {
   return widget->GetFont()->GetStringWidth(m_text);
 }
 
-int TBWidgetString::GetHeight(TBWidget* widget) {
+int WidgetString::GetHeight(TBWidget* widget) {
   return widget->GetFont()->GetHeight();
 }
 
-void TBWidgetString::Paint(TBWidget* widget, const Rect& rect,
-                           const Color& color) {
+void WidgetString::Paint(TBWidget* widget, const Rect& rect,
+                         const Color& color) {
   FontFace* font = widget->GetFont();
   int string_w = GetWidth(widget);
 
@@ -68,62 +68,57 @@ void TBWidgetString::Paint(TBWidget* widget, const Rect& rect,
   }
 }
 
-/** This value on m_cached_text_width means it needs to be updated again. */
-#define UPDATE_TEXT_WIDTH_CACHE -1
+Label::Label() { SetSkinBg(TBIDC("Label"), InvokeInfo::kNoCallbacks); }
 
-TBTextField::TBTextField()
-    : m_cached_text_width(UPDATE_TEXT_WIDTH_CACHE), m_squeezable(false) {
-  SetSkinBg(TBIDC("TBTextField"), InvokeInfo::kNoCallbacks);
-}
-
-void TBTextField::SetText(const char* text) {
+void Label::SetText(const char* text) {
   if (m_text.m_text.compare(text) == 0) return;
-  m_cached_text_width = UPDATE_TEXT_WIDTH_CACHE;
+  m_cached_text_width = kTextWidthCacheNeedsUpdate;
   Invalidate();
   InvalidateLayout(InvalidationMode::kRecursive);
   m_text.SetText(text);
 }
 
-void TBTextField::SetSqueezable(bool squeezable) {
+void Label::SetSqueezable(bool squeezable) {
   if (squeezable == m_squeezable) return;
   m_squeezable = squeezable;
   Invalidate();
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-PreferredSize TBTextField::OnCalculatePreferredContentSize(
+PreferredSize Label::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   PreferredSize ps;
-  if (m_cached_text_width == UPDATE_TEXT_WIDTH_CACHE)
+  if (m_cached_text_width == kTextWidthCacheNeedsUpdate) {
     m_cached_text_width = m_text.GetWidth(this);
+  }
   ps.pref_w = m_cached_text_width;
   ps.pref_h = ps.min_h = m_text.GetHeight(this);
   // If gravity pull both up and down, use default max_h (grow as much as
   // possible).
   // Otherwise it makes sense to only accept one line height.
   if (!(any(GetGravity() & Gravity::kTop) &&
-        any(GetGravity() & Gravity::kBottom)))
+        any(GetGravity() & Gravity::kBottom))) {
     ps.max_h = ps.pref_h;
-  if (!m_squeezable) ps.min_w = ps.pref_w;
+  }
+  if (!m_squeezable) {
+    ps.min_w = ps.pref_w;
+  }
   return ps;
 }
 
-void TBTextField::OnFontChanged() {
-  m_cached_text_width = UPDATE_TEXT_WIDTH_CACHE;
+void Label::OnFontChanged() {
+  m_cached_text_width = kTextWidthCacheNeedsUpdate;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBTextField::OnPaint(const PaintProps& paint_props) {
+void Label::OnPaint(const PaintProps& paint_props) {
   m_text.Paint(this, GetPaddingRect(), paint_props.text_color);
 }
 
-const int auto_click_first_delay = 500;
-const int auto_click_repeat_delay = 100;
-
-TBButton::TBButton() : m_auto_repeat_click(false), m_toggle_mode(false) {
+Button::Button() {
   SetIsFocusable(true);
   SetClickByKey(true);
-  SetSkinBg(TBIDC("TBButton"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("Button"), InvokeInfo::kNoCallbacks);
   AddChild(&m_layout);
   // Set the textfield gravity to all, even though it would display the same
   // with default gravity.
@@ -137,17 +132,17 @@ TBButton::TBButton() : m_auto_repeat_click(false), m_toggle_mode(false) {
   m_layout.SetPaintOverflowFadeout(false);
 }
 
-TBButton::~TBButton() {
+Button::~Button() {
   m_layout.RemoveChild(&m_textfield);
   RemoveChild(&m_layout);
 }
 
-void TBButton::SetText(const char* text) {
+void Button::SetText(const char* text) {
   m_textfield.SetText(text);
-  UpdateTextFieldVisibility();
+  UpdateLabelVisibility();
 }
 
-void TBButton::SetValue(int value) {
+void Button::SetValue(int value) {
   if (value == GetValue()) return;
   SetState(SkinState::kPressed, value ? true : false);
 
@@ -157,30 +152,38 @@ void TBButton::SetValue(int value) {
     InvokeEvent(ev);
   }
 
-  if (value && GetGroupID()) TBRadioCheckBox::UpdateGroupWidgets(this);
-}
-
-int TBButton::GetValue() { return GetState(SkinState::kPressed); }
-
-void TBButton::OnCaptureChanged(bool captured) {
-  if (captured && m_auto_repeat_click)
-    PostMessageDelayed(TBIDC("auto_click"), nullptr, auto_click_first_delay);
-  else if (!captured) {
-    if (Message* msg = GetMessageByID(TBIDC("auto_click"))) DeleteMessage(msg);
+  if (value && GetGroupID()) {
+    TBRadioCheckBox::UpdateGroupWidgets(this);
   }
 }
 
-void TBButton::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
+int Button::GetValue() { return GetState(SkinState::kPressed); }
 
-bool TBButton::OnEvent(const TBWidgetEvent& ev) {
+void Button::OnCaptureChanged(bool captured) {
+  if (captured && m_auto_repeat_click) {
+    PostMessageDelayed(TBIDC("auto_click"), nullptr,
+                       kAutoClickFirstDelayMillis);
+  } else if (!captured) {
+    if (Message* msg = GetMessageByID(TBIDC("auto_click"))) {
+      DeleteMessage(msg);
+    }
+  }
+}
+
+void Button::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
+
+bool Button::OnEvent(const TBWidgetEvent& ev) {
   if (CanToggle() && ev.type == EventType::kClick && ev.target == this) {
     WeakWidgetPointer this_widget(this);
 
     // Toggle the value, if it's not a grouped widget with value on.
-    if (!(GetGroupID() && GetValue())) SetValue(!GetValue());
+    if (!(GetGroupID() && GetValue())) {
+      SetValue(!GetValue());
+    }
 
-    if (!this_widget.Get())
+    if (!this_widget.Get()) {
       return true;  // We got removed so we actually handled this event.
+    }
 
     // Intentionally don't return true for this event. We want it to continue
     // propagating.
@@ -188,7 +191,7 @@ bool TBButton::OnEvent(const TBWidgetEvent& ev) {
   return TBWidget::OnEvent(ev);
 }
 
-void TBButton::OnMessageReceived(Message* msg) {
+void Button::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("auto_click")) {
     assert(captured_widget == this);
     if (!cancel_click &&
@@ -198,12 +201,14 @@ void TBButton::OnMessageReceived(Message* msg) {
                        pointer_move_widget_y, true);
       captured_widget->InvokeEvent(ev);
     }
-    if (auto_click_repeat_delay)
-      PostMessageDelayed(TBIDC("auto_click"), nullptr, auto_click_repeat_delay);
+    if (kAutoClickRepeattDelayMillis) {
+      PostMessageDelayed(TBIDC("auto_click"), nullptr,
+                         kAutoClickRepeattDelayMillis);
+    }
   }
 }
 
-HitStatus TBButton::GetHitStatus(int x, int y) {
+HitStatus Button::GetHitStatus(int x, int y) {
   // Never hit any of the children to the button. We always want to the button
   // itself.
   return TBWidget::GetHitStatus(x, y) != HitStatus::kNoHit
@@ -211,7 +216,7 @@ HitStatus TBButton::GetHitStatus(int x, int y) {
              : HitStatus::kNoHit;
 }
 
-void TBButton::UpdateTextFieldVisibility() {
+void Button::UpdateLabelVisibility() {
   // Auto-collapse the textfield if the text is empty and there are other
   // widgets added apart from the textfield. This removes the extra spacing
   // added between the textfield and the other widget.
@@ -221,12 +226,12 @@ void TBButton::UpdateTextFieldVisibility() {
                                                  : Visibility::kVisible);
 }
 
-void TBButton::ButtonLayout::OnChildAdded(TBWidget* child) {
-  static_cast<TBButton*>(GetParent())->UpdateTextFieldVisibility();
+void Button::ButtonLayout::OnChildAdded(TBWidget* child) {
+  static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
-void TBButton::ButtonLayout::OnChildRemove(TBWidget* child) {
-  static_cast<TBButton*>(GetParent())->UpdateTextFieldVisibility();
+void Button::ButtonLayout::OnChildRemove(TBWidget* child) {
+  static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
 TBClickLabel::TBClickLabel() {
@@ -668,8 +673,9 @@ bool TBResizer::OnEvent(const TBWidgetEvent& ev) {
     rect.w = std::max(rect.w, 50);
     rect.h = std::max(rect.h, 50);
     target->SetRect(rect);
-  } else
+  } else {
     return false;
+  }
   return true;
 }
 

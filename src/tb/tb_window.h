@@ -112,8 +112,8 @@ class Window : public TBWidget {
 
   TBMover m_mover;
   TBResizer m_resizer;
-  TBTextField m_textfield;
-  TBButton m_close_button;
+  Label m_textfield;
+  Button m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;
   WeakWidgetPointer m_last_focus;
 };

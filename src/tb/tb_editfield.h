@@ -40,7 +40,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 
         Example - Create a button with id "hello":
 
-                <widget TBButton: text: "Hello world!" id: "hello">
+                <widget Button: text: "Hello world!" id: "hello">
 
         Example - Create a image from skin element "Icon48":
 
@@ -203,7 +203,7 @@ class TBEditField : public TBWidget,
  protected:
   ScrollBar m_scrollbar_x;
   ScrollBar m_scrollbar_y;
-  TBWidgetString m_placeholder;
+  WidgetString m_placeholder;
   EditType m_edit_type;
   TBEditFieldScrollRoot m_root;
   TBEditFieldContentFactory m_content_factory;

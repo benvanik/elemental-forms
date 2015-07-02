@@ -10,8 +10,8 @@ ScrollContainer
 			text: "Some images shown by TBImageWidget. This test requires enabling TB_IMAGE (see tb_config.h).\n" \
 					"Images are unloaded when all references are removed (this window is closed)."
 		ImageWidget: filename: "Demo/demo01/images/image_8.jpg", skin: ImageFrame
-			TBButton: skin: "Remove", id: "remove", gravity: right
-			TBTextField: skin: "ImageCaption", text: "Örebro", gravity: bottom left right
+			Button: skin: "Remove", id: "remove", gravity: right
+			Label: skin: "ImageCaption", text: "Örebro", gravity: bottom left right
 		ImageWidget: filename: "Demo/demo01/images/image_9.jpg", skin: ImageFrame
-			TBButton: skin: "Remove", id: "remove", gravity: right
-			TBTextField: skin: "ImageCaption", text: "Stockholm", gravity: bottom left right
+			Button: skin: "Remove", id: "remove", gravity: right
+			Label: skin: "ImageCaption", text: "Stockholm", gravity: bottom left right

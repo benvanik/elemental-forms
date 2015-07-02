@@ -15,7 +15,7 @@
 namespace tb {
 
 // A TBLayout used in TabContainer to apply some default properties on any
-// TBButton added to it.
+// Button added to it.
 class TabLayout : public TBLayout {
  public:
   TBOBJECT_SUBCLASS(TabLayout, TBLayout);

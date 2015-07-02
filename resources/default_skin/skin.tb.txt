@@ -17,19 +17,19 @@ defaults
 	disabled
 		opacity 0.3
 elements
-	TBButton
+	Button
 		text-color #fefefe
 		bitmap button.png
 		cut 17
 		expand 7
 		padding 6 8
 		overrides
-			element TBButtonInGroup
+			element ButtonInGroup
 				condition: target: parent, property: skin, value: button_group
 				condition: target: parent, property: axis, value: x
-			element TBButton.pressed
+			element Button.pressed
 				state pressed
-	TBButton.pressed
+	Button.pressed
 		text-color #fefefe
 		bitmap button_pressed.png
 		cut 17
@@ -37,63 +37,63 @@ elements
 		content-ofs-x 1
 		content-ofs-y 1
 
-	TBButton.flat
+	Button.flat
 		text-color #fefefe
 		padding 6 8
 		children
-			element TBButton.flat.hovered
+			element Button.flat.hovered
 				state hovered
-			element TBButton.flat.pressed
+			element Button.flat.pressed
 				state pressed
-	TBButton.flat.hovered
+	Button.flat.hovered
 		bitmap button_flat_outline.png
 		cut 15
 		expand 6
-	TBButton.flat.pressed
+	Button.flat.pressed
 		bitmap button_flat_pressed.png
 		cut 8
 
-	# == TBButtonInGroup is not a widget. It's only used as override for TBButton under a "button_group" ====
-	TBButtonInGroup
+	# == ButtonInGroup is not a widget. It's only used as override for Button under a "button_group" ====
+	ButtonInGroup
 		bitmap button_grouped_x_middle_up.png
 		cut 17
 		expand 7
 		padding 6 8
 		overrides
-			element TBButtonInGroup.first
-				condition: target: prev sibling, property: skin, value: TBButton, test: !=
-			element TBButtonInGroup.last
-				condition: target: next sibling, property: skin, value: TBButton, test: !=
-			element TBButtonInGroup.pressed
+			element ButtonInGroup.first
+				condition: target: prev sibling, property: skin, value: Button, test: !=
+			element ButtonInGroup.last
+				condition: target: next sibling, property: skin, value: Button, test: !=
+			element ButtonInGroup.pressed
 				state pressed
-	TBButtonInGroup.pressed
-		clone TBButtonInGroup
+	ButtonInGroup.pressed
+		clone ButtonInGroup
 		bitmap button_grouped_x_middle_down.png
 		content-ofs-x 1
 		content-ofs-y 1
 		overrides
-	TBButtonInGroup.first
-		clone TBButtonInGroup
+	ButtonInGroup.first
+		clone ButtonInGroup
 		bitmap button_grouped_x_first_up.png
 		overrides
-			element TBButtonInGroup.first.pressed
+			element ButtonInGroup.first.pressed
 				state pressed
-	TBButtonInGroup.first.pressed
-		clone TBButtonInGroup.pressed
+	ButtonInGroup.first.pressed
+		clone ButtonInGroup.pressed
 		bitmap button_grouped_x_first_down.png
 		overrides
-	TBButtonInGroup.last
-		clone TBButtonInGroup
+	ButtonInGroup.last
+		clone ButtonInGroup
 		bitmap button_grouped_x_last_up.png
 		overrides
-			element TBButtonInGroup.last.pressed
+			element ButtonInGroup.last.pressed
 				state pressed
-	TBButtonInGroup.last.pressed
-		clone TBButtonInGroup.pressed
+	ButtonInGroup.last.pressed
+		clone ButtonInGroup.pressed
 		bitmap button_grouped_x_last_down.png
 		overrides
 
-	# == button_group is not a widget. It's specified on widgets that should group TBButton =======
+	# == button_group is not a widget. It's specified on widgets that should group Button =======
 	button_group
 		spacing -1px
 
@@ -366,7 +366,7 @@ elements
 		clone TBEditField
 		padding 2
 	SelectDropdown
-		clone TBButton
+		clone Button
 	SelectDropdown.arrow
 		clone arrow.down
 	SelectDropdown.window
@@ -440,7 +440,7 @@ elements
 
 	TBResizer
 		bitmap resizer.png
-	TBInlineSelect
+	SelectInline
 		max-width 110
 	TBDimmer
 		background-color #00000088

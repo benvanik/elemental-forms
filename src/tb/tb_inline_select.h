@@ -16,42 +16,41 @@
 
 namespace tb {
 
-/** SelectList is a select widget with no popups. Instead it has two
-        arrow buttons that cycle between the choices.
-        By default it is a number widget.
-
-        FIX: Should also be possible to set a list of strings that will be
-                shown instead of numbers.
-*/
-class TBInlineSelect : public TBWidget {
+// InlineSelect is a select widget with no popups. Instead it has two arrow
+// buttons that cycle between the choices. By default it is a number widget.
+// FIX: Should also be possible to set a list of strings that will be shown
+// instead of numbers.
+class SelectInline : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBInlineSelect, TBWidget);
+  TBOBJECT_SUBCLASS(SelectInline, TBWidget);
 
-  TBInlineSelect();
-  ~TBInlineSelect();
+  SelectInline();
+  ~SelectInline() override;
 
-  /** Set along which axis the content should layouted. */
-  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
-  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
+  // Sets along which axis the content should layout.
+  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
+  Axis GetAxis() const override { return m_layout.GetAxis(); }
 
   void SetLimits(int min, int max);
   int GetMinValue() const { return m_min; }
   int GetMaxValue() const { return m_max; }
 
-  virtual void SetValue(int value) { SetValueInternal(value, true); }
-  virtual int GetValue() { return m_value; }
+  void SetValue(int value) override { SetValueInternal(value, true); }
+  int GetValue() override { return m_value; }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual void OnSkinChanged();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  void OnInflate(const INFLATE_INFO& info) override;
+  void OnSkinChanged() override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
  protected:
-  TBButton m_buttons[2];
+  void SetValueInternal(int value, bool update_text);
+
+  Button m_buttons[2];
   TBLayout m_layout;
   TBEditField m_editfield;
-  int m_value;
-  int m_min, m_max;
-  void SetValueInternal(int value, bool update_text);
+  int m_value = 0;
+  int m_min = 0;
+  int m_max = 100;
 };
 
 }  // namespace tb

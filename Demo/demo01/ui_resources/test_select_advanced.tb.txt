@@ -22,9 +22,9 @@ TBLayout
 			id add_name
 			gravity left right
 			placeholder Name
-		TBButton
+		Button
 			id add
 			text Add
-		TBButton
+		Button
 			id delete all
 			text Delete all
