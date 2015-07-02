@@ -77,7 +77,7 @@ class FontGlyph : public TBLinkOf<FontGlyph> {
   TBID hash_id;
   UCS4 cp;
   GlyphMetrics metrics;  // The glyph metrics.
-  TBBitmapFragment* frag =
+  BitmapFragment* frag =
       nullptr;           // The bitmap fragment, or nullptr if missing.
   bool has_rgb = false;  // if true, drawing should ignore text color.
 };
@@ -99,8 +99,8 @@ class FontGlyphCache : private TBRendererListener {
   // Creates a bitmap fragment for the given glyph and render data. This may
   // drop other rendered glyphs from the fragment map.
   // Returns the fragment, or nullptr on fail.
-  TBBitmapFragment* CreateFragment(FontGlyph* glyph, int w, int h, int stride,
-                                   uint32_t* data);
+  BitmapFragment* CreateFragment(FontGlyph* glyph, int w, int h, int stride,
+                                 uint32_t* data);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   // Renders the glyph bitmaps on screen, to analyze fragment positioning.
@@ -113,7 +113,7 @@ class FontGlyphCache : private TBRendererListener {
  private:
   void DropGlyphFragment(FontGlyph* glyph);
 
-  TBBitmapFragmentManager m_frag_manager;
+  BitmapFragmentManager m_frag_manager;
   TBHashTableAutoDeleteOf<FontGlyph> m_glyphs;
   TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };

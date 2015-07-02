@@ -143,7 +143,7 @@ Rect TBRendererBatcher::GetClipRect() {
 }
 
 void TBRendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                                   TBBitmapFragment* bitmap_fragment) {
+                                   BitmapFragment* bitmap_fragment) {
   if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime))
     AddQuadInternal(
         dst_rect.Offset(m_translation_x, m_translation_y),
@@ -160,7 +160,7 @@ void TBRendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
 void TBRendererBatcher::DrawBitmapColored(const Rect& dst_rect,
                                           const Rect& src_rect,
                                           const Color& color,
-                                          TBBitmapFragment* bitmap_fragment) {
+                                          BitmapFragment* bitmap_fragment) {
   if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
     uint32_t a = (color.a * m_opacity) / 255;
     AddQuadInternal(
@@ -210,7 +210,7 @@ void TBRendererBatcher::DrawRectFill(const Rect& dst_rect, const Color& color) {
 void TBRendererBatcher::AddQuadInternal(const Rect& dst_rect,
                                         const Rect& src_rect, uint32_t color,
                                         TBBitmap* bitmap,
-                                        TBBitmapFragment* fragment) {
+                                        BitmapFragment* fragment) {
   if (batch.bitmap != bitmap) {
     batch.Flush(this);
     batch.bitmap = bitmap;
@@ -269,7 +269,7 @@ void TBRendererBatcher::FlushBitmap(TBBitmap* bitmap) {
   if (batch.vertex_count && bitmap == batch.bitmap) batch.Flush(this);
 }
 
-void TBRendererBatcher::FlushBitmapFragment(TBBitmapFragment* bitmap_fragment) {
+void TBRendererBatcher::FlushBitmapFragment(BitmapFragment* bitmap_fragment) {
   // Flush the batch if it is using this fragment (that is about to change or be
   // deleted)
   // We know if it is in use in the current batch if its batch_id matches the

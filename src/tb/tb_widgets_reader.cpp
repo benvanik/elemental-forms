@@ -360,8 +360,8 @@ void TBToggleContainer::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBImageWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
-void TBImageWidget::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(ImageWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
+void ImageWidget::OnInflate(const INFLATE_INFO& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr))
     SetImage(filename);
   TBWidget::OnInflate(info);

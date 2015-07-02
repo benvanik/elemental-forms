@@ -148,8 +148,8 @@ FontGlyph* FontGlyphCache::CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp) {
   return glyph;
 }
 
-TBBitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph, int w, int h,
-                                                 int stride, uint32_t* data) {
+BitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph, int w, int h,
+                                               int stride, uint32_t* data) {
   assert(GetGlyph(glyph->hash_id, glyph->cp));
   // Don't bother if the requested glyph is too large.
   if (w > TB_GLYPH_CACHE_WIDTH || h > TB_GLYPH_CACHE_HEIGHT) {
@@ -160,7 +160,7 @@ TBBitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph, int w, int h,
   bool dropped_large_enough_glyph = false;
   do {
     // Attempt creating a fragment for the rendered glyph data
-    if (TBBitmapFragment* frag = m_frag_manager.CreateNewFragment(
+    if (BitmapFragment* frag = m_frag_manager.CreateNewFragment(
             glyph->hash_id, false, w, h, stride, data)) {
       glyph->frag = frag;
       m_all_rendered_glyphs.AddLast(glyph);

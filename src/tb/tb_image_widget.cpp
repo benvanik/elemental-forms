@@ -14,16 +14,17 @@
 
 namespace tb {
 
-PreferredSize TBImageWidget::OnCalculatePreferredContentSize(
+PreferredSize ImageWidget::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   return PreferredSize(m_image.Width(), m_image.Height());
 }
 
-void TBImageWidget::OnPaint(const PaintProps& paint_props) {
-  if (TBBitmapFragment* fragment = m_image.GetBitmap())
+void ImageWidget::OnPaint(const PaintProps& paint_props) {
+  if (BitmapFragment* fragment = m_image.GetBitmap()) {
     g_renderer->DrawBitmap(GetPaddingRect(),
                            Rect(0, 0, m_image.Width(), m_image.Height()),
                            fragment);
+  }
 }
 
 }  // namespace tb

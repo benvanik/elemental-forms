@@ -16,11 +16,11 @@ using namespace tb;
 
 TB_TEST_GROUP(tb_space_allocator) {
   TB_TEST(free_when_full) {
-    TBSpaceAllocator spa(30);
+    SpaceAllocator spa(30);
     TB_VERIFY(spa.HasSpace(30));
-    TBSpaceAllocator::Space* s1 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s2 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s3 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s1 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s2 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s3 = spa.AllocSpace(10);
     TB_VERIFY(s1 && s2 && s3);
     TB_VERIFY(!spa.HasSpace(1));
 
@@ -49,17 +49,17 @@ TB_TEST_GROUP(tb_space_allocator) {
     TB_VERIFY(!spa.HasSpace(10));
   }
   TB_TEST(free_all) {
-    TBSpaceAllocator spa(30);
+    SpaceAllocator spa(30);
     {
-      TBSpaceAllocator::Space* s = spa.AllocSpace(30);
+      SpaceAllocator::Space* s = spa.AllocSpace(30);
       spa.FreeSpace(s);
       TB_VERIFY(spa.HasSpace(30));
     }
 
     // Free in order
-    TBSpaceAllocator::Space* s1 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s2 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s3 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s1 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s2 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s3 = spa.AllocSpace(10);
     TB_VERIFY(s1 && s2 && s3);
     spa.FreeSpace(s1);
     spa.FreeSpace(s2);
@@ -97,12 +97,12 @@ TB_TEST_GROUP(tb_space_allocator) {
     TB_VERIFY(spa.HasSpace(30));
   }
   TB_TEST(free_scattered) {
-    TBSpaceAllocator spa(50);
-    TBSpaceAllocator::Space* s1 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s2 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s3 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s4 = spa.AllocSpace(10);
-    TBSpaceAllocator::Space* s5 = spa.AllocSpace(10);
+    SpaceAllocator spa(50);
+    SpaceAllocator::Space* s1 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s2 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s3 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s4 = spa.AllocSpace(10);
+    SpaceAllocator::Space* s5 = spa.AllocSpace(10);
     TB_VERIFY(s1 && s2 && s3 && s4 && s5);
 
     // Free all middle space

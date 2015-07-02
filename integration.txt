@@ -97,7 +97,7 @@ System integration
 
 Here are some additional API's that needs implementations:
 
-TBImageLoader
+ImageLoader
 API for loading images. There's a implementation available using STBI. Note: STBI
 should only be used to load your well known resources and nothing from the net,
 since the library doesn't handle corrupt files safely which might be a security

@@ -19,7 +19,7 @@
 
 namespace tb {
 
-class TBBitmapFragment;
+class BitmapFragment;
 
 /** TBRendererListener is a listener for TBRenderer. */
 class TBRendererListener : public TBLinkOf<TBRendererListener> {
@@ -96,7 +96,7 @@ class TBRenderer {
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          TBBitmapFragment* bitmap_fragment) = 0;
+                          BitmapFragment* bitmap_fragment) = 0;
 
   /** Draw the src_rect part of the bitmap stretched to dst_rect.
           dst_rect or src_rect can have negative width and height to achieve
@@ -110,7 +110,7 @@ class TBRenderer {
      horizontal and vertical flip. */
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const Color& color,
-                                 TBBitmapFragment* bitmap_fragment) = 0;
+                                 BitmapFragment* bitmap_fragment) = 0;
 
   /** Draw the src_rect part of the bitmap stretched to dst_rect.
           The bitmap will be used as a mask for the color.
@@ -131,7 +131,7 @@ class TBRenderer {
   /** Make sure the given bitmap fragment is flushed from any batching, because
      it may
           be changed or deleted after this call. */
-  virtual void FlushBitmapFragment(TBBitmapFragment* bitmap_fragment) = 0;
+  virtual void FlushBitmapFragment(BitmapFragment* bitmap_fragment) = 0;
 
   /** Create a new TBBitmap from the given data (in BGRA32 format).
           Width and height must be a power of two.

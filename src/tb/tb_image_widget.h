@@ -15,29 +15,28 @@
 
 namespace tb {
 
-/** TBImageWidget is a widget showing a image loaded by TBImageManager,
-        constrained in size to its skin.
-        If you need to show a image from the skin, you can use TBSkinImage. */
-
-class TBImageWidget : public TBWidget {
+// A widget showing a image loaded by ImageManager, constrained in size to its
+// skin.
+// If you need to show a image from the skin, you can use TBSkinImage.
+class ImageWidget : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBImageWidget, TBWidget);
+  TBOBJECT_SUBCLASS(ImageWidget, TBWidget);
 
-  TBImageWidget() {}
+  ImageWidget() = default;
 
-  void SetImage(const TBImage& image) { m_image = image; }
+  void SetImage(const Image& image) { m_image = image; }
   void SetImage(const char* filename) {
     m_image = g_image_manager->GetImage(filename);
   }
 
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints);
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override;
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual void OnPaint(const PaintProps& paint_props);
+  void OnInflate(const INFLATE_INFO& info) override;
+  void OnPaint(const PaintProps& paint_props) override;
 
  private:
-  TBImage m_image;
+  Image m_image;
 };
 
 }  // namespace tb

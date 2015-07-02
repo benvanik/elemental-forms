@@ -195,7 +195,7 @@ class TBSkinElement {
   std::string
       name;  ///< Name of the skin element, f.ex "TBSelectDropdown.arrow"
   std::string bitmap_file;  ///< File name of the bitmap (might be empty)
-  TBBitmapFragment*
+  BitmapFragment*
       bitmap;   ///< Bitmap fragment containing the graphics, or nullptr.
   uint8_t cut;  ///< How the bitmap should be sliced using StretchBox.
   int16_t
@@ -444,7 +444,7 @@ class TBSkin : private TBRendererListener {
 #endif
 
   /** Get the fragment manager. */
-  TBBitmapFragmentManager* GetFragmentManager() { return &m_frag_manager; }
+  BitmapFragmentManager* GetFragmentManager() { return &m_frag_manager; }
 
   // Implementing TBRendererListener
   virtual void OnContextLost();
@@ -454,9 +454,9 @@ class TBSkin : private TBRendererListener {
   friend class TBSkinElement;
   TBSkinListener* m_listener;
   TBHashTableAutoDeleteOf<TBSkinElement>
-      m_elements;                          ///< All skin elements for this skin.
-  TBBitmapFragmentManager m_frag_manager;  ///< Fragment manager
-  DimensionConverter m_dim_conv;           ///< Dimension converter
+      m_elements;                        ///< All skin elements for this skin.
+  BitmapFragmentManager m_frag_manager;  ///< Fragment manager
+  DimensionConverter m_dim_conv;         ///< Dimension converter
   Color m_default_text_color;  ///< Default text color for all skin elements
   float m_default_disabled_opacity;     ///< Disabled opacity
   float m_default_placeholder_opacity;  ///< Placeholder opacity

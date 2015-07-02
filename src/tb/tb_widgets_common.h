@@ -195,7 +195,7 @@ class TBClickLabel : public TBWidget {
    skin.
         If you need to load and show images dynamically (i.e. not always loaded
    as the skin),
-        you can use TBImageWidget. */
+        you can use ImageWidget. */
 
 class TBSkinImage : public TBWidget {
  public:

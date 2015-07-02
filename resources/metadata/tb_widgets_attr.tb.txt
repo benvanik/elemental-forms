@@ -109,5 +109,5 @@ TBSection
 TBToggleContainer
 	toggle enabled, opacity, expanded
 	invert <bool>
-TBImageWidget
+ImageWidget
 	filename <string>

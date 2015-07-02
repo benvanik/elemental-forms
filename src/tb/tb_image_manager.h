@@ -18,110 +18,100 @@
 
 namespace tb {
 
-class TBImageManager;
+class ImageManager;
 
-/** TBImageRep is the internal contents of a TBImage. Owned by reference
- * counting from TBImage. */
+// ImageRep is the internal contents of a Image.
+// Owned by reference counting from Image.
+class ImageRep {
+  friend class ImageManager;
+  friend class Image;
 
-class TBImageRep {
-  friend class TBImageManager;
-  friend class TBImage;
-
-  TBImageRep(TBImageManager* image_manager, TBBitmapFragment* fragment,
-             uint32_t hash_key);
+  ImageRep(ImageManager* image_manager, BitmapFragment* fragment,
+           uint32_t hash_key);
 
   void IncRef();
   void DecRef();
 
-  int ref_count;
+  int ref_count = 0;
   uint32_t hash_key;
-  TBImageManager* image_manager;
-  TBBitmapFragment* fragment;
+  ImageManager* image_manager;
+  BitmapFragment* fragment;
 };
 
-/** TBImage is a reference counting object representing a image loaded by
-   TBImageManager.
-        As long as there are TBImage objects for a certain image, it will be
-   kept loaded in memory.
-        It may be empty if the image has not yet been set, or if the
-   TBImageManager is destroyed
-        when the image is still alive.
-*/
-
-class TBImage {
+// A reference counting object representing a image loaded by ImageManager.
+// As long as there are Image objects for a certain image, it will be kept
+// loaded in memory.
+// It may be empty if the image has not yet been set, or if the ImageManager is
+// destroyed when the image is still alive.
+class Image {
  public:
-  TBImage() : m_image_rep(nullptr) {}
-  TBImage(TBImageRep* rep);
-  TBImage(const TBImage& image);
-  ~TBImage();
+  Image() = default;
+  Image(ImageRep* rep);
+  Image(const Image& image);
+  ~Image();
 
-  /** Return true if this image is empty. */
+  // Returns true if this image is empty.
   bool IsEmpty() const;
 
-  /** Return the width of this image, or 0 if empty. */
+  // Returns the width of this image, or 0 if empty.
   int Width() const;
 
-  /** Return the height of this image, or 0 if empty. */
+  // Returns the height of this image, or 0 if empty.
   int Height() const;
 
-  /** Return the bitmap fragment for this image, or nullptr if empty. */
-  TBBitmapFragment* GetBitmap() const;
+  // Returns the bitmap fragment for this image, or nullptr if empty.
+  BitmapFragment* GetBitmap() const;
 
-  const TBImage& operator=(const TBImage& image) {
+  const Image& operator=(const Image& image) {
     SetImageRep(image.m_image_rep);
     return *this;
   }
-  bool operator==(const TBImage& image) const {
+  bool operator==(const Image& image) const {
     return m_image_rep == image.m_image_rep;
   }
-  bool operator!=(const TBImage& image) const {
+  bool operator!=(const Image& image) const {
     return m_image_rep != image.m_image_rep;
   }
 
  private:
-  void SetImageRep(TBImageRep* image_rep);
-  TBImageRep* m_image_rep;
+  void SetImageRep(ImageRep* image_rep);
+
+  ImageRep* m_image_rep = nullptr;
 };
 
-/** TBImageManager loads images returned as TBImage objects.
-
-        It internally use a TBBitmapFragmentManager that create fragment maps
-   for loaded images,
-        and keeping track of which images are loaded so they are not loaded
-   several times.
-
-        Images are forgotten when there are no longer any TBImage objects for a
-   given file.
-*/
-
-class TBImageManager : private TBRendererListener {
+// Loads images returned as Image objects.
+// It internally use a BitmapFragmentManager that create fragment maps for
+// loaded images, and keeping track of which images are loaded so they are not
+// loaded several times.
+// Images are forgotten when there are no longer any Image objects for a given
+// file.
+class ImageManager : private TBRendererListener {
  public:
-  TBImageManager();
-  ~TBImageManager();
+  ImageManager();
+  ~ImageManager();
 
-  /** Return a image object for the given filename.
-          If it fails, the returned TBImage object will be empty. */
-  TBImage GetImage(const char* filename);
+  // Returns an image object for the given filename.
+  // If it fails, the returned Image object will be empty.
+  Image GetImage(const char* filename);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  /** Render the skin bitmaps on screen, to analyze fragment positioning. */
+  // Renders the skin bitmaps on screen, to analyze fragment positioning.
   void Debug() { m_frag_manager.Debug(); }
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 
-  // Implementing TBRendererListener
-  virtual void OnContextLost();
-  virtual void OnContextRestored();
+  void OnContextLost() override;
+  void OnContextRestored() override;
 
  private:
-  TBBitmapFragmentManager m_frag_manager;
-  TBHashTableOf<TBImageRep> m_image_rep_hash;
+  friend class ImageRep;
+  void RemoveImageRep(ImageRep* image_rep);
 
-  friend class TBImageRep;
-  void RemoveImageRep(TBImageRep* image_rep);
+  BitmapFragmentManager m_frag_manager;
+  TBHashTableOf<ImageRep> m_image_rep_hash;
 };
 
-/** The global TBImageManager. */
-extern TBImageManager* g_image_manager;
+// The global ImageManager.
+extern ImageManager* g_image_manager;
 
 }  // namespace tb
 

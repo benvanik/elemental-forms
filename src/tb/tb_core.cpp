@@ -34,7 +34,7 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
   g_font_manager = new FontManager();
   g_tb_skin = new TBSkin();
   g_widgets_reader = TBWidgetsReader::Create();
-  g_image_manager = new TBImageManager();
+  g_image_manager = new ImageManager();
 
 #ifdef TB_SYSTEM_LINUX
   TBSystem::Init();

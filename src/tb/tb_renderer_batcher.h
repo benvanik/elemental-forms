@@ -51,7 +51,7 @@ class TBRendererBatcher : public TBRenderer {
     int vertex_count;
 
     TBBitmap* bitmap;
-    TBBitmapFragment* fragment;
+    BitmapFragment* fragment;
 
     uint32_t batch_id;
     bool is_flushing;
@@ -72,19 +72,19 @@ class TBRendererBatcher : public TBRenderer {
   virtual Rect GetClipRect();
 
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          TBBitmapFragment* bitmap_fragment);
+                          BitmapFragment* bitmap_fragment);
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmap* bitmap);
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const Color& color,
-                                 TBBitmapFragment* bitmap_fragment);
+                                 BitmapFragment* bitmap_fragment);
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                                  const Color& color, TBBitmap* bitmap);
   virtual void DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap);
   virtual void DrawRect(const Rect& dst_rect, const Color& color);
   virtual void DrawRectFill(const Rect& dst_rect, const Color& color);
   virtual void FlushBitmap(TBBitmap* bitmap);
-  virtual void FlushBitmapFragment(TBBitmapFragment* bitmap_fragment);
+  virtual void FlushBitmapFragment(BitmapFragment* bitmap_fragment);
 
   virtual void BeginBatchHint(TBRenderer::BatchHint hint) {}
   virtual void EndBatchHint() {}
@@ -105,7 +105,7 @@ class TBRendererBatcher : public TBRenderer {
 
   void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
                        uint32_t color, TBBitmap* bitmap,
-                       TBBitmapFragment* fragment);
+                       BitmapFragment* fragment);
   void FlushAllInternal();
 };
 
