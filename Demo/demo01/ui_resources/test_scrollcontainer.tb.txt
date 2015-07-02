@@ -51,8 +51,8 @@ TBLayout
 					id advanced dropdown
 			TBLayout
 				overflow scroll
-				TBRadioButton
-				TBCheckBox
+				RadioButton
+				CheckBox
 					value 1
 				TBSkinImage
 					skin Icon16

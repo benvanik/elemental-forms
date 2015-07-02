@@ -171,7 +171,7 @@ void SelectInline::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBClickLabel, TBValue::Type::kString, WidgetZ::kBottom) {}
+TB_WIDGET_FACTORY(LabelContainer, TBValue::Type::kString, WidgetZ::kBottom) {}
 
 TB_WIDGET_FACTORY(TBEditField, TBValue::Type::kString, WidgetZ::kTop) {}
 void TBEditField::OnInflate(const INFLATE_INFO& info) {
@@ -332,8 +332,8 @@ void SelectDropdown::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBCheckBox, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBRadioButton, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(CheckBox, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(RadioButton, TBValue::Type::kInt, WidgetZ::kTop) {}
 
 TB_WIDGET_FACTORY(Label, TBValue::Type::kString, WidgetZ::kTop) {}
 void Label::OnInflate(const INFLATE_INFO& info) {
@@ -345,8 +345,8 @@ void Label::OnInflate(const INFLATE_INFO& info) {
 }
 
 TB_WIDGET_FACTORY(TBSkinImage, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBSeparator, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBProgressSpinner, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Separator, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ProgressSpinner, TBValue::Type::kInt, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(Container, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(SectionHeader, TBValue::Type::kInt, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(Section, TBValue::Type::kInt, WidgetZ::kTop) {}

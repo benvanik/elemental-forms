@@ -4,8 +4,8 @@ TBLayout
 	TBLayout
 		Button
 			text Button 1
-		TBRadioButton
-		TBCheckBox
+		RadioButton
+		CheckBox
 	@if 1
 		Container
 			TBLayout

@@ -48,7 +48,7 @@ TBWidget
 	rect <x, y, width, height>
 	autofocus <bool>
 	<sub...>
-TBClickLabel
+LabelContainer
 TBEditField
 	multiline <bool>
 	styling <bool>
@@ -98,11 +98,11 @@ SelectDropdown
 		item
 			text <string/lngstring>
 			id <id>
-TBCheckBox
-TBRadioButton
+CheckBox
+RadioButton
 TBSkinImage
-TBSeparator
-TBProgressSpinner
+Separator
+ProgressSpinner
 Container
 SectionHeader
 Section

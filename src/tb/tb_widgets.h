@@ -631,7 +631,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   TBSkinElement* GetSkinBgElement();
 
   /** Set if this widget is a group root. Grouped widgets (such as
-     TBRadioButton) will toggle all other
+     RadioButton) will toggle all other
           widgets with the same group_id under the nearest parent group root.
      Window is a group root by default. */
   void SetIsGroupRoot(bool group_root) { m_packed.is_group_root = group_root; }
@@ -1222,7 +1222,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   Rect m_rect;  ///< The rectangle of this widget, relative to the parent. See
   /// SetRect.
   TBID m_id;                ///< ID for GetWidgetByID and others.
-  TBID m_group_id;          ///< ID for button groups (such as TBRadioButton)
+  TBID m_group_id;          ///< ID for button groups (such as RadioButton)
   TBID m_skin_bg;           ///< ID for the background skin (0 for no skin).
   TBID m_skin_bg_expected;  ///< ID for the background skin after strong
   /// override,

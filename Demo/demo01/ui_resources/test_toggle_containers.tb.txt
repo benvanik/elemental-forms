@@ -7,48 +7,48 @@ TBLayout: axis: y
 	TBLayout: position: top left
 		Container
 			TBLayout: axis: y
-				TBClickLabel: text: "Check to enable stuff:"
-					TBCheckBox: connection: toggle_demo_1
+				LabelContainer: text: "Check to enable stuff:"
+					CheckBox: connection: toggle_demo_1
 
 				# == Toggle enabled =====================================================
 				ToggleContainer: connection: toggle_demo_1, toggle: enabled
 					TBLayout: axis: y
-						TBClickLabel: text: "Option 1"
-							TBRadioButton: group-id: group1, value: 1
-						TBClickLabel: text: "Option 2"
-							TBRadioButton: group-id: group1
+						LabelContainer: text: "Option 1"
+							RadioButton: group-id: group1, value: 1
+						LabelContainer: text: "Option 2"
+							RadioButton: group-id: group1
 
-				TBClickLabel: text: "Check to disable stuff:"
-					TBCheckBox: connection: toggle_demo_2
+				LabelContainer: text: "Check to disable stuff:"
+					CheckBox: connection: toggle_demo_2
 
 				# == Toggle enabled, with the invert flag set ===========================
 				ToggleContainer: connection: toggle_demo_2, toggle: enabled, invert: 1
 					TBLayout: axis: y
-						TBClickLabel: text: "Option 1"
-							TBRadioButton: group-id: group2, value: 1
-						TBClickLabel: text: "Option 2"
-							TBRadioButton: group-id: group2
+						LabelContainer: text: "Option 1"
+							RadioButton: group-id: group2, value: 1
+						LabelContainer: text: "Option 2"
+							RadioButton: group-id: group2
 
 		Container
 			TBLayout: axis: y
-				TBClickLabel: text: "Check to show stuff:"
-					TBCheckBox: connection: toggle_demo_3
+				LabelContainer: text: "Check to show stuff:"
+					CheckBox: connection: toggle_demo_3
 
 				# == Toggle opacity =====================================================
 				ToggleContainer: connection: toggle_demo_3, toggle: opacity
 					TBLayout: axis: y
-						TBClickLabel: text: "Option 1"
-							TBRadioButton: group-id: group3, value: 1
-						TBClickLabel: text: "Option 2"
-							TBRadioButton: group-id: group3
+						LabelContainer: text: "Option 1"
+							RadioButton: group-id: group3, value: 1
+						LabelContainer: text: "Option 2"
+							RadioButton: group-id: group3
 
-				TBClickLabel: text: "Check to expand stuff:"
-					TBCheckBox: connection: toggle_demo_4
+				LabelContainer: text: "Check to expand stuff:"
+					CheckBox: connection: toggle_demo_4
 
 				# == Toggle expand ======================================================
 				ToggleContainer: connection: toggle_demo_4, toggle: expanded
 					TBLayout: axis: y
-						TBClickLabel: text: "Option 1"
-							TBRadioButton: group-id: group4, value: 1
-						TBClickLabel: text: "Option 2"
-							TBRadioButton: group-id: group4
+						LabelContainer: text: "Option 1"
+							RadioButton: group-id: group4, value: 1
+						LabelContainer: text: "Option 2"
+							RadioButton: group-id: group4

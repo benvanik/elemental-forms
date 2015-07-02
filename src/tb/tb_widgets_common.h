@@ -160,36 +160,33 @@ class Button : public TBWidget, protected MessageHandler {
   bool m_toggle_mode = false;
 };
 
-/** TBClickLabel has a text field in its internal layout by default. Pointer
-   input on the
-        text field will be redirected to another child widget (that you add) to
-   it.
-        Typically useful for creating check boxes, radio buttons with labels. */
-
-class TBClickLabel : public TBWidget {
+// Has a text field in its internal layout by default. Pointer input on the text
+// field will be redirected to another child widget (that you add) to it.
+// Typically useful for creating check boxes, radio buttons with labels.
+class LabelContainer : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBClickLabel, TBWidget);
+  TBOBJECT_SUBCLASS(LabelContainer, TBWidget);
 
-  TBClickLabel();
-  ~TBClickLabel();
+  LabelContainer();
+  ~LabelContainer() override;
 
-  /** Set along which axis the content should layouted (If the label has more
-   * content than the text) */
-  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
-  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
+  // Sets along which axis the content should layout (if the label has more
+  // content than the text).
+  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
+  Axis GetAxis() const override { return m_layout.GetAxis(); }
 
-  /** Set the text of the label. */
+  // Sets the text of the label.
   void SetText(const char* text) override { m_textfield.SetText(text); }
   std::string GetText() override { return m_textfield.GetText(); }
 
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints) {
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override {
     return m_layout.GetPreferredSize();
   }
 
-  virtual TBWidget* GetContentRoot() { return &m_layout; }
+  TBWidget* GetContentRoot() override { return &m_layout; }
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
  protected:
   TBLayout m_layout;
@@ -213,92 +210,92 @@ class TBSkinImage : public TBWidget {
       const SizeConstraints& constraints);
 };
 
-/** TBSeparator is a widget only showing a skin.
-        It is disabled by default. */
-class TBSeparator : public TBWidget {
+// A widget only showing a skin.
+// It is disabled by default.
+class Separator : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBSeparator, TBWidget);
+  TBOBJECT_SUBCLASS(Separator, TBWidget);
 
-  TBSeparator();
+  Separator();
 };
 
-/** TBProgressSpinner is a animation that is running while its value is 1.
-        Typically used to indicate that the application is working. */
-class TBProgressSpinner : public TBWidget, protected MessageHandler {
+// An animation that is running while its value is 1.
+// Typically used to indicate that the application is working.
+class ProgressSpinner : public TBWidget, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(TBProgressSpinner, TBWidget);
+  TBOBJECT_SUBCLASS(ProgressSpinner, TBWidget);
 
-  TBProgressSpinner();
+  ProgressSpinner();
 
-  /** Return true if the animation is running. */
+  // Returns true if the animation is running.
   bool IsRunning() { return m_value > 0; }
 
-  /** Begin/End are used to start or stop the animation in a incremental way.
-          If several tasks may activate the same spinner, calling Begin/End
-     instead
-          of using SetValue, so it will keep running as long as any source wants
-     it to. */
+  // Begin/End are used to start or stop the animation in a incremental way.
+  // If several tasks may activate the same spinner, calling Begin/End instead
+  // of using SetValue, so it will keep running as long as any source wants it
+  // to.
   void Begin() { SetValue(GetValue() + 1); }
   void End() { SetValue(GetValue() - 1); }
 
-  /** Setting the value to 1 will start the spinner.
-          Setting it to 0 will stop it. */
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_value; }
+  // Setting the value to 1 will start the spinner. Setting it to 0 will stop
+  // it.
+  void SetValue(int value) override;
+  int GetValue() override { return m_value; }
 
-  virtual void OnPaint(const PaintProps& paint_props);
+  void OnPaint(const PaintProps& paint_props) override;
 
-  virtual void OnMessageReceived(Message* msg);
+  void OnMessageReceived(Message* msg) override;
 
  protected:
-  int m_value;
-  int m_frame;
+  // How fast should the spinner animation animate.
+  // FIX: Add spin_speed to skin!
+  // FIX: Make it post messages only if visible
+  static const int kSpinSpeed = 1000 / 30;
+
+  int m_value = 0;
+  int m_frame = 0;
   TBID m_skin_fg;
 };
 
-/** TBRadioCheckBox has shared functionality for TBCheckBox and TBRadioButton.
- */
-class TBRadioCheckBox : public TBWidget {
+// Shared functionality for CheckBox and RadioButton.
+class BaseRadioCheckBox : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBRadioCheckBox, TBWidget);
+  TBOBJECT_SUBCLASS(BaseRadioCheckBox, TBWidget);
 
-  TBRadioCheckBox();
+  BaseRadioCheckBox();
 
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_value; }
+  void SetValue(int value) override;
+  int GetValue() override { return m_value; }
 
-  virtual PreferredSize OnCalculatePreferredSize(
-      const SizeConstraints& constraints);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  PreferredSize OnCalculatePreferredSize(
+      const SizeConstraints& constraints) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
-  /** Make sure all widgets sharing the same group as new_leader are set to
-   * value 0. */
+  // Makes sure all widgets sharing the same group as new_leader are set to
+  // value 0.
   static void UpdateGroupWidgets(TBWidget* new_leader);
 
  protected:
-  int m_value;
+  int m_value = 0;
 };
 
-/** TBCheckBox is a box toggling a check mark on click.
-        For a labeled checkbox, use a TBClickLabel containing a TBCheckBox. */
-class TBCheckBox : public TBRadioCheckBox {
+// A box toggling a check mark on click.
+// For a labeled checkbox, use a LabelContainer containing a CheckBox.
+class CheckBox : public BaseRadioCheckBox {
  public:
-  TBOBJECT_SUBCLASS(TBCheckBox, TBRadioCheckBox);
+  TBOBJECT_SUBCLASS(CheckBox, BaseRadioCheckBox);
 
-  TBCheckBox() { SetSkinBg(TBIDC("TBCheckBox"), InvokeInfo::kNoCallbacks); }
+  CheckBox() { SetSkinBg(TBIDC("CheckBox"), InvokeInfo::kNoCallbacks); }
 };
 
-/** TBRadioButton is a button which unselects other radiobuttons of the same
-        group number when clicked.
-        For a labeled radio button, use a TBClickLabel containing a
-   TBRadioButton. */
-class TBRadioButton : public TBRadioCheckBox {
+// A button which unselects other radiobuttons of the same group number when
+// clicked.
+// For a labeled radio button, use a LabelContainer containing a RadioButton.
+class RadioButton : public BaseRadioCheckBox {
  public:
-  TBOBJECT_SUBCLASS(TBRadioButton, TBRadioCheckBox);
+  TBOBJECT_SUBCLASS(RadioButton, BaseRadioCheckBox);
 
-  TBRadioButton() {
-    SetSkinBg(TBIDC("TBRadioButton"), InvokeInfo::kNoCallbacks);
-  }
+  RadioButton() { SetSkinBg(TBIDC("RadioButton"), InvokeInfo::kNoCallbacks); }
 };
 
 // A scroll bar in the given axis.

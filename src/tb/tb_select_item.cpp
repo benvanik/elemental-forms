@@ -146,7 +146,7 @@ TBWidget* SelectItemSource::CreateItemWidget(int index,
             new TBSimpleLayoutItemWidget(image, sub_source, string))
       return itemwidget;
   } else if (string && *string == '-') {
-    if (TBSeparator* separator = new TBSeparator) {
+    if (Separator* separator = new Separator) {
       separator->SetGravity(Gravity::kAll);
       separator->SetSkinBg(TBIDC("SelectItem.separator"));
       return separator;

@@ -294,13 +294,13 @@ bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("start_spinner")) {
-    if (TBProgressSpinner* spinner =
-            GetWidgetByIDAndType<TBProgressSpinner>(TBIDC("spinner")))
+    if (ProgressSpinner* spinner =
+            GetWidgetByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(1);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("stop_spinner")) {
-    if (TBProgressSpinner* spinner =
-            GetWidgetByIDAndType<TBProgressSpinner>(TBIDC("spinner")))
+    if (ProgressSpinner* spinner =
+            GetWidgetByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(0);
   }
   return DemoWindow::OnEvent(ev);
@@ -450,7 +450,7 @@ void AnimationsWindow::Animate() {
   if (SelectInline* duration_select =
           GetWidgetByIDAndType<SelectInline>("duration"))
     duration = duration_select->GetValueDouble();
-  if (TBCheckBox* fade_check = GetWidgetByIDAndType<TBCheckBox>("fade"))
+  if (CheckBox* fade_check = GetWidgetByIDAndType<CheckBox>("fade"))
     fade = fade_check->GetValue() ? true : false;
 
   // Start move animation

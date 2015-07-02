@@ -37,9 +37,9 @@ TBLayout: axis: y, distribution-position: "left top", distribution: "available"
 
 	Section: value: 0, text: "Graphics tests"
 		TBLayout: axis: y, spacing: 0, size: available
-			TBClickLabel: text: "Continous repaint"
+			LabelContainer: text: "Continous repaint"
 				lp: max-width: 0
-				TBCheckBox: connection: continous-repaint
+				CheckBox: connection: continous-repaint
 			Button: skin: "Button.flat", text: "Reload skin bitmaps", id: "reload skin bitmaps"
 			Button: skin: "Button.flat", text: "Context lost & restore", id: "test context lost"
 
@@ -47,9 +47,9 @@ TBLayout: axis: y, distribution-position: "left top", distribution: "available"
 		TBLayout: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "PostMessage", id: "msg"
 			Button: skin: "Button.flat", text: "PostMessageDelayed", id: "delayedmsg"
-			TBClickLabel: text: "Busy message loop"
+			LabelContainer: text: "Busy message loop"
 				lp: max-width: 0
-				TBCheckBox: id: "busymsg"
+				CheckBox: id: "busymsg"
 
 	# We want the debug button at the bottom if there is space over,
 	# so use an trailing layout which may expand a lot.

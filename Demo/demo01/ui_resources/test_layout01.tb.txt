@@ -5,7 +5,7 @@ test_layout_content
 	TBLayout
 		Button
 			text Default
-		TBCheckBox
+		CheckBox
 			value 1
 		Button
 			axis y

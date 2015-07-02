@@ -141,7 +141,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
 
 TB_TEST_GROUP(tb_widget_value_listener) {
   TBWidgetValue widget_val(TBIDC("test value check"));
-  TBCheckBox* a, *b;
+  CheckBox* a, *b;
 
   /** Listen to changes and update val to any changed value. */
   class MyListener : public TBValueGroupListener {
@@ -158,8 +158,8 @@ TB_TEST_GROUP(tb_widget_value_listener) {
   MyListener listener;
 
   TB_TEST(Init) {
-    TB_VERIFY(a = new TBCheckBox);
-    TB_VERIFY(b = new TBCheckBox);
+    TB_VERIFY(a = new CheckBox);
+    TB_VERIFY(b = new CheckBox);
   }
 
   TB_TEST(Setup) { g_value_group.AddListener(&listener); }

@@ -11,6 +11,6 @@ TBLayout: axis: y
 			item: text: "Speed up"
 			item: text: "Bezier"
 			item: text: "Smooth"
-	TBClickLabel: text: Fade
-		TBCheckBox: id: fade, value: 1
+	LabelContainer: text: Fade
+		CheckBox: id: fade, value: 1
 	Button: text: "Animate!", id: "Animate!", skin: "SpecialButton"

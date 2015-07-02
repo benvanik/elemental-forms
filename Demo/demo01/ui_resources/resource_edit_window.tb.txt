@@ -34,5 +34,5 @@ TBLayout
 			ScrollContainer
 				id scroll_container
 				gravity all
-			TBClickLabel: text: "Adapt to container"
-				TBCheckBox: id: "constrained"
+			LabelContainer: text: "Adapt to container"
+				CheckBox: id: "constrained"

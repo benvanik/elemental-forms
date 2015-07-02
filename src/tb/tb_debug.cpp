@@ -67,12 +67,12 @@ class DebugSettingsWindow : public Window, public WidgetListener {
   ~DebugSettingsWindow() { WidgetListener::RemoveGlobalListener(this); }
 
   void AddCheckbox(TBDebugInfo::Setting setting, const char* str) {
-    TBCheckBox* check = new TBCheckBox();
+    CheckBox* check = new CheckBox();
     check->SetValue(g_tb_debug.settings[int(setting)]);
     check->data.SetInt(int(setting));
     check->SetID(TBIDC("check"));
 
-    TBClickLabel* label = new TBClickLabel();
+    LabelContainer* label = new LabelContainer();
     label->SetText(str);
     label->GetContentRoot()->AddChild(check, WidgetZ::kBottom);
 

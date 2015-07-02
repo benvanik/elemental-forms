@@ -12,14 +12,14 @@ TabContainer
 	TBLayout: axis: y
 		Label: text: "Tab alignment:"
 		TBLayout
-			TBClickLabel: text: Left
-				TBRadioButton: group-id: set_align, id: set_align, data: 0
-			TBClickLabel: text: Up
-				TBRadioButton: group-id: set_align, id: set_align, data: 1, value: 1
-			TBClickLabel: text: Right
-				TBRadioButton: group-id: set_align, id: set_align, data: 2
-			TBClickLabel: text: Bottom
-				TBRadioButton: group-id: set_align, id: set_align, data: 3
+			LabelContainer: text: Left
+				RadioButton: group-id: set_align, id: set_align, data: 0
+			LabelContainer: text: Up
+				RadioButton: group-id: set_align, id: set_align, data: 1, value: 1
+			LabelContainer: text: Right
+				RadioButton: group-id: set_align, id: set_align, data: 2
+			LabelContainer: text: Bottom
+				RadioButton: group-id: set_align, id: set_align, data: 3
 		Button
 			text Toggle tab axis
 			id toggle_tab_axis
@@ -35,4 +35,4 @@ TabContainer
 		axis y
 		Button: id: start_spinner, text: Start spinner
 		Button: id: stop_spinner, text: Stop spinner
-		TBProgressSpinner: id: spinner
+		ProgressSpinner: id: spinner

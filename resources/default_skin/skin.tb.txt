@@ -325,36 +325,36 @@ elements
 		cut 12
 		expand 6
 		padding 10
-	TBCheckBox
+	CheckBox
 		bitmap checkbox.png
 		cut 19
 		expand 7
 		children
-			element TBCheckBox.selected
+			element CheckBox.selected
 				state selected
-			element TBCheckBox.pressed
+			element CheckBox.pressed
 				state pressed
-	TBCheckBox.selected
+	CheckBox.selected
 		bitmap checkbox_mark.png
 		type image
 		expand 7
-	TBCheckBox.pressed
+	CheckBox.pressed
 		bitmap checkbox_pressed.png
 		type image
-	TBRadioButton
+	RadioButton
 		bitmap radio.png
 		cut 19
 		expand 7
 		children
-			element TBRadioButton.selected
+			element RadioButton.selected
 				state selected
-			element TBRadioButton.pressed
+			element RadioButton.pressed
 				state pressed
-	TBRadioButton.selected
+	RadioButton.selected
 		bitmap radio_mark.png
 		type image
 		expand 7
-	TBRadioButton.pressed
+	RadioButton.pressed
 		bitmap radio_pressed.png
 		type image
 		expand 7
@@ -390,15 +390,15 @@ elements
 		cut 7
 		bitmap item_hover.png
 	SelectItem.separator
-		clone TBSeparator
+		clone Separator
 
-	TBSeparator
+	Separator
 		bitmap item_separator_x.png
 		type stretch image
 		overrides
-			element TBSeparator.y
+			element Separator.y
 				condition: target: parent, property: axis, value: x
-	TBSeparator.y
+	Separator.y
 		bitmap item_separator_y.png
 		type stretch image
 
@@ -445,10 +445,10 @@ elements
 	Dimmer
 		background-color #00000088
 
-	TBProgressSpinner
+	ProgressSpinner
 		min-width 28
 		min-height 28
-	TBProgressSpinner.fg
+	ProgressSpinner.fg
 		bitmap progress_spinner_strip.png
 
 	# The TBList header is always disabled, thus gets slightly less opacity default.

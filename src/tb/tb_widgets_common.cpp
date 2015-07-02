@@ -153,7 +153,7 @@ void Button::SetValue(int value) {
   }
 
   if (value && GetGroupID()) {
-    TBRadioCheckBox::UpdateGroupWidgets(this);
+    BaseRadioCheckBox::UpdateGroupWidgets(this);
   }
 }
 
@@ -234,7 +234,7 @@ void Button::ButtonLayout::OnChildRemove(TBWidget* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
-TBClickLabel::TBClickLabel() {
+LabelContainer::LabelContainer() {
   AddChild(&m_layout);
   m_layout.AddChild(&m_textfield);
   m_layout.SetRect(GetPaddingRect());
@@ -242,18 +242,20 @@ TBClickLabel::TBClickLabel() {
   m_layout.SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
 }
 
-TBClickLabel::~TBClickLabel() {
+LabelContainer::~LabelContainer() {
   m_layout.RemoveChild(&m_textfield);
   RemoveChild(&m_layout);
 }
 
-bool TBClickLabel::OnEvent(const TBWidgetEvent& ev) {
+bool LabelContainer::OnEvent(const TBWidgetEvent& ev) {
   // Get a widget from the layout that isn't the textfield, or just bail out
   // if we only have the textfield.
-  if (m_layout.GetFirstChild() == m_layout.GetLastChild()) return false;
-  TBWidget* click_target =
-      (m_layout.GetFirstChild() == &m_textfield ? m_layout.GetLastChild()
-                                                : m_layout.GetFirstChild());
+  if (m_layout.GetFirstChild() == m_layout.GetLastChild()) {
+    return false;
+  }
+  TBWidget* click_target = m_layout.GetFirstChild() == &m_textfield
+                               ? m_layout.GetLastChild()
+                               : m_layout.GetFirstChild();
   // Invoke the event on it, as if it was invoked on the target itself.
   if (click_target && ev.target != click_target) {
     // Focus the target if we clicked the label.
@@ -262,10 +264,8 @@ bool TBClickLabel::OnEvent(const TBWidgetEvent& ev) {
     }
 
     // Sync our pressed state with the click target. Special case for when we're
-    // just about to
-    // lose it ourself (pointer is being released).
-    bool pressed_state =
-        any(ev.target->GetAutoState() & SkinState::kPressed) ? true : false;
+    // just about to lose it ourself (pointer is being released).
+    bool pressed_state = any(ev.target->GetAutoState() & SkinState::kPressed);
     if (ev.type == EventType::kPointerUp || ev.type == EventType::kClick) {
       pressed_state = false;
     }
@@ -289,40 +289,37 @@ PreferredSize TBSkinImage::OnCalculatePreferredSize(
   return ps;
 }
 
-TBSeparator::TBSeparator() {
-  SetSkinBg(TBIDC("TBSeparator"), InvokeInfo::kNoCallbacks);
+Separator::Separator() {
+  SetSkinBg(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
   SetState(SkinState::kDisabled, true);
 }
 
-// FIX: Add spin_speed to skin!
-// FIX: Make it post messages only if visible
-const int spin_speed =
-    1000 / 30;  ///< How fast should the spinner animation animate.
-
-TBProgressSpinner::TBProgressSpinner() : m_value(0), m_frame(0) {
-  SetSkinBg(TBIDC("TBProgressSpinner"), InvokeInfo::kNoCallbacks);
-  m_skin_fg.Set(TBIDC("TBProgressSpinner.fg"));
+ProgressSpinner::ProgressSpinner() {
+  SetSkinBg(TBIDC("ProgressSpinner"), InvokeInfo::kNoCallbacks);
+  m_skin_fg.Set(TBIDC("ProgressSpinner.fg"));
 }
 
-void TBProgressSpinner::SetValue(int value) {
+void ProgressSpinner::SetValue(int value) {
   if (value == m_value) return;
   InvalidateSkinStates();
   assert(value >=
          0);  // If this happens, you probably have unballanced Begin/End calls.
   m_value = value;
   if (value > 0) {
-    // Start animation
+    // Start animation.
     if (!GetMessageByID(TBID(1))) {
       m_frame = 0;
-      PostMessageDelayed(TBID(1), nullptr, spin_speed);
+      PostMessageDelayed(TBID(1), nullptr, kSpinSpeed);
     }
   } else {
-    // Stop animation
-    if (Message* msg = GetMessageByID(TBID(1))) DeleteMessage(msg);
+    // Stop animation.
+    if (Message* msg = GetMessageByID(TBID(1))) {
+      DeleteMessage(msg);
+    }
   }
 }
 
-void TBProgressSpinner::OnPaint(const PaintProps& paint_props) {
+void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
   if (IsRunning()) {
     TBSkinElement* e = g_tb_skin->GetSkinElement(m_skin_fg);
     if (e && e->bitmap) {
@@ -336,33 +333,37 @@ void TBProgressSpinner::OnPaint(const PaintProps& paint_props) {
   }
 }
 
-void TBProgressSpinner::OnMessageReceived(Message* msg) {
+void ProgressSpinner::OnMessageReceived(Message* msg) {
   m_frame++;
   Invalidate();
-  // Keep animation running
-  PostMessageDelayed(TBID(1), nullptr, spin_speed);
+  // Keep animation running.
+  PostMessageDelayed(TBID(1), nullptr, kSpinSpeed);
 }
 
-TBRadioCheckBox::TBRadioCheckBox() : m_value(0) {
+BaseRadioCheckBox::BaseRadioCheckBox() {
   SetIsFocusable(true);
   SetClickByKey(true);
 }
 
 // static
-void TBRadioCheckBox::UpdateGroupWidgets(TBWidget* new_leader) {
+void BaseRadioCheckBox::UpdateGroupWidgets(TBWidget* new_leader) {
   assert(new_leader->GetValue() && new_leader->GetGroupID());
 
   // Find the group root widget.
   TBWidget* group = new_leader;
-  while (group && !group->GetIsGroupRoot() && group->GetParent())
+  while (group && !group->GetIsGroupRoot() && group->GetParent()) {
     group = group->GetParent();
+  }
 
-  for (TBWidget* child = group; child; child = child->GetNextDeep(group))
-    if (child != new_leader && child->GetGroupID() == new_leader->GetGroupID())
+  for (TBWidget* child = group; child; child = child->GetNextDeep(group)) {
+    if (child != new_leader &&
+        child->GetGroupID() == new_leader->GetGroupID()) {
       child->SetValue(0);
+    }
+  }
 }
 
-void TBRadioCheckBox::SetValue(int value) {
+void BaseRadioCheckBox::SetValue(int value) {
   if (m_value == value) return;
   m_value = value;
 
@@ -374,7 +375,7 @@ void TBRadioCheckBox::SetValue(int value) {
   if (value && GetGroupID()) UpdateGroupWidgets(this);
 }
 
-PreferredSize TBRadioCheckBox::OnCalculatePreferredSize(
+PreferredSize BaseRadioCheckBox::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = TBWidget::OnCalculatePreferredSize(constraints);
   ps.min_w = ps.max_w = ps.pref_w;
@@ -382,7 +383,7 @@ PreferredSize TBRadioCheckBox::OnCalculatePreferredSize(
   return ps;
 }
 
-bool TBRadioCheckBox::OnEvent(const TBWidgetEvent& ev) {
+bool BaseRadioCheckBox::OnEvent(const TBWidgetEvent& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Toggle the value, if it's not a grouped widget with value on.
     if (!(GetGroupID() && GetValue())) {
