@@ -1486,7 +1486,7 @@ void TBWidget::SetCapturedWidget(TBWidget* widget) {
   }
 }
 
-bool TBWidget::SetFontDescription(const TBFontDescription& font_desc) {
+bool TBWidget::SetFontDescription(const FontDescription& font_desc) {
   if (m_font_desc == font_desc) return true;
 
   // Set the font description only if we have a matching font, or succeed
@@ -1510,7 +1510,7 @@ void TBWidget::InvokeFontChanged() {
     if (child->m_font_desc.GetFontFaceID() == 0) child->InvokeFontChanged();
 }
 
-TBFontDescription TBWidget::GetCalculatedFontDescription() const {
+FontDescription TBWidget::GetCalculatedFontDescription() const {
   const TBWidget* tmp = this;
   while (tmp) {
     if (tmp->m_font_desc.GetFontFaceID() != 0) return tmp->m_font_desc;
@@ -1519,7 +1519,7 @@ TBFontDescription TBWidget::GetCalculatedFontDescription() const {
   return g_font_manager->GetDefaultFontDescription();
 }
 
-TBFontFace* TBWidget::GetFont() const {
+FontFace* TBWidget::GetFont() const {
   return g_font_manager->GetFontFace(GetCalculatedFontDescription());
 }
 

@@ -17,35 +17,28 @@
 
 namespace tb {
 
-/** TBFontDescription describes a font.
-        By default when nothing is set, the font is unspecified and means it
-   should be inherited
-        from a parent widget that specifies a font, or use the default font if
-   no parent does. */
-
-class TBFontDescription {
+// Describes a font.
+// By default when nothing is set, the font is unspecified and means it should
+// be inherited from a parent widget that specifies a font, or use the default
+// font if no parent does.
+class FontDescription {
  public:
-  /** Set the font ID of the font to use.
-          This ID maps to the font names in TBFontInfo, which is managed from
-          TBFontManager::AddFontInfo, TBFontManager::GetFontInfo.
-
-          Example:
-          If a font was added to the font manager with the name "Vera", you can
-          do font_description.SetID(TBIDC("Vera")).
-          */
+  // Sets the font ID of the font to use.
+  // This ID maps to the font names in FontInfo, which is managed from
+  // FontManager::AddFontInfo, FontManager::GetFontInfo.
+  // Example:
+  // If a font was added to the font manager with the name "Vera", you can
+  // do font_description.SetID(TBIDC("Vera")).
   void SetID(const TBID& id) { m_id = id; }
 
-  /** Get the TBID for the font name (See SetID). */
+  // Gets the TBID for the font name (See SetID).
   TBID GetID() const { return m_id; }
 
-  /** Get the TBID for the TBFontFace that matches this font description.
-          This is a ID combining both the font file, and variation (such as size
-     and style),
-          and should be used to identify a certain font face.
-
-          If this is 0, the font description is unspecified. For a widget, that
-     means that the font
-          should be inherited from the parent widget. */
+  // Gets the TBID for the FontFace that matches this font description.
+  // This is a ID combining both the font file, and variation (such as size and
+  // style), and should be used to identify a certain font face.
+  // If this is 0, the font description is unspecified. For a widget, that means
+  // that the font should be inherited from the parent widget.
   TBID GetFontFaceID() const { return m_id + m_packed_init; }
 
   void SetSize(uint32_t size) { m_packed.size = std::min(size, 0x8000u); }
@@ -72,20 +65,20 @@ class TBFontDescription {
   // return
   // m_packed.italic; }
 
-  TBFontDescription() : m_packed_init(0) {}
-  TBFontDescription(const TBFontDescription& src) {
+  FontDescription() = default;
+  FontDescription(const FontDescription& src) {
     m_packed_init = src.m_packed_init;
     m_id = src.m_id;
   }
-  const TBFontDescription& operator=(const TBFontDescription& src) {
+  const FontDescription& operator=(const FontDescription& src) {
     m_packed_init = src.m_packed_init;
     m_id = src.m_id;
     return *this;
   }
-  bool operator==(const TBFontDescription& fd) const {
+  bool operator==(const FontDescription& fd) const {
     return m_packed_init == fd.m_packed_init && m_id == fd.m_id;
   }
-  bool operator!=(const TBFontDescription& fd) const { return !(*this == fd); }
+  bool operator!=(const FontDescription& fd) const { return !(*this == fd); }
 
  private:
   TBID m_id;
@@ -95,7 +88,7 @@ class TBFontDescription {
       uint32_t italic : 1;
       uint32_t bold : 1;
     } m_packed;
-    uint32_t m_packed_init;
+    uint32_t m_packed_init = 0;
   };
 };
 

@@ -31,13 +31,13 @@ class TBTextFragmentContent {
                      int32_t translate_y, TBTextProps* props) {}
   virtual void Click(TBTextFragment* fragment, int button,
                      ModifierKeys modifierkeys) {}
-  virtual int32_t GetWidth(TBFontFace* font, TBTextFragment* fragment) {
+  virtual int32_t GetWidth(FontFace* font, TBTextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetHeight(TBFontFace* font, TBTextFragment* fragment) {
+  virtual int32_t GetHeight(FontFace* font, TBTextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetBaseline(TBFontFace* font, TBTextFragment* fragment) {
+  virtual int32_t GetBaseline(FontFace* font, TBTextFragment* fragment) {
     return GetHeight(font, fragment);
   }
   virtual bool GetAllowBreakBefore() { return true; }
@@ -55,8 +55,8 @@ class TBTextFragmentContentHR : public TBTextFragmentContent {
 
   virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
                      int32_t translate_y, TBTextProps* props);
-  virtual int32_t GetWidth(TBFontFace* font, TBTextFragment* fragment);
-  virtual int32_t GetHeight(TBFontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetWidth(FontFace* font, TBTextFragment* fragment);
+  virtual int32_t GetHeight(FontFace* font, TBTextFragment* fragment);
 
  private:
   int32_t width_in_percent, height;

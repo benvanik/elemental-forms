@@ -40,7 +40,7 @@ class TBHashTable {
 
   /** Add content with the given key.
           Returns false if out of memory. */
-  bool Add(uint32_t key, void* content);
+  void Add(uint32_t key, void* content);
 
   /** Remove the content with the given key. */
   void* Remove(uint32_t key);
@@ -50,7 +50,7 @@ class TBHashTable {
 
   /** Rehash the table so use the given number of buckets.
           Returns false if out of memory. */
-  bool Rehash(uint32_t num_buckets);
+  void Rehash(uint32_t num_buckets);
 
   /** Return true if the hashtable itself think it's time to rehash. */
   bool NeedRehash() const;

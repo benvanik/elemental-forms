@@ -12,7 +12,7 @@ class CodeEditField : public tb::TBEditField {
   virtual void OnInflate(const tb::INFLATE_INFO& info);
 
  private:
-  virtual void DrawString(int32_t x, int32_t y, tb::TBFontFace* font,
+  virtual void DrawString(int32_t x, int32_t y, tb::FontFace* font,
                           const tb::TBColor& color, const char* str,
                           size_t len);
   virtual void OnBreak();

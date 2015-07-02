@@ -416,11 +416,11 @@ TBBitmapFragment* TBBitmapFragmentManager::CreateNewFragment(
       delete fm;
   }
   // Finally, add the new fragment to the hash.
-  if (frag && m_fragments.Add(id, frag)) {
+  if (frag) {
+    m_fragments.Add(id, frag);
     frag->m_id = id;
     return frag;
   }
-  delete frag;
   return nullptr;
 }
 

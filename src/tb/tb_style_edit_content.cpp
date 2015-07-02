@@ -60,12 +60,12 @@ void TBTextFragmentContentHR::Paint(TBTextFragment* fragment,
   listener->DrawRectFill(Rect(x, y, w, height), props->data->text_color);
 }
 
-int32_t TBTextFragmentContentHR::GetWidth(TBFontFace* font,
+int32_t TBTextFragmentContentHR::GetWidth(FontFace* font,
                                           TBTextFragment* fragment) {
   return std::max(fragment->block->styledit->layout_width, 0);
 }
 
-int32_t TBTextFragmentContentHR::GetHeight(TBFontFace* font,
+int32_t TBTextFragmentContentHR::GetHeight(FontFace* font,
                                            TBTextFragment* fragment) {
   return height;
 }

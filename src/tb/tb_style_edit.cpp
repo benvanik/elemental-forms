@@ -544,7 +544,7 @@ void TBCaret::SetGlobalOfs(size_t gofs, bool allow_snap, bool snap_forward) {
     Place(ofs.block, ofs.ofs, allow_snap, snap_forward);
 }
 
-TBTextProps::TBTextProps(const TBFontDescription& font_desc,
+TBTextProps::TBTextProps(const FontDescription& font_desc,
                          const TBColor& text_color) {
   base_data.font_desc = font_desc;
   base_data.text_color = text_color;
@@ -570,7 +570,7 @@ void TBTextProps::Pop() {
   data = data_list.GetLast() ? data_list.GetLast() : &base_data;
 }
 
-TBFontFace* TBTextProps::GetFont() {
+FontFace* TBTextProps::GetFont() {
   return g_font_manager->GetFontFace(data->font_desc);
 }
 
@@ -691,13 +691,13 @@ void TBBlock::Merge() {
   }
 }
 
-int32_t TBBlock::CalculateTabWidth(TBFontFace* font, int32_t xpos) const {
+int32_t TBBlock::CalculateTabWidth(FontFace* font, int32_t xpos) const {
   int tabsize = font->GetStringWidth("x", 1) * TAB_SPACE;
   int p2 = int(xpos / tabsize) * tabsize + tabsize;
   return p2 - xpos;
 }
 
-int32_t TBBlock::CalculateStringWidth(TBFontFace* font, const char* str,
+int32_t TBBlock::CalculateStringWidth(FontFace* font, const char* str,
                                       size_t len) const {
   if (styledit->packed.password_on) {
     // Convert the length in number or characters, since that's what matters for
@@ -708,16 +708,15 @@ int32_t TBBlock::CalculateStringWidth(TBFontFace* font, const char* str,
   return font->GetStringWidth(str, len);
 }
 
-int32_t TBBlock::CalculateLineHeight(TBFontFace* font) const {
+int32_t TBBlock::CalculateLineHeight(FontFace* font) const {
   return font->GetHeight();
 }
 
-int32_t TBBlock::CalculateBaseline(TBFontFace* font) const {
+int32_t TBBlock::CalculateBaseline(FontFace* font) const {
   return font->GetAscent();
 }
 
-int TBBlock::GetStartIndentation(TBFontFace* font,
-                                 size_t first_line_len) const {
+int TBBlock::GetStartIndentation(FontFace* font, size_t first_line_len) const {
   // Lines beginning with whitespace or list points, should
   // indent to the same as the beginning when wrapped.
   int32_t indentation = 0;
@@ -1038,7 +1037,7 @@ void TBTextFragment::BuildSelectionRegion(int32_t translate_x,
 
   int x = translate_x + xpos;
   int y = translate_y + ypos;
-  TBFontFace* font = props->GetFont();
+  FontFace* font = props->GetFont();
 
   if (content) {
     // Selected embedded content should add to the foreground region.
@@ -1067,7 +1066,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
   int x = translate_x + xpos;
   int y = translate_y + ypos;
   TBColor color = props->data->text_color;
-  TBFontFace* font = props->GetFont();
+  FontFace* font = props->GetFont();
 
   if (content) {
     content->Paint(this, translate_x, translate_y, props);
@@ -1109,24 +1108,24 @@ void TBTextFragment::Click(int button, ModifierKeys modifierkeys) {
   if (content) content->Click(this, button, modifierkeys);
 }
 
-int32_t TBTextFragment::GetWidth(TBFontFace* font) {
+int32_t TBTextFragment::GetWidth(FontFace* font) {
   if (content) return content->GetWidth(font, this);
   if (IsBreak()) return 0;
   if (IsTab()) return block->CalculateTabWidth(font, xpos);
   return block->CalculateStringWidth(font, block->str.c_str() + ofs, len);
 }
 
-int32_t TBTextFragment::GetHeight(TBFontFace* font) {
+int32_t TBTextFragment::GetHeight(FontFace* font) {
   if (content) return content->GetHeight(font, this);
   return block->CalculateLineHeight(font);
 }
 
-int32_t TBTextFragment::GetBaseline(TBFontFace* font) {
+int32_t TBTextFragment::GetBaseline(FontFace* font) {
   if (content) return content->GetBaseline(font, this);
   return block->CalculateBaseline(font);
 }
 
-int32_t TBTextFragment::GetCharX(TBFontFace* font, size_t ofs) {
+int32_t TBTextFragment::GetCharX(FontFace* font, size_t ofs) {
   assert(ofs >= 0 && ofs <= len);
 
   if (IsEmbedded() || IsTab()) return ofs == 0 ? 0 : GetWidth(font);
@@ -1135,7 +1134,7 @@ int32_t TBTextFragment::GetCharX(TBFontFace* font, size_t ofs) {
   return block->CalculateStringWidth(font, block->str.c_str() + this->ofs, ofs);
 }
 
-size_t TBTextFragment::GetCharOfs(TBFontFace* font, int32_t x) {
+size_t TBTextFragment::GetCharOfs(FontFace* font, int32_t x) {
   if (IsEmbedded() || IsTab()) return x > GetWidth(font) / 2 ? 1 : 0;
   if (IsBreak()) return 0;
 
@@ -1155,7 +1154,7 @@ size_t TBTextFragment::GetCharOfs(TBFontFace* font, int32_t x) {
   return len;
 }
 
-int32_t TBTextFragment::GetStringWidth(TBFontFace* font, const char* str,
+int32_t TBTextFragment::GetStringWidth(FontFace* font, const char* str,
                                        size_t len) {
   if (IsTab()) return len == 0 ? 0 : block->CalculateTabWidth(font, xpos);
   if (IsBreak()) return len == 0 ? 0 : 8;
@@ -1231,7 +1230,7 @@ void TBStyleEdit::SetContentFactory(
     this->content_factory = &default_content_factory;
 }
 
-void TBStyleEdit::SetFont(const TBFontDescription& font_desc) {
+void TBStyleEdit::SetFont(const FontDescription& font_desc) {
   if (this->font_desc == font_desc) return;
   this->font_desc = font_desc;
   font = g_font_manager->GetFontFace(font_desc);
@@ -1355,7 +1354,7 @@ int32_t TBStyleEdit::GetContentWidth() {
 
 int32_t TBStyleEdit::GetContentHeight() const { return content_height; }
 
-void TBStyleEdit::Paint(const Rect& rect, const TBFontDescription& font_desc,
+void TBStyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
                         const TBColor& text_color) {
   TBTextProps props(font_desc, text_color);
 

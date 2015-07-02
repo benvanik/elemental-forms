@@ -25,13 +25,13 @@ TBRenderer* g_renderer = nullptr;
 TBSkin* g_tb_skin = nullptr;
 TBWidgetsReader* g_widgets_reader = nullptr;
 TBLanguage* g_tb_lng = nullptr;
-TBFontManager* g_font_manager = nullptr;
+FontManager* g_font_manager = nullptr;
 
 bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
   g_renderer = renderer;
   g_tb_lng = new TBLanguage;
   g_tb_lng->Load(lng_file);
-  g_font_manager = new TBFontManager();
+  g_font_manager = new FontManager();
   g_tb_skin = new TBSkin();
   g_widgets_reader = TBWidgetsReader::Create();
   g_image_manager = new TBImageManager();

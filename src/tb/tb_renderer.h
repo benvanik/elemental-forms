@@ -24,7 +24,7 @@ class TBBitmapFragment;
 /** TBRendererListener is a listener for TBRenderer. */
 class TBRendererListener : public TBLinkOf<TBRendererListener> {
  public:
-  virtual ~TBRendererListener() {}
+  virtual ~TBRendererListener() = default;
 
   /** Called when the context has been lost and all TBBitmaps need to be
      deleted.

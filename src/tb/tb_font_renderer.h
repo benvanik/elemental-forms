@@ -21,164 +21,155 @@
 namespace tb {
 
 class TBBitmap;
-class TBFontFace;
+class FontFace;
 
-/** TBFontGlyphData is rendering info used during glyph rendering by
-   TBFontRenderer.
-        It does not own the data pointers. */
-class TBFontGlyphData {
+// Rendering info used during glyph rendering by FontRenderer.
+// It does not own the data pointers.
+class FontGlyphData {
  public:
-  TBFontGlyphData()
-      : data8(nullptr), data32(nullptr), w(0), h(0), stride(0), rgb(false) {}
-  ~TBFontGlyphData() {}
-
-  uint8_t* data8;
-  uint32_t* data32;
-  int w, h, stride;
-  bool rgb;
+  uint8_t* data8 = nullptr;
+  uint32_t* data32 = nullptr;
+  int w = 0;
+  int h = 0;
+  int stride = 0;
+  bool rgb = false;
 };
 
-/** TBGlyphMetrics contains metrics for a font glyph. */
-class TBGlyphMetrics {
+// Contains metrics for a font glyph.
+class GlyphMetrics {
  public:
-  TBGlyphMetrics() : advance(0), x(0), y(0) {}
-  int16_t advance, x, y;
+  int16_t advance = 0;
+  int16_t x = 0;
+  int16_t y = 0;
 };
 
-/** TBFontMetrics contains metrics for a font face. */
-class TBFontMetrics {
+// Contains metrics for a font face.
+class FontMetrics {
  public:
-  TBFontMetrics() : ascent(0), descent(0), height(0) {}
-  int16_t ascent;   ///< Ascent. See TBFontFace::GetAscent()
-  int16_t descent;  ///< Descent. See TBFontFace::GetDescent()
-  int16_t height;   ///< Height. See TBFontFace::GetHeight()
+  int16_t ascent = 0;   // Ascent. See FontFace::GetAscent().
+  int16_t descent = 0;  // Descent. See FontFace::GetDescent().
+  int16_t height = 0;   // Height. See FontFace::GetHeight().
 };
 
-/** TBFontRenderer renders glyphs from a font file. */
-class TBFontRenderer : public TBLinkOf<TBFontRenderer> {
+// Renders glyphs from a font file.
+class FontRenderer : public TBLinkOf<FontRenderer> {
  public:
-  virtual ~TBFontRenderer() {}
+  virtual ~FontRenderer() = default;
 
-  /** Open the given font file with this renderer and return a new TBFontFace
-     with it.
-          return nullptr if the file can't be opened by this renderer. */
-  virtual TBFontFace* Create(TBFontManager* font_manager,
-                             const std::string& filename,
-                             const TBFontDescription& font_desc) = 0;
+  // Opens the given font file with this renderer and return a new FontFace with
+  // it.
+  // return nullptr if the file can't be opened by this renderer.
+  virtual FontFace* Create(FontManager* font_manager,
+                           const std::string& filename,
+                           const FontDescription& font_desc) = 0;
 
-  virtual bool RenderGlyph(TBFontGlyphData* data, UCS4 cp) = 0;
-  virtual void GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) = 0;
-  virtual TBFontMetrics GetMetrics() = 0;
-  // virtual int GetKernAdvance(UCS4 cp1, UCS4 cp2) = 0;
+  virtual bool RenderGlyph(FontGlyphData* data, UCS4 cp) = 0;
+  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) = 0;
+  virtual FontMetrics GetMetrics() = 0;
 };
 
-/** TBFontGlyph holds glyph metrics and bitmap fragment.
-        There's one of these for all rendered (both successful
-        and missing) glyphs in TBFontFace. */
-class TBFontGlyph : public TBLinkOf<TBFontGlyph> {
+// Holds glyph metrics and bitmap fragment.
+// There's one of these for all rendered (both successful and missing) glyphs in
+// FontFace.
+class FontGlyph : public TBLinkOf<FontGlyph> {
  public:
-  TBFontGlyph(const TBID& hash_id, UCS4 cp);
+  FontGlyph(const TBID& hash_id, UCS4 cp);
   TBID hash_id;
   UCS4 cp;
-  TBGlyphMetrics metrics;  ///< The glyph metrics.
-  TBBitmapFragment* frag;  ///< The bitmap fragment, or nullptr if missing.
-  bool has_rgb;            ///< if true, drawing should ignore text color.
+  GlyphMetrics metrics;  // The glyph metrics.
+  TBBitmapFragment* frag =
+      nullptr;           // The bitmap fragment, or nullptr if missing.
+  bool has_rgb = false;  // if true, drawing should ignore text color.
 };
 
-/** TBFontGlyphCache caches glyphs for font faces.
-        Rendered glyphs use bitmap fragments from its fragment manager. */
-class TBFontGlyphCache : private TBRendererListener {
+// Caches glyphs for font faces.
+// Rendered glyphs use bitmap fragments from its fragment manager.
+class FontGlyphCache : private TBRendererListener {
  public:
-  TBFontGlyphCache();
-  ~TBFontGlyphCache();
+  FontGlyphCache();
+  ~FontGlyphCache();
 
-  /** Get the glyph or nullptr if it is not in the cache. */
-  TBFontGlyph* GetGlyph(const TBID& hash_id, UCS4 cp);
+  // Gets the glyph or nullptr if it is not in the cache.
+  FontGlyph* GetGlyph(const TBID& hash_id, UCS4 cp);
 
-  /** Create the glyph and put it in the cache. Returns the glyph, or nullptr on
-   * fail. */
-  TBFontGlyph* CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp);
+  // Creates the glyph and put it in the cache.
+  // Returns the glyph, or nullptr on fail.
+  FontGlyph* CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp);
 
-  /** Create a bitmap fragment for the given glyph and render data. This may
-     drop other
-          rendered glyphs from the fragment map. Returns the fragment, or
-     nullptr on fail. */
-  TBBitmapFragment* CreateFragment(TBFontGlyph* glyph, int w, int h, int stride,
+  // Creates a bitmap fragment for the given glyph and render data. This may
+  // drop other rendered glyphs from the fragment map.
+  // Returns the fragment, or nullptr on fail.
+  TBBitmapFragment* CreateFragment(FontGlyph* glyph, int w, int h, int stride,
                                    uint32_t* data);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  /** Render the glyph bitmaps on screen, to analyze fragment positioning. */
+  // Renders the glyph bitmaps on screen, to analyze fragment positioning.
   void Debug();
 #endif
 
-  // Implementing TBRendererListener
-  virtual void OnContextLost();
-  virtual void OnContextRestored();
+  void OnContextLost() override;
+  void OnContextRestored() override;
 
  private:
-  void DropGlyphFragment(TBFontGlyph* glyph);
+  void DropGlyphFragment(FontGlyph* glyph);
+
   TBBitmapFragmentManager m_frag_manager;
-  TBHashTableAutoDeleteOf<TBFontGlyph> m_glyphs;
-  TBLinkListOf<TBFontGlyph> m_all_rendered_glyphs;
+  TBHashTableAutoDeleteOf<FontGlyph> m_glyphs;
+  TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };
 
-/** TBFontEffect applies an effect on each glyph that is rendered in a
- * TBFontFace. */
-class TBFontEffect {
+// Applies an effect on each glyph that is rendered in a FontFace.
+class FontEffect {
  public:
-  TBFontEffect();
-  ~TBFontEffect();
+  FontEffect();
+  ~FontEffect();
 
-  /** Set blur radius. 0 means no blur. */
+  // Sets blur radius. 0 means no blur.
   void SetBlurRadius(int blur_radius);
 
-  /** Returns true if the result is in RGB and should not be painted using the
-     color parameter
-          given to DrawString. In other words: It's a color glyph. */
+  // Returns true if the result is in RGB and should not be painted using the
+  // color parameter given to DrawString. In other words: It's a color glyph.
   bool RendersInRGB() const { return false; }
 
-  TBFontGlyphData* Render(TBGlyphMetrics* metrics, const TBFontGlyphData* src);
+  FontGlyphData* Render(GlyphMetrics* metrics, const FontGlyphData* src);
 
  private:
-  // Blur data
-  int m_blur_radius;
-  float* m_tempBuffer;
-  float* m_kernel;
+  int m_blur_radius = 0;
+  float* m_tempBuffer = nullptr;
+  float* m_kernel = nullptr;
   TBTempBuffer m_blur_temp;
 };
 
-/** TBFontFace represents a loaded font that can measure and render strings. */
-class TBFontFace {
+// Represents a loaded font that can measure and render strings.
+class FontFace {
  public:
-  TBFontFace(TBFontGlyphCache* glyph_cache, TBFontRenderer* renderer,
-             const TBFontDescription& font_desc);
-  ~TBFontFace();
+  FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,
+           const FontDescription& font_desc);
+  ~FontFace();
 
-  /** Render all glyphs needed to display the string. */
+  // Renders all glyphs needed to display the string.
   bool RenderGlyphs(const char* glyph_str,
                     size_t glyph_str_len = std::string::npos);
 
-  /** Get the vertical distance (positive) from the horizontal baseline to the
-     highest character coordinate
-          in a font face. */
+  // Gets the vertical distance (positive) from the horizontal baseline to the
+  // highest character coordinate in a font face.
   int GetAscent() const { return m_metrics.ascent; }
 
-  /** Get the vertical distance (positive) from the horizontal baseline to the
-     lowest character coordinate
-          in the font face. */
+  // Gets the vertical distance (positive) from the horizontal baseline to the
+  // lowest character coordinate in the font face.
   int GetDescent() const { return m_metrics.descent; }
 
-  /** Get height of the font in pixels. */
+  // Gets height of the font in pixels.
   int GetHeight() const { return m_metrics.height; }
 
-  /** Get the font description that was used to create this font. */
-  TBFontDescription GetFontDescription() const { return m_font_desc; }
+  // Gets the font description that was used to create this font.
+  FontDescription GetFontDescription() const { return m_font_desc; }
 
-  /** Get the effect object, so the effect can be changed.
-          Note: No glyphs are re-rendered. Only new glyphs are affected. */
-  TBFontEffect* GetEffect() { return &m_effect; }
+  // Gets the effect object, so the effect can be changed.
+  // NOTE: No glyphs are re-rendered. Only new glyphs are affected.
+  FontEffect* GetEffect() { return &m_effect; }
 
-  /** Draw string at position x, y (marks the upper left corner of the text). */
+  // Draw string at position x, y (marks the upper left corner of the text).
   void DrawString(int x, int y, const TBColor& color, const char* str,
                   size_t len = std::string::npos);
   void DrawString(int x, int y, const TBColor& color, const std::string& str,
@@ -186,145 +177,127 @@ class TBFontFace {
     DrawString(x, y, color, str.c_str(), len);
   }
 
-  /** Measure the width of the given string. Should measure len characters or to
-     the null
-          termination (whatever comes first). */
+  // Measures the width of the given string. Should measure len characters or to
+  // the null termination (whatever comes first).
   int GetStringWidth(const char* str, size_t len = std::string::npos);
   int GetStringWidth(const std::string& str, size_t len = std::string::npos) {
     return GetStringWidth(str.c_str(), len);
   }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  /** Render the glyph bitmaps on screen, to analyze fragment positioning. */
+  // Renders the glyph bitmaps on screen, to analyze fragment positioning.
   void Debug();
 #endif
 
-  /** Set a background font which will always be rendered behind this one
-      when calling DrawString. Very usefull to add a shadow effect to a font. */
-  void SetBackgroundFont(TBFontFace* font, const TBColor& col, int xofs,
+  // Sets a background font which will always be rendered behind this one when
+  // calling DrawString. Useful to add a shadow effect to a font.
+  void SetBackgroundFont(FontFace* font, const TBColor& col, int xofs,
                          int yofs);
 
  private:
   TBID GetHashId(UCS4 cp) const;
-  TBFontGlyph* GetGlyph(UCS4 cp, bool render_if_needed);
-  TBFontGlyph* CreateAndCacheGlyph(UCS4 cp);
-  void RenderGlyph(TBFontGlyph* glyph);
-  TBFontGlyphCache* m_glyph_cache;
-  TBFontRenderer* m_font_renderer;
-  TBFontDescription m_font_desc;
-  TBFontMetrics m_metrics;
-  TBFontEffect m_effect;
+  FontGlyph* GetGlyph(UCS4 cp, bool render_if_needed);
+  FontGlyph* CreateAndCacheGlyph(UCS4 cp);
+  void RenderGlyph(FontGlyph* glyph);
+
+  FontGlyphCache* m_glyph_cache = nullptr;
+  FontRenderer* m_font_renderer = nullptr;
+  FontDescription m_font_desc;
+  FontMetrics m_metrics;
+  FontEffect m_effect;
   TBTempBuffer m_temp_buffer;
 
-  TBFontFace* m_bgFont;
-  int m_bgX;
-  int m_bgY;
+  FontFace* m_bgFont = nullptr;
+  int m_bgX = 0;
+  int m_bgY = 0;
   TBColor m_bgColor;
 };
 
-/** TBFontInfo provides information about a font file associated with a font id.
- */
-class TBFontInfo {
+// Provides information about a font file associated with a font id.
+class FontInfo {
  public:
-  /** Get the font filename. */
   const std::string& GetFilename() const { return m_filename; }
-
-  /** Get the font name. */
   const std::string& GetName() const { return m_name; }
 
-  /** Get the font ID that can be used to create this font from a
-          TBFontDescription (See TBFontDescription::SetID) */
+  // Gets the font ID that can be used to create this font from a
+  // FontDescription (See FontDescription::SetID).
   TBID GetID() const { return m_id; }
 
  private:
-  friend class TBFontManager;
-  TBFontInfo(const char* filename, const char* name)
+  friend class FontManager;
+  FontInfo(const char* filename, const char* name)
       : m_filename(filename), m_name(name), m_id(name) {}
   std::string m_filename;
   std::string m_name;
   TBID m_id;
 };
 
-/** TBFontManager creates and owns font faces (TBFontFace) which are looked up
-   from
-        TBFontDescription using GetFontFace.
-
-        The fonts it can return must first have their file added and indexed
-   (AddFontInfo),
-        and then created CreateFontFace. Otherwise when asking for a font and it
-   doesn't
-        exist, it will use the default font.
-
-        Font ID 0 is always populated with a dummy font that draws squares. This
-   font is
-        generally not used for other things than unit testing or as fallback
-   when there is
-        no font backend implemented yet. Since there is always at least the test
-   font, no
-        nullptr checks are needed.
-*/
-class TBFontManager {
+// Creates and owns font faces (FontFace) which are looked up from
+// FontDescription using GetFontFace.
+// The fonts it can return must first have their file added and indexed
+// (AddFontInfo), and then created CreateFontFace. Otherwise when asking for a
+// font and it doesn't exist, it will use the default font.
+// Font ID 0 is always populated with a dummy font that draws squares. This font
+// is generally not used for other things than unit testing or as fallback when
+// there is no font backend implemented yet. Since there is always at least the
+// test font, no nullptr checks are needed.
+class FontManager {
  public:
-  TBFontManager();
-  ~TBFontManager();
+  FontManager();
+  ~FontManager();
 
-  /** Add a renderer so fonts supported by the renderer can be created.
-     Ownership of the
-          renderer is taken, until calling RemoveRenderer. */
-  void AddRenderer(TBFontRenderer* renderer) {
+  // Adds a renderer so fonts supported by the renderer can be created.
+  // Ownership of the renderer is taken, until calling RemoveRenderer.
+  void AddRenderer(FontRenderer* renderer) {
     m_font_renderers.AddLast(renderer);
   }
-  void RemoveRenderer(TBFontRenderer* renderer) {
+  void RemoveRenderer(FontRenderer* renderer) {
     m_font_renderers.Remove(renderer);
   }
 
-  /** Add TBFontInfo for the given font filename, so it can be loaded and
-     identified
-          using the font id in a TBFontDescription. */
-  TBFontInfo* AddFontInfo(const char* filename, const char* name);
+  // Adds FontInfo for the given font filename, so it can be loaded and
+  // identified using the font id in a FontDescription.
+  FontInfo* AddFontInfo(const char* filename, const char* name);
 
-  /** Get TBFontInfo for the given font id, or nullptr if there is no match. */
-  TBFontInfo* GetFontInfo(const TBID& id) const;
+  // Gets FontInfo for the given font id, or nullptr if there is no match.
+  FontInfo* GetFontInfo(const TBID& id) const;
 
-  /** Return true if there is a font loaded that match the given font
-   * description. */
-  bool HasFontFace(const TBFontDescription& font_desc) const;
+  // Returns true if there is a font loaded that match the given font
+  // description.
+  bool HasFontFace(const FontDescription& font_desc) const;
 
-  /** Get a loaded font matching the description, or the default font if there
-     is no exact match.
-          If there is not even any default font loaded, it will return the test
-     dummy font (rendering
-          only squares). */
-  TBFontFace* GetFontFace(const TBFontDescription& font_desc);
+  // Gets a loaded font matching the description, or the default font if there
+  // is no exact match.
+  // If there is not even any default font loaded, it will return the test dummy
+  // font (rendering only squares).
+  FontFace* GetFontFace(const FontDescription& font_desc);
 
-  /** Create and add a font with the given description. Returns the created font
-     face, or
-          nullptr on fail. The font is owned by this TBFontManager, and can be
-     recieved from
-          GetFontFace using the same TBFontDescription. */
-  TBFontFace* CreateFontFace(const TBFontDescription& font_desc);
+  // Create and add a font with the given description.
+  // Returns the created font face, or nullptr on fail. The font is owned by
+  // this FontManager, and can be recieved from GetFontFace using the same
+  // FontDescription.
+  FontFace* CreateFontFace(const FontDescription& font_desc);
 
-  /** Set the default font description. This is the font description that will
-     be used by default
-          for widgets. By default, the default description is using the test
-     dummy font. */
-  void SetDefaultFontDescription(const TBFontDescription& font_desc) {
+  // Sets the default font description. This is the font description that will
+  // be used by default for widgets. By default, the default description is
+  // using the test dummy font.
+  void SetDefaultFontDescription(const FontDescription& font_desc) {
     m_default_font_desc = font_desc;
   }
-  TBFontDescription GetDefaultFontDescription() const {
+  FontDescription GetDefaultFontDescription() const {
     return m_default_font_desc;
   }
 
-  /** Return the glyph cache used for fonts created by this font manager. */
-  TBFontGlyphCache* GetGlyphCache() { return &m_glyph_cache; }
+  // Returns the glyph cache used for fonts created by this font manager.
+  FontGlyphCache* GetGlyphCache() { return &m_glyph_cache; }
 
  private:
-  TBHashTableAutoDeleteOf<TBFontInfo> m_font_info;
-  TBHashTableAutoDeleteOf<TBFontFace> m_fonts;
-  TBLinkListAutoDeleteOf<TBFontRenderer> m_font_renderers;
-  TBFontGlyphCache m_glyph_cache;
-  TBFontDescription m_default_font_desc;
-  TBFontDescription m_test_font_desc;
+  TBHashTableAutoDeleteOf<FontInfo> m_font_info;
+  TBHashTableAutoDeleteOf<FontFace> m_fonts;
+  TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
+  FontGlyphCache m_glyph_cache;
+  FontDescription m_default_font_desc;
+  FontDescription m_test_font_desc;
 };
 
 }  // namespace tb

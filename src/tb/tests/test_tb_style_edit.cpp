@@ -206,7 +206,7 @@ TB_TEST_GROUP(tb_editfield) {
   TB_TEST(settext_undoredo_bugfix1) {
     // Make sure we use the test dummy font (ID 0), so we're not dependant on
     // the available fonts & font backend in this test.
-    TBFontDescription fd;
+    FontDescription fd;
     const int font_size = 48;
     fd.SetSize(font_size);
     edit->SetFontDescription(fd);
@@ -239,7 +239,7 @@ TB_TEST_GROUP(tb_editfield) {
   TB_TEST(multiline_overflow_1) {
     // Make sure we use the test dummy font (ID 0), so we're not dependant on
     // the available fonts & font backend in this test.
-    TBFontDescription fd;
+    FontDescription fd;
     const int font_size = 48;
     fd.SetSize(font_size);
     edit->SetFontDescription(fd);

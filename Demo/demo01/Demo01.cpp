@@ -194,21 +194,21 @@ class EditWindow : public DemoWindow {
         return true;
       } else if (ev.target->GetID() == TBIDC("popup_menu")) {
         if (ev.ref_id == TBIDC("default font"))
-          edit->SetFontDescription(TBFontDescription());
+          edit->SetFontDescription(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
-          TBFontDescription fd = g_font_manager->GetDefaultFontDescription();
+          FontDescription fd = g_font_manager->GetDefaultFontDescription();
           fd.SetSize(28);
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
-          TBFontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->GetCalculatedFontDescription();
           fd.SetID(TBIDC("Neon"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orangutang")) {
-          TBFontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->GetCalculatedFontDescription();
           fd.SetID(TBIDC("Orangutang"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orange")) {
-          TBFontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->GetCalculatedFontDescription();
           fd.SetID(TBIDC("Orange"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("CJK")) {
@@ -825,7 +825,7 @@ int app_main() {
 
   // Set the default font description for widgets to one of the fonts we just
   // added
-  TBFontDescription fd;
+  FontDescription fd;
 #ifdef TB_FONT_RENDERER_TBBF
   fd.SetID(TBIDC("Segoe"));
 #else
@@ -835,7 +835,7 @@ int app_main() {
   g_font_manager->SetDefaultFontDescription(fd);
 
   // Create the font now.
-  TBFontFace* font = g_font_manager->CreateFontFace(
+  FontFace* font = g_font_manager->CreateFontFace(
       g_font_manager->GetDefaultFontDescription());
 
   // Render some glyphs in one go now since we know we are going to use them. It

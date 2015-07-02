@@ -35,7 +35,7 @@ class TBStyleEditListener {
   virtual void OnChange(){};
   virtual bool OnEnter() { return false; };
   virtual void Invalidate(const Rect& rect) = 0;
-  virtual void DrawString(int32_t x, int32_t y, TBFontFace* font,
+  virtual void DrawString(int32_t x, int32_t y, FontFace* font,
                           const TBColor& color, const char* str,
                           size_t len = std::string::npos) = 0;
   virtual void DrawRect(const Rect& rect, const TBColor& color) = 0;
@@ -166,17 +166,17 @@ class TBTextProps {
  public:
   class Data : public TBLinkOf<Data> {
    public:
-    TBFontDescription font_desc;
+    FontDescription font_desc;
     TBColor text_color;
     bool underline;
   };
-  TBTextProps(const TBFontDescription& font_desc, const TBColor& text_color);
+  TBTextProps(const FontDescription& font_desc, const TBColor& text_color);
 
   Data* Push();
   void Pop();
 
   /** Get the font face from the current font description. */
-  TBFontFace* GetFont();
+  FontFace* GetFont();
 
  public:
   TBLinkListOf<Data> data_list;
@@ -224,11 +224,11 @@ class TBBlock : public TBLinkOf<TBBlock> {
   TBTextFragment* FindFragment(size_t ofs, bool prefer_first = false) const;
   TBTextFragment* FindFragment(int32_t x, int32_t y) const;
 
-  int32_t CalculateStringWidth(TBFontFace* font, const char* str,
+  int32_t CalculateStringWidth(FontFace* font, const char* str,
                                size_t len = std::string::npos) const;
-  int32_t CalculateTabWidth(TBFontFace* font, int32_t xpos) const;
-  int32_t CalculateLineHeight(TBFontFace* font) const;
-  int32_t CalculateBaseline(TBFontFace* font) const;
+  int32_t CalculateTabWidth(FontFace* font, int32_t xpos) const;
+  int32_t CalculateLineHeight(FontFace* font) const;
+  int32_t CalculateBaseline(FontFace* font) const;
 
   void Invalidate();
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
@@ -249,7 +249,7 @@ class TBBlock : public TBLinkOf<TBBlock> {
   size_t str_len;
 
  private:
-  int GetStartIndentation(TBFontFace* font, size_t first_line_len) const;
+  int GetStartIndentation(FontFace* font, size_t first_line_len) const;
 };
 
 /** Event in the TBUndoRedoStack. Each insert or remove change is stored as a
@@ -321,21 +321,21 @@ class TBTextFragment : public TBLinkOf<TBTextFragment> {
   bool IsSpace() const;
   bool IsTab() const;
 
-  int32_t GetCharX(TBFontFace* font, size_t ofs);
-  size_t GetCharOfs(TBFontFace* font, int32_t x);
+  int32_t GetCharX(FontFace* font, size_t ofs);
+  size_t GetCharOfs(FontFace* font, int32_t x);
 
   /** Get the stringwidth. Handles passwordmode, tab, linebreaks etc
    * automatically. */
-  int32_t GetStringWidth(TBFontFace* font, const char* str, size_t len);
+  int32_t GetStringWidth(FontFace* font, const char* str, size_t len);
 
   bool GetAllowBreakBefore() const;
   bool GetAllowBreakAfter() const;
 
   const char* Str() const { return block->str.c_str() + ofs; }
 
-  int32_t GetWidth(TBFontFace* font);
-  int32_t GetHeight(TBFontFace* font);
-  int32_t GetBaseline(TBFontFace* font);
+  int32_t GetWidth(FontFace* font);
+  int32_t GetHeight(FontFace* font);
+  int32_t GetBaseline(FontFace* font);
 
  public:
   int16_t xpos, ypos;
@@ -357,9 +357,9 @@ class TBStyleEdit {
   void SetListener(TBStyleEditListener* listener);
   void SetContentFactory(TBTextFragmentContentFactory* content_factory);
 
-  void SetFont(const TBFontDescription& font_desc);
+  void SetFont(const FontDescription& font_desc);
 
-  void Paint(const Rect& rect, const TBFontDescription& font_desc,
+  void Paint(const Rect& rect, const FontDescription& font_desc,
              const TBColor& text_color);
   bool KeyDown(int key, SpecialKey special_key, ModifierKeys modifierkeys);
   bool MouseDown(const Point& point, int button, int clicks,
@@ -460,8 +460,8 @@ class TBStyleEdit {
 
   /** DEPRECATED! This will be removed when using different fonts is properly
    * supported! */
-  TBFontFace* font;
-  TBFontDescription font_desc;
+  FontFace* font;
+  FontDescription font_desc;
 
   TextAlign align;
   union {

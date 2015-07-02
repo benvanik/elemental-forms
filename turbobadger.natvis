@@ -3,7 +3,7 @@
 	<Type Name="tb::Rect">
 		<DisplayString>{{x={x} y={y} w={w} h={h}}}</DisplayString>
 	</Type>
-	<Type Name="tb::TBFontDescription">
+	<Type Name="tb::FontDescription">
 		<DisplayString Condition="m_id.id == 0 &amp;&amp; m_packed_init == 0">Unspecified font (inherit)</DisplayString>
 		<DisplayString Condition="m_id.id == 0">Test dummy font, size: {m_packed.size}</DisplayString>
 		<DisplayString>{m_id.debug_string.s}, size: {m_packed.size}</DisplayString>

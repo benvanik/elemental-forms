@@ -131,7 +131,7 @@ void TBWidget::OnInflate(const INFLATE_INFO& info) {
 
   // Read the font now when the widget is in the hiearchy so inheritance works.
   if (TBNode* font = info.node->GetNode("font")) {
-    TBFontDescription fd = GetCalculatedFontDescription();
+    FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
       int new_size = g_tb_skin->GetDimensionConverter()->GetPxFromString(
           size, fd.GetSize());

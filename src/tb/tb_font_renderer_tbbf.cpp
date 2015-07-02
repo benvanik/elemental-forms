@@ -87,7 +87,7 @@ struct GLYPH {
    dots will
                 be identified as different glyphs.
 */
-class TBBFRenderer : public TBFontRenderer {
+class TBBFRenderer : public FontRenderer {
  public:
   TBBFRenderer();
   ~TBBFRenderer();
@@ -96,17 +96,17 @@ class TBBFRenderer : public TBFontRenderer {
   bool FindGlyphs();
   GLYPH* FindNext(UCS4 cp, int x);
 
-  virtual TBFontFace* Create(TBFontManager* font_manager,
-                             const std::string& filename,
-                             const TBFontDescription& font_desc);
+  virtual FontFace* Create(FontManager* font_manager,
+                           const std::string& filename,
+                           const FontDescription& font_desc);
 
-  virtual TBFontMetrics GetMetrics();
-  virtual bool RenderGlyph(TBFontGlyphData* dst_bitmap, UCS4 cp);
-  virtual void GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp);
+  virtual FontMetrics GetMetrics();
+  virtual bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp);
+  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
 
  private:
   TBNode m_node;
-  TBFontMetrics m_metrics;
+  FontMetrics m_metrics;
   TBImageLoader* m_img;
   int m_size;
   int m_x_ofs;
@@ -126,9 +126,9 @@ TBBFRenderer::TBBFRenderer()
 
 TBBFRenderer::~TBBFRenderer() { delete m_img; }
 
-TBFontMetrics TBBFRenderer::GetMetrics() { return m_metrics; }
+FontMetrics TBBFRenderer::GetMetrics() { return m_metrics; }
 
-bool TBBFRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
+bool TBBFRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
   if (cp == ' ') return false;
   GLYPH* glyph;
   if ((glyph = m_glyph_table.Get(cp)) || (glyph = m_glyph_table.Get('?'))) {
@@ -142,7 +142,7 @@ bool TBBFRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
   return false;
 }
 
-void TBBFRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
+void TBBFRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   metrics->x = m_x_ofs;
   metrics->y = -m_metrics.ascent;
   if (cp == ' ')
@@ -259,14 +259,13 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
   return glyph;
 }
 
-TBFontFace* TBBFRenderer::Create(TBFontManager* font_manager,
-                                 const std::string& filename,
-                                 const TBFontDescription& font_desc) {
+FontFace* TBBFRenderer::Create(FontManager* font_manager,
+                               const std::string& filename,
+                               const FontDescription& font_desc) {
   if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
   TBBFRenderer* fr = new TBBFRenderer();
   if (fr->Load(filename, (int)font_desc.GetSize())) {
-    TBFontFace* font =
-        new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc);
+    FontFace* font = new FontFace(font_manager->GetGlyphCache(), fr, font_desc);
     return font;
   }
   delete fr;

@@ -25,10 +25,7 @@ bool TBLanguage::Load(const char* filename) {
   while (n) {
     const char* str = n->GetValue().GetString();
     std::string* new_str = new std::string(str);
-    if (!new_str || !strings.Add(TBID(n->GetName()), new_str)) {
-      delete new_str;
-      return false;
-    }
+    strings.Add(TBID(n->GetName()), new_str);
     n = n->GetNext();
   }
   return true;

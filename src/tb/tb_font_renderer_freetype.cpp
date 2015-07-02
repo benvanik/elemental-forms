@@ -50,18 +50,18 @@ class FreetypeFace {
 };
 
 /** FreetypeFontRenderer renders fonts using the freetype library. */
-class FreetypeFontRenderer : public TBFontRenderer {
+class FreetypeFontRenderer : public FontRenderer {
  public:
   FreetypeFontRenderer();
   ~FreetypeFontRenderer();
 
-  virtual TBFontFace* Create(TBFontManager* font_manager,
-                             const std::string& filename,
-                             const TBFontDescription& font_desc);
+  virtual FontFace* Create(FontManager* font_manager,
+                           const std::string& filename,
+                           const FontDescription& font_desc);
 
-  virtual TBFontMetrics GetMetrics();
-  virtual bool RenderGlyph(TBFontGlyphData* dst_bitmap, UCS4 cp);
-  virtual void GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp);
+  virtual FontMetrics GetMetrics();
+  virtual bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp);
+  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
 
  private:
   bool Load(FreetypeFace* face, int size);
@@ -87,15 +87,15 @@ FreetypeFontRenderer::~FreetypeFontRenderer() {
   }
 }
 
-TBFontMetrics FreetypeFontRenderer::GetMetrics() {
-  TBFontMetrics metrics;
+FontMetrics FreetypeFontRenderer::GetMetrics() {
+  FontMetrics metrics;
   metrics.ascent = (int16_t)(m_size->metrics.ascender >> 6);
   metrics.descent = (int16_t) - (m_size->metrics.descender >> 6);
   metrics.height = (int16_t)(m_size->metrics.height >> 6);
   return metrics;
 }
 
-bool FreetypeFontRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
+bool FreetypeFontRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
   FT_Activate_Size(m_size);
   FT_GlyphSlot slot = m_face->m_face->glyph;
   if (FT_Load_Char(m_face->m_face, cp, FT_LOAD_RENDER) ||
@@ -108,7 +108,7 @@ bool FreetypeFontRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
   return data->data8 ? true : false;
 }
 
-void FreetypeFontRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
+void FreetypeFontRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   FT_Activate_Size(m_size);
   FT_GlyphSlot slot = m_face->m_face->glyph;
   if (FT_Load_Char(m_face->m_face, cp, FT_LOAD_RENDER)) return;
@@ -151,23 +151,23 @@ bool FreetypeFontRenderer::Load(const std::string& filename, int size) {
   return Load(m_face, size);
 }
 
-TBFontFace* FreetypeFontRenderer::Create(TBFontManager* font_manager,
-                                         const std::string& filename,
-                                         const TBFontDescription& font_desc) {
+FontFace* FreetypeFontRenderer::Create(FontManager* font_manager,
+                                       const std::string& filename,
+                                       const FontDescription& font_desc) {
   if (FreetypeFontRenderer* fr = new FreetypeFontRenderer()) {
     TBID face_cache_id(filename);
     FreetypeFace* f = ft_face_cache.Get(face_cache_id);
     if (f) {
       ++f->refCount;
       if (fr->Load(f, (int)font_desc.GetSize()))
-        if (TBFontFace* font =
-                new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc))
+        if (FontFace* font =
+                new FontFace(font_manager->GetGlyphCache(), fr, font_desc))
           return font;
     } else if (fr->Load(filename, (int)font_desc.GetSize())) {
       if (ft_face_cache.Add(face_cache_id, fr->m_face))
         fr->m_face->hashID = face_cache_id;
-      if (TBFontFace* font =
-              new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc))
+      if (FontFace* font =
+              new FontFace(font_manager->GetGlyphCache(), fr, font_desc))
         return font;
     }
 

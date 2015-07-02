@@ -16,16 +16,17 @@
 
 namespace tb {
 
-static void blurGlyph(unsigned char* src, int srcw, int srch, int srcStride,
-                      unsigned char* dst, int dstw, int dsth, int dstStride,
-                      float* temp, float* kernel, int kernelRadius) {
+void BlurGlyph(unsigned char* src, int srcw, int srch, int srcStride,
+               unsigned char* dst, int dstw, int dsth, int dstStride,
+               float* temp, float* kernel, int kernelRadius) {
   for (int y = 0; y < srch; y++) {
     for (int x = 0; x < dstw; x++) {
       float val = 0;
       for (int k_ofs = -kernelRadius; k_ofs <= kernelRadius; k_ofs++) {
-        if (x - kernelRadius + k_ofs >= 0 && x - kernelRadius + k_ofs < srcw)
+        if (x - kernelRadius + k_ofs >= 0 && x - kernelRadius + k_ofs < srcw) {
           val += src[y * srcStride + x - kernelRadius + k_ofs] *
                  kernel[k_ofs + kernelRadius];
+        }
       }
       temp[y * dstw + x] = val;
     }
@@ -34,26 +35,28 @@ static void blurGlyph(unsigned char* src, int srcw, int srch, int srcStride,
     for (int x = 0; x < dstw; x++) {
       float val = 0;
       for (int k_ofs = -kernelRadius; k_ofs <= kernelRadius; k_ofs++) {
-        if (y - kernelRadius + k_ofs >= 0 && y - kernelRadius + k_ofs < srch)
+        if (y - kernelRadius + k_ofs >= 0 && y - kernelRadius + k_ofs < srch) {
           val += temp[(y - kernelRadius + k_ofs) * dstw + x] *
                  kernel[k_ofs + kernelRadius];
+        }
       }
       dst[y * dstStride + x] = (unsigned char)(val + 0.5f);
     }
   }
 }
 
-TBFontEffect::TBFontEffect()
-    : m_blur_radius(0), m_tempBuffer(nullptr), m_kernel(nullptr) {}
+FontEffect::FontEffect() = default;
 
-TBFontEffect::~TBFontEffect() {
+FontEffect::~FontEffect() {
   delete[] m_tempBuffer;
   delete[] m_kernel;
 }
 
-void TBFontEffect::SetBlurRadius(int blur_radius) {
+void FontEffect::SetBlurRadius(int blur_radius) {
   assert(blur_radius >= 0);
-  if (m_blur_radius == blur_radius) return;
+  if (m_blur_radius == blur_radius) {
+    return;
+  }
   m_blur_radius = blur_radius;
   if (m_blur_radius > 0) {
     delete[] m_kernel;
@@ -72,17 +75,21 @@ void TBFontEffect::SetBlurRadius(int blur_radius) {
       m_kernel[k] = kval;
       sum += kval;
     }
-    for (int k = 0; k < 2 * m_blur_radius + 1; k++) m_kernel[k] /= sum;
+    for (int k = 0; k < 2 * m_blur_radius + 1; k++) {
+      m_kernel[k] /= sum;
+    }
   }
 }
 
-TBFontGlyphData* TBFontEffect::Render(TBGlyphMetrics* metrics,
-                                      const TBFontGlyphData* src) {
-  TBFontGlyphData* effect_glyph_data = nullptr;
+FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
+                                  const FontGlyphData* src) {
+  FontGlyphData* effect_glyph_data = nullptr;
   if (m_blur_radius > 0 && src->data8) {
-    // Create a new TBFontGlyphData for the blurred glyph
-    effect_glyph_data = new TBFontGlyphData;
-    if (!effect_glyph_data) return nullptr;
+    // Create a new FontGlyphData for the blurred glyph
+    effect_glyph_data = new FontGlyphData;
+    if (!effect_glyph_data) {
+      return nullptr;
+    }
     effect_glyph_data->w = src->w + m_blur_radius * 2;
     effect_glyph_data->h = src->h + m_blur_radius * 2;
     effect_glyph_data->stride = effect_glyph_data->w;
@@ -90,15 +97,14 @@ TBFontGlyphData* TBFontEffect::Render(TBGlyphMetrics* metrics,
         new unsigned char[effect_glyph_data->w * effect_glyph_data->h];
 
     // Reserve memory needed for blurring.
-    if (!effect_glyph_data->data8 ||
-        !m_blur_temp.Reserve(effect_glyph_data->w * effect_glyph_data->h *
+    if (!m_blur_temp.Reserve(effect_glyph_data->w * effect_glyph_data->h *
                              sizeof(float))) {
       delete effect_glyph_data;
       return nullptr;
     }
 
     // Blur!
-    blurGlyph(src->data8, src->w, src->h, src->stride, effect_glyph_data->data8,
+    BlurGlyph(src->data8, src->w, src->h, src->stride, effect_glyph_data->data8,
               effect_glyph_data->w, effect_glyph_data->h, effect_glyph_data->w,
               (float*)m_blur_temp.GetData(), m_kernel, m_blur_radius);
 
@@ -109,10 +115,9 @@ TBFontGlyphData* TBFontEffect::Render(TBGlyphMetrics* metrics,
   return effect_glyph_data;
 }
 
-TBFontGlyph::TBFontGlyph(const TBID& hash_id, UCS4 cp)
-    : hash_id(hash_id), cp(cp), frag(nullptr), has_rgb(false) {}
+FontGlyph::FontGlyph(const TBID& hash_id, UCS4 cp) : hash_id(hash_id), cp(cp) {}
 
-TBFontGlyphCache::TBFontGlyphCache() {
+FontGlyphCache::FontGlyphCache() {
   // Only use one map for the font face. The glyph cache will start forgetting
   // glyphs that haven't been used for a while if the map gets full.
   m_frag_manager.SetNumMapsLimit(1);
@@ -121,10 +126,10 @@ TBFontGlyphCache::TBFontGlyphCache() {
   g_renderer->AddListener(this);
 }
 
-TBFontGlyphCache::~TBFontGlyphCache() { g_renderer->RemoveListener(this); }
+FontGlyphCache::~FontGlyphCache() { g_renderer->RemoveListener(this); }
 
-TBFontGlyph* TBFontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
-  if (TBFontGlyph* glyph = m_glyphs.Get(hash_id)) {
+FontGlyph* FontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
+  if (FontGlyph* glyph = m_glyphs.Get(hash_id)) {
     // Move the glyph to the end of m_all_rendered_glyphs so we maintain LRU
     // (oldest first)
     if (m_all_rendered_glyphs.ContainsLink(glyph)) {
@@ -136,21 +141,20 @@ TBFontGlyph* TBFontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
   return nullptr;
 }
 
-TBFontGlyph* TBFontGlyphCache::CreateAndCacheGlyph(const TBID& hash_id,
-                                                   UCS4 cp) {
+FontGlyph* FontGlyphCache::CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp) {
   assert(!GetGlyph(hash_id, cp));
-  TBFontGlyph* glyph = new TBFontGlyph(hash_id, cp);
-  if (glyph && m_glyphs.Add(glyph->hash_id, glyph)) return glyph;
-  delete glyph;
-  return nullptr;
+  FontGlyph* glyph = new FontGlyph(hash_id, cp);
+  m_glyphs.Add(glyph->hash_id, glyph);
+  return glyph;
 }
 
-TBBitmapFragment* TBFontGlyphCache::CreateFragment(TBFontGlyph* glyph, int w,
-                                                   int h, int stride,
-                                                   uint32_t* data) {
+TBBitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph, int w, int h,
+                                                 int stride, uint32_t* data) {
   assert(GetGlyph(glyph->hash_id, glyph->cp));
   // Don't bother if the requested glyph is too large.
-  if (w > TB_GLYPH_CACHE_WIDTH || h > TB_GLYPH_CACHE_HEIGHT) return nullptr;
+  if (w > TB_GLYPH_CACHE_WIDTH || h > TB_GLYPH_CACHE_HEIGHT) {
+    return nullptr;
+  }
 
   bool try_drop_largest = true;
   bool dropped_large_enough_glyph = false;
@@ -166,7 +170,7 @@ TBBitmapFragment* TBFontGlyphCache::CreateFragment(TBFontGlyph* glyph, int w,
     if (try_drop_largest) {
       const int check_limit = 20;
       int check_count = 0;
-      for (TBFontGlyph* oldest = m_all_rendered_glyphs.GetFirst();
+      for (FontGlyph* oldest = m_all_rendered_glyphs.GetFirst();
            oldest && check_count < check_limit; oldest = oldest->GetNext()) {
         if (oldest->frag->Width() >= w &&
             oldest->frag->GetAllocatedHeight() >= h) {
@@ -181,16 +185,17 @@ TBBitmapFragment* TBFontGlyphCache::CreateFragment(TBFontGlyph* glyph, int w,
     // We had no large enough glyph so just drop the oldest one. We will likely
     // spin around the loop, fail and drop again a few times before we succeed.
     if (!dropped_large_enough_glyph) {
-      if (TBFontGlyph* oldest = m_all_rendered_glyphs.GetFirst())
+      if (FontGlyph* oldest = m_all_rendered_glyphs.GetFirst()) {
         DropGlyphFragment(oldest);
-      else
+      } else {
         break;
+      }
     }
   } while (true);
   return nullptr;
 }
 
-void TBFontGlyphCache::DropGlyphFragment(TBFontGlyph* glyph) {
+void FontGlyphCache::DropGlyphFragment(FontGlyph* glyph) {
   assert(glyph->frag);
   m_frag_manager.FreeFragment(glyph->frag);
   glyph->frag = nullptr;
@@ -198,26 +203,23 @@ void TBFontGlyphCache::DropGlyphFragment(TBFontGlyph* glyph) {
 }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-void TBFontGlyphCache::Debug() { m_frag_manager.Debug(); }
+void FontGlyphCache::Debug() { m_frag_manager.Debug(); }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-void TBFontGlyphCache::OnContextLost() { m_frag_manager.DeleteBitmaps(); }
+void FontGlyphCache::OnContextLost() { m_frag_manager.DeleteBitmaps(); }
 
-void TBFontGlyphCache::OnContextRestored() {
+void FontGlyphCache::OnContextRestored() {
   // No need to do anything. The bitmaps will be created when drawing.
 }
 
-TBFontFace::TBFontFace(TBFontGlyphCache* glyph_cache, TBFontRenderer* renderer,
-                       const TBFontDescription& font_desc)
+FontFace::FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,
+                   const FontDescription& font_desc)
     : m_glyph_cache(glyph_cache),
       m_font_renderer(renderer),
-      m_font_desc(font_desc),
-      m_bgFont(nullptr),
-      m_bgX(0),
-      m_bgY(0) {
-  if (m_font_renderer)
+      m_font_desc(font_desc) {
+  if (m_font_renderer) {
     m_metrics = m_font_renderer->GetMetrics();
-  else {
+  } else {
     // Invent some metrics for the test font
     int size = m_font_desc.GetSize();
     m_metrics.ascent = size - size / 4;
@@ -226,23 +228,26 @@ TBFontFace::TBFontFace(TBFontGlyphCache* glyph_cache, TBFontRenderer* renderer,
   }
 }
 
-TBFontFace::~TBFontFace() {
+FontFace::~FontFace() {
   // It would be nice to drop all glyphs we have live for this font face.
   // Now they only die when they get old and kicked out of the cache.
   // We currently don't drop any font faces either though (except on shutdown)
   delete m_font_renderer;
 }
 
-void TBFontFace::SetBackgroundFont(TBFontFace* font, const TBColor& col,
-                                   int xofs, int yofs) {
+void FontFace::SetBackgroundFont(FontFace* font, const TBColor& col, int xofs,
+                                 int yofs) {
   m_bgFont = font;
   m_bgX = xofs;
   m_bgY = yofs;
   m_bgColor = col;
 }
 
-bool TBFontFace::RenderGlyphs(const char* glyph_str, size_t glyph_str_len) {
-  if (!m_font_renderer) return true;  // This is the test font
+bool FontFace::RenderGlyphs(const char* glyph_str, size_t glyph_str_len) {
+  if (!m_font_renderer) {
+    // This is the test font.
+    return true;
+  }
 
   if (glyph_str_len == std::string::npos) {
     glyph_str_len = strlen(glyph_str);
@@ -252,27 +257,32 @@ bool TBFontFace::RenderGlyphs(const char* glyph_str, size_t glyph_str_len) {
   size_t i = 0;
   while (glyph_str[i] && i < glyph_str_len) {
     UCS4 cp = utf8::decode_next(glyph_str, &i, glyph_str_len);
-    if (!GetGlyph(cp, true)) has_all_glyphs = false;
+    if (!GetGlyph(cp, true)) {
+      has_all_glyphs = false;
+    }
   }
   return has_all_glyphs;
 }
 
-TBFontGlyph* TBFontFace::CreateAndCacheGlyph(UCS4 cp) {
-  if (!m_font_renderer) return nullptr;  // This is the test font
+FontGlyph* FontFace::CreateAndCacheGlyph(UCS4 cp) {
+  if (!m_font_renderer) {
+    // This is the test font.
+    return nullptr;
+  }
 
   // Create the new glyph
-  TBFontGlyph* glyph = m_glyph_cache->CreateAndCacheGlyph(GetHashId(cp), cp);
+  FontGlyph* glyph = m_glyph_cache->CreateAndCacheGlyph(GetHashId(cp), cp);
   if (glyph) m_font_renderer->GetGlyphMetrics(&glyph->metrics, cp);
   return glyph;
 }
 
-void TBFontFace::RenderGlyph(TBFontGlyph* glyph) {
+void FontFace::RenderGlyph(FontGlyph* glyph) {
   assert(!glyph->frag);
-  TBFontGlyphData glyph_data;
+  FontGlyphData glyph_data;
   if (m_font_renderer->RenderGlyph(&glyph_data, glyph->cp)) {
-    TBFontGlyphData* effect_glyph_data =
+    FontGlyphData* effect_glyph_data =
         m_effect.Render(&glyph->metrics, &glyph_data);
-    TBFontGlyphData* result_glyph_data =
+    FontGlyphData* result_glyph_data =
         effect_glyph_data ? effect_glyph_data : &glyph_data;
 
     // The glyph data may be in uint8_t format, which we have to convert since
@@ -310,22 +320,26 @@ void TBFontFace::RenderGlyph(TBFontGlyph* glyph) {
 // full) using %d bitmaps.\n", cp, glyph_str, m_all_glyphs.CountLinks(),
 // m_frag_manager.GetUseRatio(), m_frag_manager.GetNumMaps());
 // TBDebugOut(info);
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 }
 
-TBID TBFontFace::GetHashId(UCS4 cp) const {
+TBID FontFace::GetHashId(UCS4 cp) const {
   return cp * 31 + m_font_desc.GetFontFaceID();
 }
 
-TBFontGlyph* TBFontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
-  TBFontGlyph* glyph = m_glyph_cache->GetGlyph(GetHashId(cp), cp);
-  if (!glyph) glyph = CreateAndCacheGlyph(cp);
-  if (glyph && !glyph->frag && render_if_needed) RenderGlyph(glyph);
+FontGlyph* FontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
+  FontGlyph* glyph = m_glyph_cache->GetGlyph(GetHashId(cp), cp);
+  if (!glyph) {
+    glyph = CreateAndCacheGlyph(cp);
+  }
+  if (glyph && !glyph->frag && render_if_needed) {
+    RenderGlyph(glyph);
+  }
   return glyph;
 }
 
-void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
-                            size_t len) {
+void FontFace::DrawString(int x, int y, const TBColor& color, const char* str,
+                          size_t len) {
   if (m_bgFont) {
     m_bgFont->DrawString(x + m_bgX, y + m_bgY, m_bgColor, str, len);
   }
@@ -338,108 +352,111 @@ void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
   while (str[i] && i < len) {
     UCS4 cp = utf8::decode_next(str, &i, len);
     if (cp == 0xFFFF) continue;
-    if (TBFontGlyph* glyph = GetGlyph(cp, true)) {
+    if (FontGlyph* glyph = GetGlyph(cp, true)) {
       if (glyph->frag) {
         Rect dst_rect(x + glyph->metrics.x, y + glyph->metrics.y + GetAscent(),
                       glyph->frag->Width(), glyph->frag->Height());
         Rect src_rect(0, 0, glyph->frag->Width(), glyph->frag->Height());
-        if (glyph->has_rgb)
+        if (glyph->has_rgb) {
           g_renderer->DrawBitmap(dst_rect, src_rect, glyph->frag);
-        else
+        } else {
           g_renderer->DrawBitmapColored(dst_rect, src_rect, color, glyph->frag);
+        }
       }
       x += glyph->metrics.advance;
-    } else if (!m_font_renderer)  // This is the test font. Use same glyph width
-                                  // as height and draw square.
-    {
+    } else if (!m_font_renderer) {
+      // This is the test font. Use same glyph width as height and draw square.
       g_renderer->DrawRect(Rect(x, y, m_metrics.height / 3, m_metrics.height),
                            color);
       x += m_metrics.height / 3 + 1;
     }
   }
 
-  if (m_font_renderer) g_renderer->EndBatchHint();
+  if (m_font_renderer) {
+    g_renderer->EndBatchHint();
+  }
 }
 
-int TBFontFace::GetStringWidth(const char* str, size_t len) {
+int FontFace::GetStringWidth(const char* str, size_t len) {
   int width = 0;
   size_t i = 0;
   while (str[i] && i < len) {
     UCS4 cp = utf8::decode_next(str, &i, len);
-    if (cp == 0xFFFF) continue;
-    if (!m_font_renderer)  // This is the test font. Use same glyph width as
-                           // height.
+    if (cp == 0xFFFF) {
+      continue;
+    }
+    if (!m_font_renderer) {
+      // This is the test font. Use same glyph width as height.
       width += m_metrics.height / 3 + 1;
-    else if (TBFontGlyph* glyph = GetGlyph(cp, false))
+    } else if (FontGlyph* glyph = GetGlyph(cp, false)) {
       width += glyph->metrics.advance;
+    }
   }
   return width;
 }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-void TBFontFace::Debug() { m_glyph_cache->Debug(); }
+void FontFace::Debug() { m_glyph_cache->Debug(); }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-TBFontManager::TBFontManager() {
-  // Add the test dummy font with empty name (Equals to ID 0)
+FontManager::FontManager() {
+  // Add the test dummy font with empty name (equal to ID 0).
   AddFontInfo("-test-font-dummy-", "");
   m_test_font_desc.SetSize(16);
   CreateFontFace(m_test_font_desc);
 
-  // Use the test dummy font as default by default
+  // Use the test dummy font as default by default.
   m_default_font_desc = m_test_font_desc;
 }
 
-TBFontManager::~TBFontManager() {}
+FontManager::~FontManager() = default;
 
-TBFontInfo* TBFontManager::AddFontInfo(const char* filename, const char* name) {
-  if (TBFontInfo* fi = new TBFontInfo(filename, name)) {
-    if (m_font_info.Add(fi->GetID(), fi)) return fi;
-    delete fi;
-  }
-  return nullptr;
+FontInfo* FontManager::AddFontInfo(const char* filename, const char* name) {
+  FontInfo* fi = new FontInfo(filename, name);
+  m_font_info.Add(fi->GetID(), fi);
+  return fi;
 }
 
-TBFontInfo* TBFontManager::GetFontInfo(const TBID& id) const {
+FontInfo* FontManager::GetFontInfo(const TBID& id) const {
   return m_font_info.Get(id);
 }
 
-bool TBFontManager::HasFontFace(const TBFontDescription& font_desc) const {
+bool FontManager::HasFontFace(const FontDescription& font_desc) const {
   return m_fonts.Get(font_desc.GetFontFaceID()) ? true : false;
 }
 
-TBFontFace* TBFontManager::GetFontFace(const TBFontDescription& font_desc) {
-  if (TBFontFace* font = m_fonts.Get(font_desc.GetFontFaceID())) return font;
-  if (TBFontFace* font =
-          m_fonts.Get(GetDefaultFontDescription().GetFontFaceID()))
+FontFace* FontManager::GetFontFace(const FontDescription& font_desc) {
+  if (FontFace* font = m_fonts.Get(font_desc.GetFontFaceID())) {
     return font;
+  }
+  if (FontFace* font =
+          m_fonts.Get(GetDefaultFontDescription().GetFontFaceID())) {
+    return font;
+  }
   return m_fonts.Get(m_test_font_desc.GetFontFaceID());
 }
 
-TBFontFace* TBFontManager::CreateFontFace(const TBFontDescription& font_desc) {
+FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
   assert(
       !HasFontFace(
           font_desc));  // There is already a font added with this description!
 
-  TBFontInfo* fi = GetFontInfo(font_desc.GetID());
+  FontInfo* fi = GetFontInfo(font_desc.GetID());
   if (!fi) return nullptr;
 
-  if (fi->GetID() == 0)  // Is this the test dummy font
-  {
-    if (TBFontFace* font = new TBFontFace(&m_glyph_cache, nullptr, font_desc)) {
-      if (m_fonts.Add(font_desc.GetFontFaceID(), font)) return font;
-      delete font;
-    }
-    return nullptr;
+  if (fi->GetID() == 0) {
+    // Is this the test dummy font.
+    FontFace* font = new FontFace(&m_glyph_cache, nullptr, font_desc);
+    m_fonts.Add(font_desc.GetFontFaceID(), font);
+    return font;
   }
 
   // Iterate through font renderers until we find one capable of creating a font
   // for this file.
-  for (TBFontRenderer* fr = m_font_renderers.GetFirst(); fr;
-       fr = fr->GetNext()) {
-    if (TBFontFace* font = fr->Create(this, fi->GetFilename(), font_desc)) {
-      if (m_fonts.Add(font_desc.GetFontFaceID(), font)) return font;
-      delete font;
+  for (FontRenderer* fr = m_font_renderers.GetFirst(); fr; fr = fr->GetNext()) {
+    if (FontFace* font = fr->Create(this, fi->GetFilename(), font_desc)) {
+      m_fonts.Add(font_desc.GetFontFaceID(), font);
+      return font;
     }
   }
   return nullptr;

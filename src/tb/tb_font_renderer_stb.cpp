@@ -20,22 +20,22 @@ using namespace tb;
                                      // implementation
 #include "thirdparty/stb_truetype.h"
 
-/** STBFontRenderer renders fonts using stb_truetype.h (http://nothings.org/) */
+/** SFontRenderer renders fonts using stb_truetype.h (http://nothings.org/) */
 
-class STBFontRenderer : public TBFontRenderer {
+class SFontRenderer : public FontRenderer {
  public:
-  STBFontRenderer();
-  ~STBFontRenderer();
+  SFontRenderer();
+  ~SFontRenderer();
 
   bool Load(const char* filename, int size);
 
-  virtual TBFontFace* Create(TBFontManager* font_manager,
-                             const std::string& filename,
-                             const TBFontDescription& font_desc);
+  virtual FontFace* Create(FontManager* font_manager,
+                           const std::string& filename,
+                           const FontDescription& font_desc);
 
-  virtual TBFontMetrics GetMetrics();
-  virtual bool RenderGlyph(TBFontGlyphData* dst_bitmap, UCS4 cp);
-  virtual void GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp);
+  virtual FontMetrics GetMetrics();
+  virtual bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp);
+  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
 
  private:
   stbtt_fontinfo font;
@@ -45,16 +45,15 @@ class STBFontRenderer : public TBFontRenderer {
   float scale;
 };
 
-STBFontRenderer::STBFontRenderer()
-    : ttf_buffer(nullptr), render_data(nullptr) {}
+SFontRenderer::SFontRenderer() : ttf_buffer(nullptr), render_data(nullptr) {}
 
-STBFontRenderer::~STBFontRenderer() {
+SFontRenderer::~SFontRenderer() {
   delete[] ttf_buffer;
   delete[] render_data;
 }
 
-TBFontMetrics STBFontRenderer::GetMetrics() {
-  TBFontMetrics metrics;
+FontMetrics SFontRenderer::GetMetrics() {
+  FontMetrics metrics;
   int ascent, descent, lineGap;
   stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
   metrics.ascent = (int)(ascent * scale + 0.5f);
@@ -63,7 +62,7 @@ TBFontMetrics STBFontRenderer::GetMetrics() {
   return metrics;
 }
 
-bool STBFontRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
+bool SFontRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
   delete[] render_data;
   render_data =
       stbtt_GetCodepointBitmap(&font, 0, scale, cp, &data->w, &data->h, 0, 0);
@@ -73,7 +72,7 @@ bool STBFontRenderer::RenderGlyph(TBFontGlyphData* data, UCS4 cp) {
   return data->data8 ? true : false;
 }
 
-void STBFontRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
+void SFontRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   int advanceWidth, leftSideBearing;
   stbtt_GetCodepointHMetrics(&font, cp, &advanceWidth, &leftSideBearing);
   metrics->advance = (int)(advanceWidth * scale + 0.5f);
@@ -83,7 +82,7 @@ void STBFontRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
   metrics->y = iy0;
 }
 
-bool STBFontRenderer::Load(const char* filename, int size) {
+bool SFontRenderer::Load(const char* filename, int size) {
   TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
   if (!f) return false;
 
@@ -102,13 +101,12 @@ bool STBFontRenderer::Load(const char* filename, int size) {
   return true;
 }
 
-TBFontFace* STBFontRenderer::Create(TBFontManager* font_manager,
-                                    const char* filename,
-                                    const TBFontDescription& font_desc) {
-  if (STBFontRenderer* fr = new STBFontRenderer()) {
+FontFace* SFontRenderer::Create(FontManager* font_manager, const char* filename,
+                                const FontDescription& font_desc) {
+  if (SFontRenderer* fr = new SFontRenderer()) {
     if (fr->Load(filename, (int)font_desc.GetSize()))
-      if (TBFontFace* font =
-              new TBFontFace(font_manager->GetGlyphCache(), fr, font_desc))
+      if (FontFace* font =
+              new FontFace(font_manager->GetGlyphCache(), fr, font_desc))
         return font;
     delete fr;
   }
@@ -116,8 +114,7 @@ TBFontFace* STBFontRenderer::Create(TBFontManager* font_manager,
 }
 
 void register_stb_font_renderer() {
-  if (STBFontRenderer* fr = new STBFontRenderer)
-    g_font_manager->AddRenderer(fr);
+  if (SFontRenderer* fr = new SFontRenderer) g_font_manager->AddRenderer(fr);
 }
 
 #endif  // TB_FONT_RENDERER_STB

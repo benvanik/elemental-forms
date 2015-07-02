@@ -25,7 +25,7 @@ namespace tb {
 
 class Window;
 class TBWidget;
-class TBFontFace;
+class FontFace;
 class TBScroller;
 class TBWidgetListener;
 class TBLongClickTimer;
@@ -1187,7 +1187,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   /** Set the font description for this widget and any children that inherit the
      font.
 
-          Setting a unspecified TBFontDescription (no changes made since
+          Setting a unspecified FontDescription (no changes made since
      construction) means
           it will be inherited from parent (the default).
 
@@ -1196,25 +1196,25 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
           Returns false and keep the font onchanged if it no matching font
      exists or fails creation. */
-  bool SetFontDescription(const TBFontDescription& font_desc);
+  bool SetFontDescription(const FontDescription& font_desc);
 
   /** Get the font description as set with SetFontDescription. Use
      GetCalculatedFontDescription()
           to get the calculated font description (Inherit from parent widget
      etc.) */
-  TBFontDescription GetFontDescription() const { return m_font_desc; }
+  FontDescription GetFontDescription() const { return m_font_desc; }
 
   /** Calculate the font description for this widget. If this widget have
      unspecified font
           description, it will be inheritted from parent. If no parent specify
      any font,
           the default font description will be returned. */
-  TBFontDescription GetCalculatedFontDescription() const;
+  FontDescription GetCalculatedFontDescription() const;
 
-  /** Get the TBFontFace for this widget from the current font description
+  /** Get the FontFace for this widget from the current font description
      (calculated
           by GetCalculatedFontDescription) */
-  TBFontFace* GetFont() const;
+  FontFace* GetFont() const;
 
  private:
   friend class TBWidgetListener;  ///< It does iteration of m_listeners for us.
@@ -1233,7 +1233,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   float m_opacity;                             ///< Opacity 0-1. See SetOpacity.
   SkinState m_state;  ///< The widget state (excluding any auto states)
   Gravity m_gravity;  ///< The layout gravity setting.
-  TBFontDescription m_font_desc;  ///< The font description.
+  FontDescription m_font_desc;    ///< The font description.
   PreferredSize m_cached_ps;      ///< Cached preferred size.
   SizeConstraints m_cached_sc;    ///< Cached size constraints.
   LayoutParams* m_layout_params;  ///< Layout params, or nullptr.

@@ -102,14 +102,12 @@ TBImage TBImageManager::GetImage(const char* filename) {
       fragment =
           m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
     }
-    if (!fragment)
+    if (!fragment) {
       fragment = m_frag_manager.GetFragmentFromFile(filename, false);
-
-    image_rep = new TBImageRep(this, fragment, hash_key);
-    if (!image_rep || !fragment || !m_image_rep_hash.Add(hash_key, image_rep)) {
-      delete image_rep;
-      m_frag_manager.FreeFragment(fragment);
-      image_rep = nullptr;
+    }
+    if (fragment) {
+      image_rep = new TBImageRep(this, fragment, hash_key);
+      m_image_rep_hash.Add(hash_key, image_rep);
     }
     TBDebugOut(image_rep ? "TBImageManager - Loaded new image.\n"
                          : "TBImageManager - Loading image failed.\n");

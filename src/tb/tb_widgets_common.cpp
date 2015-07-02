@@ -30,7 +30,7 @@ int TBWidgetString::GetHeight(TBWidget* widget) {
 
 void TBWidgetString::Paint(TBWidget* widget, const Rect& rect,
                            const TBColor& color) {
-  TBFontFace* font = widget->GetFont();
+  FontFace* font = widget->GetFont();
   int string_w = GetWidth(widget);
 
   int x = rect.x;

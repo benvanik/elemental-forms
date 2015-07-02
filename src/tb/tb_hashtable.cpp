@@ -41,29 +41,28 @@ void TBHashTable::RemoveAll(bool delete_content) {
   m_num_buckets = m_num_items = 0;
 }
 
-bool TBHashTable::Rehash(uint32_t new_num_buckets) {
-  if (new_num_buckets == m_num_buckets) return true;
-  if (ITEM** new_buckets = new ITEM* [new_num_buckets]) {
-    memset(new_buckets, 0, sizeof(ITEM*) * new_num_buckets);
-    // Rehash all items into the new buckets
-    for (uint32_t i = 0; i < m_num_buckets; i++) {
-      ITEM* item = m_buckets[i];
-      while (item) {
-        ITEM* item_next = item->next;
-        // Add it to new_buckets
-        uint32_t bucket = item->key & (new_num_buckets - 1);
-        item->next = new_buckets[bucket];
-        new_buckets[bucket] = item;
-        item = item_next;
-      }
-    }
-    // Delete old buckets and update
-    delete[] m_buckets;
-    m_buckets = new_buckets;
-    m_num_buckets = new_num_buckets;
-    return true;
+void TBHashTable::Rehash(uint32_t new_num_buckets) {
+  if (new_num_buckets == m_num_buckets) {
+    return;
   }
-  return false;
+  ITEM** new_buckets = new ITEM* [new_num_buckets];
+  std::memset(new_buckets, 0, sizeof(ITEM*) * new_num_buckets);
+  // Rehash all items into the new buckets
+  for (uint32_t i = 0; i < m_num_buckets; i++) {
+    ITEM* item = m_buckets[i];
+    while (item) {
+      ITEM* item_next = item->next;
+      // Add it to new_buckets
+      uint32_t bucket = item->key & (new_num_buckets - 1);
+      item->next = new_buckets[bucket];
+      new_buckets[bucket] = item;
+      item = item_next;
+    }
+  }
+  // Delete old buckets and update
+  delete[] m_buckets;
+  m_buckets = new_buckets;
+  m_num_buckets = new_num_buckets;
 }
 
 bool TBHashTable::NeedRehash() const {
@@ -89,19 +88,18 @@ void* TBHashTable::Get(uint32_t key) const {
   return nullptr;
 }
 
-bool TBHashTable::Add(uint32_t key, void* content) {
-  if (NeedRehash() && !Rehash(GetSuitableBucketsCount())) return false;
-  assert(!Get(key));
-  if (ITEM* item = new ITEM) {
-    uint32_t bucket = key & (m_num_buckets - 1);
-    item->key = key;
-    item->content = content;
-    item->next = m_buckets[bucket];
-    m_buckets[bucket] = item;
-    m_num_items++;
-    return true;
+void TBHashTable::Add(uint32_t key, void* content) {
+  if (NeedRehash()) {
+    Rehash(GetSuitableBucketsCount());
   }
-  return false;
+  assert(!Get(key));
+  ITEM* item = new ITEM();
+  uint32_t bucket = key & (m_num_buckets - 1);
+  item->key = key;
+  item->content = content;
+  item->next = m_buckets[bucket];
+  m_buckets[bucket] = item;
+  m_num_items++;
 }
 
 void* TBHashTable::Remove(uint32_t key) {
@@ -129,7 +127,6 @@ void* TBHashTable::Remove(uint32_t key) {
 void TBHashTable::Delete(uint32_t key) { DeleteContent(Remove(key)); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-
 void TBHashTable::Debug() {
   TBTempBuffer line;
   line.AppendString("Hash table: ");
@@ -148,7 +145,6 @@ void TBHashTable::Debug() {
                                       total_count, m_num_buckets));
   TBDebugOut(line.GetData());
 }
-
 #endif  // TB_RUNTIME_DEBUG_INFO
 
 TBHashTableIterator::TBHashTableIterator(TBHashTable* hash_table)
@@ -156,9 +152,9 @@ TBHashTableIterator::TBHashTableIterator(TBHashTable* hash_table)
 
 void* TBHashTableIterator::GetNextContent() {
   if (m_current_bucket == m_hash_table->m_num_buckets) return nullptr;
-  if (m_current_item && m_current_item->next)
+  if (m_current_item && m_current_item->next) {
     m_current_item = m_current_item->next;
-  else {
+  } else {
     if (m_current_item) m_current_bucket++;
     if (m_current_bucket == m_hash_table->m_num_buckets) return nullptr;
     while (m_current_bucket < m_hash_table->m_num_buckets) {

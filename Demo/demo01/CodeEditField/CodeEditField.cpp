@@ -12,7 +12,7 @@ void CodeEditField::OnInflate(const INFLATE_INFO& info) {
   TBEditField::OnInflate(info);
 }
 
-void CodeEditField::DrawString(int32_t x, int32_t y, TBFontFace* font,
+void CodeEditField::DrawString(int32_t x, int32_t y, FontFace* font,
                                const TBColor& color, const char* str,
                                size_t len) {
   TBColor finalColor(color);

@@ -118,21 +118,19 @@ void TBWidgetValue::SetDouble(double value) {
 
 TBWidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
                                                  TBValue::Type type) {
-  if (TBWidgetValue* val = GetValue(name)) return val;
-  if (TBWidgetValue* val = new TBWidgetValue(name, type)) {
-    if (m_values.Add(name, val))
-      return val;
-    else
-      delete val;
+  if (TBWidgetValue* val = GetValue(name)) {
+    return val;
   }
-  return nullptr;
+  TBWidgetValue* val = new TBWidgetValue(name, type);
+  m_values.Add(name, val);
+  return val;
 }
 
 void TBValueGroup::InvokeOnValueChanged(const TBWidgetValue* value) {
-  TBLinkListOf<TBValueGroupListener>::Iterator iter =
-      m_listeners.IterateForward();
-  while (TBValueGroupListener* listener = iter.GetAndStep())
+  auto iter = m_listeners.IterateForward();
+  while (TBValueGroupListener* listener = iter.GetAndStep()) {
     listener->OnValueChanged(this, value);
+  }
 }
 
 }  // namespace tb
