@@ -21,7 +21,7 @@ class ResourceItem : public TBGenericStringItem {
 
 class ResourceEditWindow : public Window,
                            public MessageHandler,
-                           public TBWidgetListener {
+                           public WidgetListener {
  public:
   TBOBJECT_SUBCLASS(ResourceEditWindow, Window);
 
@@ -63,7 +63,7 @@ class ResourceEditWindow : public Window,
   TBWidget* m_build_container;
   TBEditField* m_source_edit;
   std::string m_resource_filename;
-  TBWidgetSafePointer m_selected_widget;
+  WeakWidgetPointer m_selected_widget;
   void AddWidgetListItemsRecursive(TBWidget* widget, int depth);
   bool OnDropFileEvent(const TBWidgetEvent& ev);
 };

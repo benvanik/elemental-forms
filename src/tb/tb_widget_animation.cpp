@@ -52,7 +52,7 @@ void OpacityWidgetAnimation::OnAnimationUpdate(float progress) {
 void OpacityWidgetAnimation::OnAnimationStop(bool aborted) {
   // If we're aborted, it may be because the widget is being deleted
   if (m_die && !aborted) {
-    TBWidgetSafePointer the_widget(m_widget);
+    WeakWidgetPointer the_widget(m_widget);
     if (m_widget->GetParent()) m_widget->GetParent()->RemoveChild(m_widget);
     if (the_widget.Get()) delete the_widget.Get();
   } else
@@ -122,11 +122,11 @@ void RectWidgetAnimation::OnAnimationStop(bool aborted) {
 WidgetAnimationManager widgets_animation_manager;
 
 void WidgetAnimationManager::Init() {
-  TBWidgetListener::AddGlobalListener(&widgets_animation_manager);
+  WidgetListener::AddGlobalListener(&widgets_animation_manager);
 }
 
 void WidgetAnimationManager::Shutdown() {
-  TBWidgetListener::RemoveGlobalListener(&widgets_animation_manager);
+  WidgetListener::RemoveGlobalListener(&widgets_animation_manager);
 }
 
 void WidgetAnimationManager::AbortAnimations(TBWidget* widget) {

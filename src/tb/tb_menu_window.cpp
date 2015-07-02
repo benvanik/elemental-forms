@@ -13,43 +13,44 @@
 
 namespace tb {
 
-TBMenuWindow::TBMenuWindow(TBWidget* target, TBID id) : TBPopupWindow(target) {
+MenuWindow::MenuWindow(TBWidget* target, TBID id) : PopupWindow(target) {
   SetID(id);
-  SetSkinBg(TBIDC("TBMenuWindow"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
   m_select_list.GetScrollContainer()->SetAdaptToContentSize(true);
-  m_select_list.SetIsFocusable(
-      false);  ///< Avoid it autoclosing its window on click
+  // Avoid it autoclosing its window on click:
+  m_select_list.SetIsFocusable(false);
   m_select_list.SetSkinBg("");
   m_select_list.SetRect(GetPaddingRect());
   m_select_list.SetGravity(Gravity::kAll);
   AddChild(&m_select_list);
 }
 
-TBMenuWindow::~TBMenuWindow() { RemoveChild(&m_select_list); }
+MenuWindow::~MenuWindow() { RemoveChild(&m_select_list); }
 
-bool TBMenuWindow::Show(TBSelectItemSource* source,
-                        const TBPopupAlignment& alignment, int initial_value) {
+bool MenuWindow::Show(TBSelectItemSource* source,
+                      const PopupAlignment& alignment, int initial_value) {
   m_select_list.SetValue(initial_value);
   m_select_list.SetSource(source);
   m_select_list.ValidateList();
-
-  return TBPopupWindow::Show(alignment);
+  return PopupWindow::Show(alignment);
 }
 
-bool TBMenuWindow::OnEvent(const TBWidgetEvent& ev) {
+bool MenuWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick && &m_select_list == ev.target) {
-    TBWidgetSafePointer this_widget(this);
+    WeakWidgetPointer this_widget(this);
 
-    // Invoke the click on the target
+    // Invoke the click on the target.
     TBWidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.ref_id;
     InvokeEvent(target_ev);
 
-    // If target got deleted, close
-    if (this_widget.Get()) Close();
+    // If target got deleted, close.
+    if (this_widget.Get()) {
+      Close();
+    }
     return true;
   }
-  return TBPopupWindow::OnEvent(ev);
+  return PopupWindow::OnEvent(ev);
 }
 
 }  // namespace tb

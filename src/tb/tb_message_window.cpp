@@ -18,12 +18,12 @@
 namespace tb {
 
 MessageWindow::MessageWindow(TBWidget* target, TBID id) : m_target(target) {
-  TBWidgetListener::AddGlobalListener(this);
+  WidgetListener::AddGlobalListener(this);
   SetID(id);
 }
 
 MessageWindow::~MessageWindow() {
-  TBWidgetListener::RemoveGlobalListener(this);
+  WidgetListener::RemoveGlobalListener(this);
   if (TBWidget* dimmer = m_dimmer.Get()) {
     dimmer->GetParent()->RemoveChild(dimmer);
     delete dimmer;
@@ -107,7 +107,7 @@ void MessageWindow::AddButton(TBID id, bool focused) {
 
 bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<TBButton>()) {
-    TBWidgetSafePointer this_widget(this);
+    WeakWidgetPointer this_widget(this);
 
     // Invoke the click on the target
     TBWidgetEvent target_ev(EventType::kClick);

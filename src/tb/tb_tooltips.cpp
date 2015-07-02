@@ -33,7 +33,7 @@ class TTMsgParam : public TBTypedObject {
 
 }  // namespace
 
-TooltipWindow::TooltipWindow(TBWidget* target) : TBPopupWindow(target) {
+TooltipWindow::TooltipWindow(TBWidget* target) : PopupWindow(target) {
   SetSkinBg("", InvokeInfo::kNoCallbacks);
   SetSettings(WindowSettings::kNone);
   m_content.SetSkinBg(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
@@ -78,10 +78,10 @@ Rect TooltipWindow::GetAlignedRect(int x, int y) {
   return Rect(x, y, w, h);
 }
 
-TooltipManager::TooltipManager() { TBWidgetListener::AddGlobalListener(this); }
+TooltipManager::TooltipManager() { WidgetListener::AddGlobalListener(this); }
 
 TooltipManager::~TooltipManager() {
-  TBWidgetListener::RemoveGlobalListener(this);
+  WidgetListener::RemoveGlobalListener(this);
 }
 
 bool TooltipManager::OnWidgetInvokeEvent(TBWidget* widget,

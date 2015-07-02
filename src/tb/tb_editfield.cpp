@@ -244,7 +244,7 @@ bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
     Point pos_in_root(ev.target_x, ev.target_y);
     ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
 
-    if (TBMenuWindow* menu = new TBMenuWindow(ev.target, TBIDC("popupmenu"))) {
+    if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"))) {
       TBGenericStringItemSource* source = menu->GetList()->GetDefaultSource();
       source->AddItem(new TBGenericStringItem(g_tb_lng->GetString(TBIDC("cut")),
                                               TBIDC("cut")));
@@ -257,7 +257,7 @@ bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
       source->AddItem(new TBGenericStringItem("-"));
       source->AddItem(new TBGenericStringItem(
           g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
-      menu->Show(source, TBPopupAlignment(pos_in_root), -1);
+      menu->Show(source, PopupAlignment(pos_in_root), -1);
     }
     return true;
   }
@@ -422,16 +422,15 @@ bool TBEditField::OnEnter() { return false; }
 void TBEditField::Invalidate(const Rect& rect) { TBWidget::Invalidate(); }
 
 void TBEditField::DrawString(int32_t x, int32_t y, FontFace* font,
-                             const TBColor& color, const char* str,
-                             size_t len) {
+                             const Color& color, const char* str, size_t len) {
   font->DrawString(x, y, color, str, len);
 }
 
-void TBEditField::DrawRect(const Rect& rect, const TBColor& color) {
+void TBEditField::DrawRect(const Rect& rect, const Color& color) {
   g_renderer->DrawRect(rect, color);
 }
 
-void TBEditField::DrawRectFill(const Rect& rect, const TBColor& color) {
+void TBEditField::DrawRectFill(const Rect& rect, const Color& color) {
   g_renderer->DrawRectFill(rect, color);
 }
 

@@ -247,7 +247,7 @@ bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
     // closing
     // the dropdown menu. We want to sent another event, so ensure we're still
     // around.
-    TBWidgetSafePointer this_widget(this);
+    WeakWidgetPointer this_widget(this);
 
     int index = ev.target->data.GetInt();
     SetValue(index);
@@ -255,14 +255,14 @@ bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
     // If we're still around, invoke the click event too.
     if (this_widget.Get()) {
       TBSelectList* target_list = this;
-      // If the parent window is a TBMenuWindow, we will iterate up the event
+      // If the parent window is a MenuWindow, we will iterate up the event
       // destination
-      // chain to find the top TBMenuWindow and invoke the event there.
+      // chain to find the top MenuWindow and invoke the event there.
       // That way events in submenus will reach the caller properly, and seem
       // like it was
       // invoked on the top menu.
       Window* window = GetParentWindow();
-      while (TBMenuWindow* menu_win = TBSafeCast<TBMenuWindow>(window)) {
+      while (MenuWindow* menu_win = TBSafeCast<MenuWindow>(window)) {
         target_list = menu_win->GetList();
         window = menu_win->GetEventDestination()->GetParentWindow();
       }
@@ -361,20 +361,20 @@ TBID TBSelectDropdown::GetSelectedItemID() {
 void TBSelectDropdown::OpenWindow() {
   if (!m_source || !m_source->GetNumItems() || m_window_pointer.Get()) return;
 
-  if (TBMenuWindow* window =
-          new TBMenuWindow(this, TBIDC("TBSelectDropdown.window"))) {
+  if (MenuWindow* window =
+          new MenuWindow(this, TBIDC("TBSelectDropdown.window"))) {
     m_window_pointer.Set(window);
     window->SetSkinBg(TBIDC("TBSelectDropdown.window"));
-    window->Show(m_source, TBPopupAlignment(), GetValue());
+    window->Show(m_source, PopupAlignment(), GetValue());
   }
 }
 
 void TBSelectDropdown::CloseWindow() {
-  if (TBMenuWindow* window = GetMenuIfOpen()) window->Close();
+  if (MenuWindow* window = GetMenuIfOpen()) window->Close();
 }
 
-TBMenuWindow* TBSelectDropdown::GetMenuIfOpen() const {
-  return TBSafeCast<TBMenuWindow>(m_window_pointer.Get());
+MenuWindow* TBSelectDropdown::GetMenuIfOpen() const {
+  return TBSafeCast<MenuWindow>(m_window_pointer.Get());
 }
 
 bool TBSelectDropdown::OnEvent(const TBWidgetEvent& ev) {
@@ -382,8 +382,8 @@ bool TBSelectDropdown::OnEvent(const TBWidgetEvent& ev) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
     // button)
-    if (TBMenuWindow* menu_window = GetMenuIfOpen()) {
-      TBWidgetSafePointer tmp(this);
+    if (MenuWindow* menu_window = GetMenuIfOpen()) {
+      WeakWidgetPointer tmp(this);
       int value = menu_window->GetList()->GetValue();
       menu_window->Die();
       if (tmp.Get()) SetValue(value);
@@ -393,11 +393,11 @@ bool TBSelectDropdown::OnEvent(const TBWidgetEvent& ev) {
   } else if (ev.target->GetID() == TBIDC("TBSelectDropdown.window") &&
              ev.type == EventType::kClick) {
     // Set the value of the clicked item
-    if (TBMenuWindow* menu_window = GetMenuIfOpen())
+    if (MenuWindow* menu_window = GetMenuIfOpen())
       SetValue(menu_window->GetList()->GetValue());
     return true;
   } else if (ev.target == this && m_source && ev.IsKeyEvent()) {
-    if (TBMenuWindow* menu_window = GetMenuIfOpen()) {
+    if (MenuWindow* menu_window = GetMenuIfOpen()) {
       // Redirect the key strokes to the list
       TBWidgetEvent redirected_ev(ev);
       return menu_window->GetList()->InvokeEvent(redirected_ev);

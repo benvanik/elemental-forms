@@ -25,7 +25,7 @@ namespace tb {
         -TBSkinImage showing the arrow for items with a submenu.
         It also handles submenu events. */
 
-class TBSimpleLayoutItemWidget : public TBLayout, private TBWidgetListener {
+class TBSimpleLayoutItemWidget : public TBLayout, private WidgetListener {
  public:
   TBSimpleLayoutItemWidget(TBID image, TBSelectItemSource* source,
                            const char* str);
@@ -37,7 +37,7 @@ class TBSimpleLayoutItemWidget : public TBLayout, private TBWidgetListener {
   TBTextField m_textfield;
   TBSkinImage m_image;
   TBSkinImage m_image_arrow;
-  TBMenuWindow* m_menu;  ///< Points to the submenu window if opened
+  MenuWindow* m_menu;  ///< Points to the submenu window if opened
   virtual void OnWidgetDelete(TBWidget* widget);
   void OpenSubMenu();
   void CloseSubMenu();
@@ -93,11 +93,11 @@ void TBSimpleLayoutItemWidget::OpenSubMenu() {
   if (m_menu) return;
 
   // Open a new menu window for the submenu with this widget as target
-  m_menu = new TBMenuWindow(this, TBIDC("submenu"));
+  m_menu = new MenuWindow(this, TBIDC("submenu"));
   if (m_menu) {
     SetState(SkinState::kSelected, true);
     m_menu->AddListener(this);
-    m_menu->Show(m_source, TBPopupAlignment(Align::kRight), -1);
+    m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);
   }
 }
 

@@ -15,77 +15,71 @@
 
 namespace tb {
 
-/** TBPopupAlignment describes the preferred alignment of a popup
-        relative to a target widget or a given point.
-
-        It calculates the rect to be used to match these preferences
-        for any given popup and target. */
-class TBPopupAlignment {
+// Describes the preferred alignment of a popup relative to a target widget or a
+// given point.
+// It calculates the rect to be used to match these preferences for any given
+// popup and target.
+class PopupAlignment {
  public:
   static const int kUnspecified = kInvalidDimension;
 
-  /** Align relative to the target widget. */
-  TBPopupAlignment(Align align = Align::kBottom)
+  // Aligns relative to the target widget.
+  PopupAlignment(Align align = Align::kBottom)
       : pos_in_root(kUnspecified, kUnspecified),
         align(align),
         expand_to_target_width(true) {}
 
-  /** Align relative to the given position (coordinates relative to the root
-   * widget). */
-  TBPopupAlignment(const Point& pos_in_root, Align align = Align::kBottom)
+  // Aligns relative to the given position (coordinates relative to the root
+  // widget).
+  PopupAlignment(const Point& pos_in_root, Align align = Align::kBottom)
       : pos_in_root(pos_in_root), align(align), expand_to_target_width(true) {}
 
-  /** Align relative to the given position (coordinates relative to the root
-     widget).
-          Applies an additional offset. */
-  TBPopupAlignment(const Point& pos_in_root, const Point& pos_offset)
+  // Aligns relative to the given position (coordinates relative to the root
+  // widget). Applies an additional offset.
+  PopupAlignment(const Point& pos_in_root, const Point& pos_offset)
       : pos_in_root(pos_in_root),
         pos_offset(pos_offset),
         align(Align::kBottom),
         expand_to_target_width(true) {}
 
-  /** Calculate a good rect for the given popup window using its preferred size
-     and
-          the preferred alignment information stored in this class. */
+  // Calculates a good rect for the given popup window using its preferred size
+  // and the preferred alignment information stored in this class.
   Rect GetAlignedRect(TBWidget* popup, TBWidget* target) const;
 
   Point pos_in_root;
   Point pos_offset;
 
   Align align;
-  /** If true, the width of the popup will be at least the same as the target
-     widget
-          if the alignment is Align::kTop or Align::kBottom. */
+  // If true the width of the popup will be at least the same as the target
+  // widget if the alignment is Align::kTop or Align::kBottom.
   bool expand_to_target_width;
 };
 
-/** TBPopupWindow is a popup window that redirects any child widgets events
-        through the given target. It will automatically close on click events
-   that
-        are not sent through this popup. */
-
-class TBPopupWindow : public Window, private TBWidgetListener {
+// A popup window that redirects any child widgets events through the given
+// target. It will automatically close on click events that are not sent through
+// this popup.
+class PopupWindow : public Window, private WidgetListener {
  public:
-  TBOBJECT_SUBCLASS(TBPopupWindow, Window);
+  TBOBJECT_SUBCLASS(PopupWindow, Window);
 
-  TBPopupWindow(TBWidget* target);
-  ~TBPopupWindow();
+  PopupWindow(TBWidget* target);
+  ~PopupWindow() override;
 
-  bool Show(const TBPopupAlignment& alignment);
+  bool Show(const PopupAlignment& alignment);
 
-  virtual TBWidget* GetEventDestination() { return m_target.Get(); }
+  TBWidget* GetEventDestination() override { return m_target.Get(); }
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
-  const TBWidgetSafePointer& GetTargetWidget() { return m_target; }
+  const WeakWidgetPointer& GetTargetWidget() { return m_target; }
 
  private:
-  TBWidgetSafePointer m_target;
-  // TBWidgetListener
-  virtual void OnWidgetFocusChanged(TBWidget* widget, bool focused);
-  virtual bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev);
-  virtual void OnWidgetDelete(TBWidget* widget);
-  virtual bool OnWidgetDying(TBWidget* widget);
+  void OnWidgetFocusChanged(TBWidget* widget, bool focused) override;
+  bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev) override;
+  void OnWidgetDelete(TBWidget* widget) override;
+  bool OnWidgetDying(TBWidget* widget) override;
+
+  WeakWidgetPointer m_target;
 };
 
 }  // namespace tb

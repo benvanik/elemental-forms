@@ -217,9 +217,9 @@ class TBEditField : public TBWidget,
   virtual bool OnEnter();
   virtual void Invalidate(const Rect& rect);
   virtual void DrawString(int32_t x, int32_t y, FontFace* font,
-                          const TBColor& color, const char* str, size_t len);
-  virtual void DrawRect(const Rect& rect, const TBColor& color);
-  virtual void DrawRectFill(const Rect& rect, const TBColor& color);
+                          const Color& color, const char* str, size_t len);
+  virtual void DrawRect(const Rect& rect, const Color& color);
+  virtual void DrawRectFill(const Rect& rect, const Color& color);
   virtual void DrawTextSelectionBg(const Rect& rect);
   virtual void DrawContentSelectionFg(const Rect& rect);
   virtual void DrawCaret(const Rect& rect);

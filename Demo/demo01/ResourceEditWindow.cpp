@@ -23,7 +23,7 @@ ResourceEditWindow::ResourceEditWindow()
       m_build_container(nullptr),
       m_source_edit(nullptr) {
   // Register as global listener to intercept events in the build container
-  TBWidgetListener::AddGlobalListener(this);
+  WidgetListener::AddGlobalListener(this);
 
   g_widgets_reader->LoadFile(
       this, "Demo/demo01/ui_resources/resource_edit_window.tb.txt");
@@ -40,7 +40,7 @@ ResourceEditWindow::ResourceEditWindow()
 }
 
 ResourceEditWindow::~ResourceEditWindow() {
-  TBWidgetListener::RemoveGlobalListener(this);
+  WidgetListener::RemoveGlobalListener(this);
 
   // avoid assert
   m_widget_list->SetSource(nullptr);
@@ -183,7 +183,7 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
                      selected_widget->GetRect().h);
     selected_widget->ConvertToRoot(widget_rect.x, widget_rect.y);
     ConvertFromRoot(widget_rect.x, widget_rect.y);
-    g_renderer->DrawRect(widget_rect, TBColor(255, 205, 0));
+    g_renderer->DrawRect(widget_rect, Color(255, 205, 0));
   }
 }
 

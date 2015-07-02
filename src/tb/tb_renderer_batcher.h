@@ -76,13 +76,13 @@ class TBRendererBatcher : public TBRenderer {
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                           TBBitmap* bitmap);
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const TBColor& color,
+                                 const Color& color,
                                  TBBitmapFragment* bitmap_fragment);
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const TBColor& color, TBBitmap* bitmap);
+                                 const Color& color, TBBitmap* bitmap);
   virtual void DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap);
-  virtual void DrawRect(const Rect& dst_rect, const TBColor& color);
-  virtual void DrawRectFill(const Rect& dst_rect, const TBColor& color);
+  virtual void DrawRect(const Rect& dst_rect, const Color& color);
+  virtual void DrawRectFill(const Rect& dst_rect, const Color& color);
   virtual void FlushBitmap(TBBitmap* bitmap);
   virtual void FlushBitmapFragment(TBBitmapFragment* bitmap_fragment);
 

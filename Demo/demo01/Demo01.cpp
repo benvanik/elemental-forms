@@ -188,9 +188,8 @@ class EditWindow : public DemoWindow {
               new TBGenericStringItem("Align right", TBIDC("align right")));
         }
 
-        if (TBMenuWindow* menu =
-                new TBMenuWindow(ev.target, TBIDC("popup_menu")))
-          menu->Show(&source, TBPopupAlignment());
+        if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popup_menu")))
+          menu->Show(&source, PopupAlignment());
         return true;
       } else if (ev.target->GetID() == TBIDC("popup_menu")) {
         if (ev.ref_id == TBIDC("default font"))
@@ -371,8 +370,8 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
       delete ev.target;
       return true;
     } else if (ev.target->GetID() == TBIDC("showpopupmenu1")) {
-      if (TBMenuWindow* menu = new TBMenuWindow(ev.target, TBIDC("popupmenu1")))
-        menu->Show(&popup_menu_source, TBPopupAlignment());
+      if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu1")))
+        menu->Show(&popup_menu_source, PopupAlignment());
       return true;
     } else if (ev.target->GetID() == TBIDC("popupmenu1")) {
       MessageWindow* msg_win = new MessageWindow(this, TBIDC("popup_dialog"));
@@ -771,7 +770,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   } else {
     str = tb::format_string("Frame %d", frame_counter_total);
   }
-  GetRoot()->GetFont()->DrawString(5, 5, TBColor(255, 255, 255), str);
+  GetRoot()->GetFont()->DrawString(5, 5, Color(255, 255, 255), str);
 
   g_renderer->EndPaint();
 

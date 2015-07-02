@@ -16,11 +16,11 @@
 
 namespace tb {
 
-// Implements functionality of tooltip popups, based on TBPopupWindow and
+// Implements functionality of tooltip popups, based on PopupWindow and
 // contains TBEditField as content viewer.
-class TooltipWindow : public TBPopupWindow {
+class TooltipWindow : public PopupWindow {
  public:
-  TBOBJECT_SUBCLASS(TooltipWindow, TBPopupWindow);
+  TBOBJECT_SUBCLASS(TooltipWindow, PopupWindow);
 
   TooltipWindow(TBWidget* target);
   ~TooltipWindow() override;
@@ -38,7 +38,7 @@ class TooltipWindow : public TBPopupWindow {
 };
 
 // Implements logic for show/hide tooltips.
-class TooltipManager : private TBWidgetListener, public MessageHandler {
+class TooltipManager : private WidgetListener, public MessageHandler {
  public:
   TooltipManager();
   ~TooltipManager() override;

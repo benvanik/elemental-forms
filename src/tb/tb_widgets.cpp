@@ -87,7 +87,7 @@ TBWidget::~TBWidget() {
   if (this == captured_widget) captured_widget = nullptr;
   if (this == focused_widget) focused_widget = nullptr;
 
-  TBWidgetListener::InvokeWidgetDelete(this);
+  WidgetListener::InvokeWidgetDelete(this);
   DeleteAllChildren();
 
   delete m_scroller;
@@ -131,7 +131,7 @@ void TBWidget::Die() {
   if (m_packed.is_dying) return;
   m_packed.is_dying = true;
   OnDie();
-  if (!TBWidgetListener::InvokeWidgetDying(this)) {
+  if (!WidgetListener::InvokeWidgetDying(this)) {
     // No one was interested, so die immediately.
     if (m_parent) m_parent->RemoveChild(this);
     delete this;
@@ -274,7 +274,7 @@ void TBWidget::AddChildRelative(TBWidget* child, WidgetZRel z,
   if (info == InvokeInfo::kNormal) {
     OnChildAdded(child);
     child->OnAdded();
-    TBWidgetListener::InvokeWidgetAdded(this, child);
+    WidgetListener::InvokeWidgetAdded(this, child);
   }
   InvalidateLayout(InvalidationMode::kRecursive);
   Invalidate();
@@ -292,7 +292,7 @@ void TBWidget::RemoveChild(TBWidget* child, InvokeInfo info) {
 
     OnChildRemove(child);
     child->OnRemove();
-    TBWidgetListener::InvokeWidgetRemove(this, child);
+    WidgetListener::InvokeWidgetRemove(this, child);
   }
 
   m_children.Remove(child);
@@ -484,7 +484,7 @@ bool TBWidget::SetFocus(FocusReason reason, InvokeInfo info) {
     focused_widget->InvalidateSkinStates();
   }
 
-  TBWidgetSafePointer old_focus(focused_widget);
+  WeakWidgetPointer old_focus(focused_widget);
   focused_widget = this;
 
   Invalidate();
@@ -511,11 +511,11 @@ bool TBWidget::SetFocus(FocusReason reason, InvokeInfo info) {
       old->OnFocusChanged(false);
     }
     if (old_focus.Get())
-      TBWidgetListener::InvokeWidgetFocusChanged(old_focus.Get(), false);
+      WidgetListener::InvokeWidgetFocusChanged(old_focus.Get(), false);
     if (focused_widget && focused_widget == this)
       focused_widget->OnFocusChanged(true);
     if (focused_widget && focused_widget == this)
-      TBWidgetListener::InvokeWidgetFocusChanged(focused_widget, true);
+      WidgetListener::InvokeWidgetFocusChanged(focused_widget, true);
   }
   return true;
 }
@@ -653,15 +653,15 @@ Window* TBWidget::GetParentWindow() {
   return static_cast<Window*>(tmp);
 }
 
-void TBWidget::AddListener(TBWidgetListener* listener) {
+void TBWidget::AddListener(WidgetListener* listener) {
   m_listeners.AddLast(listener);
 }
 
-void TBWidget::RemoveListener(TBWidgetListener* listener) {
+void TBWidget::RemoveListener(WidgetListener* listener) {
   m_listeners.Remove(listener);
 }
 
-bool TBWidget::HasListener(TBWidgetListener* listener) const {
+bool TBWidget::HasListener(WidgetListener* listener) const {
   return m_listeners.ContainsLink(listener);
 }
 
@@ -1043,7 +1043,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
 
   TB_IF_DEBUG_SETTING(
       Setting::kLayoutBounds,
-      g_renderer->DrawRect(local_rect, TBColor(255, 255, 255, 50)));
+      g_renderer->DrawRect(local_rect, Color(255, 255, 255, 50)));
 
   // Inherit properties from parent if not specified in the used skin for this
   // widget.
@@ -1069,11 +1069,11 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
     const uint64_t debug_time = 300;
     const uint64_t now = TBSystem::GetTimeMS();
     if (now < last_layout_time + debug_time) {
-      g_renderer->DrawRect(local_rect, TBColor(255, 30, 30, 200));
+      g_renderer->DrawRect(local_rect, Color(255, 30, 30, 200));
       Invalidate();
     }
     if (now < last_measure_time + debug_time) {
-      g_renderer->DrawRect(local_rect.Shrink(1, 1), TBColor(255, 255, 30, 200));
+      g_renderer->DrawRect(local_rect.Shrink(1, 1), Color(255, 255, 30, 200));
       Invalidate();
     }
   }
@@ -1093,8 +1093,8 @@ bool TBWidget::InvokeEvent(TBWidgetEvent& ev) {
   // First call the global listener about this event.
   // Who knows, maybe some listener will block the event or cause us
   // to be deleted.
-  TBWidgetSafePointer this_widget(this);
-  if (TBWidgetListener::InvokeWidgetInvokeEvent(this, ev)) return true;
+  WeakWidgetPointer this_widget(this);
+  if (WidgetListener::InvokeWidgetInvokeEvent(this, ev)) return true;
 
   if (!this_widget.Get())
     return true;  // We got removed so we actually handled this event.

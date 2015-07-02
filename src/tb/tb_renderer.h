@@ -109,7 +109,7 @@ class TBRenderer {
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const TBColor& color,
+                                 const Color& color,
                                  TBBitmapFragment* bitmap_fragment) = 0;
 
   /** Draw the src_rect part of the bitmap stretched to dst_rect.
@@ -117,16 +117,16 @@ class TBRenderer {
           dst_rect or src_rect can have negative width and height to achieve
      horizontal and vertical flip. */
   virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const TBColor& color, TBBitmap* bitmap) = 0;
+                                 const Color& color, TBBitmap* bitmap) = 0;
 
   /** Draw the bitmap tiled into dst_rect. */
   virtual void DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap) = 0;
 
   /** Draw a 1px thick rectangle outline. */
-  virtual void DrawRect(const Rect& dst_rect, const TBColor& color) = 0;
+  virtual void DrawRect(const Rect& dst_rect, const Color& color) = 0;
 
   /** Draw a filled rectangle. */
-  virtual void DrawRectFill(const Rect& dst_rect, const TBColor& color) = 0;
+  virtual void DrawRectFill(const Rect& dst_rect, const Color& color) = 0;
 
   /** Make sure the given bitmap fragment is flushed from any batching, because
      it may

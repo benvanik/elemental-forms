@@ -29,7 +29,7 @@ int TBWidgetString::GetHeight(TBWidget* widget) {
 }
 
 void TBWidgetString::Paint(TBWidget* widget, const Rect& rect,
-                           const TBColor& color) {
+                           const Color& color) {
   FontFace* font = widget->GetFont();
   int string_w = GetWidth(widget);
 
@@ -174,7 +174,7 @@ void TBButton::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
 bool TBButton::OnEvent(const TBWidgetEvent& ev) {
   if (CanToggle() && ev.type == EventType::kClick && ev.target == this) {
-    TBWidgetSafePointer this_widget(this);
+    WeakWidgetPointer this_widget(this);
 
     // Toggle the value, if it's not a grouped widget with value on.
     if (!(GetGroupID() && GetValue())) SetValue(!GetValue());

@@ -233,8 +233,8 @@ class TBSkinElement {
   int8_t flip_y;  ///< The skin is flipped vertically
   float opacity;  ///< Opacity that should be used for the whole widget (0.f -
   /// 1.f).
-  TBColor text_color;  ///< Color of the text in the widget.
-  TBColor bg_color;    ///< Color of the background in the widget.
+  Color text_color;    ///< Color of the text in the widget.
+  Color bg_color;      ///< Color of the background in the widget.
   int16_t bitmap_dpi;  ///< The DPI of the bitmap that was loaded.
   TBValue tag;  ///< This value is free to use for anything. It's not used
   /// internally.
@@ -375,7 +375,7 @@ class TBSkin : private TBRendererListener {
       TBSkinConditionContext& context) const;
 
   /** Get the default text color for all skin elements */
-  TBColor GetDefaultTextColor() const { return m_default_text_color; }
+  Color GetDefaultTextColor() const { return m_default_text_color; }
 
   /** Get the default disabled opacity for all skin elements */
   float GetDefaultDisabledOpacity() const { return m_default_disabled_opacity; }
@@ -457,7 +457,7 @@ class TBSkin : private TBRendererListener {
       m_elements;                          ///< All skin elements for this skin.
   TBBitmapFragmentManager m_frag_manager;  ///< Fragment manager
   DimensionConverter m_dim_conv;           ///< Dimension converter
-  TBColor m_default_text_color;  ///< Default text color for all skin elements
+  Color m_default_text_color;  ///< Default text color for all skin elements
   float m_default_disabled_opacity;     ///< Disabled opacity
   float m_default_placeholder_opacity;  ///< Placeholder opacity
   int16_t m_default_spacing;            ///< Default layout spacing

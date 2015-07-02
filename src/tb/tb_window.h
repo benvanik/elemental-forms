@@ -115,7 +115,7 @@ class Window : public TBWidget {
   TBTextField m_textfield;
   TBButton m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;
-  TBWidgetSafePointer m_last_focus;
+  WeakWidgetPointer m_last_focus;
 };
 
 }  // namespace tb

@@ -36,10 +36,10 @@ class TBStyleEditListener {
   virtual bool OnEnter() { return false; };
   virtual void Invalidate(const Rect& rect) = 0;
   virtual void DrawString(int32_t x, int32_t y, FontFace* font,
-                          const TBColor& color, const char* str,
+                          const Color& color, const char* str,
                           size_t len = std::string::npos) = 0;
-  virtual void DrawRect(const Rect& rect, const TBColor& color) = 0;
-  virtual void DrawRectFill(const Rect& rect, const TBColor& color) = 0;
+  virtual void DrawRect(const Rect& rect, const Color& color) = 0;
+  virtual void DrawRectFill(const Rect& rect, const Color& color) = 0;
   virtual void DrawTextSelectionBg(const Rect& rect) = 0;
   virtual void DrawContentSelectionFg(const Rect& rect) = 0;
   virtual void DrawCaret(const Rect& rect) = 0;
@@ -167,10 +167,10 @@ class TBTextProps {
   class Data : public TBLinkOf<Data> {
    public:
     FontDescription font_desc;
-    TBColor text_color;
+    Color text_color;
     bool underline;
   };
-  TBTextProps(const FontDescription& font_desc, const TBColor& text_color);
+  TBTextProps(const FontDescription& font_desc, const Color& text_color);
 
   Data* Push();
   void Pop();
@@ -360,7 +360,7 @@ class TBStyleEdit {
   void SetFont(const FontDescription& font_desc);
 
   void Paint(const Rect& rect, const FontDescription& font_desc,
-             const TBColor& text_color);
+             const Color& text_color);
   bool KeyDown(int key, SpecialKey special_key, ModifierKeys modifierkeys);
   bool MouseDown(const Point& point, int button, int clicks,
                  ModifierKeys modifierkeys, bool touch);

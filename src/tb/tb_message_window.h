@@ -45,7 +45,7 @@ class MessageWindowSettings {
 
         If the target widget is deleted while this window is alive, the
         window will delete itself. */
-class MessageWindow : public Window, private TBWidgetListener {
+class MessageWindow : public Window, private WidgetListener {
  public:
   TBOBJECT_SUBCLASS(MessageWindow, Window);
 
@@ -62,11 +62,11 @@ class MessageWindow : public Window, private TBWidgetListener {
 
  private:
   void AddButton(TBID id, bool focused);
-  // TBWidgetListener
+  // WidgetListener
   virtual void OnWidgetDelete(TBWidget* widget);
   virtual bool OnWidgetDying(TBWidget* widget);
-  TBWidgetSafePointer m_dimmer;
-  TBWidgetSafePointer m_target;
+  WeakWidgetPointer m_dimmer;
+  WeakWidgetPointer m_target;
 };
 
 }  // namespace tb

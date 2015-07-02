@@ -16,7 +16,7 @@
 
 namespace tb {
 
-class TBMenuWindow;
+class MenuWindow;
 
 /** TBSelectList shows a scrollable list of items provided by a
  * TBSelectItemSource. */
@@ -151,7 +151,7 @@ class TBSelectDropdown : public TBButton, public TBSelectItemViewer {
   void CloseWindow();
 
   /** Return the menu window if it's open, or nullptr. */
-  TBMenuWindow* GetMenuIfOpen() const;
+  MenuWindow* GetMenuIfOpen() const;
 
   virtual void OnInflate(const INFLATE_INFO& info);
   virtual bool OnEvent(const TBWidgetEvent& ev);
@@ -167,7 +167,7 @@ class TBSelectDropdown : public TBButton, public TBSelectItemViewer {
   TBGenericStringItemSource m_default_source;
   TBSkinImage m_arrow;
   int m_value;
-  TBWidgetSafePointer
+  WeakWidgetPointer
       m_window_pointer;  ///< Points to the dropdown window if opened
 };
 

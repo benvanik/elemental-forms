@@ -16,24 +16,26 @@
 
 namespace tb {
 
-/** TBColor contains a 32bit color. */
-
-class TBColor {
+// Contains a 32bit color.
+class Color {
  public:
-  TBColor() : b(0), g(0), r(0), a(255) {}
-  TBColor(int r, int g, int b, int a = 255) : b(b), g(g), r(r), a(a) {}
+  Color() = default;
+  Color(int r, int g, int b, int a = 255) : b(b), g(g), r(r), a(a) {}
 
-  uint8_t b, g, r, a;
+  uint8_t b = 0;
+  uint8_t g = 0;
+  uint8_t r = 0;
+  uint8_t a = 0;
 
-  void Set(const TBColor& color) { *this = color; }
+  void Set(const Color& color) { *this = color; }
 
-  /** Set the color from string in any of the following formats:
-          "#rrggbbaa", "#rrggbb", "#rgba", "#rgb" */
+  // Sets the color from string in any of the following formats:
+  // "#rrggbbaa", "#rrggbb", "#rgba", "#rgb"
   void SetFromString(const char* str, size_t len);
 
   operator uint32_t() const { return *((uint32_t*)this); }
-  bool operator==(const TBColor& c) const { return *this == (uint32_t)c; }
-  bool operator!=(const TBColor& c) const { return !(*this == c); }
+  bool operator==(const Color& c) const { return *this == (uint32_t)c; }
+  bool operator!=(const Color& c) const { return !(*this == c); }
 };
 
 }  // namespace tb

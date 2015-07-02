@@ -15,27 +15,23 @@
 
 namespace tb {
 
-/** TBMenuWindow is a popup window that shows a list of items (TBSelectList).
-
-        When selected it will invoke a click with the id given to the menu,
-        and the id of the clicked item as ref_id, and then close itself.
-
-        It may open sub items as new windows at the same time as this window is
-   open.*/
-
-class TBMenuWindow : public TBPopupWindow {
+// MenuWindow is a popup window that shows a list of items (TBSelectList).
+// When selected it will invoke a click with the id given to the menu,
+// and the id of the clicked item as ref_id, and then close itself.
+// It may open sub items as new windows at the same time as this window is open.
+class MenuWindow : public PopupWindow {
  public:
-  TBOBJECT_SUBCLASS(TBMenuWindow, TBPopupWindow);
+  TBOBJECT_SUBCLASS(MenuWindow, PopupWindow);
 
-  TBMenuWindow(TBWidget* target, TBID id);
-  ~TBMenuWindow();
+  MenuWindow(TBWidget* target, TBID id);
+  ~MenuWindow() override;
 
-  bool Show(TBSelectItemSource* source, const TBPopupAlignment& alignment,
+  bool Show(TBSelectItemSource* source, const PopupAlignment& alignment,
             int initial_value = -1);
 
   TBSelectList* GetList() { return &m_select_list; }
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
  private:
   TBSelectList m_select_list;

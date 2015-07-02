@@ -159,7 +159,7 @@ void TBRendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
 
 void TBRendererBatcher::DrawBitmapColored(const Rect& dst_rect,
                                           const Rect& src_rect,
-                                          const TBColor& color,
+                                          const Color& color,
                                           TBBitmapFragment* bitmap_fragment) {
   if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
     uint32_t a = (color.a * m_opacity) / 255;
@@ -172,7 +172,7 @@ void TBRendererBatcher::DrawBitmapColored(const Rect& dst_rect,
 
 void TBRendererBatcher::DrawBitmapColored(const Rect& dst_rect,
                                           const Rect& src_rect,
-                                          const TBColor& color,
+                                          const Color& color,
                                           TBBitmap* bitmap) {
   uint32_t a = (color.a * m_opacity) / 255;
   AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), src_rect,
@@ -185,7 +185,7 @@ void TBRendererBatcher::DrawBitmapTile(const Rect& dst_rect, TBBitmap* bitmap) {
                   VER_COL_OPACITY(m_opacity), bitmap, nullptr);
 }
 
-void TBRendererBatcher::DrawRect(const Rect& dst_rect, const TBColor& color) {
+void TBRendererBatcher::DrawRect(const Rect& dst_rect, const Color& color) {
   if (dst_rect.IsEmpty()) return;
   // Top
   DrawRectFill(Rect(dst_rect.x, dst_rect.y, dst_rect.w, 1), color);
@@ -200,8 +200,7 @@ void TBRendererBatcher::DrawRect(const Rect& dst_rect, const TBColor& color) {
       color);
 }
 
-void TBRendererBatcher::DrawRectFill(const Rect& dst_rect,
-                                     const TBColor& color) {
+void TBRendererBatcher::DrawRectFill(const Rect& dst_rect, const Color& color) {
   if (dst_rect.IsEmpty()) return;
   uint32_t a = (color.a * m_opacity) / 255;
   AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), Rect(),

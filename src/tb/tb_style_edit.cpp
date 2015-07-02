@@ -545,7 +545,7 @@ void TBCaret::SetGlobalOfs(size_t gofs, bool allow_snap, bool snap_forward) {
 }
 
 TBTextProps::TBTextProps(const FontDescription& font_desc,
-                         const TBColor& text_color) {
+                         const Color& text_color) {
   base_data.font_desc = font_desc;
   base_data.text_color = text_color;
   base_data.underline = false;
@@ -1007,7 +1007,7 @@ void TBBlock::Paint(int32_t translate_x, int32_t translate_y,
                     TBTextProps* props) {
   TMPDEBUG(styledit->listener->DrawRect(
       Rect(translate_x, translate_y + ypos, styledit->layout_width, height),
-      TBColor(255, 200, 0, 128)));
+      Color(255, 200, 0, 128)));
 
   TBTextFragment* fragment = fragments.GetFirst();
   while (fragment) {
@@ -1065,7 +1065,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
 
   int x = translate_x + xpos;
   int y = translate_y + ypos;
-  TBColor color = props->data->text_color;
+  Color color = props->data->text_color;
   FontFace* font = props->GetFont();
 
   if (content) {
@@ -1073,7 +1073,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
     return;
   }
   TMPDEBUG(listener->DrawRect(Rect(x, y, GetWidth(font), GetHeight(font)),
-                              TBColor(255, 255, 255, 128)));
+                              Color(255, 255, 255, 128)));
 
   if (IsBreak()) {
     listener->OnBreak();
@@ -1355,7 +1355,7 @@ int32_t TBStyleEdit::GetContentWidth() {
 int32_t TBStyleEdit::GetContentHeight() const { return content_height; }
 
 void TBStyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
-                        const TBColor& text_color) {
+                        const Color& text_color) {
   TBTextProps props(font_desc, text_color);
 
   // Find the first visible block

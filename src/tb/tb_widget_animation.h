@@ -82,7 +82,7 @@ class RectWidgetAnimation : public WidgetAnimation {
   Mode m_mode;
 };
 
-class WidgetAnimationManager : public TBWidgetListener {
+class WidgetAnimationManager : public WidgetListener {
  public:
   static void Init();
   static void Shutdown();

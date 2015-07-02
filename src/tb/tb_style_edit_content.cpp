@@ -35,7 +35,7 @@ TBTextFragmentContent* TBTextFragmentContentFactory::CreateFragmentContent(
   else if (strncmp(text, "<u>", text_len) == 0)
     return new TBTextFragmentContentUnderline();
   else if (strncmp(text, "<color ", std::min(text_len, 7)) == 0) {
-    TBColor color;
+    Color color;
     color.SetFromString(text + 7, text_len - 8);
     return new TBTextFragmentContentTextColor(color);
   } else if (strncmp(text, "</", std::min(text_len, 2)) == 0)

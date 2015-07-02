@@ -77,8 +77,8 @@ class TBTextFragmentContentUnderline : public TBTextFragmentContent {
 
 class TBTextFragmentContentTextColor : public TBTextFragmentContent {
  public:
-  TBColor color;
-  TBTextFragmentContentTextColor(const TBColor& color) : color(color) {}
+  Color color;
+  TBTextFragmentContentTextColor(const Color& color) : color(color) {}
   virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
                      int32_t translate_y, TBTextProps* props);
   virtual bool GetAllowBreakBefore() { return true; }

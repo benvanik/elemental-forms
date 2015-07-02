@@ -30,7 +30,7 @@ class TBWidgetString {
  public:
   TBWidgetString();
 
-  void Paint(TBWidget* widget, const Rect& rect, const TBColor& color);
+  void Paint(TBWidget* widget, const Rect& rect, const Color& color);
 
   int GetWidth(TBWidget* widget);
   int GetHeight(TBWidget* widget);

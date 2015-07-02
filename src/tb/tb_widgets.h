@@ -27,7 +27,7 @@ class Window;
 class TBWidget;
 class FontFace;
 class TBScroller;
-class TBWidgetListener;
+class WidgetListener;
 class TBLongClickTimer;
 struct INFLATE_INFO;
 
@@ -748,9 +748,9 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Add a listener to this widget. It should be removed again with
           RemoveListener before the widget is deleted. */
-  void AddListener(TBWidgetListener* listener);
-  void RemoveListener(TBWidgetListener* listener);
-  bool HasListener(TBWidgetListener* listener) const;
+  void AddListener(WidgetListener* listener);
+  void RemoveListener(WidgetListener* listener);
+  bool HasListener(WidgetListener* listener) const;
 
   /** Callback for handling events.
           Return true if the event is handled and should not
@@ -782,7 +782,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
     /** Text color as specified in the skin element, or inherited from parent.
      */
-    TBColor text_color;
+    Color text_color;
   };
 
   /** Callback for painting this widget.
@@ -1134,7 +1134,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Invoke a event on this widget.
 
-          This will first check with all registered TBWidgetListener if the
+          This will first check with all registered WidgetListener if the
      event should be dispatched.
 
           If the widgets OnEvent returns false (event not handled), it will
@@ -1152,7 +1152,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           Note: Remember that this widgets may be deleted after this call! So if
      you really must do something after
           this call and are not sure what the event will cause, use
-     TBWidgetSafePointer to detect self deletion. */
+     WeakWidgetPointer to detect self deletion. */
   bool InvokeEvent(TBWidgetEvent& ev);
 
   bool InvokePointerDown(int x, int y, int click_count,
@@ -1217,8 +1217,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   FontFace* GetFont() const;
 
  private:
-  friend class TBWidgetListener;  ///< It does iteration of m_listeners for us.
-  TBWidget* m_parent;             ///< The parent of this widget
+  friend class WidgetListener;  ///< It does iteration of m_listeners for us.
+  TBWidget* m_parent;           ///< The parent of this widget
   Rect m_rect;  ///< The rectangle of this widget, relative to the parent. See
   /// SetRect.
   TBID m_id;                ///< ID for GetWidgetByID and others.
@@ -1227,10 +1227,10 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   TBID m_skin_bg_expected;  ///< ID for the background skin after strong
   /// override,
   ///< used to indirect skin changes because of condition changes.
-  TBLinkListOf<TBWidget> m_children;           ///< List of child widgets
-  TBWidgetValueConnection m_connection;        ///< TBWidget value connection
-  TBLinkListOf<TBWidgetListener> m_listeners;  ///< List of listeners
-  float m_opacity;                             ///< Opacity 0-1. See SetOpacity.
+  TBLinkListOf<TBWidget> m_children;         ///< List of child widgets
+  TBWidgetValueConnection m_connection;      ///< TBWidget value connection
+  TBLinkListOf<WidgetListener> m_listeners;  ///< List of listeners
+  float m_opacity;                           ///< Opacity 0-1. See SetOpacity.
   SkinState m_state;  ///< The widget state (excluding any auto states)
   Gravity m_gravity;  ///< The layout gravity setting.
   FontDescription m_font_desc;    ///< The font description.

@@ -289,9 +289,9 @@ TBSkinElement* TBSkin::PaintSkin(const Rect& dst_rect, TBSkinElement* element,
 
   // Paint ugly rectangles on invalid skin elements in debug builds.
   TB_IF_DEBUG(if (paint_error_highlight) g_renderer->DrawRect(
-      dst_rect.Expand(1, 1), TBColor(255, 205, 0)));
+      dst_rect.Expand(1, 1), Color(255, 205, 0)));
   TB_IF_DEBUG(if (paint_error_highlight) g_renderer->DrawRect(
-      dst_rect.Shrink(1, 1), TBColor(255, 0, 0)));
+      dst_rect.Shrink(1, 1), Color(255, 0, 0)));
 
   element->is_painting = false;
   return return_element;

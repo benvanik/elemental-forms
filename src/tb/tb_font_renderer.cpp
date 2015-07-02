@@ -235,7 +235,7 @@ FontFace::~FontFace() {
   delete m_font_renderer;
 }
 
-void FontFace::SetBackgroundFont(FontFace* font, const TBColor& col, int xofs,
+void FontFace::SetBackgroundFont(FontFace* font, const Color& col, int xofs,
                                  int yofs) {
   m_bgFont = font;
   m_bgX = xofs;
@@ -294,7 +294,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
         glyph_dsta_src = (uint32_t*)m_temp_buffer.GetData();
         for (int y = 0; y < result_glyph_data->h; y++)
           for (int x = 0; x < result_glyph_data->w; x++) {
-            glyph_dsta_src[x + y * result_glyph_data->w] = TBColor(
+            glyph_dsta_src[x + y * result_glyph_data->w] = Color(
                 255, 255, 255,
                 result_glyph_data->data8[x + y * result_glyph_data->stride]);
           }
@@ -338,7 +338,7 @@ FontGlyph* FontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
   return glyph;
 }
 
-void FontFace::DrawString(int x, int y, const TBColor& color, const char* str,
+void FontFace::DrawString(int x, int y, const Color& color, const char* str,
                           size_t len) {
   if (m_bgFont) {
     m_bgFont->DrawString(x + m_bgX, y + m_bgY, m_bgColor, str, len);

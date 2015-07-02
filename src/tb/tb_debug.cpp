@@ -27,7 +27,7 @@ TBDebugInfo g_tb_debug;
 TBDebugInfo::TBDebugInfo() = default;
 
 /** Window showing runtime debug settings. */
-class DebugSettingsWindow : public Window, public TBWidgetListener {
+class DebugSettingsWindow : public Window, public WidgetListener {
  public:
   TBEditField* output;
 
@@ -61,10 +61,10 @@ class DebugSettingsWindow : public Window, public TBWidgetListener {
 
     root->AddChild(this);
 
-    TBWidgetListener::AddGlobalListener(this);
+    WidgetListener::AddGlobalListener(this);
   }
 
-  ~DebugSettingsWindow() { TBWidgetListener::RemoveGlobalListener(this); }
+  ~DebugSettingsWindow() { WidgetListener::RemoveGlobalListener(this); }
 
   void AddCheckbox(TBDebugInfo::Setting setting, const char* str) {
     TBCheckBox* check = new TBCheckBox();
@@ -121,7 +121,7 @@ class DebugSettingsWindow : public Window, public TBWidgetListener {
     return str;
   }
 
-  // TBWidgetListener
+  // WidgetListener
   virtual bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev) {
     // Skip these events for now
     if (ev.IsPointerEvent()) return false;

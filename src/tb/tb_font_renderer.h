@@ -170,9 +170,9 @@ class FontFace {
   FontEffect* GetEffect() { return &m_effect; }
 
   // Draw string at position x, y (marks the upper left corner of the text).
-  void DrawString(int x, int y, const TBColor& color, const char* str,
+  void DrawString(int x, int y, const Color& color, const char* str,
                   size_t len = std::string::npos);
-  void DrawString(int x, int y, const TBColor& color, const std::string& str,
+  void DrawString(int x, int y, const Color& color, const std::string& str,
                   size_t len = std::string::npos) {
     DrawString(x, y, color, str.c_str(), len);
   }
@@ -191,8 +191,7 @@ class FontFace {
 
   // Sets a background font which will always be rendered behind this one when
   // calling DrawString. Useful to add a shadow effect to a font.
-  void SetBackgroundFont(FontFace* font, const TBColor& col, int xofs,
-                         int yofs);
+  void SetBackgroundFont(FontFace* font, const Color& col, int xofs, int yofs);
 
  private:
   TBID GetHashId(UCS4 cp) const;
@@ -210,7 +209,7 @@ class FontFace {
   FontFace* m_bgFont = nullptr;
   int m_bgX = 0;
   int m_bgY = 0;
-  TBColor m_bgColor;
+  Color m_bgColor;
 };
 
 // Provides information about a font file associated with a font id.
