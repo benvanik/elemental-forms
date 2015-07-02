@@ -40,7 +40,7 @@ int GetSelectionScrollSpeed(int pointerpos, int min, int max) {
 }
 
 TBEditField::TBEditField()
-    : m_edit_type(EDIT_TYPE_TEXT),
+    : m_edit_type(EditType::kText),
       m_adapt_to_content_size(false),
       m_virtual_width(250) {
   SetIsFocusable(true);
@@ -48,10 +48,10 @@ TBEditField::TBEditField()
   AddChild(&m_scrollbar_x);
   AddChild(&m_scrollbar_y);
   AddChild(&m_root);
-  m_root.SetGravity(WIDGET_GRAVITY_ALL);
-  m_scrollbar_x.SetGravity(WIDGET_GRAVITY_BOTTOM | WIDGET_GRAVITY_LEFT_RIGHT);
-  m_scrollbar_y.SetGravity(WIDGET_GRAVITY_RIGHT | WIDGET_GRAVITY_TOP_BOTTOM);
-  m_scrollbar_y.SetAxis(AXIS_Y);
+  m_root.SetGravity(Gravity::kAll);
+  m_scrollbar_x.SetGravity(Gravity::kBottom | Gravity::kLeftRight);
+  m_scrollbar_y.SetGravity(Gravity::kRight | Gravity::kTopBottom);
+  m_scrollbar_y.SetAxis(Axis::kY);
   int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
   int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
   m_scrollbar_x.SetRect(
@@ -60,12 +60,12 @@ TBEditField::TBEditField()
   m_scrollbar_x.SetOpacity(0);
   m_scrollbar_y.SetOpacity(0);
 
-  SetSkinBg(TBIDC("TBEditField"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+  SetSkinBg(TBIDC("TBEditField"), InvokeInfo::kNoCallbacks);
   m_style_edit.SetListener(this);
 
   m_root.SetRect(GetVisibleRect());
 
-  m_placeholder.SetTextAlign(TB_TEXT_ALIGN_LEFT);
+  m_placeholder.SetTextAlign(TextAlign::kLeft);
 
   m_content_factory.editfield = this;
   m_style_edit.SetContentFactory(&m_content_factory);
@@ -101,7 +101,7 @@ void TBEditField::SetVirtualWidth(int virtual_width) {
   m_virtual_width = virtual_width;
 
   if (m_adapt_to_content_size && m_style_edit.packed.wrapping)
-    InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+    InvalidateLayout(InvalidationMode::kRecursive);
 }
 
 void TBEditField::SetMultiline(bool multiline) {
@@ -129,34 +129,34 @@ void TBEditField::SetWrapping(bool wrapping) {
 
   // Invalidate the layout when the wrap mode change and we should adapt our
   // size to it
-  if (m_adapt_to_content_size) InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  if (m_adapt_to_content_size) InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBEditField::SetEditType(EDIT_TYPE type) {
+void TBEditField::SetEditType(EditType type) {
   if (m_edit_type == type) return;
   m_edit_type = type;
-  m_style_edit.SetPassword(type == EDIT_TYPE_PASSWORD);
+  m_style_edit.SetPassword(type == EditType::kPassword);
   InvalidateSkinStates();
   TBWidget::Invalidate();
 }
 
 bool TBEditField::GetCustomSkinCondition(
-    const TBSkinCondition::CONDITION_INFO& info) {
+    const TBSkinCondition::ConditionInfo& info) {
   if (info.custom_prop == TBIDC("edit-type")) {
     switch (m_edit_type) {
-      case EDIT_TYPE_TEXT:
+      case EditType::kText:
         return info.value == TBIDC("text");
-      case EDIT_TYPE_SEARCH:
+      case EditType::kSearch:
         return info.value == TBIDC("search");
-      case EDIT_TYPE_PASSWORD:
+      case EditType::kPassword:
         return info.value == TBIDC("password");
-      case EDIT_TYPE_EMAIL:
+      case EditType::kEmail:
         return info.value == TBIDC("email");
-      case EDIT_TYPE_PHONE:
+      case EditType::kPhone:
         return info.value == TBIDC("phone");
-      case EDIT_TYPE_URL:
+      case EditType::kUrl:
         return info.value == TBIDC("url");
-      case EDIT_TYPE_NUMBER:
+      case EditType::kNumber:
         return info.value == TBIDC("number");
     };
   } else if (info.custom_prop == TBIDC("multiline"))
@@ -186,44 +186,44 @@ TBWidget::ScrollInfo TBEditField::GetScrollInfo() {
 }
 
 bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CHANGED && ev.target == &m_scrollbar_x) {
+  if (ev.type == EventType::kChanged && ev.target == &m_scrollbar_x) {
     m_style_edit.SetScrollPos(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
     OnScroll(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
     return true;
-  } else if (ev.type == EVENT_TYPE_CHANGED && ev.target == &m_scrollbar_y) {
+  } else if (ev.type == EventType::kChanged && ev.target == &m_scrollbar_y) {
     m_style_edit.SetScrollPos(m_style_edit.scroll_x, m_scrollbar_y.GetValue());
     OnScroll(m_style_edit.scroll_x, m_scrollbar_y.GetValue());
     return true;
-  } else if (ev.type == EVENT_TYPE_WHEEL &&
-             ev.modifierkeys == TB_MODIFIER_NONE) {
+  } else if (ev.type == EventType::kWheel &&
+             ev.modifierkeys == ModifierKeys::kNone) {
     int old_val = m_scrollbar_y.GetValue();
     m_scrollbar_y.SetValue(old_val + ev.delta_y * TBSystem::GetPixelsPerLine());
     return m_scrollbar_y.GetValue() != old_val;
-  } else if (ev.type == EVENT_TYPE_POINTER_DOWN && ev.target == this) {
+  } else if (ev.type == EventType::kPointerDown && ev.target == this) {
     TBRect padding_rect = GetPaddingRect();
     if (m_style_edit.MouseDown(
             TBPoint(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y),
-            1, ev.count, TB_MODIFIER_NONE, ev.touch)) {
+            1, ev.count, ModifierKeys::kNone, ev.touch)) {
       // Post a message to start selection scroll
       PostMessageDelayed(TBIDC("selscroll"), nullptr, SELECTION_SCROLL_DELAY);
       return true;
     }
-  } else if (ev.type == EVENT_TYPE_POINTER_MOVE && ev.target == this) {
+  } else if (ev.type == EventType::kPointerMove && ev.target == this) {
     TBRect padding_rect = GetPaddingRect();
     return m_style_edit.MouseMove(
         TBPoint(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y));
-  } else if (ev.type == EVENT_TYPE_POINTER_UP && ev.target == this) {
+  } else if (ev.type == EventType::kPointerUp && ev.target == this) {
     TBRect padding_rect = GetPaddingRect();
     return m_style_edit.MouseUp(
         TBPoint(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y), 1,
-        TB_MODIFIER_NONE, ev.touch);
-  } else if (ev.type == EVENT_TYPE_KEY_DOWN) {
+        ModifierKeys::kNone, ev.touch);
+  } else if (ev.type == EventType::kKeyDown) {
     return m_style_edit.KeyDown(ev.key, ev.special_key, ev.modifierkeys);
-  } else if (ev.type == EVENT_TYPE_KEY_UP) {
+  } else if (ev.type == EventType::kKeyUp) {
     return true;
-  } else if ((ev.type == EVENT_TYPE_CLICK &&
+  } else if ((ev.type == EventType::kClick &&
               ev.target->GetID() == TBIDC("popupmenu")) ||
-             (ev.type == EVENT_TYPE_SHORTCUT)) {
+             (ev.type == EventType::kShortcut)) {
     if (ev.ref_id == TBIDC("cut") && !m_style_edit.packed.read_only)
       m_style_edit.Cut();
     else if (ev.ref_id == TBIDC("copy"))
@@ -241,7 +241,7 @@ bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
     else
       return false;
     return true;
-  } else if (ev.type == EVENT_TYPE_CONTEXT_MENU && ev.target == this) {
+  } else if (ev.type == EventType::kContextMenu && ev.target == this) {
     TBPoint pos_in_root(ev.target_x, ev.target_y);
     ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
 
@@ -357,7 +357,7 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
       }
 
       m_style_edit.SetLayoutSize(layout_width, old_layout_height, true);
-      ps.size_dependency = SIZE_DEP_HEIGHT_DEPEND_ON_WIDTH;
+      ps.size_dependency = SizeDependency::kHeightOnWidth;
     }
     int width = m_style_edit.GetContentWidth();
     int height = m_style_edit.GetContentHeight();
@@ -412,9 +412,9 @@ void TBEditField::OnMessageReceived(TBMessage* msg) {
 void TBEditField::OnChange() {
   // Invalidate the layout when the content change and we should adapt our size
   // to it
-  if (m_adapt_to_content_size) InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  if (m_adapt_to_content_size) InvalidateLayout(InvalidationMode::kRecursive);
 
-  TBWidgetEvent ev(EVENT_TYPE_CHANGED);
+  TBWidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
@@ -439,13 +439,13 @@ void TBEditField::DrawRectFill(const TBRect& rect, const TBColor& color) {
 void TBEditField::DrawTextSelectionBg(const TBRect& rect) {
   TBWidgetSkinConditionContext context(this);
   g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
-                       static_cast<SKIN_STATE>(GetAutoState()), context);
+                       static_cast<SkinState>(GetAutoState()), context);
 }
 
 void TBEditField::DrawContentSelectionFg(const TBRect& rect) {
   TBWidgetSkinConditionContext context(this);
   g_tb_skin->PaintSkin(rect, TBIDC("TBEditField.selection"),
-                       static_cast<SKIN_STATE>(GetAutoState()), context);
+                       static_cast<SkinState>(GetAutoState()), context);
 }
 
 void TBEditField::DrawCaret(const TBRect& rect) {
@@ -493,11 +493,13 @@ void TBEditFieldScrollRoot::GetChildTranslation(int& x, int& y) const {
   y = (int)-edit_field->GetStyleEdit()->scroll_y;
 }
 
-WIDGET_HIT_STATUS TBEditFieldScrollRoot::GetHitStatus(int x, int y) {
+HitStatus TBEditFieldScrollRoot::GetHitStatus(int x, int y) {
   // Return no hit on this widget, but maybe on any of the children.
-  if (TBWidget::GetHitStatus(x, y) && GetWidgetAt(x, y, false))
-    return WIDGET_HIT_STATUS_HIT;
-  return WIDGET_HIT_STATUS_NO_HIT;
+  if (TBWidget::GetHitStatus(x, y) != HitStatus::kNoHit &&
+      GetWidgetAt(x, y, false)) {
+    return HitStatus::kHit;
+  }
+  return HitStatus::kNoHit;
 }
 
 class TBTextFragmentContentWidget : public TBTextFragmentContent {

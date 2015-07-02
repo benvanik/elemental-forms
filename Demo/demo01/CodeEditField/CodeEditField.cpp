@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 using namespace tb;
-TB_WIDGET_FACTORY(CodeEditField, TBValue::TYPE_STRING, WIDGET_Z_TOP) {}
+TB_WIDGET_FACTORY(CodeEditField, TBValue::Type::kString, WidgetZ::kTop) {}
 
 CodeEditField::CodeEditField() : TBEditField(), inComment(false) {}
 

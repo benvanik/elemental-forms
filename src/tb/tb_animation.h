@@ -17,49 +17,38 @@ namespace tb {
 
 class TBAnimationObject;
 
-/** Defines how the animation progress value is interpolated. */
-enum ANIMATION_CURVE {
-  ANIMATION_CURVE_LINEAR,     ///< Linear
-  ANIMATION_CURVE_SLOW_DOWN,  ///< Fast start, slow end
-  ANIMATION_CURVE_SPEED_UP,   ///< Slow start, fast end
-  ANIMATION_CURVE_BEZIER,     ///< Slow start, slow end. Almost linear.
-  ANIMATION_CURVE_SMOOTH      ///< Slow start, slow end. Stronger than
-  /// ANIMATION_CURVE_BEZIER.
+// Defines how the animation progress value is interpolated.
+enum class AnimationCurve {
+  kLinear,    // Linear.
+  kSlowDown,  // Fast start, slow end.
+  kSpeedUp,   // Slow start, fast end.
+  kBezier,    // Slow start, slow end. Almost linear.
+  kSmooth,    // Slow start, slow end. Stronger than AnimationCurve::kBezier.
 };
 
-/** Defines what the animation duration time is relative to. */
-enum ANIMATION_TIME {
+// Defines what the animation duration time is relative to.
+enum class AnimationTime {
+  // The start time begins when the animation start in
+  // TBAnimationManager::StartAnimation.
+  kImmediately,
 
-  /** The start time begins when the animation start in
-     TBAnimationManager::StartAnimation. */
-  ANIMATION_TIME_IMMEDIATELY,
-
-  /** The animation start in StartAnimation just as with
-     ANIMATION_TIME_IMMEDIATELY,
-          but the start time is adjusted to when the animations Update is about
-     to be called
-          the first time since it was started.
-
-          Using this is most often preferable since starting a animation is
-     often accompanied
-          with some extra work that might eat up a considerable time of the
-     total duration (and
-          chop of the beginning of it).
-
-          F.ex: Creating a window and starting its appearance animation. During
-     initialization
-          of the window, you might initiate loading of additional resources.
-     When that is done
-          and you finally end up updating animations, most of the animation time
-     might already
-          have passed. If the animation start time is adjusted to the first
-     update, the whole
-          animation will run from 0.0 - 1.0 smoothly when the initialization is
-     done. */
-  ANIMATION_TIME_FIRST_UPDATE
+  // The animation start in StartAnimation just as with
+  // AnimationTime::kImmediately, but the start time is adjusted to when the
+  // animations Update is about to be called the first time since it was
+  // started.
+  // Using this is most often preferable since starting a animation is often
+  // accompanied with some extra work that might eat up a considerable time of
+  // the total duration (and chop of the beginning of it).
+  // F.ex: Creating a window and starting its appearance animation. During
+  // initialization of the window, you might initiate loading of additional
+  // resources. When that is done and you finally end up updating animations,
+  // most of the animation time might already have passed. If the animation
+  // start time is adjusted to the first update, the whole animation will run
+  // from 0.0 - 1.0 smoothly when the initialization is done.
+  kFirstUpdate,
 };
 
-#define ANIMATION_DEFAULT_CURVE ANIMATION_CURVE_SLOW_DOWN
+#define ANIMATION_DEFAULT_CURVE AnimationCurve::kSlowDown
 #define ANIMATION_DEFAULT_DURATION 200
 
 /** TBAnimationListener - Listens to the progress of TBAnimationObject. */
@@ -86,7 +75,7 @@ class TBAnimationListener : public TBLinkOf<TBAnimationListener> {
 class TBAnimationObject : public TBTypedObject,
                           public TBLinkOf<TBAnimationObject> {
  public:
-  ANIMATION_CURVE animation_curve;
+  AnimationCurve animation_curve;
   uint64_t animation_start_time;
   uint64_t animation_duration;
   bool adjust_start_time;
@@ -149,9 +138,9 @@ class TBAnimationManager {
 
   static void StartAnimation(
       TBAnimationObject* obj,
-      ANIMATION_CURVE animation_curve = ANIMATION_DEFAULT_CURVE,
+      AnimationCurve animation_curve = ANIMATION_DEFAULT_CURVE,
       double animation_duration = ANIMATION_DEFAULT_DURATION,
-      ANIMATION_TIME animation_time = ANIMATION_TIME_FIRST_UPDATE);
+      AnimationTime animation_time = AnimationTime::kFirstUpdate);
   /** Abort the animation. If delete_animation is true, the animation will be
      deleted in
           this call after running callbacks and listeners callbacks. In rare

@@ -17,31 +17,31 @@
 
 namespace tb {
 
-TBLayout::TBLayout(AXIS axis)
+TBLayout::TBLayout(Axis axis)
     : m_axis(axis),
       m_spacing(SPACING_FROM_SKIN),
       m_overflow(0),
       m_overflow_scroll(0),
       m_packed_init(0) {
-  m_packed.layout_mode_size = LAYOUT_SIZE_GRAVITY;
-  m_packed.layout_mode_pos = LAYOUT_POSITION_CENTER;
-  m_packed.layout_mode_overflow = LAYOUT_OVERFLOW_CLIP;
-  m_packed.layout_mode_dist = LAYOUT_DISTRIBUTION_PREFERRED;
-  m_packed.layout_mode_dist_pos = LAYOUT_DISTRIBUTION_POSITION_CENTER;
+  m_packed.layout_mode_size = uint32_t(LayoutSize::kGravity);
+  m_packed.layout_mode_pos = uint32_t(LayoutPosition::kCenter);
+  m_packed.layout_mode_overflow = uint32_t(LayoutOverflow::kClip);
+  m_packed.layout_mode_dist = uint32_t(LayoutDistribution::kPreferred);
+  m_packed.layout_mode_dist_pos = uint32_t(LayoutDistributionPosition::kCenter);
   m_packed.paint_overflow_fadeout = 1;
 }
 
-void TBLayout::SetAxis(AXIS axis) {
+void TBLayout::SetAxis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
-  InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  InvalidateLayout(InvalidationMode::kRecursive);
   InvalidateSkinStates();
 }
 
 void TBLayout::SetSpacing(int spacing) {
   if (spacing == m_spacing) return;
   m_spacing = spacing;
-  InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  InvalidateLayout(InvalidationMode::kRecursive);
 }
 
 void TBLayout::SetOverflowScroll(int overflow_scroll) {
@@ -50,58 +50,58 @@ void TBLayout::SetOverflowScroll(int overflow_scroll) {
   if (overflow_scroll == m_overflow_scroll) return;
   m_overflow_scroll = overflow_scroll;
   Invalidate();
-  if (m_axis == AXIS_X)
+  if (m_axis == Axis::kX)
     OnScroll(m_overflow_scroll, 0);
   else
     OnScroll(0, m_overflow_scroll);
 }
 
-void TBLayout::SetLayoutSize(LAYOUT_SIZE size) {
-  if (size == m_packed.layout_mode_size) return;
-  m_packed.layout_mode_size = size;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+void TBLayout::SetLayoutSize(LayoutSize size) {
+  if (uint32_t(size) == m_packed.layout_mode_size) return;
+  m_packed.layout_mode_size = uint32_t(size);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutPosition(LAYOUT_POSITION pos) {
-  if (pos == m_packed.layout_mode_pos) return;
-  m_packed.layout_mode_pos = pos;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+void TBLayout::SetLayoutPosition(LayoutPosition pos) {
+  if (uint32_t(pos) == m_packed.layout_mode_pos) return;
+  m_packed.layout_mode_pos = uint32_t(pos);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutOverflow(LAYOUT_OVERFLOW overflow) {
-  if (overflow == m_packed.layout_mode_overflow) return;
-  m_packed.layout_mode_overflow = overflow;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+void TBLayout::SetLayoutOverflow(LayoutOverflow overflow) {
+  if (uint32_t(overflow) == m_packed.layout_mode_overflow) return;
+  m_packed.layout_mode_overflow = uint32_t(overflow);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutDistribution(LAYOUT_DISTRIBUTION distribution) {
-  if (distribution == m_packed.layout_mode_dist) return;
-  m_packed.layout_mode_dist = distribution;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+void TBLayout::SetLayoutDistribution(LayoutDistribution distribution) {
+  if (uint32_t(distribution) == m_packed.layout_mode_dist) return;
+  m_packed.layout_mode_dist = uint32_t(distribution);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
 void TBLayout::SetLayoutDistributionPosition(
-    LAYOUT_DISTRIBUTION_POSITION distribution_pos) {
-  if (distribution_pos == m_packed.layout_mode_dist_pos) return;
-  m_packed.layout_mode_dist_pos = distribution_pos;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+    LayoutDistributionPosition distribution_pos) {
+  if (uint32_t(distribution_pos) == m_packed.layout_mode_dist_pos) return;
+  m_packed.layout_mode_dist_pos = uint32_t(distribution_pos);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::SetLayoutOrder(LAYOUT_ORDER order) {
-  bool reversed = (order == LAYOUT_ORDER_TOP_TO_BOTTOM);
+void TBLayout::SetLayoutOrder(LayoutOrder order) {
+  bool reversed = (order == LayoutOrder::kTopToBottom);
   if (reversed == m_packed.mode_reverse_order) return;
   m_packed.mode_reverse_order = reversed;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBLayout::InvalidateLayout(INVALIDATE_LAYOUT il) {
+void TBLayout::InvalidateLayout(InvalidationMode il) {
   m_packed.layout_is_invalid = 1;
   // Continue invalidating parents (depending on il)
   TBWidget::InvalidateLayout(il);
 }
 
-PreferredSize RotPreferredSize(const PreferredSize& ps, AXIS axis) {
-  if (axis == AXIS_X) return ps;
+PreferredSize RotPreferredSize(const PreferredSize& ps, Axis axis) {
+  if (axis == Axis::kX) return ps;
   PreferredSize psr;
   psr.max_w = ps.max_h;
   psr.max_h = ps.max_w;
@@ -109,60 +109,60 @@ PreferredSize RotPreferredSize(const PreferredSize& ps, AXIS axis) {
   psr.min_h = ps.min_w;
   psr.pref_w = ps.pref_h;
   psr.pref_h = ps.pref_w;
-  psr.size_dependency = ((ps.size_dependency & SIZE_DEP_WIDTH_DEPEND_ON_HEIGHT)
-                             ? SIZE_DEP_HEIGHT_DEPEND_ON_WIDTH
-                             : SIZE_DEP_NONE) |
-                        ((ps.size_dependency & SIZE_DEP_HEIGHT_DEPEND_ON_WIDTH)
-                             ? SIZE_DEP_WIDTH_DEPEND_ON_HEIGHT
-                             : SIZE_DEP_NONE);
+  psr.size_dependency =
+      (any(ps.size_dependency & SizeDependency::kWidthOnHeight)
+           ? SizeDependency::kHeightOnWidth
+           : SizeDependency::kNone) |
+      (any(ps.size_dependency & SizeDependency::kHeightOnWidth)
+           ? SizeDependency::kWidthOnHeight
+           : SizeDependency::kNone);
   return psr;
 }
 
-SizeConstraints RotSizeConstraints(const SizeConstraints& sc, AXIS axis) {
-  return axis == AXIS_X ? sc : SizeConstraints(sc.available_h, sc.available_w);
+SizeConstraints RotSizeConstraints(const SizeConstraints& sc, Axis axis) {
+  return axis == Axis::kX ? sc
+                          : SizeConstraints(sc.available_h, sc.available_w);
 }
 
-TBRect RotRect(const TBRect& rect, AXIS axis) {
-  if (axis == AXIS_X) return rect;
+TBRect RotRect(const TBRect& rect, Axis axis) {
+  if (axis == Axis::kX) return rect;
   return TBRect(rect.y, rect.x, rect.h, rect.w);
 }
 
-WIDGET_GRAVITY RotGravity(WIDGET_GRAVITY gravity, AXIS axis) {
-  if (axis == AXIS_X) return gravity;
-  WIDGET_GRAVITY r = WIDGET_GRAVITY_NONE;
-  r |= (gravity & WIDGET_GRAVITY_LEFT) ? WIDGET_GRAVITY_TOP
-                                       : WIDGET_GRAVITY_NONE;
-  r |= (gravity & WIDGET_GRAVITY_TOP) ? WIDGET_GRAVITY_LEFT
-                                      : WIDGET_GRAVITY_NONE;
-  r |= (gravity & WIDGET_GRAVITY_RIGHT) ? WIDGET_GRAVITY_BOTTOM
-                                        : WIDGET_GRAVITY_NONE;
-  r |= (gravity & WIDGET_GRAVITY_BOTTOM) ? WIDGET_GRAVITY_RIGHT
-                                         : WIDGET_GRAVITY_NONE;
+Gravity RotGravity(Gravity gravity, Axis axis) {
+  if (axis == Axis::kX) return gravity;
+  Gravity r = Gravity::kNone;
+  r |= any(gravity & Gravity::kLeft) ? Gravity::kTop : Gravity::kNone;
+  r |= any(gravity & Gravity::kTop) ? Gravity::kLeft : Gravity::kNone;
+  r |= any(gravity & Gravity::kRight) ? Gravity::kBottom : Gravity::kNone;
+  r |= any(gravity & Gravity::kBottom) ? Gravity::kRight : Gravity::kNone;
   return r;
 }
 
-bool TBLayout::QualifyForExpansion(WIDGET_GRAVITY gravity) const {
-  if (m_packed.layout_mode_dist == LAYOUT_DISTRIBUTION_AVAILABLE) return true;
-  if (m_packed.layout_mode_dist == LAYOUT_DISTRIBUTION_GRAVITY &&
-      ((gravity & WIDGET_GRAVITY_LEFT) && (gravity & WIDGET_GRAVITY_RIGHT)))
+bool TBLayout::QualifyForExpansion(Gravity gravity) const {
+  if (m_packed.layout_mode_dist == uint32_t(LayoutDistribution::kAvailable)) {
     return true;
+  }
+  if (m_packed.layout_mode_dist == uint32_t(LayoutDistribution::kGravity) &&
+      (any(gravity & Gravity::kLeft) && any(gravity & Gravity::kRight))) {
+    return true;
+  }
   return false;
 }
 
-int TBLayout::GetWantedHeight(WIDGET_GRAVITY gravity, const PreferredSize& ps,
+int TBLayout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
                               int available_height) const {
   int height = 0;
-  switch (m_packed.layout_mode_size) {
-    case LAYOUT_SIZE_GRAVITY:
-      height =
-          ((gravity & WIDGET_GRAVITY_TOP) && (gravity & WIDGET_GRAVITY_BOTTOM))
-              ? available_height
-              : std::min(available_height, ps.pref_h);
+  switch (LayoutSize(m_packed.layout_mode_size)) {
+    case LayoutSize::kGravity:
+      height = (any(gravity & Gravity::kTop) && any(gravity & Gravity::kBottom))
+                   ? available_height
+                   : std::min(available_height, ps.pref_h);
       break;
-    case LAYOUT_SIZE_PREFERRED:
+    case LayoutSize::kPreferred:
       height = std::min(available_height, ps.pref_h);
       break;
-    case LAYOUT_SIZE_AVAILABLE:
+    case LayoutSize::kAvailable:
       height = std::min(available_height, ps.max_h);
       break;
   };
@@ -172,7 +172,7 @@ int TBLayout::GetWantedHeight(WIDGET_GRAVITY gravity, const PreferredSize& ps,
 
 TBWidget* TBLayout::GetNextNonCollapsedWidget(TBWidget* child) const {
   TBWidget* next = GetNextInLayoutOrder(child);
-  while (next && next->GetVisibility() == WIDGET_VISIBILITY_GONE)
+  while (next && next->GetVisibility() == Visibility::kGone)
     next = GetNextInLayoutOrder(next);
   return next;
 }
@@ -189,8 +189,8 @@ int TBLayout::CalculateSpacing() {
   if (spacing == SPACING_FROM_SKIN) {
     if (TBSkinElement* e = GetSkinBgElement()) spacing = e->spacing;
 
-    assert(SPACING_FROM_SKIN == SKIN_VALUE_NOT_SPECIFIED);
-    if (spacing == SPACING_FROM_SKIN /*|| spacing == SKIN_VALUE_NOT_SPECIFIED*/)
+    assert(SPACING_FROM_SKIN == kSkinValueNotSpecified);
+    if (spacing == SPACING_FROM_SKIN /*|| spacing == kSkinValueNotSpecified*/)
       spacing = g_tb_skin->GetDefaultSpacing();
   }
   return spacing;
@@ -207,8 +207,8 @@ TBWidget* TBLayout::GetNextInLayoutOrder(TBWidget* child) const {
 void TBLayout::ValidateLayout(const SizeConstraints& constraints,
                               PreferredSize* calculate_ps) {
   // Layout notes:
-  // -All layout code is written for AXIS_X layout.
-  //  Instead of duplicating the layout code for both AXIS_X and AXIS_Y, we
+  // -All layout code is written for Axis::kX layout.
+  //  Instead of duplicating the layout code for both Axis::kX and Axis::kY, we
   //  simply
   //  rotate the in data (rect, gravity, preferred size) and the outdata (rect).
 
@@ -233,12 +233,12 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
   int total_max_pref_diff_w = 0;
   for (TBWidget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == WIDGET_VISIBILITY_GONE) continue;
+    if (child->GetVisibility() == Visibility::kGone) continue;
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
         RotPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const WIDGET_GRAVITY gravity = RotGravity(child->GetGravity(), m_axis);
+    const Gravity gravity = RotGravity(child->GetGravity(), m_axis);
 
     total_preferred_w += ps.pref_w + ending_space;
     total_min_pref_diff_w += ps.pref_w - ps.min_w;
@@ -272,7 +272,7 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
     return;
   }
 
-  TB_IF_DEBUG_SETTING(LAYOUT_PS_DEBUGGING,
+  TB_IF_DEBUG_SETTING(Setting::kLayoutSizing,
                       last_layout_time = TBSystem::GetTimeMS());
 
   // Pre Layout step (calculate distribution position)
@@ -281,7 +281,8 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
 
   int offset = layout_rect.x;
   if (extra_space &&
-      m_packed.layout_mode_dist_pos != LAYOUT_DISTRIBUTION_POSITION_LEFT_TOP) {
+      LayoutDistributionPosition(m_packed.layout_mode_dist_pos) !=
+          LayoutDistributionPosition::kLeftTop) {
     // To calculate the offset we need to predict the used space. We can do that
     // by checking
     // the distribution mode and total_max_pref_diff_w. That's how much the
@@ -289,25 +290,28 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
     // expand in the layout below.
 
     int used_space = total_preferred_w;
-    if (m_packed.layout_mode_dist != LAYOUT_DISTRIBUTION_PREFERRED)
+    if (LayoutDistribution(m_packed.layout_mode_dist) !=
+        LayoutDistribution::kPreferred) {
       used_space += std::min(extra_space, total_max_pref_diff_w);
-
-    if (m_packed.layout_mode_dist_pos == LAYOUT_DISTRIBUTION_POSITION_CENTER)
+    }
+    if (LayoutDistributionPosition(m_packed.layout_mode_dist_pos) ==
+        LayoutDistributionPosition::kCenter) {
       offset += (layout_rect.w - used_space) / 2;
-    else  // LAYOUT_DISTRIBUTION_POSITION_RIGHT_BOTTOM
+    } else {  // LayoutDistributionPosition::kRightBottom
       offset += layout_rect.w - used_space;
+    }
   }
 
   // Layout
   int used_space = 0;
   for (TBWidget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == WIDGET_VISIBILITY_GONE) continue;
+    if (child->GetVisibility() == Visibility::kGone) continue;
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
         RotPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const WIDGET_GRAVITY gravity = RotGravity(child->GetGravity(), m_axis);
+    const Gravity gravity = RotGravity(child->GetGravity(), m_axis);
 
     // Calculate width. May shrink if space is missing, or grow if we have extra
     // space.
@@ -340,20 +344,21 @@ void TBLayout::ValidateLayout(const SizeConstraints& constraints,
 
     // Calculate position
     int pos = layout_rect.y;
-    switch (m_packed.layout_mode_pos) {
-      case LAYOUT_POSITION_CENTER:
+    switch (LayoutPosition(m_packed.layout_mode_pos)) {
+      case LayoutPosition::kCenter:
         pos += (available_height - height) / 2;
         break;
-      case LAYOUT_POSITION_RIGHT_BOTTOM:
+      case LayoutPosition::kRightBottom:
         pos += available_height - height;
         break;
-      case LAYOUT_POSITION_GRAVITY:
-        if ((gravity & WIDGET_GRAVITY_TOP) && (gravity & WIDGET_GRAVITY_BOTTOM))
+      case LayoutPosition::kGravity:
+        if (any(gravity & Gravity::kTop) && any(gravity & Gravity::kBottom)) {
           pos += (available_height - height) / 2;
-        else if (gravity & WIDGET_GRAVITY_BOTTOM)
+        } else if (any(gravity & Gravity::kBottom)) {
           pos += available_height - height;
+        }
         break;
-      default:  // LAYOUT_POSITION_LEFT_TOP
+      default:  // LayoutPosition::kLeftTop
         break;
     };
 
@@ -377,7 +382,7 @@ PreferredSize TBLayout::OnCalculatePreferredContentSize(
 }
 
 bool TBLayout::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_WHEEL && ev.modifierkeys == TB_MODIFIER_NONE) {
+  if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
                       ev.delta_y * TBSystem::GetPixelsPerLine());
@@ -398,7 +403,7 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
     TBRect clip_rect = padding_rect;
     const int fluff = 100;
 
-    if (m_axis == AXIS_X)
+    if (m_axis == Axis::kX)
       clip_rect =
           clip_rect.Expand(m_overflow_scroll == 0 ? fluff : 0, fluff,
                            m_overflow_scroll == m_overflow ? fluff : 0, fluff);
@@ -410,7 +415,7 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
     old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
     TB_IF_DEBUG_SETTING(
-        LAYOUT_CLIPPING,
+        Setting::kLayoutClipping,
         g_renderer->DrawRect(clip_rect, TBColor(255, 0, 0, 200)));
   }
 
@@ -421,7 +426,7 @@ void TBLayout::OnPaintChildren(const PaintProps& paint_props) {
   // to the indicate to used that it's overflowed.
   if (m_overflow && m_packed.paint_overflow_fadeout) {
     TBID skin_x, skin_y;
-    if (m_axis == AXIS_X)
+    if (m_axis == Axis::kX)
       skin_x = TBIDC("TBLayout.fadeout_x");
     else
       skin_y = TBIDC("TBLayout.fadeout_y");
@@ -441,7 +446,7 @@ void TBLayout::OnProcess() {
 }
 
 void TBLayout::OnResized(int old_w, int old_h) {
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
   SizeConstraints sc(GetRect().w, GetRect().h);
   ValidateLayout(sc);
 }
@@ -451,7 +456,7 @@ void TBLayout::OnInflateChild(TBWidget* child) {
 }
 
 void TBLayout::GetChildTranslation(int& x, int& y) const {
-  if (m_axis == AXIS_X) {
+  if (m_axis == Axis::kX) {
     x = -m_overflow_scroll;
     y = 0;
   } else {
@@ -461,12 +466,12 @@ void TBLayout::GetChildTranslation(int& x, int& y) const {
 }
 
 void TBLayout::ScrollTo(int x, int y) {
-  SetOverflowScroll(m_axis == AXIS_X ? x : y);
+  SetOverflowScroll(m_axis == Axis::kX ? x : y);
 }
 
 TBWidget::ScrollInfo TBLayout::GetScrollInfo() {
   ScrollInfo info;
-  if (m_axis == AXIS_X) {
+  if (m_axis == Axis::kX) {
     info.max_x = m_overflow;
     info.x = m_overflow_scroll;
   } else {

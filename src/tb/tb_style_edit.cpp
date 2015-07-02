@@ -468,10 +468,10 @@ bool TBCaret::Place(const TBPoint& point) {
   return false;
 }
 
-void TBCaret::Place(TB_CARET_POS place) {
-  if (place == TB_CARET_POS_BEGINNING)
+void TBCaret::Place(CaretPosition place) {
+  if (place == CaretPosition::kBeginning)
     Place(styledit->blocks.GetFirst(), 0);
-  else if (place == TB_CARET_POS_END)
+  else if (place == CaretPosition::kEnd)
     Place(styledit->blocks.GetLast(), styledit->blocks.GetLast()->str_len);
 }
 
@@ -578,7 +578,7 @@ TBBlock::TBBlock(TBStyleEdit* styledit)
     : styledit(styledit),
       ypos(0),
       height(0),
-      align(styledit->align),
+      align(int8_t(styledit->align)),
       line_width_max(0),
       str_len(0) {}
 
@@ -593,9 +593,9 @@ void TBBlock::Set(const char* newstr, size_t len) {
   Layout(true, true);
 }
 
-void TBBlock::SetAlign(TB_TEXT_ALIGN align) {
-  if (this->align == align) return;
-  this->align = align;
+void TBBlock::SetAlign(TextAlign align) {
+  if (TextAlign(this->align) == align) return;
+  this->align = int8_t(align);
   Layout(false, false);
 }
 
@@ -827,7 +827,9 @@ void TBBlock::Layout(bool update_fragments, bool propagate_height) {
 
         line_xpos += fragment_w;
       }
-      if (!allowed_last_fragment) line_width = line_xpos;
+      if (!allowed_last_fragment) {
+        line_width = line_xpos;
+      }
     } else {
       // When wrapping is off, just measure and set pos.
       line_width = first_line_indentation;
@@ -851,7 +853,9 @@ void TBBlock::Layout(bool update_fragments, bool propagate_height) {
       // These positions are not final. Will be adjusted below.
       fragment->ypos = line_ypos;
 
-      if (fragment == last_fragment_on_line) break;
+      if (fragment == last_fragment_on_line) {
+        break;
+      }
       fragment = fragment->GetNext();
     }
 
@@ -861,10 +865,11 @@ void TBBlock::Layout(bool update_fragments, bool propagate_height) {
     // line baseline.
 
     int32_t xofs = 0;
-    if (align == TB_TEXT_ALIGN_RIGHT)
+    if (TextAlign(align) == TextAlign::kRight) {
       xofs = styledit->layout_width - line_width;
-    else if (align == TB_TEXT_ALIGN_CENTER)
+    } else if (TextAlign(align) == TextAlign::kCenter) {
       xofs = (styledit->layout_width - line_width) / 2;
+    }
 
     int adjusted_line_height = line_height;
     fragment = first_fragment_on_line;
@@ -1100,7 +1105,7 @@ void TBTextFragment::Paint(int32_t translate_x, int32_t translate_y,
   }
 }
 
-void TBTextFragment::Click(int button, uint32_t modifierkeys) {
+void TBTextFragment::Click(int button, ModifierKeys modifierkeys) {
   if (content) content->Click(this, button, modifierkeys);
 }
 
@@ -1192,7 +1197,7 @@ TBStyleEdit::TBStyleEdit()
       select_state(0),
       mousedown_fragment(nullptr),
       font(nullptr),
-      align(TB_TEXT_ALIGN_LEFT),
+      align(TextAlign::kLeft),
       packed_init(0) {
   caret.styledit = this;
   selection.styledit = this;
@@ -1312,7 +1317,7 @@ void TBStyleEdit::SetLayoutSize(int32_t width, int32_t height,
 }
 
 bool TBStyleEdit::GetSizeAffectsLayout() const {
-  if (packed.wrapping || align != TB_TEXT_ALIGN_LEFT) return true;
+  if (packed.wrapping || align != TextAlign::kLeft) return true;
   return false;
 }
 
@@ -1444,93 +1449,108 @@ TBBlock* TBStyleEdit::FindBlock(int32_t y) const {
   return blocks.GetLast();
 }
 
-bool TBStyleEdit::KeyDown(int key, SPECIAL_KEY special_key,
-                          MODIFIER_KEYS modifierkeys) {
+bool TBStyleEdit::KeyDown(int key, SpecialKey special_key,
+                          ModifierKeys modifierkeys) {
   if (select_state) return false;
 
   bool handled = true;
-  bool move_caret = special_key == TB_KEY_LEFT || special_key == TB_KEY_RIGHT ||
-                    special_key == TB_KEY_UP || special_key == TB_KEY_DOWN ||
-                    special_key == TB_KEY_HOME || special_key == TB_KEY_END ||
-                    special_key == TB_KEY_PAGE_UP ||
-                    special_key == TB_KEY_PAGE_DOWN;
+  bool move_caret =
+      special_key == SpecialKey::kLeft || special_key == SpecialKey::kRight ||
+      special_key == SpecialKey::kUp || special_key == SpecialKey::kDown ||
+      special_key == SpecialKey::kHome || special_key == SpecialKey::kEnd ||
+      special_key == SpecialKey::kPageUp ||
+      special_key == SpecialKey::kPageDown;
 
-  if (!(modifierkeys & TB_SHIFT) && move_caret) selection.SelectNothing();
+  if (!any(modifierkeys & ModifierKeys::kShift) && move_caret) {
+    selection.SelectNothing();
+  }
 
   TBTextOfs old_caret_pos = caret.pos;
   TBTextFragment* old_caret_elm = caret.GetFragment();
 
-  if ((special_key == TB_KEY_UP || special_key == TB_KEY_DOWN) &&
-      (modifierkeys & TB_CTRL)) {
+  if ((special_key == SpecialKey::kUp || special_key == SpecialKey::kDown) &&
+      any(modifierkeys & ModifierKeys::kCtrl)) {
     int32_t line_height = old_caret_pos.block->CalculateLineHeight(font);
-    int32_t new_y =
-        scroll_y + (special_key == TB_KEY_UP ? -line_height : line_height);
+    int32_t new_y = scroll_y + (special_key == SpecialKey::kUp ? -line_height
+                                                               : line_height);
     SetScrollPos(scroll_x, new_y);
-  } else if (special_key == TB_KEY_LEFT)
-    caret.Move(false, (modifierkeys & TB_CTRL) ? true : false);
-  else if (special_key == TB_KEY_RIGHT)
-    caret.Move(true, (modifierkeys & TB_CTRL) ? true : false);
-  else if (special_key == TB_KEY_UP)
+  } else if (special_key == SpecialKey::kLeft) {
+    caret.Move(false, any(modifierkeys & ModifierKeys::kCtrl));
+  } else if (special_key == SpecialKey::kRight) {
+    caret.Move(true, any(modifierkeys & ModifierKeys::kCtrl));
+  } else if (special_key == SpecialKey::kUp) {
     handled =
         caret.Place(TBPoint(caret.wanted_x, old_caret_pos.block->ypos +
                                                 old_caret_elm->line_ypos - 1));
-  else if (special_key == TB_KEY_DOWN)
+  } else if (special_key == SpecialKey::kDown) {
     handled = caret.Place(TBPoint(
         caret.wanted_x, old_caret_pos.block->ypos + old_caret_elm->line_ypos +
                             old_caret_elm->line_height + 1));
-  else if (special_key == TB_KEY_PAGE_UP)
+  } else if (special_key == SpecialKey::kPageUp) {
     caret.Place(TBPoint(caret.wanted_x, caret.y - layout_height));
-  else if (special_key == TB_KEY_PAGE_DOWN)
+  } else if (special_key == SpecialKey::kPageDown) {
     caret.Place(TBPoint(caret.wanted_x,
                         caret.y + layout_height + old_caret_elm->line_height));
-  else if (special_key == TB_KEY_HOME && modifierkeys & TB_CTRL)
+  } else if (special_key == SpecialKey::kHome &&
+             any(modifierkeys & ModifierKeys::kCtrl)) {
     caret.Place(TBPoint(0, 0));
-  else if (special_key == TB_KEY_END && modifierkeys & TB_CTRL)
+  } else if (special_key == SpecialKey::kEnd &&
+             any(modifierkeys & ModifierKeys::kCtrl)) {
     caret.Place(
         TBPoint(32000, blocks.GetLast()->ypos + blocks.GetLast()->height));
-  else if (special_key == TB_KEY_HOME)
+  } else if (special_key == SpecialKey::kHome) {
     caret.Place(TBPoint(0, caret.y));
-  else if (special_key == TB_KEY_END)
+  } else if (special_key == SpecialKey::kEnd) {
     caret.Place(TBPoint(32000, caret.y));
-  else if (key == '8' && (modifierkeys & TB_CTRL)) {
+  } else if (key == '8' && any(modifierkeys & ModifierKeys::kCtrl)) {
     packed.show_whitespace = !packed.show_whitespace;
     listener->Invalidate(TBRect(0, 0, layout_width, layout_height));
-  } else if (!packed.read_only && (special_key == TB_KEY_DELETE ||
-                                   special_key == TB_KEY_BACKSPACE)) {
+  } else if (!packed.read_only && (special_key == SpecialKey::kDelete ||
+                                   special_key == SpecialKey::kBackspace)) {
     if (!selection.IsSelected()) {
-      caret.Move(special_key == TB_KEY_DELETE,
-                 (modifierkeys & TB_CTRL) ? true : false);
+      caret.Move(special_key == SpecialKey::kDelete,
+                 any(modifierkeys & ModifierKeys::kCtrl));
       selection.SelectToCaret(old_caret_pos.block, old_caret_pos.ofs);
     }
     selection.RemoveContent();
-  } else if (!packed.read_only && !(modifierkeys & TB_SHIFT) &&
-             (special_key == TB_KEY_TAB && packed.multiline_on))
+  } else if (!packed.read_only && !any(modifierkeys & ModifierKeys::kShift) &&
+             (special_key == SpecialKey::kTab && packed.multiline_on)) {
     InsertText("\t", 1);
-  else if (!packed.read_only &&
-           (special_key == TB_KEY_ENTER && packed.multiline_on) &&
-           !(modifierkeys & TB_CTRL))
+  } else if (!packed.read_only &&
+             (special_key == SpecialKey::kEnter && packed.multiline_on) &&
+             !any(modifierkeys & ModifierKeys::kCtrl)) {
     InsertBreak();
-  else if (!packed.read_only && (key && !(modifierkeys & TB_CTRL)) &&
-           special_key != TB_KEY_ENTER) {
+  } else if (!packed.read_only &&
+             (key && !any(modifierkeys & ModifierKeys::kCtrl)) &&
+             special_key != SpecialKey::kEnter) {
     char utf8[8];
     int len = utf8::encode(key, utf8);
     InsertText(utf8, len);
-  } else
+  } else {
     handled = false;
+  }
 
-  if ((modifierkeys & TB_SHIFT) && move_caret)
+  if (any(modifierkeys & ModifierKeys::kShift) && move_caret) {
     selection.SelectToCaret(old_caret_pos.block, old_caret_pos.ofs);
+  }
 
-  if (!(special_key == TB_KEY_UP || special_key == TB_KEY_DOWN ||
-        special_key == TB_KEY_PAGE_UP || special_key == TB_KEY_PAGE_DOWN))
+  if (!(special_key == SpecialKey::kUp || special_key == SpecialKey::kDown ||
+        special_key == SpecialKey::kPageUp ||
+        special_key == SpecialKey::kPageDown)) {
     caret.UpdateWantedX();
+  }
 
   caret.ResetBlink();
 
   // Hooks
-  if (!move_caret && handled) listener->OnChange();
-  if (special_key == TB_KEY_ENTER && !(modifierkeys & TB_CTRL)) {
-    if (listener->OnEnter()) handled = true;
+  if (!move_caret && handled) {
+    listener->OnChange();
+  }
+  if (special_key == SpecialKey::kEnter &&
+      !any(modifierkeys & ModifierKeys::kCtrl)) {
+    if (listener->OnEnter()) {
+      handled = true;
+    }
   }
   if (handled) ScrollIfNeeded();
 
@@ -1540,7 +1560,7 @@ bool TBStyleEdit::KeyDown(int key, SPECIAL_KEY special_key,
 void TBStyleEdit::Cut() {
   if (packed.password_on) return;
   Copy();
-  KeyDown(0, TB_KEY_DELETE, TB_MODIFIER_NONE);
+  KeyDown(0, SpecialKey::kDelete, ModifierKeys::kNone);
 }
 
 void TBStyleEdit::Copy() {
@@ -1579,7 +1599,7 @@ void TBStyleEdit::Redo() {
 }
 
 bool TBStyleEdit::MouseDown(const TBPoint& point, int button, int clicks,
-                            MODIFIER_KEYS modifierkeys, bool touch) {
+                            ModifierKeys modifierkeys, bool touch) {
   if (button != 1) return false;
 
   if (touch) {
@@ -1609,7 +1629,7 @@ bool TBStyleEdit::MouseDown(const TBPoint& point, int button, int clicks,
 }
 
 bool TBStyleEdit::MouseUp(const TBPoint& point, int button,
-                          MODIFIER_KEYS modifierkeys, bool touch) {
+                          ModifierKeys modifierkeys, bool touch) {
   if (button != 1) return false;
 
   if (touch && !TBWidget::cancel_click) {
@@ -1666,11 +1686,12 @@ void TBStyleEdit::Focus(bool focus) {
   selection.Invalidate();
 }
 
-void TBStyleEdit::SetText(const char* text, TB_CARET_POS pos) {
+void TBStyleEdit::SetText(const char* text, CaretPosition pos) {
   SetText(text, strlen(text), pos);
 }
 
-void TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
+void TBStyleEdit::SetText(const char* text, size_t text_len,
+                          CaretPosition pos) {
   if (!text || !*text) {
     Clear(true);
     caret.UpdateWantedX();
@@ -1685,7 +1706,7 @@ void TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
   caret.UpdateWantedX();
   ScrollIfNeeded(true, false);
 
-  if (pos == TB_CARET_POS_END) {
+  if (pos == CaretPosition::kEnd) {
     caret.Place(blocks.GetLast(), blocks.GetLast()->str_len);
   }
 
@@ -1693,7 +1714,7 @@ void TBStyleEdit::SetText(const char* text, size_t text_len, TB_CARET_POS pos) {
 }
 
 bool TBStyleEdit::Load(const char* filename) {
-  TBFile* f = TBFile::Open(filename, TBFile::MODE_READ);
+  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
   if (!f) return false;
   size_t num_bytes = f->Size();
 
@@ -1725,7 +1746,7 @@ bool TBStyleEdit::IsEmpty() const {
          blocks.GetFirst()->str.empty();
 }
 
-void TBStyleEdit::SetAlign(TB_TEXT_ALIGN align) {
+void TBStyleEdit::SetAlign(TextAlign align) {
   this->align = align;
   // Call SetAlign on all blocks currently selected, or the block of the current
   // caret position.

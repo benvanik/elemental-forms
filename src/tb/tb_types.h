@@ -24,19 +24,46 @@ T Clamp(const T& value, const T& min, const T& max) {
   return (value > max) ? max : ((value < min) ? min : value);
 }
 
-/** Returns value clamped to min and max. If max is greater than min,
-        max will be clipped to min. */
+// Returns value clamped to min and max. If max is greater than min, max will be
+// clipped to min.
 template <class T>
 T ClampClipMax(const T& value, const T& min, const T& max) {
   return (value > max) ? (max > min ? max : min)
                        : ((value < min) ? min : value);
 }
 
-/** Makes it possible to use the given enum types as flag combinations.
-        That will catch use of incorrect type during compilation, that wouldn't
-   be caught
-        using a uint32_t flag. */
+#define MAKE_ORDERED_ENUM_STRING_UTILS(Enum, ...)             \
+  \
+inline Enum                                                   \
+  from_string(const char* value, Enum default_value) {        \
+    \
+static const char* text[] = {__VA_ARGS__};                    \
+    \
+for(int i = 0; i < sizeof(text) / sizeof(const char*); ++i) { \
+      if (strcmp(value, text[i]) == 0) {                      \
+        return static_cast<Enum>(i);                          \
+      }                                                       \
+    \
+}                                                      \
+    \
+return default_value;                                         \
+  \
+}                                                        \
+  \
+inline const char*                                            \
+  to_string(Enum value) {                                     \
+    static const char* text[] = {__VA_ARGS__};                \
+    return text[int(value)];                                  \
+  \
+}
+
+// Makes it possible to use the given enum types as flag combinations.
+// That will catch use of incorrect type during compilation, that wouldn't be
+// caught using a uint32_t flag.
 #define MAKE_ENUM_FLAG_COMBO(Enum)                       \
+  constexpr bool any(const Enum value) {                 \
+    return static_cast<uint32_t>(value) != 0;            \
+  }                                                      \
   constexpr Enum operator|(Enum a, Enum b) {             \
     return static_cast<Enum>(static_cast<uint32_t>(a) |  \
                              static_cast<uint32_t>(b));  \

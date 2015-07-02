@@ -78,10 +78,10 @@ class TBAndroidFile : public TBFile {
   AAsset* file;
 };
 
-TBFile* TBFile::Open(const std::string& filename, TBFileMode mode) {
+TBFile* TBFile::Open(const std::string& filename, Mode mode) {
   AAsset* f = nullptr;
   switch (mode) {
-    case MODE_READ:
+    case Mode::kRead:
       f = AAssetManager_open(g_pManager, filename.c_str(), AASSET_MODE_UNKNOWN);
       break;
     default:

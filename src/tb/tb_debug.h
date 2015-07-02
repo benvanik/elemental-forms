@@ -26,26 +26,26 @@ class TBDebugInfo {
  public:
   TBDebugInfo();
 
-  enum SETTING {
-    /** Show widgets bounds */
-    LAYOUT_BOUNDS,
-    /** Show child widget clipping set by some widgets. */
-    LAYOUT_CLIPPING,
-    /** Show highlights on widgets that recalculate their preferred
-            size, and those who recalculate their layout. */
-    LAYOUT_PS_DEBUGGING,
-    /** Show render batch info and log batch info in the debug
-            output. It depends on the renderer backend if this is available. */
-    RENDER_BATCHES,
-    /** Render the bitmap fragments of the skin. */
-    RENDER_SKIN_BITMAP_FRAGMENTS,
-    /** Render the bitmap fragments of the font that's set on the hovered
-            or focused widget. */
-    RENDER_FONT_BITMAP_FRAGMENTS,
+  enum class Setting {
+    // Show widgets bounds.
+    kLayoutBounds,
+    // Show child widget clipping set by some widgets.
+    kLayoutClipping,
+    // Show highlights on widgets that recalculate their preferred size, and
+    // those who recalculate their layout.
+    kLayoutSizing,
+    // Show render batch info and log batch info in the debug output. It depends
+    // on the renderer backend if this is available.
+    kDrawRenderBatches,
+    // Render the bitmap fragments of the skin.
+    kDrawSkinBitmapFragments,
+    // Render the bitmap fragments of the font that's set on the hovered or
+    // focused widget.
+    kDrawFontBitmapFragments,
 
-    NUM_SETTINGS
+    kSettingCount,
   };
-  int settings[NUM_SETTINGS];
+  int settings[int(Setting::kSettingCount)] = {0};
 };
 
 extern TBDebugInfo g_tb_debug;
@@ -53,7 +53,7 @@ extern TBDebugInfo g_tb_debug;
 /** Show a window containing runtime debugging settings. */
 void ShowDebugInfoSettingsWindow(class TBWidget* root);
 
-#define TB_DEBUG_SETTING(setting) g_tb_debug.settings[TBDebugInfo::setting]
+#define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(TBDebugInfo::setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \
   if (TB_DEBUG_SETTING(setting)) {         \
     code;                                  \

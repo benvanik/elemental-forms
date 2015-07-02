@@ -84,7 +84,7 @@ void STBFontRenderer::GetGlyphMetrics(TBGlyphMetrics* metrics, UCS4 cp) {
 }
 
 bool STBFontRenderer::Load(const char* filename, int size) {
-  TBFile* f = TBFile::Open(filename, TBFile::MODE_READ);
+  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
   if (!f) return false;
 
   size_t ttf_buf_size = f->Size();

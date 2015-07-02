@@ -14,8 +14,8 @@
 
 namespace tb {
 
-TBWindow::TBWindow() : m_settings(WINDOW_SETTINGS_DEFAULT) {
-  SetSkinBg(TBIDC("TBWindow"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+TBWindow::TBWindow() : m_settings(WindowSettings::kDefault) {
+  SetSkinBg(TBIDC("TBWindow"), InvokeInfo::kNoCallbacks);
   AddChild(&m_mover);
   AddChild(&m_resizer);
   m_mover.SetSkinBg(TBIDC("TBWindow.mover"));
@@ -35,14 +35,14 @@ TBWindow::~TBWindow() {
   m_mover.RemoveChild(&m_textfield);
 }
 
-TBRect TBWindow::GetResizeToFitContentRect(RESIZE_FIT fit) {
+TBRect TBWindow::GetResizeToFitContentRect(ResizeFit fit) {
   PreferredSize ps = GetPreferredSize();
   int new_w = ps.pref_w;
   int new_h = ps.pref_h;
-  if (fit == RESIZE_FIT_MINIMAL) {
+  if (fit == ResizeFit::kMinimal) {
     new_w = ps.min_w;
     new_h = ps.min_h;
-  } else if (fit == RESIZE_FIT_CURRENT_OR_NEEDED) {
+  } else if (fit == ResizeFit::kCurrentOrNeeded) {
     new_w = Clamp(GetRect().w, ps.min_w, ps.max_w);
     new_h = Clamp(GetRect().h, ps.min_h, ps.max_h);
   }
@@ -53,31 +53,34 @@ TBRect TBWindow::GetResizeToFitContentRect(RESIZE_FIT fit) {
   return TBRect(GetRect().x, GetRect().y, new_w, new_h);
 }
 
-void TBWindow::ResizeToFitContent(RESIZE_FIT fit) {
+void TBWindow::ResizeToFitContent(ResizeFit fit) {
   SetRect(GetResizeToFitContentRect(fit));
 }
 
 void TBWindow::Close() { Die(); }
 
-bool TBWindow::IsActive() const { return GetState(WIDGET_STATE_SELECTED); }
+bool TBWindow::IsActive() const { return GetState(SkinState::kSelected); }
 
 TBWindow* TBWindow::GetTopMostOtherWindow(bool only_activable_windows) {
   TBWindow* other_window = nullptr;
   TBWidget* sibling = GetParent()->GetLastChild();
   while (sibling && !other_window) {
-    if (sibling != this) other_window = TBSafeCast<TBWindow>(sibling);
-
+    if (sibling != this) {
+      other_window = TBSafeCast<TBWindow>(sibling);
+    }
     if (only_activable_windows && other_window &&
-        !(other_window->m_settings & WINDOW_SETTINGS_CAN_ACTIVATE))
+        !any(other_window->m_settings & WindowSettings::kCanActivate)) {
       other_window = nullptr;
-
+    }
     sibling = sibling->GetPrev();
   }
   return other_window;
 }
 
 void TBWindow::Activate() {
-  if (!GetParent() || !(m_settings & WINDOW_SETTINGS_CAN_ACTIVATE)) return;
+  if (!GetParent() || !any(m_settings & WindowSettings::kCanActivate)) {
+    return;
+  }
   if (IsActive()) {
     // Already active, but we may still have lost focus,
     // so ensure it comes back to us.
@@ -87,11 +90,12 @@ void TBWindow::Activate() {
 
   // Deactivate currently active window
   TBWindow* active_window = GetTopMostOtherWindow(true);
-  if (active_window) active_window->DeActivate();
+  if (active_window) {
+    active_window->DeActivate();
+  }
 
   // Activate this window
-
-  SetZ(WIDGET_Z_TOP);
+  SetZ(WidgetZ::kTop);
   SetWindowActiveState(true);
   EnsureFocus();
 }
@@ -103,9 +107,9 @@ bool TBWindow::EnsureFocus() {
   // Focus last focused widget (if we have one)
   bool success = false;
   if (m_last_focus.Get())
-    success = m_last_focus.Get()->SetFocus(WIDGET_FOCUS_REASON_UNKNOWN);
+    success = m_last_focus.Get()->SetFocus(FocusReason::kUnknown);
   // We didn't have one or failed, so try focus any child.
-  if (!success) success = SetFocusRecursive(WIDGET_FOCUS_REASON_UNKNOWN);
+  if (!success) success = SetFocusRecursive(FocusReason::kUnknown);
   return success;
 }
 
@@ -115,28 +119,40 @@ void TBWindow::DeActivate() {
 }
 
 void TBWindow::SetWindowActiveState(bool active) {
-  SetState(WIDGET_STATE_SELECTED, active);
-  m_mover.SetState(WIDGET_STATE_SELECTED, active);
+  SetState(SkinState::kSelected, active);
+  m_mover.SetState(SkinState::kSelected, active);
 }
 
-void TBWindow::SetSettings(WINDOW_SETTINGS settings) {
+void TBWindow::SetSettings(WindowSettings settings) {
   if (settings == m_settings) return;
   m_settings = settings;
 
-  if (settings & WINDOW_SETTINGS_TITLEBAR) {
-    if (!m_mover.GetParent()) AddChild(&m_mover);
-  } else if (!(settings & WINDOW_SETTINGS_TITLEBAR)) {
-    if (m_mover.GetParent()) RemoveChild(&m_mover);
+  if (any(settings & WindowSettings::kTitleBar)) {
+    if (!m_mover.GetParent()) {
+      AddChild(&m_mover);
+    }
+  } else {
+    if (m_mover.GetParent()) {
+      RemoveChild(&m_mover);
+    }
   }
-  if (settings & WINDOW_SETTINGS_RESIZABLE) {
-    if (!m_resizer.GetParent()) AddChild(&m_resizer);
-  } else if (!(settings & WINDOW_SETTINGS_RESIZABLE)) {
-    if (m_resizer.GetParent()) RemoveChild(&m_resizer);
+  if (any(settings & WindowSettings::kResizable)) {
+    if (!m_resizer.GetParent()) {
+      AddChild(&m_resizer);
+    }
+  } else {
+    if (m_resizer.GetParent()) {
+      RemoveChild(&m_resizer);
+    }
   }
-  if (settings & WINDOW_SETTINGS_CLOSE_BUTTON) {
-    if (!m_close_button.GetParent()) m_mover.AddChild(&m_close_button);
-  } else if (!(settings & WINDOW_SETTINGS_CLOSE_BUTTON)) {
-    if (m_close_button.GetParent()) m_mover.RemoveChild(&m_close_button);
+  if (any(settings & WindowSettings::kCloseButton)) {
+    if (!m_close_button.GetParent()) {
+      m_mover.AddChild(&m_close_button);
+    }
+  } else {
+    if (m_close_button.GetParent()) {
+      m_mover.RemoveChild(&m_close_button);
+    }
   }
 
   // FIX: invalidate layout / resize window!
@@ -144,8 +160,9 @@ void TBWindow::SetSettings(WINDOW_SETTINGS settings) {
 }
 
 int TBWindow::GetTitleHeight() {
-  if (m_settings & WINDOW_SETTINGS_TITLEBAR)
+  if (any(m_settings & WindowSettings::kTitleBar)) {
     return m_mover.GetPreferredSize().pref_h;
+  }
   return 0;
 }
 
@@ -177,7 +194,7 @@ PreferredSize TBWindow::OnCalculatePreferredSize(
 
 bool TBWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.target == &m_close_button) {
-    if (ev.type == EVENT_TYPE_CLICK) Close();
+    if (ev.type == EventType::kClick) Close();
     return true;
   }
   return false;
@@ -196,7 +213,7 @@ void TBWindow::OnRemove() {
     active_window->Activate();
 }
 
-void TBWindow::OnChildAdded(TBWidget* child) { m_resizer.SetZ(WIDGET_Z_TOP); }
+void TBWindow::OnChildAdded(TBWidget* child) { m_resizer.SetZ(WidgetZ::kTop); }
 
 void TBWindow::OnResized(int old_w, int old_h) {
   // Apply gravity on children
@@ -212,7 +229,9 @@ void TBWindow::OnResized(int old_w, int old_h) {
   int button_size = mover_rect.h;
   m_close_button.SetRect(TBRect(mover_rect.x + mover_rect.w - button_size,
                                 mover_rect.y, button_size, button_size));
-  if (m_settings & WINDOW_SETTINGS_CLOSE_BUTTON) mover_rect.w -= button_size;
+  if (any(m_settings & WindowSettings::kCloseButton)) {
+    mover_rect.w -= button_size;
+  }
   m_textfield.SetRect(mover_rect);
 }
 

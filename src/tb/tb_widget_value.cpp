@@ -31,7 +31,7 @@ void TBWidgetValueConnection::SyncFromWidget(TBWidget* source_widget) {
   if (m_value) m_value->SetFromWidget(source_widget);
 }
 
-TBWidgetValue::TBWidgetValue(const TBID& name, TBValue::TYPE type)
+TBWidgetValue::TBWidgetValue(const TBID& name, TBValue::Type type)
     : m_name(name), m_value(type), m_syncing(false) {}
 
 TBWidgetValue::~TBWidgetValue() {
@@ -43,14 +43,14 @@ void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
 
   // Get the value in the format
   switch (m_value.GetType()) {
-    case TBValue::TYPE_STRING:
+    case TBValue::Type::kString:
       m_value.SetString(source_widget->GetText());
       break;
-    case TBValue::TYPE_NULL:
-    case TBValue::TYPE_INT:
+    case TBValue::Type::kNull:
+    case TBValue::Type::kInt:
       m_value.SetInt(source_widget->GetValue());
       break;
-    case TBValue::TYPE_FLOAT:
+    case TBValue::Type::kFloat:
       // FIX: TBValue should use double instead of float?
       m_value.SetFloat((float)source_widget->GetValueDouble());
       break;
@@ -81,14 +81,14 @@ void TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
 
   m_syncing = true;
   switch (m_value.GetType()) {
-    case TBValue::TYPE_STRING:
+    case TBValue::Type::kString:
       dst_widget->SetText(m_value.GetString());
       break;
-    case TBValue::TYPE_NULL:
-    case TBValue::TYPE_INT:
+    case TBValue::Type::kNull:
+    case TBValue::Type::kInt:
       dst_widget->SetValue(m_value.GetInt());
       break;
-    case TBValue::TYPE_FLOAT:
+    case TBValue::Type::kFloat:
       // FIX: TBValue should use double instead of float?
       dst_widget->SetValueDouble(m_value.GetFloat());
       break;
@@ -104,7 +104,7 @@ void TBWidgetValue::SetInt(int value) {
 }
 
 void TBWidgetValue::SetText(const char* text) {
-  m_value.SetString(text, TBValue::SET_NEW_COPY);
+  m_value.SetString(text, TBValue::Set::kNewCopy);
   SyncToWidgets(nullptr);
 }
 
@@ -117,7 +117,7 @@ void TBWidgetValue::SetDouble(double value) {
 /*extern*/ TBValueGroup g_value_group;
 
 TBWidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
-                                                 TBValue::TYPE type) {
+                                                 TBValue::Type type) {
   if (TBWidgetValue* val = GetValue(name)) return val;
   if (TBWidgetValue* val = new TBWidgetValue(name, type)) {
     if (m_values.Add(name, val))

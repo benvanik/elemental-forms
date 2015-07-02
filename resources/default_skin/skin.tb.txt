@@ -102,13 +102,13 @@ elements
 		spacing -1px
 	TBSection.container
 		bitmap TBSectionContainer.png
-		type StretchBorder
+		type stretch border
 		cut 11
 		expand 6
 		padding 10
 	TBSectionHeader
 		bitmap window_mover_bg_tile.png
-		type Tile
+		type tile
 		expand -1
 		padding 3 16
 		children
@@ -125,22 +125,22 @@ elements
 				state all
 	TBSectionHeader.overlay
 		bitmap window_mover_overlay.png
-		type StretchBorder
+		type stretch border
 		cut 16
 		expand 3
 	TBSectionHeader.icon_0
 		bitmap toggle_section_icon_up.png
-		type Image
+		type image
 		img-position-x 0
 		img-ofs-x 4
 	TBSectionHeader.icon_1
 		bitmap toggle_section_icon_down.png
-		type Image
+		type image
 		img-position-x 0
 		img-ofs-x 4
 	TBSectionHeader.icon_pressed
 		bitmap toggle_section_icon_middle.png
-		type Image
+		type image
 		img-position-x 0
 		img-ofs-x 4
 
@@ -177,7 +177,7 @@ elements
 			element tab_top_focus
 				state focused
 	tab_top_focus
-		type StretchBorder
+		type stretch border
 		bitmap focus_tabbutton_top.png
 		cut 12
 		expand 6
@@ -219,7 +219,7 @@ elements
 			element tab_left_focus
 				state focused
 	tab_left_focus
-		type StretchBorder
+		type stretch border
 		bitmap focus_tabbutton_left.png
 		cut 12
 		expand 6
@@ -269,7 +269,7 @@ elements
 			element TBEditField.search.icon
 	TBEditField.search.icon
 		bitmap search.png
-		type Image
+		type image
 		img-position-x 0
 		img-ofs-x 5
 
@@ -288,17 +288,17 @@ elements
 		expand 12
 	TBWindow.close
 		bitmap window_close.png
-		type Image
+		type image
 		children
 			element TBWindow.close.pressed
 				state pressed
 	TBWindow.close.pressed
 		bitmap window_close_pressed.png
-		type Image
+		type image
 	TBWindow.mover
 		text-color #b8b8b8
 		bitmap window_mover_bg_tile.png
-		type Tile
+		type tile
 		expand -1
 		padding 4
 		overrides
@@ -321,7 +321,7 @@ elements
 	# == Misc skins ====================================================================================
 	TBContainer
 		bitmap container.png
-		type StretchBorder
+		type stretch border
 		cut 12
 		expand 6
 		padding 10
@@ -336,11 +336,11 @@ elements
 				state pressed
 	TBCheckBox.selected
 		bitmap checkbox_mark.png
-		type Image
+		type image
 		expand 7
 	TBCheckBox.pressed
 		bitmap checkbox_pressed.png
-		type Image
+		type image
 	TBRadioButton
 		bitmap radio.png
 		cut 19
@@ -352,11 +352,11 @@ elements
 				state pressed
 	TBRadioButton.selected
 		bitmap radio_mark.png
-		type Image
+		type image
 		expand 7
 	TBRadioButton.pressed
 		bitmap radio_pressed.png
-		type Image
+		type image
 		expand 7
 	TBLayout.fadeout_x
 		bitmap fadeout_x.png
@@ -394,13 +394,13 @@ elements
 
 	TBSeparator
 		bitmap item_separator_x.png
-		type Stretch Image
+		type stretch image
 		overrides
 			element TBSeparator.y
 				condition: target: parent, property: axis, value: x
 	TBSeparator.y
 		bitmap item_separator_y.png
-		type Stretch Image
+		type stretch image
 
 	TBScrollBarBgX
 		bitmap scroll_bg_x.png

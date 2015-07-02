@@ -15,13 +15,13 @@
 
 namespace tb {
 
-enum TB_NODE_READ_FLAGS {
-  TB_NODE_READ_FLAGS_NONE = 0,
-  /** Read nodes without clearing first. Can be used to append
-          data from multiple sources, or inject dependencies. */
-  TB_NODE_READ_FLAGS_APPEND = 1,
+enum class ReadFlags {
+  kNone = 0,
+  // Read nodes without clearing first. Can be used to append data from multiple
+  // sources, or inject dependencies.
+  kAppend = 1,
 };
-MAKE_ENUM_FLAG_COMBO(TB_NODE_READ_FLAGS);
+MAKE_ENUM_FLAG_COMBO(ReadFlags);
 
 /** TBNode is a tree node with a string name and a value (TBValue).
         It may have a parent TBNode and child TBNodes.
@@ -43,15 +43,14 @@ class TBNode : public TBLinkOf<TBNode> {
 
   /** Read a tree of nodes from file into this node. Returns true on success. */
   bool ReadFile(const std::string& filename,
-                TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
+                ReadFlags flags = ReadFlags::kNone);
 
   /** Read a tree of nodes from a null terminated string buffer. */
-  void ReadData(const char* data,
-                TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
+  void ReadData(const char* data, ReadFlags flags = ReadFlags::kNone);
 
   /** Read a tree of nodes from a buffer with a known length. */
   void ReadData(const char* data, size_t data_len,
-                TB_NODE_READ_FLAGS flags = TB_NODE_READ_FLAGS_NONE);
+                ReadFlags flags = ReadFlags::kNone);
 
   /** Clear the contens of this node. */
   void Clear();
@@ -93,11 +92,11 @@ class TBNode : public TBLinkOf<TBNode> {
           are added after any existing nodes. */
   bool CloneChildren(TBNode* source);
 
-  enum GET_MISS_POLICY {
-    /** GetNode will return nullptr if the node doesn't exist. */
-    GET_MISS_POLICY_NULL,
-    /** GetNode will create all missing nodes for the request. */
-    GET_MISS_POLICY_CREATE
+  enum class MissingPolicy {
+    // GetNode will return nullptr if the node doesn't exist.
+    kNull,
+    // GetNode will create all missing nodes for the request.
+    kCreate,
   };
 
   /** Get a node from the given request.
@@ -106,8 +105,7 @@ class TBNode : public TBLinkOf<TBNode> {
           It can find nodes in children as well. Names are separated by a ">".
 
           Ex: GetNode("dishes>pizza>special>batman") */
-  TBNode* GetNode(const char* request,
-                  GET_MISS_POLICY mp = GET_MISS_POLICY_NULL);
+  TBNode* GetNode(const char* request, MissingPolicy mp = MissingPolicy::kNull);
 
   /** Returns the name of this node. */
   const char* GetName() const { return m_name; }
@@ -150,7 +148,7 @@ class TBNode : public TBLinkOf<TBNode> {
   friend class TBNodeTarget;
   friend class TBNodeRefTree;
   TBNode* GetNodeFollowRef(const char* request,
-                           GET_MISS_POLICY mp = GET_MISS_POLICY_NULL);
+                           MissingPolicy mp = MissingPolicy::kNull);
   TBNode* GetNodeInternal(const char* name, size_t name_len) const;
   static TBNode* Create(const char* name, size_t name_len);
   char* m_name = nullptr;

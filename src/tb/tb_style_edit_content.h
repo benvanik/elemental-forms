@@ -30,7 +30,7 @@ class TBTextFragmentContent {
   virtual void Paint(TBTextFragment* fragment, int32_t translate_x,
                      int32_t translate_y, TBTextProps* props) {}
   virtual void Click(TBTextFragment* fragment, int button,
-                     uint32_t modifierkeys) {}
+                     ModifierKeys modifierkeys) {}
   virtual int32_t GetWidth(TBFontFace* font, TBTextFragment* fragment) {
     return 0;
   }

@@ -14,6 +14,16 @@
 
 namespace tb {
 
+// Defines what should toggle when the value changes.
+enum class ToggleAction {
+  kNothing,   // Nothing happens (the default).
+  kEnabled,   // Enabled/disabled state.
+  kOpacity,   // Opacity 1/0.
+  kExpanded,  // Expanded/collapsed (In parent axis direction).
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
+                               "expanded");
+
 /** TBToggleContainer is a widget that toggles a property when its value
         change between 0 and 1. TOGGLE specifies what property will toggle.
         This is useful f.ex to toggle a whole group of child widgets depending
@@ -26,17 +36,9 @@ class TBToggleContainer : public TBWidget {
 
   TBToggleContainer();
 
-  /** Defines what should toggle when the value changes. */
-  enum TOGGLE {
-    TOGGLE_NOTHING,  ///< Nothing happens (the default)
-    TOGGLE_ENABLED,  ///< Enabled/disabled state
-    TOGGLE_OPACITY,  ///< Opacity 1/0
-    TOGGLE_EXPANDED  ///< Expanded/collapsed (In parent axis direction)
-  };
-
   /** Set what should toggle when the value changes. */
-  void SetToggle(TOGGLE toggle);
-  TOGGLE GetToggle() const { return m_toggle; }
+  void SetToggleAction(ToggleAction toggle);
+  ToggleAction GetToggleAction() const { return m_toggle; }
 
   /** Set if the toggle state should be inverted. */
   void SetInvert(bool invert);
@@ -55,7 +57,7 @@ class TBToggleContainer : public TBWidget {
 
  private:
   void UpdateInternal();
-  TOGGLE m_toggle;
+  ToggleAction m_toggle;
   bool m_invert;
   int m_value;
 };
@@ -75,7 +77,8 @@ class TBSectionHeader : public TBButton {
 };
 
 /** TBSection is a widget with a header that when clicked toggles its children
-        on and off (using a internal TBToggleContainer with TOGGLE_EXPANDED).
+        on and off (using a internal TBToggleContainer with
+   ToggleAction::kExpanded).
 
         The header is a TBSectionHeader.
 

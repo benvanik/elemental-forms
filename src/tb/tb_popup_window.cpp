@@ -31,18 +31,18 @@ TBRect TBPopupAlignment::GetAlignedRect(TBWidget* popup,
   int w = std::min(ps.pref_w, root->GetRect().w);
   int h = std::min(ps.pref_h, root->GetRect().h);
 
-  if (pos_in_root.x != UNSPECIFIED && pos_in_root.y != UNSPECIFIED) {
+  if (pos_in_root.x != kUnspecified && pos_in_root.y != kUnspecified) {
     x = pos_in_root.x;
     y = pos_in_root.y;
     avoid_w = pos_offset.x;
     avoid_h = pos_offset.y;
     // Make sure it's moved into view horizontally
-    if (align == TB_ALIGN_TOP || align == TB_ALIGN_BOTTOM)
+    if (align == Align::kTop || align == Align::kBottom)
       x = Clamp(x, 0, root->GetRect().w - w);
   } else {
     target->ConvertToRoot(x, y);
 
-    if (align == TB_ALIGN_TOP || align == TB_ALIGN_BOTTOM) {
+    if (align == Align::kTop || align == Align::kBottom) {
       if (expand_to_target_width) w = std::max(w, target->GetRect().w);
 
       // If the menu is aligned top or bottom, limit its height to the worst
@@ -55,14 +55,14 @@ TBRect TBPopupAlignment::GetAlignedRect(TBWidget* popup,
     avoid_h = target->GetRect().h;
   }
 
-  if (align == TB_ALIGN_BOTTOM)
+  if (align == Align::kBottom)
     y = y + avoid_h + h > root->GetRect().h ? y - h : y + avoid_h;
-  else if (align == TB_ALIGN_TOP)
+  else if (align == Align::kTop)
     y = y - h < 0 ? y + avoid_h : y - h;
-  else if (align == TB_ALIGN_RIGHT) {
+  else if (align == Align::kRight) {
     x = x + avoid_w + w > root->GetRect().w ? x - w : x + avoid_w;
     y = std::min(y, root->GetRect().h - h);
-  } else  // if (align == TB_ALIGN_LEFT)
+  } else  // if (align == Align::kLeft)
   {
     x = x - w < 0 ? x + avoid_w : x - w;
     y = std::min(y, root->GetRect().h - h);
@@ -72,8 +72,8 @@ TBRect TBPopupAlignment::GetAlignedRect(TBWidget* popup,
 
 TBPopupWindow::TBPopupWindow(TBWidget* target) : m_target(target) {
   TBWidgetListener::AddGlobalListener(this);
-  SetSkinBg(TBIDC("TBPopupWindow"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
-  SetSettings(WINDOW_SETTINGS_NONE);
+  SetSkinBg(TBIDC("TBPopupWindow"), InvokeInfo::kNoCallbacks);
+  SetSettings(WindowSettings::kNone);
 }
 
 TBPopupWindow::~TBPopupWindow() {
@@ -90,7 +90,7 @@ bool TBPopupWindow::Show(const TBPopupAlignment& alignment) {
 }
 
 bool TBPopupWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_KEY_DOWN && ev.special_key == TB_KEY_ESC) {
+  if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     Close();
     return true;
   }
@@ -103,8 +103,8 @@ void TBPopupWindow::OnWidgetFocusChanged(TBWidget* widget, bool focused) {
 
 bool TBPopupWindow::OnWidgetInvokeEvent(TBWidget* widget,
                                         const TBWidgetEvent& ev) {
-  if ((ev.type == EVENT_TYPE_POINTER_DOWN ||
-       ev.type == EVENT_TYPE_CONTEXT_MENU) &&
+  if ((ev.type == EventType::kPointerDown ||
+       ev.type == EventType::kContextMenu) &&
       !IsEventDestinationFor(ev.target))
     Close();
   return false;

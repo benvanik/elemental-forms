@@ -16,18 +16,19 @@
 
 namespace tb {
 
-/** EDIT_TYPE - These types does not restrict input (may change in the future).
-        They are just hints for virtual keyboard, so it can show special keys.
-   */
-enum EDIT_TYPE {
-  EDIT_TYPE_TEXT,
-  EDIT_TYPE_SEARCH,
-  EDIT_TYPE_PASSWORD,
-  EDIT_TYPE_EMAIL,
-  EDIT_TYPE_PHONE,
-  EDIT_TYPE_URL,
-  EDIT_TYPE_NUMBER
+// These types does not restrict input (may change in the future). They are just
+// hints for virtual keyboard, so it can show special keys.
+enum class EditType {
+  kText,
+  kSearch,
+  kPassword,
+  kEmail,
+  kPhone,
+  kUrl,
+  kNumber
 };
+MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
+                               "phone", "url", "number");
 
 /** The default content factory for embedded content in TBEditField with styling
    enabled.
@@ -66,12 +67,12 @@ class TBEditFieldScrollRoot : public TBWidget {
  public:
   virtual void OnPaintChildren(const PaintProps& paint_props);
   virtual void GetChildTranslation(int& x, int& y) const;
-  virtual WIDGET_HIT_STATUS GetHitStatus(int x, int y);
+  virtual HitStatus GetHitStatus(int x, int y);
 };
 
 /** TBEditField is a one line or multi line textfield that is editable or
         read-only. It can also be a passwordfield by calling
-        SetEditType(EDIT_TYPE_PASSWORD).
+        SetEditType(EditType::kPassword).
 
         It may perform styling of text and contain custom embedded content,
         if enabled by SetStyling(true). Disabled by default.
@@ -133,27 +134,27 @@ class TBEditField : public TBWidget,
 
   /** Set the edit type that is a hint for virtual keyboards about what the
           content should be. */
-  void SetEditType(EDIT_TYPE type);
-  EDIT_TYPE GetEditType() { return m_edit_type; }
+  void SetEditType(EditType type);
+  EditType GetEditType() { return m_edit_type; }
 
   /** Support custom skin condition properties. Currently supported properties
      are:
-          "edit-type", matching those of EDIT_TYPE.
+          "edit-type", matching those of EditType.
           "multiline", matching 1 if multiline mode is enabled.
           "readonly", matching 1 if readonly mode is enabled. */
   virtual bool GetCustomSkinCondition(
-      const TBSkinCondition::CONDITION_INFO& info);
+      const TBSkinCondition::ConditionInfo& info);
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text.
           This changes the default for new blocks, as wel as the currently
      selected blocks or the block
           of the current caret position if nothing is selected. */
-  void SetTextAlign(TB_TEXT_ALIGN align) { m_style_edit.SetAlign(align); }
-  TB_TEXT_ALIGN GetTextAlign() { return m_style_edit.align; }
+  void SetTextAlign(TextAlign align) { m_style_edit.SetAlign(align); }
+  TextAlign GetTextAlign() { return m_style_edit.align; }
 
   void SetText(const char* text) override {
-    m_style_edit.SetText(text, TB_CARET_POS_BEGINNING);
+    m_style_edit.SetText(text, CaretPosition::kBeginning);
   }
   using TBWidget::SetText;
   std::string GetText() override { return m_style_edit.GetText(); }
@@ -163,14 +164,14 @@ class TBEditField : public TBWidget,
   /** Set the text and also specify if the caret should be positioned at the
      beginning
           or end of the text. */
-  void SetText(const char* text, TB_CARET_POS pos) {
+  void SetText(const char* text, CaretPosition pos) {
     m_style_edit.SetText(text, pos);
   }
   /** Set the text of the given length and also specify if the caret should be
      positioned
           at the beginning or end of the text. */
   void SetText(const char* text, size_t text_len,
-               TB_CARET_POS pos = TB_CARET_POS_BEGINNING) {
+               CaretPosition pos = CaretPosition::kBeginning) {
     m_style_edit.SetText(text, text_len, pos);
   }
 
@@ -204,7 +205,7 @@ class TBEditField : public TBWidget,
   TBScrollBar m_scrollbar_x;
   TBScrollBar m_scrollbar_y;
   TBWidgetString m_placeholder;
-  EDIT_TYPE m_edit_type;
+  EditType m_edit_type;
   TBEditFieldScrollRoot m_root;
   TBEditFieldContentFactory m_content_factory;
   TBStyleEdit m_style_edit;

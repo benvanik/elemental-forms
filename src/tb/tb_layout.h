@@ -15,68 +15,71 @@
 namespace tb {
 
 /** This means the spacing should be the default, read from the skin. */
-#define SPACING_FROM_SKIN TB_INVALID_DIMENSION
+#define SPACING_FROM_SKIN kInvalidDimension
 
-/** Specifies which height widgets in a AXIS_X layout should have,
-        or which width widgets in a AXIS_Y layout should have.
-        No matter what, it will still prioritize minimum and maximum for each
-   widget. */
-enum LAYOUT_SIZE {
-  LAYOUT_SIZE_GRAVITY,  ///< Sizes depend on the gravity for each widget. (If
-  /// the widget pulls
-  ///< towards both directions, it should grow to all available space)
-  LAYOUT_SIZE_PREFERRED,  ///< Size will be the preferred so each widget may be
-  /// sized differently.
-  LAYOUT_SIZE_AVAILABLE  ///< Size should grow to all available space
+// Specifies which height widgets in a Axis::kX layout should have, or which
+// width widgets in a Axis::kY layout should have.
+// No matter what, it will still prioritize minimum and maximum for each widget.
+enum class LayoutSize {
+  kGravity,    // Sizes depend on the gravity for each widget. (If the widget
+               // pulls towards both directions, it should grow to all available
+               // space).
+  kPreferred,  // Size will be the preferred so each widget may be sized
+               // differently.
+  kAvailable   // Size should grow to all available space.
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(LayoutSize, "gravity", "preferred", "available");
+
+// Specifies which y position widgets in a Axis::kX layout should have, or which
+// x position widgets in a Axis::kY layout should have.
+enum class LayoutPosition {
+  kCenter,   // Position is centered.
+  kLeftTop,  // Position is to the left for Axis::kY layout and top for Axis::kX
+             // layout.
+  kRightBottom,  // Position is to the right for Axis::kY layout and bottom for
+                 // Axis::kX layout.
+  kGravity,  // Position depend on the gravity for each widget. (If the widget
+             // pulls towards both directions, it will be centered).
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(LayoutPosition, "center", "left top",
+                               "right bottom", "gravity");
+
+// Specifies which width widgets in a Axis::kX layout should have, or which
+// height widgets in a Axis::kY layout should have.
+enum class LayoutDistribution {
+  kPreferred,  // Size will be the preferred so each widget may be sized
+               // differently.
+  kAvailable,  // Size should grow to all available space.
+  kGravity,    // Sizes depend on the gravity for each widget. (If the widget
+               // pulls towards both directions, it should grow to all available
+               // space).
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistribution, "preferred", "available",
+                               "gravity");
+
+// Specifies how widgets should be moved horizontally in a Axis::kX layout (or
+// vertically in a Axis::kY layout) if there is extra space available.
+enum class LayoutDistributionPosition {
+  kCenter,
+  kLeftTop,
+  kRightBottom,
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistributionPosition, "center", "left top",
+                               "right bottom");
+
+// Layout order parameter for TBLayout::SetLayoutOrder.
+enum class LayoutOrder {
+  kBottomToTop,  // From bottom to top widget (default creation order).
+  kTopToBottom,  // From top to bottom widget.
 };
 
-/** Specifies which y position widgets in a AXIS_X layout should have,
-        or which x position widgets in a AXIS_Y layout should have. */
-enum LAYOUT_POSITION {
-  LAYOUT_POSITION_CENTER,    ///< Position is centered
-  LAYOUT_POSITION_LEFT_TOP,  ///< Position is to the left for AXIS_Y layout and
-  /// top for AXIS_X layout.
-  LAYOUT_POSITION_RIGHT_BOTTOM,  ///< Position is to the right for AXIS_Y layout
-  /// and bottom for AXIS_X layout.
-  LAYOUT_POSITION_GRAVITY,  ///< Position depend on the gravity for each widget.
-                            ///(If the widget pulls
-                            ///< towards both directions, it will be centered)
+// Specifies what happens when there is not enough room for the layout, even
+// when all the children have been shrunk to their minimum size.
+enum class LayoutOverflow {
+  kClip,
+  kScroll,
 };
-
-/** Specifies which width widgets in a AXIS_X layout should have,
-        or which height widgets in a AXIS_Y layout should have. */
-enum LAYOUT_DISTRIBUTION {
-  LAYOUT_DISTRIBUTION_PREFERRED,  ///< Size will be the preferred so each widget
-  /// may be sized differently.
-  LAYOUT_DISTRIBUTION_AVAILABLE,  ///< Size should grow to all available space
-  LAYOUT_DISTRIBUTION_GRAVITY  ///< Sizes depend on the gravity for each widget.
-                               ///(If the widget pulls
-  ///< towards both directions, it should grow to all available space)
-};
-
-/** Specifies how widgets should be moved horizontally in a AXIS_X
-        layout (or vertically in a AXIS_Y layout) if there is extra space
-        available. */
-enum LAYOUT_DISTRIBUTION_POSITION {
-  LAYOUT_DISTRIBUTION_POSITION_CENTER,
-  LAYOUT_DISTRIBUTION_POSITION_LEFT_TOP,
-  LAYOUT_DISTRIBUTION_POSITION_RIGHT_BOTTOM
-};
-
-/** Layout order parameter for TBLayout::SetLayoutOrder. */
-enum LAYOUT_ORDER {
-  LAYOUT_ORDER_BOTTOM_TO_TOP,  ///< From bottom to top widget (default creation
-  /// order).
-  LAYOUT_ORDER_TOP_TO_BOTTOM  ///< From top to bottom widget.
-};
-
-/** Specifies what happens when there is not enough room for the layout, even
-        when all the children have been shrunk to their minimum size. */
-enum LAYOUT_OVERFLOW {
-  LAYOUT_OVERFLOW_CLIP,
-  LAYOUT_OVERFLOW_SCROLL
-  // LAYOUT_OVERFLOW_WRAP
-};
+MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 
 /** TBLayout layouts its children along the given axis.
 
@@ -96,11 +99,11 @@ class TBLayout : public TBWidget {
   // For safe typecasting
   TBOBJECT_SUBCLASS(TBLayout, TBWidget);
 
-  TBLayout(AXIS axis = AXIS_X);
+  TBLayout(Axis axis = Axis::kX);
 
   /** Set along which axis the content should be layouted */
-  virtual void SetAxis(AXIS axis);
-  virtual AXIS GetAxis() const { return m_axis; }
+  virtual void SetAxis(Axis axis);
+  virtual Axis GetAxis() const { return m_axis; }
 
   /** Set the spacing between widgets in this layout. Setting the default
      (SPACING_FROM_SKIN)
@@ -112,7 +115,7 @@ class TBLayout : public TBWidget {
      this layout,
           it can scroll in the axis it's laid out. It does so automatically by
      wheel or panning also
-          for other LAYOUT_OVERFLOW than LAYOUT_OVERFLOW_SCROLL. */
+          for other LayoutOverflow than LayoutOverflow::kScroll. */
   void SetOverflowScroll(int overflow_scroll);
   int GetOverflowScroll() const { return m_overflow_scroll; }
 
@@ -121,29 +124,29 @@ class TBLayout : public TBWidget {
     m_packed.paint_overflow_fadeout = paint_fadeout;
   }
 
-  /** Set the layout size mode. See LAYOUT_SIZE. */
-  void SetLayoutSize(LAYOUT_SIZE size);
+  /** Set the layout size mode. See LayoutSize. */
+  void SetLayoutSize(LayoutSize size);
 
-  /** Set the layout position mode. See LAYOUT_POSITION. */
-  void SetLayoutPosition(LAYOUT_POSITION pos);
+  /** Set the layout position mode. See LayoutPosition. */
+  void SetLayoutPosition(LayoutPosition pos);
 
-  /** Set the layout size mode. See LAYOUT_OVERFLOW. */
-  void SetLayoutOverflow(LAYOUT_OVERFLOW overflow);
+  /** Set the layout size mode. See LayoutOverflow. */
+  void SetLayoutOverflow(LayoutOverflow overflow);
 
-  /** Set the layout distribution mode. See LAYOUT_DISTRIBUTION. */
-  void SetLayoutDistribution(LAYOUT_DISTRIBUTION distribution);
+  /** Set the layout distribution mode. See LayoutDistribution. */
+  void SetLayoutDistribution(LayoutDistribution distribution);
 
   /** Set the layout distribution position mode. See
-   * LAYOUT_DISTRIBUTION_POSITION. */
+   * LayoutDistributionPosition. */
   void SetLayoutDistributionPosition(
-      LAYOUT_DISTRIBUTION_POSITION distribution_pos);
+      LayoutDistributionPosition distribution_pos);
 
-  /** Set the layout order. The default is LAYOUT_ORDER_BOTTOM_TO_TOP, which
+  /** Set the layout order. The default is LayoutOrder::kBottomToTop, which
      begins
           from bottom to top (default creation order). */
-  void SetLayoutOrder(LAYOUT_ORDER order);
+  void SetLayoutOrder(LayoutOrder order);
 
-  virtual void InvalidateLayout(INVALIDATE_LAYOUT il);
+  virtual void InvalidateLayout(InvalidationMode il);
 
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints);
@@ -159,7 +162,7 @@ class TBLayout : public TBWidget {
   virtual TBWidget::ScrollInfo GetScrollInfo();
 
  protected:
-  AXIS m_axis;
+  Axis m_axis;
   int m_spacing;
   int m_overflow;
   int m_overflow_scroll;
@@ -178,8 +181,8 @@ class TBLayout : public TBWidget {
   };
   void ValidateLayout(const SizeConstraints& constraints,
                       PreferredSize* calculate_ps = nullptr);
-  bool QualifyForExpansion(WIDGET_GRAVITY gravity) const;
-  int GetWantedHeight(WIDGET_GRAVITY gravity, const PreferredSize& ps,
+  bool QualifyForExpansion(Gravity gravity) const;
+  int GetWantedHeight(Gravity gravity, const PreferredSize& ps,
                       int available_height) const;
   TBWidget* GetNextNonCollapsedWidget(TBWidget* child) const;
   int GetTrailingSpace(TBWidget* child, int spacing) const;

@@ -161,10 +161,10 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
   return !(num_backslashes & 1);
 }
 
-TBParser::STATUS TBParser::Read(TBParserStream* stream,
+TBParser::Status TBParser::Read(TBParserStream* stream,
                                 TBParserTarget* target) {
   TBTempBuffer line, work;
-  if (!line.Reserve(1024) || !work.Reserve(1024)) return STATUS_OUT_OF_MEMORY;
+  if (!line.Reserve(1024) || !work.Reserve(1024)) return Status::kOutOfMemory;
 
   current_indent = 0;
   current_line_nr = 1;
@@ -194,7 +194,7 @@ TBParser::STATUS TBParser::Read(TBParserStream* stream,
         // Skip preceding \r (if we have one)
         size_t line_len = line_pos - line_start;
         if (!line.Append(buf + line_start, line_len))
-          return STATUS_OUT_OF_MEMORY;
+          return Status::kOutOfMemory;
 
         // Strip away trailing '\r' if the line has it
         char* linebuf = line.GetData();
@@ -203,7 +203,7 @@ TBParser::STATUS TBParser::Read(TBParserStream* stream,
           linebuf[linebuf_len - 1] = 0;
 
         // Terminate the line string
-        if (!line.Append("", 1)) return STATUS_OUT_OF_MEMORY;
+        if (!line.Append("", 1)) return Status::kOutOfMemory;
 
         // Handle line
         OnLine(line.GetData(), target);
@@ -216,16 +216,16 @@ TBParser::STATUS TBParser::Read(TBParserStream* stream,
       }
       // No more lines here so push the rest and break for more data
       if (!line.Append(buf + line_start, read_len - line_start))
-        return STATUS_OUT_OF_MEMORY;
+        return Status::kOutOfMemory;
       break;
     }
   }
   if (line.GetAppendPos()) {
-    if (!line.Append("", 1)) return STATUS_OUT_OF_MEMORY;
+    if (!line.Append("", 1)) return Status::kOutOfMemory;
     OnLine(line.GetData(), target);
     current_line_nr++;
   }
-  return STATUS_OK;
+  return Status::kOk;
 }
 
 void TBParser::OnLine(char* line, TBParserTarget* target) {
@@ -293,7 +293,7 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
     } else if (token[token_len]) {
       token[token_len] = 0;
       UnescapeString(line);
-      value.SetFromStringAuto(line, TBValue::SET_AS_STATIC);
+      value.SetFromStringAuto(line, TBValue::Set::kAsStatic);
     }
     target->OnToken(current_line_nr, token, value);
 
@@ -345,7 +345,7 @@ void TBParser::OnMultiline(char* line, TBParserTarget* target) {
 
   if (!pending_multiline) {
     // Ready with all lines
-    value.SetString(multi_line_value.GetData(), TBValue::SET_AS_STATIC);
+    value.SetString(multi_line_value.GetData(), TBValue::Set::kAsStatic);
     target->OnToken(current_line_nr, multi_line_token.c_str(), value);
 
     if (multi_line_sub_level) target->Leave();
@@ -375,7 +375,7 @@ void TBParser::ConsumeValue(TBValue& dst_value, char*& line) {
     if (*line == ',') line++;
 
     UnescapeString(value);
-    dst_value.SetString(value, TBValue::SET_AS_STATIC);
+    dst_value.SetString(value, TBValue::Set::kAsStatic);
   } else {
     // Find next comma or end
     while (*line != ',' && *line != 0) line++;
@@ -383,7 +383,7 @@ void TBParser::ConsumeValue(TBValue& dst_value, char*& line) {
     if (*line == ',') *line++ = 0;
 
     UnescapeString(value);
-    dst_value.SetFromStringAuto(value, TBValue::SET_AS_STATIC);
+    dst_value.SetFromStringAuto(value, TBValue::Set::kAsStatic);
   }
 
   // Check if we still have pending value data on the following line and set

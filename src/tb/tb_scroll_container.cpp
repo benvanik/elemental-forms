@@ -17,27 +17,27 @@
 namespace tb {
 
 TBScrollBarVisibility TBScrollBarVisibility::Solve(
-    SCROLL_MODE mode, int content_w, int content_h, int available_w,
+    ScrollMode mode, int content_w, int content_h, int available_w,
     int available_h, int scrollbar_x_h, int scrollbar_y_w) {
   TBScrollBarVisibility visibility;
   visibility.visible_w = available_w;
   visibility.visible_h = available_h;
 
-  if (mode == SCROLL_MODE_X_Y) {
+  if (mode == ScrollMode::kXY) {
     visibility.y_on = true;
     visibility.x_on = true;
     visibility.visible_w -= scrollbar_y_w;
     visibility.visible_h -= scrollbar_x_h;
-  } else if (mode == SCROLL_MODE_OFF) {
-  } else if (mode == SCROLL_MODE_Y) {
+  } else if (mode == ScrollMode::kOff) {
+  } else if (mode == ScrollMode::kY) {
     visibility.y_on = true;
     visibility.visible_w -= scrollbar_y_w;
-  } else if (mode == SCROLL_MODE_Y_AUTO) {
+  } else if (mode == ScrollMode::kAutoY) {
     if (content_h > available_h) {
       visibility.y_on = true;
       visibility.visible_w -= scrollbar_y_w;
     }
-  } else if (mode == SCROLL_MODE_X_AUTO_Y_AUTO) {
+  } else if (mode == ScrollMode::kAutoXAutoY) {
     if (content_w > visibility.visible_w) {
       visibility.x_on = true;
       visibility.visible_h = available_h - scrollbar_x_h;
@@ -67,7 +67,7 @@ void TBScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
 
   TBRect old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
-  TB_IF_DEBUG_SETTING(LAYOUT_CLIPPING,
+  TB_IF_DEBUG_SETTING(Setting::kLayoutClipping,
                       g_renderer->DrawRect(clip_rect, TBColor(255, 0, 0, 200)));
 
   TBWidget::OnPaintChildren(paint_props);
@@ -85,11 +85,11 @@ TBScrollContainer::TBScrollContainer()
     : m_adapt_to_content_size(false),
       m_adapt_content_size(false),
       m_layout_is_invalid(false),
-      m_mode(SCROLL_MODE_X_Y) {
+      m_mode(ScrollMode::kXY) {
   AddChild(&m_scrollbar_x);
   AddChild(&m_scrollbar_y);
   AddChild(&m_root);
-  m_scrollbar_y.SetAxis(AXIS_Y);
+  m_scrollbar_y.SetAxis(Axis::kY);
 }
 
 TBScrollContainer::~TBScrollContainer() {
@@ -100,21 +100,21 @@ TBScrollContainer::~TBScrollContainer() {
 
 void TBScrollContainer::SetAdaptToContentSize(bool adapt) {
   if (m_adapt_to_content_size == adapt) return;
-  InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  InvalidateLayout(InvalidationMode::kRecursive);
   m_adapt_to_content_size = adapt;
-  InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  InvalidateLayout(InvalidationMode::kRecursive);
 }
 
 void TBScrollContainer::SetAdaptContentSize(bool adapt) {
   if (m_adapt_content_size == adapt) return;
   m_adapt_content_size = adapt;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void TBScrollContainer::SetScrollMode(SCROLL_MODE mode) {
+void TBScrollContainer::SetScrollMode(ScrollMode mode) {
   if (mode == m_mode) return;
   m_mode = mode;
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
 void TBScrollContainer::ScrollTo(int x, int y) {
@@ -137,7 +137,7 @@ TBWidget::ScrollInfo TBScrollContainer::GetScrollInfo() {
   return info;
 }
 
-void TBScrollContainer::InvalidateLayout(INVALIDATE_LAYOUT il) {
+void TBScrollContainer::InvalidateLayout(InvalidationMode il) {
   m_layout_is_invalid = true;
   // No recursion up to parents here unless we adapt to content size.
   if (m_adapt_to_content_size) TBWidget::InvalidateLayout(il);
@@ -167,7 +167,7 @@ PreferredSize TBScrollContainer::OnCalculatePreferredContentSize(
       ps.pref_w += scrollbar_y_w;
       ps.max_w += scrollbar_y_w;
 
-      if (m_mode == SCROLL_MODE_X_Y || m_mode == SCROLL_MODE_X_AUTO_Y_AUTO) {
+      if (m_mode == ScrollMode::kXY || m_mode == ScrollMode::kAutoXAutoY) {
         ps.pref_h += scrollbar_x_h;
         ps.max_h += scrollbar_x_h;
       }
@@ -177,13 +177,13 @@ PreferredSize TBScrollContainer::OnCalculatePreferredContentSize(
 }
 
 bool TBScrollContainer::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CHANGED &&
+  if (ev.type == EventType::kChanged &&
       (ev.target == &m_scrollbar_x || ev.target == &m_scrollbar_y)) {
     Invalidate();
     OnScroll(m_scrollbar_x.GetValue(), m_scrollbar_y.GetValue());
     return true;
-  } else if (ev.type == EVENT_TYPE_WHEEL &&
-             ev.modifierkeys == TB_MODIFIER_NONE) {
+  } else if (ev.type == EventType::kWheel &&
+             ev.modifierkeys == ModifierKeys::kNone) {
     double old_val_y = m_scrollbar_y.GetValueDouble();
     m_scrollbar_y.SetValueDouble(old_val_y +
                                  ev.delta_y * TBSystem::GetPixelsPerLine());
@@ -192,25 +192,28 @@ bool TBScrollContainer::OnEvent(const TBWidgetEvent& ev) {
                                  ev.delta_x * TBSystem::GetPixelsPerLine());
     return (m_scrollbar_x.GetValueDouble() != old_val_x ||
             m_scrollbar_y.GetValueDouble() != old_val_y);
-  } else if (ev.type == EVENT_TYPE_KEY_DOWN) {
-    if (ev.special_key == TB_KEY_LEFT && m_scrollbar_x.CanScrollNegative())
+  } else if (ev.type == EventType::kKeyDown) {
+    if (ev.special_key == SpecialKey::kLeft &&
+        m_scrollbar_x.CanScrollNegative())
       ScrollBySmooth(-TBSystem::GetPixelsPerLine(), 0);
-    else if (ev.special_key == TB_KEY_RIGHT &&
+    else if (ev.special_key == SpecialKey::kRight &&
              m_scrollbar_x.CanScrollPositive())
       ScrollBySmooth(TBSystem::GetPixelsPerLine(), 0);
-    else if (ev.special_key == TB_KEY_UP && m_scrollbar_y.CanScrollNegative())
+    else if (ev.special_key == SpecialKey::kUp &&
+             m_scrollbar_y.CanScrollNegative())
       ScrollBySmooth(0, -TBSystem::GetPixelsPerLine());
-    else if (ev.special_key == TB_KEY_DOWN && m_scrollbar_y.CanScrollPositive())
+    else if (ev.special_key == SpecialKey::kDown &&
+             m_scrollbar_y.CanScrollPositive())
       ScrollBySmooth(0, TBSystem::GetPixelsPerLine());
-    else if (ev.special_key == TB_KEY_PAGE_UP &&
+    else if (ev.special_key == SpecialKey::kPageUp &&
              m_scrollbar_y.CanScrollNegative())
       ScrollBySmooth(0, -GetPaddingRect().h);
-    else if (ev.special_key == TB_KEY_PAGE_DOWN &&
+    else if (ev.special_key == SpecialKey::kPageDown &&
              m_scrollbar_y.CanScrollPositive())
       ScrollBySmooth(0, GetPaddingRect().h);
-    else if (ev.special_key == TB_KEY_HOME)
+    else if (ev.special_key == SpecialKey::kHome)
       ScrollToSmooth(m_scrollbar_x.GetValue(), 0);
-    else if (ev.special_key == TB_KEY_END)
+    else if (ev.special_key == SpecialKey::kEnd)
       ScrollToSmooth(m_scrollbar_x.GetValue(),
                      (int)m_scrollbar_y.GetMaxValue());
     else
@@ -275,7 +278,7 @@ void TBScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
 }
 
 void TBScrollContainer::OnResized(int old_w, int old_h) {
-  InvalidateLayout(INVALIDATE_LAYOUT_TARGET_ONLY);
+  InvalidateLayout(InvalidationMode::kTargetOnly);
   SizeConstraints sc(GetRect().w, GetRect().h);
   ValidateLayout(sc);
 }

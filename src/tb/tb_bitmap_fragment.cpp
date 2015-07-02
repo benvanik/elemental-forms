@@ -327,8 +327,8 @@ void TBBitmapFragmentMap::CopyData(TBBitmapFragment* frag, int data_stride,
   }
 }
 
-TBBitmap* TBBitmapFragmentMap::GetBitmap(TB_VALIDATE_TYPE validate_type) {
-  if (m_bitmap && validate_type == TB_VALIDATE_FIRST_TIME) return m_bitmap;
+TBBitmap* TBBitmapFragmentMap::GetBitmap(Validate validate_type) {
+  if (m_bitmap && validate_type == Validate::kFirstTime) return m_bitmap;
   ValidateBitmap();
   return m_bitmap;
 }

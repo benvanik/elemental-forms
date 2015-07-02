@@ -14,17 +14,16 @@
 
 namespace tb {
 
-enum SCROLL_MODE {
-  SCROLL_MODE_X_Y,            ///< X and Y always			scroll-mode: xy
-  SCROLL_MODE_Y,              ///< Y always (X never)		scroll-mode: y
-  SCROLL_MODE_Y_AUTO,         ///< Y auto (X never)		scroll-mode: y-auto
-  SCROLL_MODE_X_AUTO_Y_AUTO,  ///< X auto, Y auto
-  /// scroll-mode: auto
-  SCROLL_MODE_OFF  ///< X any Y never			scroll-mode: off
+enum class ScrollMode {
+  kXY,          // X and Y always; scroll-mode: xy
+  kY,           // Y always (X never); scroll-mode: y
+  kAutoY,       // Y auto (X never); scroll-mode: y-auto
+  kAutoXAutoY,  // X auto, Y auto; scroll-mode: auto
+  kOff          // X and Y never; scroll-mode: off
 };
+MAKE_ORDERED_ENUM_STRING_UTILS(ScrollMode, "xy", "y", "y-auto", "auto", "off");
 
 /** TBScrollContainerRoot - Internal for TBScrollContainer */
-
 class TBScrollContainerRoot : public TBWidget {
  private:  // May only be used by TBScrollContainer.
   friend class TBScrollContainer;
@@ -37,19 +36,19 @@ class TBScrollContainerRoot : public TBWidget {
 
 /** TBScrollBarVisibility - Helper for TBScrollContainer or any other scrollable
         container that needs to solve scrollbar visibility according to
-   SCROLL_MODE. */
+   ScrollMode. */
 class TBScrollBarVisibility {
  public:
   TBScrollBarVisibility()
       : x_on(false), y_on(false), visible_w(0), visible_h(0) {}
 
-  static TBScrollBarVisibility Solve(SCROLL_MODE mode, int content_w,
+  static TBScrollBarVisibility Solve(ScrollMode mode, int content_w,
                                      int content_h, int available_w,
                                      int available_h, int scrollbar_x_h,
                                      int scrollbar_y_w);
-  static bool IsAlwaysOnX(SCROLL_MODE mode) { return mode == SCROLL_MODE_X_Y; }
-  static bool IsAlwaysOnY(SCROLL_MODE mode) {
-    return mode == SCROLL_MODE_X_Y || mode == SCROLL_MODE_Y;
+  static bool IsAlwaysOnX(ScrollMode mode) { return mode == ScrollMode::kXY; }
+  static bool IsAlwaysOnY(ScrollMode mode) {
+    return mode == ScrollMode::kXY || mode == ScrollMode::kY;
   }
 
  public:
@@ -82,14 +81,14 @@ class TBScrollContainer : public TBWidget {
   void SetAdaptContentSize(bool adapt);
   bool GetAdaptContentSize() { return m_adapt_content_size; }
 
-  void SetScrollMode(SCROLL_MODE mode);
-  SCROLL_MODE GetScrollMode() { return m_mode; }
+  void SetScrollMode(ScrollMode mode);
+  ScrollMode GetScrollMode() { return m_mode; }
 
   virtual void ScrollTo(int x, int y);
   virtual TBWidget::ScrollInfo GetScrollInfo();
   virtual TBWidget* GetScrollRoot() { return &m_root; }
 
-  virtual void InvalidateLayout(INVALIDATE_LAYOUT il);
+  virtual void InvalidateLayout(InvalidationMode il);
 
   virtual TBRect GetPaddingRect();
   virtual PreferredSize OnCalculatePreferredContentSize(
@@ -109,7 +108,7 @@ class TBScrollContainer : public TBWidget {
   bool m_adapt_to_content_size;
   bool m_adapt_content_size;
   bool m_layout_is_invalid;
-  SCROLL_MODE m_mode;
+  ScrollMode m_mode;
   void ValidateLayout(const SizeConstraints& constraints);
 };
 };

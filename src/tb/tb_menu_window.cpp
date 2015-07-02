@@ -15,13 +15,13 @@ namespace tb {
 
 TBMenuWindow::TBMenuWindow(TBWidget* target, TBID id) : TBPopupWindow(target) {
   SetID(id);
-  SetSkinBg(TBIDC("TBMenuWindow"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+  SetSkinBg(TBIDC("TBMenuWindow"), InvokeInfo::kNoCallbacks);
   m_select_list.GetScrollContainer()->SetAdaptToContentSize(true);
   m_select_list.SetIsFocusable(
       false);  ///< Avoid it autoclosing its window on click
   m_select_list.SetSkinBg("");
   m_select_list.SetRect(GetPaddingRect());
-  m_select_list.SetGravity(WIDGET_GRAVITY_ALL);
+  m_select_list.SetGravity(Gravity::kAll);
   AddChild(&m_select_list);
 }
 
@@ -37,11 +37,11 @@ bool TBMenuWindow::Show(TBSelectItemSource* source,
 }
 
 bool TBMenuWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && &m_select_list == ev.target) {
+  if (ev.type == EventType::kClick && &m_select_list == ev.target) {
     TBWidgetSafePointer this_widget(this);
 
     // Invoke the click on the target
-    TBWidgetEvent target_ev(EVENT_TYPE_CLICK);
+    TBWidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.ref_id;
     InvokeEvent(target_ev);
 

@@ -39,39 +39,39 @@ TB_TEST_GROUP(tb_editfield) {
 
   TB_TEST(settext_singleline) {
     edit->SetMultiline(false);
-    edit->SetText("One\nTwo", TB_CARET_POS_END);
+    edit->SetText("One\nTwo", CaretPosition::kEnd);
     TB_VERIFY_STR(edit->GetText(), "One");
   }
 
   TB_TEST(settext_multiline) {
     // Both unix and windows line endings should be ok.
-    edit->SetText("One\nTwo", TB_CARET_POS_END);
+    edit->SetText("One\nTwo", CaretPosition::kEnd);
     TB_VERIFY_STR(edit->GetText(), "One\nTwo");
-    edit->SetText("One\r\nTwo", TB_CARET_POS_END);
+    edit->SetText("One\r\nTwo", CaretPosition::kEnd);
     TB_VERIFY_STR(edit->GetText(), "One\r\nTwo");
   }
 
   TB_TEST(settext_singleline_malformed_utf8) {
     // Should not detect these sequences as having new line character
 
-    edit->SetText("\xC0\x8A", TB_CARET_POS_END);
+    edit->SetText("\xC0\x8A", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 1);
 
-    edit->SetText("\xE0\x80\x8A", TB_CARET_POS_END);
+    edit->SetText("\xE0\x80\x8A", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 1);
 
-    edit->SetText("\xF0\x80\x80\x8A", TB_CARET_POS_END);
+    edit->SetText("\xF0\x80\x80\x8A", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 1);
 
-    edit->SetText("\xF8\x80\x80\x80\x8A", TB_CARET_POS_END);
+    edit->SetText("\xF8\x80\x80\x80\x8A", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 1);
 
-    edit->SetText("\xFC\x80\x80\x80\x80\x8A", TB_CARET_POS_END);
+    edit->SetText("\xFC\x80\x80\x80\x80\x8A", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 1);
 
     // Should detect the new line character
 
-    edit->SetText("\xF0\nHello", TB_CARET_POS_END);
+    edit->SetText("\xF0\nHello", CaretPosition::kEnd);
     TB_VERIFY(sedit->blocks.CountLinks() == 2);
   }
 
@@ -216,7 +216,7 @@ TB_TEST_GROUP(tb_editfield) {
     TB_VERIFY_STR(edit->GetText(), "\r\nA\r\n");
     TB_VERIFY(sedit->GetContentHeight() == font_size * 2);
 
-    sedit->KeyDown(0, TB_KEY_BACKSPACE, TB_MODIFIER_NONE);
+    sedit->KeyDown(0, SpecialKey::kBackspace, ModifierKeys::kNone);
     TB_VERIFY_STR(edit->GetText(), "\r\n\r\n");
     TB_VERIFY(sedit->GetContentHeight() == font_size * 2);
 
@@ -249,7 +249,7 @@ TB_TEST_GROUP(tb_editfield) {
     edit->SetText(
         "this_is_a_long_line_that_should_not_wrap\n"
         "this_is_a_long_line_that_should_not_wrap",
-        TB_CARET_POS_END);
+        CaretPosition::kEnd);
     TB_VERIFY(sedit->GetContentHeight() == font_size * 2);
   }
 }

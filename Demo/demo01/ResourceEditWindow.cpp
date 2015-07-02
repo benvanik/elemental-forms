@@ -53,7 +53,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
   // Set the text of the source view
   m_source_edit->SetText("");
 
-  if (TBFile* file = TBFile::Open(m_resource_filename, TBFile::MODE_READ)) {
+  if (TBFile* file = TBFile::Open(m_resource_filename, TBFile::Mode::kRead)) {
     TBTempBuffer buffer;
     if (buffer.Reserve(file->Size())) {
       size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
@@ -83,7 +83,7 @@ void ResourceEditWindow::RefreshFromSource() {
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
-  m_source_edit->SetFocus(WIDGET_FOCUS_REASON_UNKNOWN);
+  m_source_edit->SetFocus(FocusReason::kUnknown);
 }
 
 void ResourceEditWindow::UpdateWidgetList(bool immediately) {
@@ -137,20 +137,20 @@ void ResourceEditWindow::SetSelectedWidget(TBWidget* widget) {
 }
 
 bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CHANGED &&
+  if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("widget_list_search")) {
     m_widget_list->SetFilter(ev.target->GetText());
     return true;
-  } else if (ev.type == EVENT_TYPE_CHANGED && ev.target == m_widget_list) {
+  } else if (ev.type == EventType::kChanged && ev.target == m_widget_list) {
     if (m_widget_list->GetValue() >= 0 &&
         m_widget_list->GetValue() < m_widget_list_source.GetNumItems())
       if (ResourceItem* item =
               m_widget_list_source.GetItem(m_widget_list->GetValue()))
         SetSelectedWidget(item->GetWidget());
-  } else if (ev.type == EVENT_TYPE_CHANGED && ev.target == m_source_edit) {
+  } else if (ev.type == EventType::kChanged && ev.target == m_source_edit) {
     RefreshFromSource();
     return true;
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
     if (TBWindow* win = new TBWindow()) {
@@ -168,7 +168,7 @@ bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
     m_scroll_container->SetAdaptContentSize(ev.target->GetValue() ? true
                                                                   : false);
     return true;
-  } else if (ev.type == EVENT_TYPE_FILE_DROP) {
+  } else if (ev.type == EventType::kFileDrop) {
     return OnDropFileEvent(ev);
   }
   return TBWindow::OnEvent(ev);
@@ -197,12 +197,12 @@ bool ResourceEditWindow::OnWidgetInvokeEvent(TBWidget* widget,
   if (m_build_container->IsAncestorOf(ev.target)) {
     // Let events through if alt is pressed so we can test some
     // functionality right in the editor (like toggle hidden UI).
-    if (ev.modifierkeys & TB_ALT) return false;
+    if (any(ev.modifierkeys & ModifierKeys::kAlt)) return false;
 
     // Select widget when clicking
-    if (ev.type == EVENT_TYPE_POINTER_DOWN) SetSelectedWidget(ev.target);
+    if (ev.type == EventType::kPointerDown) SetSelectedWidget(ev.target);
 
-    if (ev.type == EVENT_TYPE_FILE_DROP) OnDropFileEvent(ev);
+    if (ev.type == EventType::kFileDrop) OnDropFileEvent(ev);
     return true;
   }
   return false;

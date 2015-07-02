@@ -70,11 +70,11 @@ class TBSelectList : public TBWidget, public TBSelectItemViewer {
   /** Change the value to a non disabled item that is visible with the current
           filter. Returns true if it successfully found another item.
           Valid keys:
-                  TB_KEY_UP - Previous item.
-                  TB_KEY_DOWN - Next item.
-                  TB_KEY_HOME - First item.
-                  TB_KEY_END - Last item. */
-  bool ChangeValue(SPECIAL_KEY key);
+                  SpecialKey::kUp - Previous item.
+                  SpecialKey::kDown - Next item.
+                  SpecialKey::kHome - First item.
+                  SpecialKey::kEnd - Last item. */
+  bool ChangeValue(SpecialKey key);
 
   /** Set the selected state of the item at the given index. If you want
           to unselect the previously selected item, use SetValue. */

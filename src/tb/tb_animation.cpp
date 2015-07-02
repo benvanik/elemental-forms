@@ -85,17 +85,17 @@ void TBAnimationManager::Update() {
     // Apply animation curve
     float tmp;
     switch (obj->animation_curve) {
-      case ANIMATION_CURVE_SLOW_DOWN:
+      case AnimationCurve::kSlowDown:
         tmp = 1 - progress;
         progress = 1 - tmp * tmp * tmp;
         break;
-      case ANIMATION_CURVE_SPEED_UP:
+      case AnimationCurve::kSpeedUp:
         progress = progress * progress * progress;
         break;
-      case ANIMATION_CURVE_BEZIER:
+      case AnimationCurve::kBezier:
         progress = SMOOTHSTEP(progress);
         break;
-      case ANIMATION_CURVE_SMOOTH:
+      case AnimationCurve::kSmooth:
         progress = SmoothCurve(progress, 0.6f);
         break;
       default:  // linear (progress is already linear)
@@ -124,13 +124,13 @@ bool TBAnimationManager::HasAnimationsRunning() {
 
 // static
 void TBAnimationManager::StartAnimation(TBAnimationObject* obj,
-                                        ANIMATION_CURVE animation_curve,
+                                        AnimationCurve animation_curve,
                                         double animation_duration,
-                                        ANIMATION_TIME animation_time) {
+                                        AnimationTime animation_time) {
   if (obj->IsAnimating()) AbortAnimation(obj, false);
   if (IsAnimationsBlocked()) animation_duration = 0;
   obj->adjust_start_time =
-      (animation_time == ANIMATION_TIME_FIRST_UPDATE ? true : false);
+      (animation_time == AnimationTime::kFirstUpdate ? true : false);
   obj->animation_start_time = TBSystem::GetTimeMS();
   obj->animation_duration = uint64_t(std::max(animation_duration, 0.0));
   obj->animation_curve = animation_curve;

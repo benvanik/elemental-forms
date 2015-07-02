@@ -24,7 +24,7 @@ TBInlineSelect::TBInlineSelect() : m_value(0), m_min(0), m_max(100) {
   m_layout.AddChild(&m_editfield);
   m_layout.AddChild(&m_buttons[1]);
   m_layout.SetRect(GetPaddingRect());
-  m_layout.SetGravity(WIDGET_GRAVITY_ALL);
+  m_layout.SetGravity(Gravity::kAll);
   m_layout.SetSpacing(0);
   m_buttons[0].SetSkinBg(TBIDC("TBButton.flat"));
   m_buttons[1].SetSkinBg(TBIDC("TBButton.flat"));
@@ -37,8 +37,8 @@ TBInlineSelect::TBInlineSelect() : m_value(0), m_min(0), m_max(100) {
   m_buttons[1].SetID(TBIDC("inc"));
   m_buttons[0].SetAutoRepeat(true);
   m_buttons[1].SetAutoRepeat(true);
-  m_editfield.SetTextAlign(TB_TEXT_ALIGN_CENTER);
-  m_editfield.SetEditType(EDIT_TYPE_NUMBER);
+  m_editfield.SetTextAlign(TextAlign::kCenter);
+  m_editfield.SetEditType(EditType::kNumber);
   m_editfield.SetText("0");
 }
 
@@ -65,7 +65,7 @@ void TBInlineSelect::SetValueInternal(int value, bool update_text) {
     m_editfield.SetText(std::to_string(m_value));
   }
 
-  TBWidgetEvent ev(EVENT_TYPE_CHANGED);
+  TBWidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 
   // Warning: Do nothing here since the event might have deleted us.
@@ -75,21 +75,22 @@ void TBInlineSelect::SetValueInternal(int value, bool update_text) {
 void TBInlineSelect::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
 bool TBInlineSelect::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_KEY_DOWN) {
-    if (ev.special_key == TB_KEY_UP || ev.special_key == TB_KEY_DOWN) {
-      int dv = ev.special_key == TB_KEY_UP ? 1 : -1;
+  if (ev.type == EventType::kKeyDown) {
+    if (ev.special_key == SpecialKey::kUp ||
+        ev.special_key == SpecialKey::kDown) {
+      int dv = ev.special_key == SpecialKey::kUp ? 1 : -1;
       SetValue(GetValue() + dv);
       return true;
     }
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("dec")) {
     SetValue(GetValue() - 1);
     return true;
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("inc")) {
     SetValue(GetValue() + 1);
     return true;
-  } else if (ev.type == EVENT_TYPE_CHANGED && ev.target == &m_editfield) {
+  } else if (ev.type == EventType::kChanged && ev.target == &m_editfield) {
     auto text = m_editfield.GetText();
     SetValueInternal(atoi(text.c_str()), false);
   }

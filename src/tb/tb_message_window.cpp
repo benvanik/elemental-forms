@@ -58,12 +58,12 @@ bool TBMessageWindow::Show(const std::string& title, const std::string& message,
   editfield->SetSkinBg("");
 
   // Create buttons
-  if (settings->msg == TB_MSG_OK) {
+  if (settings->msg == MessageWindowButtons::kOk) {
     AddButton("TBMessageWindow.ok", true);
-  } else if (settings->msg == TB_MSG_OK_CANCEL) {
+  } else if (settings->msg == MessageWindowButtons::kOkCancel) {
     AddButton("TBMessageWindow.ok", true);
     AddButton("TBMessageWindow.cancel", false);
-  } else if (settings->msg == TB_MSG_YES_NO) {
+  } else if (settings->msg == MessageWindowButtons::kYesNo) {
     AddButton("TBMessageWindow.yes", true);
     AddButton("TBMessageWindow.no", false);
   }
@@ -101,24 +101,25 @@ void TBMessageWindow::AddButton(TBID id, bool focused) {
     btn->SetID(id);
     btn->SetText(g_tb_lng->GetString(btn->GetID()));
     layout->AddChild(btn);
-    if (focused) btn->SetFocus(WIDGET_FOCUS_REASON_UNKNOWN);
+    if (focused) btn->SetFocus(FocusReason::kUnknown);
   }
 }
 
 bool TBMessageWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && ev.target->IsOfType<TBButton>()) {
+  if (ev.type == EventType::kClick && ev.target->IsOfType<TBButton>()) {
     TBWidgetSafePointer this_widget(this);
 
     // Invoke the click on the target
-    TBWidgetEvent target_ev(EVENT_TYPE_CLICK);
+    TBWidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.target->GetID();
     InvokeEvent(target_ev);
 
     // If target got deleted, close
     if (this_widget.Get()) Close();
     return true;
-  } else if (ev.type == EVENT_TYPE_KEY_DOWN && ev.special_key == TB_KEY_ESC) {
-    TBWidgetEvent click_ev(EVENT_TYPE_CLICK);
+  } else if (ev.type == EventType::kKeyDown &&
+             ev.special_key == SpecialKey::kEsc) {
+    TBWidgetEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }

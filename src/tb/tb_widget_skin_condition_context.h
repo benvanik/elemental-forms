@@ -20,12 +20,12 @@ namespace tb {
 class TBWidgetSkinConditionContext : public TBSkinConditionContext {
  public:
   TBWidgetSkinConditionContext(TBWidget* widget) : m_widget(widget) {}
-  virtual bool GetCondition(TBSkinCondition::TARGET target,
-                            const TBSkinCondition::CONDITION_INFO& info);
+  virtual bool GetCondition(SkinTarget target,
+                            const TBSkinCondition::ConditionInfo& info);
 
  private:
   bool GetCondition(TBWidget* widget,
-                    const TBSkinCondition::CONDITION_INFO& info);
+                    const TBSkinCondition::ConditionInfo& info);
   TBWidget* m_widget;
 };
 

@@ -33,8 +33,8 @@ void TBRendererBatcher::Batch::Flush(TBRendererBatcher* batch_renderer) {
   if (fragment) {
     // Now it's time to ensure the bitmap data is up to date. A call to
     // GetBitmap
-    // with TB_VALIDATE_ALWAYS should guarantee that its data is validated.
-    TBBitmap* frag_bitmap = fragment->GetBitmap(TB_VALIDATE_ALWAYS);
+    // with Validate::kAlways should guarantee that its data is validated.
+    TBBitmap* frag_bitmap = fragment->GetBitmap(Validate::kAlways);
     ((void)frag_bitmap);  // silence warning about unused variable
     assert(frag_bitmap == bitmap);
   }
@@ -42,7 +42,7 @@ void TBRendererBatcher::Batch::Flush(TBRendererBatcher* batch_renderer) {
   batch_renderer->RenderBatch(this);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(RENDER_BATCHES)) {
+  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches)) {
     // This assumes we're drawing triangles. Need to modify this
     // if we start using strips, fans or whatever.
     dbg_frame_triangle_count += vertex_count / 3;
@@ -99,7 +99,7 @@ void TBRendererBatcher::EndPaint() {
   FlushAllInternal();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(RENDER_BATCHES))
+  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches))
     TBDebugPrint(
         "Frame rendered using %d batches and a total of %d triangles.\n",
         batch.batch_id - dbg_begin_paint_batch_id, dbg_frame_triangle_count);
@@ -145,7 +145,7 @@ TBRect TBRendererBatcher::GetClipRect() {
 void TBRendererBatcher::DrawBitmap(const TBRect& dst_rect,
                                    const TBRect& src_rect,
                                    TBBitmapFragment* bitmap_fragment) {
-  if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(TB_VALIDATE_FIRST_TIME))
+  if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime))
     AddQuadInternal(
         dst_rect.Offset(m_translation_x, m_translation_y),
         src_rect.Offset(bitmap_fragment->m_rect.x, bitmap_fragment->m_rect.y),
@@ -162,7 +162,7 @@ void TBRendererBatcher::DrawBitmapColored(const TBRect& dst_rect,
                                           const TBRect& src_rect,
                                           const TBColor& color,
                                           TBBitmapFragment* bitmap_fragment) {
-  if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(TB_VALIDATE_FIRST_TIME)) {
+  if (TBBitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
     uint32_t a = (color.a * m_opacity) / 255;
     AddQuadInternal(
         dst_rect.Offset(m_translation_x, m_translation_y),

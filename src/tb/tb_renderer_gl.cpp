@@ -81,7 +81,7 @@ void TBBitmapGL::SetData(uint32_t* data) {
   BindBitmap(this);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
-  TB_IF_DEBUG_SETTING(RENDER_BATCHES, dbg_bitmap_validations++);
+  TB_IF_DEBUG_SETTING(Setting::kDrawRenderBatches, dbg_bitmap_validations++);
 }
 
 // == TBRendererGL
@@ -121,7 +121,7 @@ void TBRendererGL::EndPaint() {
   TBRendererBatcher::EndPaint();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(RENDER_BATCHES))
+  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches))
     TBDebugPrint("Frame caused %d bitmap validations.\n",
                  dbg_bitmap_validations);
 #endif  // TB_RUNTIME_DEBUG_INFO

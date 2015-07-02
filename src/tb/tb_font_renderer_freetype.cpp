@@ -134,7 +134,7 @@ bool FreetypeFontRenderer::Load(const std::string& filename, int size) {
   m_face = new FreetypeFace();
   if (!m_face) return false;
 
-  TBFile* f = TBFile::Open(filename, TBFile::MODE_READ);
+  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
   if (!f) return false;
 
   size_t ttf_buf_size = f->Size();

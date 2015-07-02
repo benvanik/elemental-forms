@@ -53,14 +53,14 @@ class TBWidgetValueConnection : public TBLinkOf<TBWidgetValueConnection> {
 
         It will synchronize with widgets when any of the connected widgets
    change and trig the
-        EVENT_TYPE_CHANGED event, and when the value is changed with any of the
+        EventType::kChanged event, and when the value is changed with any of the
    setters here.
 
         The synchronization with widgets is done through the generic TBWidget
    setters/getters,
         TBWidget::SetValue/GetValue/SetValueDouble/GetValueDouble/GetText/SetText.
 
-        The type that is synchronized is determined by the TBValue::TYPE
+        The type that is synchronized is determined by the TBValue::Type
    specified in the
         constructor.
 
@@ -70,7 +70,7 @@ class TBWidgetValueConnection : public TBLinkOf<TBWidgetValueConnection> {
 
 class TBWidgetValue {
  public:
-  TBWidgetValue(const TBID& name, TBValue::TYPE type = TBValue::TYPE_INT);
+  TBWidgetValue(const TBID& name, TBValue::Type type = TBValue::Type::kInt);
   ~TBWidgetValue();
 
   /** Set integer value and sync to connected widgets. */
@@ -137,7 +137,7 @@ class TBValueGroup {
   /** Create a TBWidgetValue with the given name if it does not already exist.
           Returns nullptr if out of memory. */
   TBWidgetValue* CreateValueIfNeeded(const TBID& name,
-                                     TBValue::TYPE type = TBValue::TYPE_INT);
+                                     TBValue::Type type = TBValue::Type::kInt);
 
   /** Get the TBWidgetValue with the given name, or nullptr if no match is
    * found. */

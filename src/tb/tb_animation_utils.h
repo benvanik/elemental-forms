@@ -26,7 +26,7 @@ class TBAnimatedFloat : public TBAnimationObject {
   TBOBJECT_SUBCLASS(TBAnimatedFloat, TBAnimationObject);
 
   TBAnimatedFloat(float initial_value,
-                  ANIMATION_CURVE animation_curve = ANIMATION_DEFAULT_CURVE,
+                  AnimationCurve animation_curve = ANIMATION_DEFAULT_CURVE,
                   double animation_duration = ANIMATION_DEFAULT_DURATION)
       : src_val(initial_value), dst_val(initial_value), current_progress(0) {
     TBAnimationObject::animation_curve = animation_curve;
@@ -64,7 +64,7 @@ class TBFloatAnimator : public TBAnimatedFloat {
   TBOBJECT_SUBCLASS(TBFloatAnimator, TBAnimationObject);
 
   TBFloatAnimator(float* target_value,
-                  ANIMATION_CURVE animation_curve = ANIMATION_DEFAULT_CURVE,
+                  AnimationCurve animation_curve = ANIMATION_DEFAULT_CURVE,
                   double animation_duration = ANIMATION_DEFAULT_DURATION)
       : TBAnimatedFloat(*target_value), target_value(target_value) {}
 

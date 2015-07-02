@@ -61,13 +61,10 @@ class TBWidgetAnimationRect : public TBWidgetAnimationObject {
   // For safe typecasting
   TBOBJECT_SUBCLASS(TBWidgetAnimationRect, TBWidgetAnimationObject);
 
-  enum MODE {
-    /** Animate from source to dest. */
-    MODE_SRC_TO_DST,
-    /** Animate from current + delta to current. */
-    MODE_DELTA_IN,
-    /** Animate from current to current + delta. */
-    MODE_DELTA_OUT
+  enum class Mode {
+    kSrcToDest,  // Animate from source to dest.
+    kDeltaIn,    // Animate from current + delta to current.
+    kDeltaOut,   // Animate from current to current + delta.
   };
   /** Animate the widget between the given source and dest rectangle. */
   TBWidgetAnimationRect(TBWidget* widget, const TBRect& src_rect,
@@ -75,7 +72,7 @@ class TBWidgetAnimationRect : public TBWidgetAnimationObject {
   /** Animate the widget between rectangles based on the current widget
           rectangle and a delta. The reference rectangle will be taken from
           the target widget on the first OnAnimationUpdate. */
-  TBWidgetAnimationRect(TBWidget* widget, const TBRect& delta_rect, MODE mode);
+  TBWidgetAnimationRect(TBWidget* widget, const TBRect& delta_rect, Mode mode);
   virtual void OnAnimationStart();
   virtual void OnAnimationUpdate(float progress);
   virtual void OnAnimationStop(bool aborted);
@@ -84,7 +81,7 @@ class TBWidgetAnimationRect : public TBWidgetAnimationObject {
   TBRect m_src_rect;
   TBRect m_dst_rect;
   TBRect m_delta_rect;
-  MODE m_mode;
+  Mode m_mode;
 };
 
 class TBWidgetsAnimationManager : public TBWidgetListener {

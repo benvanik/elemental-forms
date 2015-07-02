@@ -156,12 +156,11 @@ class TBRenderer {
           Call when bitmaps can safely be restored. */
   void InvokeContextRestored();
 
-  /** Defines the hint given to BeginBatchHint. */
-  enum BATCH_HINT {
-    /** All calls are either DrawBitmap or DrawBitmapColored with the same
-       bitmap
-            fragment. */
-    BATCH_HINT_DRAW_BITMAP_FRAGMENT
+  // Defines the hint given to BeginBatchHint.
+  enum class BatchHint {
+    // All calls are either DrawBitmap or DrawBitmapColored with the same bitmap
+    // fragment.
+    kDrawBitmapFragment,
   };
 
   /** A hint to batching renderers that the following set of draw calls are of
@@ -170,7 +169,7 @@ class TBRenderer {
           The hint defines what operations are allowed between BeginBatchHint
           until EndBatchHint is called. All other draw operations are invalid.
           It's not valid to nest calls to BeginBatchHint. */
-  virtual void BeginBatchHint(BATCH_HINT hint) {}
+  virtual void BeginBatchHint(BatchHint hint) {}
 
   /** End the hint scope started with BeginBatchHint. */
   virtual void EndBatchHint() {}

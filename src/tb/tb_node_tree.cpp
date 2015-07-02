@@ -51,14 +51,14 @@ const char* TBNode::GetNextNodeSeparator(const char* request) {
   return request;
 }
 
-TBNode* TBNode::GetNode(const char* request, GET_MISS_POLICY mp) {
+TBNode* TBNode::GetNode(const char* request, MissingPolicy mp) {
   // Iterate one node deeper for each sub request (non recursive)
   TBNode* n = this;
   while (*request && n) {
     const char* nextend = GetNextNodeSeparator(request);
     size_t name_len = nextend - request;
     TBNode* n_child = n->GetNodeInternal(request, name_len);
-    if (!n_child && mp == GET_MISS_POLICY_CREATE) {
+    if (!n_child && mp == MissingPolicy::kCreate) {
       n_child = n->Create(request, name_len);
       if (n_child) n->Add(n_child);
     }
@@ -68,7 +68,7 @@ TBNode* TBNode::GetNode(const char* request, GET_MISS_POLICY mp) {
   return n;
 }
 
-TBNode* TBNode::GetNodeFollowRef(const char* request, GET_MISS_POLICY mp) {
+TBNode* TBNode::GetNodeFollowRef(const char* request, MissingPolicy mp) {
   TBNode* node = GetNode(request, mp);
   if (node) node = TBNodeRefTree::FollowNodeRef(node);
   return node;
@@ -134,12 +134,12 @@ const char* TBNode::GetValueStringRaw(const char* request, const char* def) {
 class FileParser : public TBParserStream {
  public:
   bool Read(const std::string& filename, TBParserTarget* target) {
-    f = TBFile::Open(filename, TBFile::MODE_READ);
+    f = TBFile::Open(filename, TBFile::Mode::kRead);
     if (!f) return false;
     TBParser p;
-    TBParser::STATUS status = p.Read(this, target);
+    auto status = p.Read(this, target);
     delete f;
-    return status == TBParser::STATUS_OK ? true : false;
+    return status == TBParser::Status::kOk ? true : false;
   }
   virtual size_t GetMoreData(char* buf, size_t buf_len) {
     return f->Read(buf, 1, buf_len);
@@ -155,8 +155,8 @@ class DataParser : public TBParserStream {
     m_data = data;
     m_data_len = data_len;
     TBParser p;
-    TBParser::STATUS status = p.Read(this, target);
-    return status == TBParser::STATUS_OK ? true : false;
+    auto status = p.Read(this, target);
+    return status == TBParser::Status::kOk ? true : false;
   }
   virtual size_t GetMoreData(char* buf, size_t buf_len) {
     size_t consume = std::min(buf_len, m_data_len);
@@ -224,14 +224,14 @@ class TBNodeTarget : public TBParserTarget {
     TBNode* refnode = nullptr;
     if (*refstr == '@') {
       TBNode tmp;
-      tmp.GetValue().SetString(refstr, TBValue::SET_AS_STATIC);
+      tmp.GetValue().SetString(refstr, TBValue::Set::kAsStatic);
       refnode = TBNodeRefTree::FollowNodeRef(&tmp);
     } else  // Local look-up
     {
       // Note: If we read to a target node that already contains
       //       nodes, we might look up nodes that's already there
       //       instead of new nodes.
-      refnode = m_root_node->GetNode(refstr, TBNode::GET_MISS_POLICY_NULL);
+      refnode = m_root_node->GetNode(refstr, TBNode::MissingPolicy::kNull);
 
       // Detect cycles
       TBNode* cycle_detection = m_target_node;
@@ -255,12 +255,10 @@ class TBNodeTarget : public TBParserTarget {
   std::string m_filename;
 };
 
-void TBNode::TakeValue(TBValue& value) {
-  m_value.TakeOver(value);
-}
+void TBNode::TakeValue(TBValue& value) { m_value.TakeOver(value); }
 
-bool TBNode::ReadFile(const std::string& filename, TB_NODE_READ_FLAGS flags) {
-  if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
+bool TBNode::ReadFile(const std::string& filename, ReadFlags flags) {
+  if (!any(flags & ReadFlags::kAppend)) Clear();
   FileParser p;
   TBNodeTarget t(this, filename);
   if (p.Read(filename, &t)) {
@@ -270,13 +268,12 @@ bool TBNode::ReadFile(const std::string& filename, TB_NODE_READ_FLAGS flags) {
   return false;
 }
 
-void TBNode::ReadData(const char* data, TB_NODE_READ_FLAGS flags) {
+void TBNode::ReadData(const char* data, ReadFlags flags) {
   ReadData(data, strlen(data), flags);
 }
 
-void TBNode::ReadData(const char* data, size_t data_len,
-                      TB_NODE_READ_FLAGS flags) {
-  if (!(flags & TB_NODE_READ_FLAGS_APPEND)) Clear();
+void TBNode::ReadData(const char* data, size_t data_len, ReadFlags flags) {
+  if (!any(flags & ReadFlags::kAppend)) Clear();
   DataParser p;
   TBNodeTarget t(this, "{data}");
   p.Read(data, data_len, &t);

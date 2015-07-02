@@ -16,69 +16,68 @@
 namespace tb {
 
 bool TBWidgetSkinConditionContext::GetCondition(
-    TBSkinCondition::TARGET target,
-    const TBSkinCondition::CONDITION_INFO& info) {
+    SkinTarget target, const TBSkinCondition::ConditionInfo& info) {
   switch (target) {
-    case TBSkinCondition::TARGET_THIS:
+    case SkinTarget::kThis:
       return GetCondition(m_widget, info);
-    case TBSkinCondition::TARGET_PARENT:
+    case SkinTarget::kParent:
       return m_widget->GetParent() && GetCondition(m_widget->GetParent(), info);
-    case TBSkinCondition::TARGET_ANCESTORS: {
+    case SkinTarget::kAncestors: {
       TBWidget* widget = m_widget->GetParent();
       while (widget) {
         if (GetCondition(widget, info)) return true;
         widget = widget->GetParent();
       }
     }
-    case TBSkinCondition::TARGET_PREV_SIBLING:
+    case SkinTarget::kPrevSibling:
       return m_widget->GetPrev() && GetCondition(m_widget->GetPrev(), info);
-    case TBSkinCondition::TARGET_NEXT_SIBLING:
+    case SkinTarget::kNextSibling:
       return m_widget->GetNext() && GetCondition(m_widget->GetNext(), info);
   }
   return false;
 }
 
 bool TBWidgetSkinConditionContext::GetCondition(
-    TBWidget* widget, const TBSkinCondition::CONDITION_INFO& info) {
+    TBWidget* widget, const TBSkinCondition::ConditionInfo& info) {
   switch (info.prop) {
-    case TBSkinCondition::PROPERTY_SKIN:
+    case SkinProperty::kSkin:
       return widget->GetSkinBg() == info.value;
-    case TBSkinCondition::PROPERTY_WINDOW_ACTIVE:
+    case SkinProperty::kWindowActive:
       if (TBWindow* window = widget->GetParentWindow())
         return window->IsActive();
       return false;
-    case TBSkinCondition::PROPERTY_AXIS:
-      return TBID(widget->GetAxis() == AXIS_X ? "x" : "y") == info.value;
-    case TBSkinCondition::PROPERTY_ALIGN:
+    case SkinProperty::kAxis:
+      return TBID(widget->GetAxis() == Axis::kX ? "x" : "y") == info.value;
+    case SkinProperty::kAlign:
       if (TBTabContainer* tc = TBSafeCast<TBTabContainer>(widget)) {
         TBID widget_align;
-        if (tc->GetAlignment() == TB_ALIGN_LEFT)
+        if (tc->GetAlignment() == Align::kLeft)
           widget_align = TBIDC("left");
-        else if (tc->GetAlignment() == TB_ALIGN_TOP)
+        else if (tc->GetAlignment() == Align::kTop)
           widget_align = TBIDC("top");
-        else if (tc->GetAlignment() == TB_ALIGN_RIGHT)
+        else if (tc->GetAlignment() == Align::kRight)
           widget_align = TBIDC("right");
-        else if (tc->GetAlignment() == TB_ALIGN_BOTTOM)
+        else if (tc->GetAlignment() == Align::kBottom)
           widget_align = TBIDC("bottom");
         return widget_align == info.value;
       }
       return false;
-    case TBSkinCondition::PROPERTY_ID:
+    case SkinProperty::kId:
       return widget->GetID() == info.value;
-    case TBSkinCondition::PROPERTY_STATE:
-      return !!(widget->GetAutoState() & info.value);
-    case TBSkinCondition::PROPERTY_VALUE:
+    case SkinProperty::kState:
+      return !!(uint32_t(widget->GetAutoState()) & info.value);
+    case SkinProperty::kValue:
       return widget->GetValue() == (int)info.value;
-    case TBSkinCondition::PROPERTY_HOVER:
+    case SkinProperty::kHover:
       return TBWidget::hovered_widget &&
              widget->IsAncestorOf(TBWidget::hovered_widget);
-    case TBSkinCondition::PROPERTY_CAPTURE:
+    case SkinProperty::kCapture:
       return TBWidget::captured_widget &&
              widget->IsAncestorOf(TBWidget::captured_widget);
-    case TBSkinCondition::PROPERTY_FOCUS:
+    case SkinProperty::kFocus:
       return TBWidget::focused_widget &&
              widget->IsAncestorOf(TBWidget::focused_widget);
-    case TBSkinCondition::PROPERTY_CUSTOM:
+    case SkinProperty::kCustom:
       return widget->GetCustomSkinCondition(info);
   }
   return false;

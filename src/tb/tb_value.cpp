@@ -95,26 +95,26 @@ TBValue::TBValue() : m_packed_init(0) {}
 
 TBValue::TBValue(const TBValue& value) : m_packed_init(0) { Copy(value); }
 
-TBValue::TBValue(TYPE type) : m_packed_init(0) {
+TBValue::TBValue(Type type) : m_packed_init(0) {
   switch (type) {
-    case TYPE_NULL:
+    case Type::kNull:
       SetNull();
       break;
-    case TYPE_STRING:
-      SetString("", SET_AS_STATIC);
+    case Type::kString:
+      SetString("", Set::kAsStatic);
       break;
-    case TYPE_FLOAT:
+    case Type::kFloat:
       SetFloat(0);
       break;
-    case TYPE_INT:
+    case Type::kInt:
       SetInt(0);
       break;
-    case TYPE_OBJECT:
+    case Type::kObject:
       SetObject(nullptr);
       break;
-    case TYPE_ARRAY:
+    case Type::kArray:
       if (TBValueArray* arr = new TBValueArray())
-        SetArray(arr, SET_TAKE_OWNERSHIP);
+        SetArray(arr, Set::kTakeOwnership);
       break;
     default:
       assert(!"Not implemented!");
@@ -125,7 +125,7 @@ TBValue::TBValue(int value) : m_packed_init(0) { SetInt(value); }
 
 TBValue::TBValue(float value) : m_packed_init(0) { SetFloat(value); }
 
-TBValue::TBValue(const char* value, SET set) : m_packed_init(0) {
+TBValue::TBValue(const char* value, Set set) : m_packed_init(0) {
   SetString(value, set);
 }
 
@@ -136,25 +136,26 @@ TBValue::TBValue(TBTypedObject* object) : m_packed_init(0) {
 TBValue::~TBValue() { SetNull(); }
 
 void TBValue::TakeOver(TBValue& source_value) {
-  if (source_value.m_packed.type == TYPE_STRING)
+  if (Type(source_value.m_packed.type) == Type::kString) {
     SetString(source_value.val_str, source_value.m_packed.allocated
-                                        ? SET_TAKE_OWNERSHIP
-                                        : SET_NEW_COPY);
-  else if (source_value.m_packed.type == TYPE_ARRAY)
+                                        ? Set::kTakeOwnership
+                                        : Set::kNewCopy);
+  } else if (source_value.GetType() == Type::kArray) {
     SetArray(source_value.val_arr, source_value.m_packed.allocated
-                                       ? SET_TAKE_OWNERSHIP
-                                       : SET_NEW_COPY);
-  else
+                                       ? Set::kTakeOwnership
+                                       : Set::kNewCopy);
+  } else {
     *this = source_value;
-  source_value.m_packed.type = TYPE_NULL;
+  }
+  source_value.SetType(Type::kNull);
 }
 
 void TBValue::Copy(const TBValue& source_value) {
-  if (source_value.m_packed.type == TYPE_STRING)
-    SetString(source_value.val_str, SET_NEW_COPY);
-  else if (source_value.m_packed.type == TYPE_ARRAY)
-    SetArray(source_value.val_arr, SET_NEW_COPY);
-  else if (source_value.m_packed.type == TYPE_OBJECT) {
+  if (source_value.GetType() == Type::kString) {
+    SetString(source_value.val_str, Set::kNewCopy);
+  } else if (source_value.GetType() == Type::kArray) {
+    SetArray(source_value.val_arr, Set::kNewCopy);
+  } else if (source_value.GetType() == Type::kObject) {
     assert(!"We can't copy objects! The value will be nulled!");
     SetObject(nullptr);
   } else {
@@ -165,63 +166,67 @@ void TBValue::Copy(const TBValue& source_value) {
 
 void TBValue::SetNull() {
   if (m_packed.allocated) {
-    if (m_packed.type == TYPE_STRING)
+    if (GetType() == Type::kString) {
       free(val_str);
-    else if (m_packed.type == TYPE_OBJECT)
+    } else if (GetType() == Type::kObject) {
       delete val_obj;
-    else if (m_packed.type == TYPE_ARRAY)
+    } else if (GetType() == Type::kArray) {
       delete val_arr;
+    }
   }
-  m_packed.type = TYPE_NULL;
+  SetType(Type::kNull);
 }
 
 void TBValue::SetInt(int val) {
   SetNull();
-  m_packed.type = TYPE_INT;
+  SetType(Type::kInt);
   val_int = val;
 }
 
 void TBValue::SetFloat(float val) {
   SetNull();
-  m_packed.type = TYPE_FLOAT;
+  SetType(Type::kFloat);
   val_float = val;
 }
 
-void TBValue::SetString(const char* val, SET set) {
+void TBValue::SetString(const char* val, Set set) {
   SetNull();
-  m_packed.allocated = (set == SET_NEW_COPY || set == SET_TAKE_OWNERSHIP);
-  if (set != SET_NEW_COPY) {
+  m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
+  if (set != Set::kNewCopy) {
     val_str = const_cast<char*>(val);
-    m_packed.type = TYPE_STRING;
-  } else if ((val_str = strdup(val)))
-    m_packed.type = TYPE_STRING;
+    SetType(Type::kString);
+  } else if ((val_str = strdup(val))) {
+    SetType(Type::kString);
+  }
 }
 
 void TBValue::SetObject(TBTypedObject* object) {
   SetNull();
-  m_packed.type = TYPE_OBJECT;
+  SetType(Type::kObject);
   m_packed.allocated = true;
   val_obj = object;
 }
 
-void TBValue::SetArray(TBValueArray* arr, SET set) {
+void TBValue::SetArray(TBValueArray* arr, Set set) {
   SetNull();
-  m_packed.allocated = (set == SET_NEW_COPY || set == SET_TAKE_OWNERSHIP);
-  if (set != SET_NEW_COPY) {
+  m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
+  if (set != Set::kNewCopy) {
     val_arr = arr;
-    m_packed.type = TYPE_ARRAY;
-  } else if ((val_arr = TBValueArray::Clone(arr)))
-    m_packed.type = TYPE_ARRAY;
+    SetType(Type::kArray);
+  } else if ((val_arr = TBValueArray::Clone(arr))) {
+    SetType(Type::kArray);
+  }
 }
 
-void TBValue::SetFromStringAuto(const char* str, SET set) {
-  if (!str)
+void TBValue::SetFromStringAuto(const char* str, Set set) {
+  if (!str) {
     SetNull();
-  else if (is_number_only(str)) {
-    if (is_number_float(str))
+  } else if (is_number_only(str)) {
+    if (is_number_float(str)) {
       SetFloat((float)atof(str));
-    else
+    } else {
       SetInt(atoi(str));
+    }
   } else if (is_start_of_number(str) && contains_non_trailing_space(str)) {
     // If the number has nontrailing space, we'll assume a list of numbers
     // (example: "10 -4 3.5")
@@ -230,16 +235,17 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
       std::string tmpstr = str;
       char* str_next = (char*)tmpstr.data();
       while (char* token = next_token(str_next, ", ")) {
-        if (TBValue* new_val = arr->AddValue())
-          new_val->SetFromStringAuto(token, SET_NEW_COPY);
+        if (TBValue* new_val = arr->AddValue()) {
+          new_val->SetFromStringAuto(token, Set::kNewCopy);
+        }
       }
-      SetArray(arr, SET_TAKE_OWNERSHIP);
+      SetArray(arr, Set::kTakeOwnership);
     }
   } else if (*str == '[') {
     SetNull();
     if (TBValueArray* arr = new TBValueArray) {
       assert(!"not implemented! Split out the tokenizer code above!");
-      SetArray(arr, SET_TAKE_OWNERSHIP);
+      SetArray(arr, Set::kTakeOwnership);
     }
   } else {
     SetString(str, set);
@@ -247,41 +253,44 @@ void TBValue::SetFromStringAuto(const char* str, SET set) {
   }
   // We didn't set as string, so we might need to deal with the passed in string
   // data.
-  if (set == SET_TAKE_OWNERSHIP) {
+  if (set == Set::kTakeOwnership) {
     // Delete the passed in data
     TBValue tmp;
-    tmp.SetString(str, SET_TAKE_OWNERSHIP);
+    tmp.SetString(str, Set::kTakeOwnership);
   }
 }
 
 int TBValue::GetInt() const {
-  if (m_packed.type == TYPE_STRING)
+  if (GetType() == Type::kString) {
     return atoi(val_str);
-  else if (m_packed.type == TYPE_FLOAT)
+  } else if (GetType() == Type::kFloat) {
     return (int)val_float;
-  return m_packed.type == TYPE_INT ? val_int : 0;
+  }
+  return GetType() == Type::kInt ? val_int : 0;
 }
 
 float TBValue::GetFloat() const {
-  if (m_packed.type == TYPE_STRING)
+  if (GetType() == Type::kString) {
     return (float)atof(val_str);
-  else if (m_packed.type == TYPE_INT)
+  } else if (GetType() == Type::kInt) {
     return (float)val_int;
-  return m_packed.type == TYPE_FLOAT ? val_float : 0;
+  }
+  return GetType() == Type::kFloat ? val_float : 0;
 }
 
 const char* TBValue::GetString() {
-  if (m_packed.type == TYPE_INT) {
+  if (GetType() == Type::kInt) {
     char tmp[32];
     sprintf(tmp, "%d", val_int);
-    SetString(tmp, SET_NEW_COPY);
-  } else if (m_packed.type == TYPE_FLOAT) {
+    SetString(tmp, Set::kNewCopy);
+  } else if (GetType() == Type::kFloat) {
     char tmp[32];
     sprintf(tmp, "%f", val_float);
-    SetString(tmp, SET_NEW_COPY);
-  } else if (m_packed.type == TYPE_OBJECT)
+    SetString(tmp, Set::kNewCopy);
+  } else if (GetType() == Type::kObject) {
     return val_obj ? val_obj->GetClassName() : "";
-  return m_packed.type == TYPE_STRING ? val_str : "";
+  }
+  return GetType() == Type::kString ? val_str : "";
 }
 
 }  // namespace tb

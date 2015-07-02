@@ -36,10 +36,10 @@ class TBPosixFile : public TBFile {
 };
 
 // static
-TBFile* TBFile::Open(const std::string& filename, TBFileMode mode) {
+TBFile* TBFile::Open(const std::string& filename, Mode mode) {
   FILE* f = nullptr;
   switch (mode) {
-    case MODE_READ:
+    case Mode::kRead:
       f = fopen(filename.c_str(), "rb");
       break;
     default:

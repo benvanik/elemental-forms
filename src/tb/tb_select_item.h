@@ -19,10 +19,10 @@ namespace tb {
 
 class TBSelectItemSource;
 
-enum TB_SORT {
-  TB_SORT_NONE,       ///< No sorting. Items appear in list order.
-  TB_SORT_ASCENDING,  ///< Ascending sort.
-  TB_SORT_DESCENDING  ///< Descending sort.
+enum class Sort {
+  kNone,       // No sorting. Items appear in list order.
+  kAscending,  // Ascending sort.
+  kDescending  // Descending sort.
 };
 
 /** TBSelectItemViewer is the viewer for items provided by TBSelectItemSource.
@@ -83,7 +83,7 @@ class TBSelectItemViewer : public TBLinkOf<TBSelectItemViewer> {
 
 class TBSelectItemSource {
  public:
-  TBSelectItemSource() : m_sort(TB_SORT_NONE) {}
+  TBSelectItemSource() : m_sort(Sort::kNone) {}
   virtual ~TBSelectItemSource();
 
   /** Return true if a item matches the given filter text.
@@ -113,9 +113,9 @@ class TBSelectItemSource {
   /** Get the number of items */
   virtual int GetNumItems() = 0;
 
-  /** Set sort type. Default is TB_SORT_NONE. */
-  void SetSort(TB_SORT sort) { m_sort = sort; }
-  TB_SORT GetSort() const { return m_sort; }
+  /** Set sort type. Default is Sort::kNone. */
+  void SetSort(Sort sort) { m_sort = sort; }
+  Sort GetSort() const { return m_sort; }
 
   /** Invoke OnItemChanged on all open viewers for this source. */
   void InvokeItemChanged(int index,
@@ -127,7 +127,7 @@ class TBSelectItemSource {
  private:
   friend class TBSelectItemViewer;
   TBLinkListOf<TBSelectItemViewer> m_viewers;
-  TB_SORT m_sort;
+  Sort m_sort;
 };
 
 /** TBSelectItemSourceList is a item provider for list widgets (TBSelectList and

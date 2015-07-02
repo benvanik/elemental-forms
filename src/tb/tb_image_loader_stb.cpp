@@ -61,7 +61,7 @@ TBImageLoader* TBImageLoader::CreateFromFile(const std::string& filename) {
                   stbi_image_free(data);
   }
   return nullptr;*/
-  if (TBFile* file = TBFile::Open(filename, TBFile::MODE_READ)) {
+  if (TBFile* file = TBFile::Open(filename, TBFile::Mode::kRead)) {
     size_t size = file->Size();
     if (unsigned char* data = new unsigned char[size]) {
       size = file->Read(data, 1, size);

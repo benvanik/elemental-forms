@@ -15,20 +15,16 @@
 
 namespace tb {
 
-enum WINDOW_SETTINGS {
-  WINDOW_SETTINGS_NONE = 0,  ///< Chrome less window without any other settings.
-  WINDOW_SETTINGS_TITLEBAR =
-      1,  ///< Show a title bar that can also move the window.
-  WINDOW_SETTINGS_RESIZABLE = 2,     ///< Show a widget for resizing the window.
-  WINDOW_SETTINGS_CLOSE_BUTTON = 4,  ///< Show a widget for closing the window.
-  WINDOW_SETTINGS_CAN_ACTIVATE =
-      8,  ///< Can be activated and deactivate other windows.
+enum class WindowSettings {
+  kNone = 0,         // Chrome less window without any other settings.
+  kTitleBar = 1,     // Show a title bar that can also move the window.
+  kResizable = 2,    // Show a widget for resizing the window.
+  kCloseButton = 4,  // Show a widget for closing the window.
+  kCanActivate = 8,  // Can be activated and deactivate other windows.
 
-  WINDOW_SETTINGS_DEFAULT =
-      WINDOW_SETTINGS_TITLEBAR | WINDOW_SETTINGS_RESIZABLE |
-      WINDOW_SETTINGS_CLOSE_BUTTON | WINDOW_SETTINGS_CAN_ACTIVATE
+  kDefault = kTitleBar | kResizable | kCloseButton | kCanActivate,
 };
-MAKE_ENUM_FLAG_COMBO(WINDOW_SETTINGS);
+MAKE_ENUM_FLAG_COMBO(WindowSettings);
 
 /** TBWindow is a TBWidget that provides some window-like features.
 
@@ -77,32 +73,32 @@ class TBWindow : public TBWidget {
   void SetLastFocus(TBWidget* last_focus) { m_last_focus.Set(last_focus); }
 
   /** Set settings for how this window should look and behave. */
-  void SetSettings(WINDOW_SETTINGS settings);
-  WINDOW_SETTINGS GetSettings() { return m_settings; }
+  void SetSettings(WindowSettings settings);
+  WindowSettings GetSettings() { return m_settings; }
 
-  /** RESIZE_FIT specifies how ResizeToFitContent should resize the window. */
-  enum RESIZE_FIT {
-    RESIZE_FIT_PREFERRED,         ///< Fit the preferred size of all content
-    RESIZE_FIT_MINIMAL,           ///< Fit the minimal size of all content
-    RESIZE_FIT_CURRENT_OR_NEEDED  ///< Fit the minimal or maximum size only if
-    /// needed. Will keep
-    ///< the new size as close as possible to the current size.
+  // ResizeFit specifies how ResizeToFitContent should resize the window.
+  enum class ResizeFit {
+    kPreferred,        // Fit the preferred size of all content.
+    kMinimal,          // Fit the minimal size of all content.
+    kCurrentOrNeeded,  // Fit the minimal or maximum size only if needed. Will
+                       // keep the new size as close as possible to the current
+                       // size.
   };
 
   /** Get a suitable rect for the window based on the contents and the given
    * fit. */
-  TBRect GetResizeToFitContentRect(RESIZE_FIT fit = RESIZE_FIT_PREFERRED);
+  TBRect GetResizeToFitContentRect(ResizeFit fit = ResizeFit::kPreferred);
 
   /** Resize the window to fit the its content. This is the same as doing
           SetRect(GetResizeToFitContentRect(fit)). */
-  void ResizeToFitContent(RESIZE_FIT fit = RESIZE_FIT_PREFERRED);
+  void ResizeToFitContent(ResizeFit fit = ResizeFit::kPreferred);
 
   /** Set the window title. */
   void SetText(const char* text) override { m_textfield.SetText(text); }
   using TBWidget::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
-  /** Get the height of the title bar (or 0 if the WINDOW_SETTINGS say this
+  /** Get the height of the title bar (or 0 if the WindowSettings say this
      window
           shouldn't have any title bar) */
   int GetTitleHeight();
@@ -122,7 +118,7 @@ class TBWindow : public TBWidget {
   TBResizer m_resizer;
   TBTextField m_textfield;
   TBButton m_close_button;
-  WINDOW_SETTINGS m_settings;
+  WindowSettings m_settings;
   TBWidgetSafePointer m_last_focus;
   TBWindow* GetTopMostOtherWindow(bool only_activable_windows);
   void SetWindowActiveState(bool active);

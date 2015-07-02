@@ -16,12 +16,12 @@ namespace tb {
 
 TBSectionHeader::TBSectionHeader() {
   SetSkinBg(TBIDC("TBSectionHeader"));
-  SetGravity(WIDGET_GRAVITY_LEFT | WIDGET_GRAVITY_RIGHT);
+  SetGravity(Gravity::kLeft | Gravity::kRight);
   SetToggleMode(true);
 }
 
 bool TBSectionHeader::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.target == this && ev.type == EVENT_TYPE_CHANGED &&
+  if (ev.target == this && ev.type == EventType::kChanged &&
       GetParent()->GetParent()) {
     if (TBSection* section = TBSafeCast<TBSection>(GetParent()->GetParent())) {
       section->GetContainer()->SetValue(GetValue());
@@ -34,18 +34,17 @@ bool TBSectionHeader::OnEvent(const TBWidgetEvent& ev) {
 }
 
 TBSection::TBSection() : m_pending_scroll(false) {
-  SetGravity(WIDGET_GRAVITY_LEFT | WIDGET_GRAVITY_RIGHT);
+  SetGravity(Gravity::kLeft | Gravity::kRight);
 
-  SetSkinBg(TBIDC("TBSection"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
-  m_layout.SetSkinBg(TBIDC("TBSection.layout"),
-                     WIDGET_INVOKE_INFO_NO_CALLBACKS);
+  SetSkinBg(TBIDC("TBSection"), InvokeInfo::kNoCallbacks);
+  m_layout.SetSkinBg(TBIDC("TBSection.layout"), InvokeInfo::kNoCallbacks);
 
   m_toggle_container.SetSkinBg(TBIDC("TBSection.container"));
-  m_toggle_container.SetToggle(TBToggleContainer::TOGGLE_EXPANDED);
-  m_toggle_container.SetGravity(WIDGET_GRAVITY_ALL);
-  m_layout.SetAxis(AXIS_Y);
-  m_layout.SetGravity(WIDGET_GRAVITY_ALL);
-  m_layout.SetLayoutSize(LAYOUT_SIZE_AVAILABLE);
+  m_toggle_container.SetToggleAction(ToggleAction::kExpanded);
+  m_toggle_container.SetGravity(Gravity::kAll);
+  m_layout.SetAxis(Axis::kY);
+  m_layout.SetGravity(Gravity::kAll);
+  m_layout.SetLayoutSize(LayoutSize::kAvailable);
 
   AddChild(&m_layout);
   m_layout.AddChild(&m_header);
@@ -79,15 +78,16 @@ PreferredSize TBSection::OnCalculatePreferredSize(
 }
 
 TBToggleContainer::TBToggleContainer()
-    : m_toggle(TOGGLE_NOTHING), m_invert(false), m_value(0) {
-  SetSkinBg(TBIDC("TBToggleContainer"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+    : m_toggle(ToggleAction::kNothing), m_invert(false), m_value(0) {
+  SetSkinBg(TBIDC("TBToggleContainer"), InvokeInfo::kNoCallbacks);
 }
 
-void TBToggleContainer::SetToggle(TOGGLE toggle) {
+void TBToggleContainer::SetToggleAction(ToggleAction toggle) {
   if (toggle == m_toggle) return;
 
-  if (m_toggle == TOGGLE_EXPANDED)
-    InvalidateLayout(INVALIDATE_LAYOUT_RECURSIVE);
+  if (m_toggle == ToggleAction::kExpanded) {
+    InvalidateLayout(InvalidationMode::kRecursive);
+  }
 
   m_toggle = toggle;
   UpdateInternal();
@@ -109,19 +109,19 @@ void TBToggleContainer::SetValue(int value) {
 void TBToggleContainer::UpdateInternal() {
   bool on = GetIsOn();
   switch (m_toggle) {
-    case TOGGLE_NOTHING:
+    case ToggleAction::kNothing:
       break;
-    case TOGGLE_ENABLED:
-      SetState(WIDGET_STATE_DISABLED, !on);
+    case ToggleAction::kEnabled:
+      SetState(SkinState::kDisabled, !on);
       break;
-    case TOGGLE_OPACITY:
+    case ToggleAction::kOpacity:
       SetOpacity(on ? 1.f : 0);
       break;
-    case TOGGLE_EXPANDED:
-      SetVisibilility(on ? WIDGET_VISIBILITY_VISIBLE : WIDGET_VISIBILITY_GONE);
+    case ToggleAction::kExpanded:
+      SetVisibilility(on ? Visibility::kVisible : Visibility::kGone);
 
       // Also disable when collapsed so tab focus skips the children.
-      SetState(WIDGET_STATE_DISABLED, !on);
+      SetState(SkinState::kDisabled, !on);
       break;
   };
 }

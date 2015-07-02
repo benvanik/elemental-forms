@@ -18,7 +18,7 @@ TB_TEST_GROUP(tb_value) {
   TB_TEST(node_create_on_get) {
     TBNode node;
     TB_VERIFY(node.GetNode("foo>bar>funky") == nullptr);
-    TB_VERIFY(node.GetNode("foo>bar>funky", TBNode::GET_MISS_POLICY_CREATE) !=
+    TB_VERIFY(node.GetNode("foo>bar>funky", TBNode::MissingPolicy::kCreate) !=
               nullptr);
     TB_VERIFY(node.GetNode("foo>bar>funky") != nullptr);
   }

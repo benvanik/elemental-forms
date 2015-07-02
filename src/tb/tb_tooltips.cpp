@@ -38,12 +38,12 @@ class TTMsgParam : public TBTypedObject {
 }
 
 TBTooltipWindow::TBTooltipWindow(TBWidget* target) : TBPopupWindow(target) {
-  SetSkinBg("", WIDGET_INVOKE_INFO_NO_CALLBACKS);
-  SetSettings(WINDOW_SETTINGS_NONE);
-  m_content.SetSkinBg(TBIDC("TBTooltip"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+  SetSkinBg("", InvokeInfo::kNoCallbacks);
+  SetSettings(WindowSettings::kNone);
+  m_content.SetSkinBg(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
   m_content.SetIsFocusable(false);
   m_content.SetStyling(true);
-  m_content.SetGravity(WIDGET_GRAVITY_ALL);
+  m_content.SetGravity(Gravity::kAll);
   m_content.SetReadOnly(true);
   m_content.SetMultiline(true);
   m_content.SetText(target->GetDescription());
@@ -94,7 +94,7 @@ TBTooltipManager::~TBTooltipManager() {
 
 bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
                                            const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_POINTER_MOVE && !TBWidget::captured_widget) {
+  if (ev.type == EventType::kPointerMove && !TBWidget::captured_widget) {
     TBWidget* tipped_widget = GetTippedWidget();
     if (m_last_tipped_widget != tipped_widget && tipped_widget) {
       TBMessageData* msg_data = new TBMessageData();
@@ -118,8 +118,8 @@ bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
       DeleteShowMessages();
     }
     m_last_tipped_widget = tipped_widget;
-  } else  // if (ev.type == EVENT_TYPE_POINTER_DOWN || ev.type ==
-          // EVENT_TYPE_POINTER_UP)
+  } else  // if (ev.type == EventType::kPointerDown || ev.type ==
+          // EventType::kPointerUp)
   {
     KillToolTip();
     DeleteShowMessages();

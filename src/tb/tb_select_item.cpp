@@ -48,7 +48,7 @@ TBSimpleLayoutItemWidget::TBSimpleLayoutItemWidget(TBID image,
                                                    const char* str)
     : m_source(source), m_menu(nullptr) {
   SetSkinBg(TBIDC("TBSelectItem"));
-  SetLayoutDistribution(LAYOUT_DISTRIBUTION_AVAILABLE);
+  SetLayoutDistribution(LayoutDistribution::kAvailable);
   SetPaintOverflowFadeout(false);
 
   if (image) {
@@ -58,7 +58,7 @@ TBSimpleLayoutItemWidget::TBSimpleLayoutItemWidget(TBID image,
   }
 
   m_textfield.SetText(str);
-  m_textfield.SetTextAlign(TB_TEXT_ALIGN_LEFT);
+  m_textfield.SetTextAlign(TextAlign::kLeft);
   m_textfield.SetIgnoreInput(true);
   AddChild(&m_textfield);
 
@@ -77,7 +77,7 @@ TBSimpleLayoutItemWidget::~TBSimpleLayoutItemWidget() {
 }
 
 bool TBSimpleLayoutItemWidget::OnEvent(const TBWidgetEvent& ev) {
-  if (m_source && ev.type == EVENT_TYPE_CLICK && ev.target == this) {
+  if (m_source && ev.type == EventType::kClick && ev.target == this) {
     OpenSubMenu();
     return true;
   }
@@ -95,16 +95,16 @@ void TBSimpleLayoutItemWidget::OpenSubMenu() {
   // Open a new menu window for the submenu with this widget as target
   m_menu = new TBMenuWindow(this, TBIDC("submenu"));
   if (m_menu) {
-    SetState(WIDGET_STATE_SELECTED, true);
+    SetState(SkinState::kSelected, true);
     m_menu->AddListener(this);
-    m_menu->Show(m_source, TBPopupAlignment(TB_ALIGN_RIGHT), -1);
+    m_menu->Show(m_source, TBPopupAlignment(Align::kRight), -1);
   }
 }
 
 void TBSimpleLayoutItemWidget::CloseSubMenu() {
   if (!m_menu) return;
 
-  SetState(WIDGET_STATE_SELECTED, false);
+  SetState(SkinState::kSelected, false);
   m_menu->RemoveListener(this);
   if (!m_menu->GetIsDying()) m_menu->Close();
   m_menu = nullptr;
@@ -143,14 +143,14 @@ TBWidget* TBSelectItemSource::CreateItemWidget(int index,
       return itemwidget;
   } else if (string && *string == '-') {
     if (TBSeparator* separator = new TBSeparator) {
-      separator->SetGravity(WIDGET_GRAVITY_ALL);
+      separator->SetGravity(Gravity::kAll);
       separator->SetSkinBg(TBIDC("TBSelectItem.separator"));
       return separator;
     }
   } else if (TBTextField* textfield = new TBTextField) {
     textfield->SetSkinBg("TBSelectItem");
     textfield->SetText(string);
-    textfield->SetTextAlign(TB_TEXT_ALIGN_LEFT);
+    textfield->SetTextAlign(TextAlign::kLeft);
     return textfield;
   }
   return nullptr;

@@ -118,10 +118,12 @@ class TBSelection {
   TBTextOfs start, stop;
 };
 
-enum TB_CARET_POS { TB_CARET_POS_BEGINNING, TB_CARET_POS_END };
+enum class CaretPosition {
+  kBeginning,
+  kEnd,
+};
 
-/** The caret in a TBStyleEdit. */
-
+// The caret in a TBStyleEdit.
 class TBCaret {
  public:
   TBCaret(TBStyleEdit* styledit);
@@ -131,7 +133,7 @@ class TBCaret {
   bool Place(const TBPoint& point);
   bool Place(TBBlock* block, size_t ofs, bool allow_snap = true,
              bool snap_forward = false);
-  void Place(TB_CARET_POS place);
+  void Place(CaretPosition place);
   void AvoidLineBreak();
   void Paint(int32_t translate_x, int32_t translate_y);
   void ResetBlink();
@@ -191,7 +193,7 @@ class TBBlock : public TBLinkOf<TBBlock> {
 
   void Clear();
   void Set(const char* newstr, size_t len);
-  void SetAlign(TB_TEXT_ALIGN align);
+  void SetAlign(TextAlign align);
 
   size_t InsertText(size_t ofs, const char* text, size_t len,
                     bool allow_line_recurse);
@@ -311,7 +313,7 @@ class TBTextFragment : public TBLinkOf<TBTextFragment> {
                             TBTextProps* props, TBRegion& bg_region,
                             TBRegion& fg_region);
   void Paint(int32_t translate_x, int32_t translate_y, TBTextProps* props);
-  void Click(int button, uint32_t modifierkeys);
+  void Click(int button, ModifierKeys modifierkeys);
 
   bool IsText() const { return !IsEmbedded(); }
   bool IsEmbedded() const { return content ? true : false; }
@@ -359,25 +361,25 @@ class TBStyleEdit {
 
   void Paint(const TBRect& rect, const TBFontDescription& font_desc,
              const TBColor& text_color);
-  bool KeyDown(int key, SPECIAL_KEY special_key, MODIFIER_KEYS modifierkeys);
+  bool KeyDown(int key, SpecialKey special_key, ModifierKeys modifierkeys);
   bool MouseDown(const TBPoint& point, int button, int clicks,
-                 MODIFIER_KEYS modifierkeys, bool touch);
-  bool MouseUp(const TBPoint& point, int button, MODIFIER_KEYS modifierkeys,
+                 ModifierKeys modifierkeys, bool touch);
+  bool MouseUp(const TBPoint& point, int button, ModifierKeys modifierkeys,
                bool touch);
   bool MouseMove(const TBPoint& point);
   void Focus(bool focus);
 
   void Clear(bool init_new = true);
   bool Load(const char* filename);
-  void SetText(const char* text, TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
+  void SetText(const char* text, CaretPosition pos = CaretPosition::kBeginning);
   void SetText(const char* text, size_t text_len,
-               TB_CARET_POS pos = TB_CARET_POS_BEGINNING);
+               CaretPosition pos = CaretPosition::kBeginning);
   std::string GetText();
   bool IsEmpty() const;
 
   /** Set the default text alignment and all currently selected blocks,
           or the block of the current caret position if nothing is selected. */
-  void SetAlign(TB_TEXT_ALIGN align);
+  void SetAlign(TextAlign align);
   void SetMultiline(bool multiline = true);
   void SetStyling(bool styling = true);
   void SetReadOnly(bool readonly = true);
@@ -461,7 +463,7 @@ class TBStyleEdit {
   TBFontFace* font;
   TBFontDescription font_desc;
 
-  TB_TEXT_ALIGN align;
+  TextAlign align;
   union {
     struct {
       uint32_t multiline_on : 1;

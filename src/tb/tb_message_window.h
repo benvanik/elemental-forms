@@ -15,20 +15,25 @@
 
 namespace tb {
 
-enum TB_MSG { TB_MSG_OK, TB_MSG_OK_CANCEL, TB_MSG_YES_NO };
+enum class MessageWindowButtons {
+  kOk,
+  kOkCancel,
+  kYesNo,
+};
 
-/** TBMessageWindowSettings contains additional settings for TBMessageWindow. */
+// TBMessageWindowSettings contains additional settings for TBMessageWindow.
 class TBMessageWindowSettings {
  public:
-  TBMessageWindowSettings() : msg(TB_MSG_OK), dimmer(false), styling(false) {}
-  TBMessageWindowSettings(TB_MSG msg, TBID icon_skin)
+  TBMessageWindowSettings()
+      : msg(MessageWindowButtons::kOk), dimmer(false), styling(false) {}
+  TBMessageWindowSettings(MessageWindowButtons msg, TBID icon_skin)
       : msg(msg), icon_skin(icon_skin), dimmer(false), styling(false) {}
 
  public:
-  TB_MSG msg;      ///< The type of response for the message.
-  TBID icon_skin;  ///< The icon skin (0 for no icon)
-  bool dimmer;     ///< Set to true to dim background widgets by a TBDimmer.
-  bool styling;    ///< Enable styling in the textfield.
+  MessageWindowButtons msg;  ///< The type of response for the message.
+  TBID icon_skin;            ///< The icon skin (0 for no icon)
+  bool dimmer;   ///< Set to true to dim background widgets by a TBDimmer.
+  bool styling;  ///< Enable styling in the textfield.
 };
 
 /** TBMessageWindow is a window for showing simple messages.

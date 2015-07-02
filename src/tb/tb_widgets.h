@@ -31,130 +31,114 @@ class TBWidgetListener;
 class TBLongClickTimer;
 struct INFLATE_INFO;
 
-enum TB_ALIGN {
-  TB_ALIGN_LEFT,   ///< Align to the left side
-  TB_ALIGN_TOP,    ///< Align to the top (above)
-  TB_ALIGN_RIGHT,  ///< Align to the right side
-  TB_ALIGN_BOTTOM  ///< Align to the bottom (below)
+enum class Align {
+  kLeft,
+  kTop,
+  kRight,
+  kBottom,
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(Align, "left", "top", "right", "bottom");
+
+enum class EventType {
+  // Click event is what should be used to trig actions in almost all cases.
+  // It is invoked on a widget after POINTER_UP if the pointer is still inside
+  // its hit area. It can also be invoked by keyboard on some clickable widgets
+  // (see TBWidget::SetClickByKey).
+  // If panning of scrollable widgets start while the pointer is down, CLICK
+  // won't be invoked when releasing the pointer (since that should stop
+  // panning).
+  kClick,
+  // Long click event is sent when the pointer has been down for some time
+  // without moving much.
+  // It is invoked on a widget that has enabled it (TBWidget::SetWantLongClick).
+  // If this event isn't handled, the widget will invoke a CONTEXT_MENU event.
+  // If any of those are handled, the CLICK event that would normally be invoked
+  // after the pending POINTER_UP will be suppressed.
+  kLongClick,
+  kPointerDown,
+  kPointerUp,
+  kPointerMove,
+  kWheel,
+  // Invoked after changing text in a TBTextField, changing selected item in a
+  // TBSelectList etc. Invoking this event trigs synchronization with connected
+  // TBWidgetValue and other widgets connected to it.
+  kChanged,
+  kKeyDown,
+  kKeyUp,
+  // Invoked by the platform when a standard keyboard shortcut is pressed.
+  // It's called before InvokeKeyDown (kKeyDown) and if the event is
+  // handled (returns true), the KeyDown is canceled.
+  // The ref_id will be set to one of the following:
+  // "cut", "copy", "paste", "selectall", "undo", "redo", "new", "open", "save".
+  kShortcut,
+  // Invoked when a context menu should be opened at the event x and y
+  // coordinates.
+  // It may be invoked automatically for a widget on long click, if nothing
+  // handles the long click event.
+  kContextMenu,
+  // Invoked by the platform when one or multiple files has been dropped on the
+  // widget. The event is guaranteed to be a TBWidgetEventFileDrop.
+  kFileDrop,
+  // Custom event. Not used internally.
+  // ref_id may be used for additional type info.
+  kCustom,
 };
 
-enum EVENT_TYPE {
-  /** Click event is what should be used to trig actions in almost all cases.
-
-          It is invoked on a widget after POINTER_UP if the pointer is still
-     inside
-          its hit area. It can also be invoked by keyboard on some clickable
-     widgets
-          (see TBWidget::SetClickByKey).
-
-          If panning of scrollable widgets start while the pointer is down,
-     CLICK
-          won't be invoked when releasing the pointer (since that should stop
-     panning). */
-  EVENT_TYPE_CLICK,
-
-  /** Long click event is sent when the pointer has been down for some time
-          without moving much.
-
-          It is invoked on a widget that has enabled it
-     (TBWidget::SetWantLongClick
-          If this event isn't handled, the widget will invoke a CONTEXT_MENU
-     event.
-          If any of those are handled, the CLICK event that would normally be
-          invoked after the pending POINTER_UP will be suppressed. */
-  EVENT_TYPE_LONG_CLICK,
-  EVENT_TYPE_POINTER_DOWN,
-  EVENT_TYPE_POINTER_UP,
-  EVENT_TYPE_POINTER_MOVE,
-  EVENT_TYPE_WHEEL,
-
-  /** Invoked after changing text in a TBTextField, changing selected item
-          in a TBSelectList etc. Invoking this event trigs synchronization with
-          connected TBWidgetValue and other widgets connected to it. */
-  EVENT_TYPE_CHANGED,
-  EVENT_TYPE_KEY_DOWN,
-  EVENT_TYPE_KEY_UP,
-
-  /** Invoked by the platform when a standard keyboard shortcut is pressed.
-          It's called before InvokeKeyDown (EVENT_TYPE_KEY_DOWN) and if the
-     event
-          is handled (returns true), the KeyDown is canceled.
-          The ref_id will be set to one of the following:
-                  "cut", "copy", "paste", "selectall", "undo", "redo", "new",
-     "open", "save". */
-  EVENT_TYPE_SHORTCUT,
-
-  /** Invoked when a context menu should be opened at the event x and y
-     coordinates.
-          It may be invoked automatically for a widget on long click, if nothing
-     handles
-          the long click event. */
-  EVENT_TYPE_CONTEXT_MENU,
-
-  /** Invoked by the platform when one or multiple files has been dropped on
-          the widget. The event is guaranteed to be a TBWidgetEventFileDrop. */
-  EVENT_TYPE_FILE_DROP,
-
-  /** Custom event. Not used internally. ref_id may be used for additional type
-     info. */
-  EVENT_TYPE_CUSTOM
+enum class ModifierKeys {
+  kNone = 0,
+  kCtrl = 1,
+  kShift = 2,
+  kAlt = 4,
+  kSuper = 8,
 };
+MAKE_ENUM_FLAG_COMBO(ModifierKeys);
 
-enum MODIFIER_KEYS {
-  TB_MODIFIER_NONE = 0,
-  TB_CTRL = 1,
-  TB_SHIFT = 2,
-  TB_ALT = 4,
-  TB_SUPER = 8
-};
-MAKE_ENUM_FLAG_COMBO(MODIFIER_KEYS);
-
-enum SPECIAL_KEY {
-  TB_KEY_UNDEFINED = 0,
-  TB_KEY_UP,
-  TB_KEY_DOWN,
-  TB_KEY_LEFT,
-  TB_KEY_RIGHT,
-  TB_KEY_PAGE_UP,
-  TB_KEY_PAGE_DOWN,
-  TB_KEY_HOME,
-  TB_KEY_END,
-  TB_KEY_TAB,
-  TB_KEY_BACKSPACE,
-  TB_KEY_INSERT,
-  TB_KEY_DELETE,
-  TB_KEY_ENTER,
-  TB_KEY_ESC,
-  TB_KEY_F1,
-  TB_KEY_F2,
-  TB_KEY_F3,
-  TB_KEY_F4,
-  TB_KEY_F5,
-  TB_KEY_F6,
-  TB_KEY_F7,
-  TB_KEY_F8,
-  TB_KEY_F9,
-  TB_KEY_F10,
-  TB_KEY_F11,
-  TB_KEY_F12
+enum class SpecialKey {
+  kUndefined,
+  kUp,
+  kDown,
+  kLeft,
+  kRight,
+  kPageUp,
+  kPageDown,
+  kHome,
+  kEnd,
+  kTab,
+  kBackspace,
+  kInsert,
+  kDelete,
+  kEnter,
+  kEsc,
+  kF1,
+  kF2,
+  kF3,
+  kF4,
+  kF5,
+  kF6,
+  kF7,
+  kF8,
+  kF9,
+  kF10,
+  kF11,
+  kF12,
 };
 
 class TBWidgetEvent : public TBTypedObject {
  public:
   TBWidget* target;  ///< The widget that invoked the event
-  EVENT_TYPE type;   ///< Which type of event
+  EventType type;    ///< Which type of event
   int target_x;  ///< X position in target widget. Set for all pointer events,
   /// click and wheel.
   int target_y;  ///< Y position in target widget. Set for all pointer events,
   /// click and wheel.
-  int delta_x;  ///< Set for EVENT_TYPE_WHEEL. Positive is a turn right.
-  int delta_y;  ///< Set for EVENT_TYPE_WHEEL. Positive is a turn against the
+  int delta_x;  ///< Set for EventType::kWheel. Positive is a turn right.
+  int delta_y;  ///< Set for EventType::kWheel. Positive is a turn against the
   /// user.
   int count;  ///< 1 for all events, but increased for POINTER_DOWN event to 2
   /// for doubleclick, 3 for tripleclick and so on.
   int key;
-  SPECIAL_KEY special_key;
-  MODIFIER_KEYS modifierkeys;
+  SpecialKey special_key;
+  ModifierKeys modifierkeys;
   TBID ref_id;  ///< Sometimes (when documented) events have a ref_id (The id
   /// that caused this event)
   bool touch;  ///< Set for pointer events. True if the event is a touch event
@@ -163,7 +147,7 @@ class TBWidgetEvent : public TBTypedObject {
 
   TBOBJECT_SUBCLASS(TBWidgetEvent, TBTypedObject);
 
-  TBWidgetEvent(EVENT_TYPE type)
+  TBWidgetEvent(EventType type)
       : target(nullptr),
         type(type),
         target_x(0),
@@ -172,12 +156,12 @@ class TBWidgetEvent : public TBTypedObject {
         delta_y(0),
         count(1),
         key(0),
-        special_key(TB_KEY_UNDEFINED),
-        modifierkeys(TB_MODIFIER_NONE),
+        special_key(SpecialKey::kUndefined),
+        modifierkeys(ModifierKeys::kNone),
         touch(false) {}
 
-  TBWidgetEvent(EVENT_TYPE type, int x, int y, bool touch,
-                MODIFIER_KEYS modifierkeys = TB_MODIFIER_NONE)
+  TBWidgetEvent(EventType type, int x, int y, bool touch,
+                ModifierKeys modifierkeys = ModifierKeys::kNone)
       : target(nullptr),
         type(type),
         target_x(x),
@@ -186,7 +170,7 @@ class TBWidgetEvent : public TBTypedObject {
         delta_y(0),
         count(1),
         key(0),
-        special_key(TB_KEY_UNDEFINED),
+        special_key(SpecialKey::kUndefined),
         modifierkeys(modifierkeys),
         touch(touch) {}
 
@@ -199,15 +183,15 @@ class TBWidgetEvent : public TBTypedObject {
   int GetCountCycle(int max) { return ((count - 1) % max) + 1; }
 
   bool IsPointerEvent() const {
-    return type == EVENT_TYPE_POINTER_DOWN || type == EVENT_TYPE_POINTER_UP ||
-           type == EVENT_TYPE_POINTER_MOVE;
+    return type == EventType::kPointerDown || type == EventType::kPointerUp ||
+           type == EventType::kPointerMove;
   }
   bool IsKeyEvent() const {
-    return type == EVENT_TYPE_KEY_DOWN || type == EVENT_TYPE_KEY_UP;
+    return type == EventType::kKeyDown || type == EventType::kKeyUp;
   }
 };
 
-/** TBWidgetEventFileDrop is a event of type EVENT_TYPE_FILE_DROP.
+/** TBWidgetEventFileDrop is a event of type EventType::kFileDrop.
         It contains a list of filenames of the files that was dropped. */
 class TBWidgetEventFileDrop : public TBWidgetEvent {
  public:
@@ -215,70 +199,51 @@ class TBWidgetEventFileDrop : public TBWidgetEvent {
 
   TBOBJECT_SUBCLASS(TBWidgetEventFileDrop, TBWidgetEvent);
 
-  TBWidgetEventFileDrop() : TBWidgetEvent(EVENT_TYPE_FILE_DROP) {}
+  TBWidgetEventFileDrop() : TBWidgetEvent(EventType::kFileDrop) {}
 };
 
-/** TBWidget state types (may be combined).
-        NOTE: This should exactly match SKIN_STATE in tb_skin.h! */
-enum WIDGET_STATE {
-  WIDGET_STATE_NONE = 0,
-  WIDGET_STATE_DISABLED = 1,
-  WIDGET_STATE_FOCUSED = 2,
-  WIDGET_STATE_PRESSED = 4,
-  WIDGET_STATE_SELECTED = 8,
-  WIDGET_STATE_HOVERED = 16,
+// TBWidget gravity (may be combined).
+// Gravity gives hints about positioning and sizing preferences.
+enum class Gravity {
+  kNone = 0,
+  kLeft = 1,
+  kRight = 2,
+  kTop = 4,
+  kBottom = 8,
 
-  WIDGET_STATE_ALL = WIDGET_STATE_DISABLED | WIDGET_STATE_FOCUSED |
-                     WIDGET_STATE_PRESSED | WIDGET_STATE_SELECTED |
-                     WIDGET_STATE_HOVERED
+  kLeftRight = kLeft | kRight,
+  kTopBottom = kTop | kBottom,
+  kAll = kLeftRight | kTopBottom,
+  kDefault = kLeft | kTop,
 };
-MAKE_ENUM_FLAG_COMBO(WIDGET_STATE);
+MAKE_ENUM_FLAG_COMBO(Gravity);
 
-/** TBWidget gravity (may be combined).
-        Gravity gives hints about positioning and sizing preferences. */
-enum WIDGET_GRAVITY {
-  WIDGET_GRAVITY_NONE = 0,
-  WIDGET_GRAVITY_LEFT = 1,
-  WIDGET_GRAVITY_RIGHT = 2,
-  WIDGET_GRAVITY_TOP = 4,
-  WIDGET_GRAVITY_BOTTOM = 8,
-
-  WIDGET_GRAVITY_LEFT_RIGHT = WIDGET_GRAVITY_LEFT | WIDGET_GRAVITY_RIGHT,
-  WIDGET_GRAVITY_TOP_BOTTOM = WIDGET_GRAVITY_TOP | WIDGET_GRAVITY_BOTTOM,
-  WIDGET_GRAVITY_ALL = WIDGET_GRAVITY_LEFT_RIGHT | WIDGET_GRAVITY_TOP_BOTTOM,
-  WIDGET_GRAVITY_DEFAULT = WIDGET_GRAVITY_LEFT | WIDGET_GRAVITY_TOP
+enum class Axis {
+  kX,  // Horizontal layout.
+  kY,  // Vertical layout.
 };
-MAKE_ENUM_FLAG_COMBO(WIDGET_GRAVITY);
+MAKE_ORDERED_ENUM_STRING_UTILS(Axis, "x", "y");
 
-enum AXIS {
-  AXIS_X,  ///< Horizontal layout
-  AXIS_Y,  ///< Vertical layout
+// Defines how the size in one axis depend on the other axis when a widgets size
+// is affected by constraints.
+enum class SizeDependency {
+  // No dependency (Faster layout).
+  kNone = 0,
+  // The width is dependant on the height. Additional layout pass may be
+  // required.
+  kWidthOnHeight = 1,
+  // The height is dependant on the width. Additional layout pass may be
+  // required.
+  kHeightOnWidth = 2,
+  // Both width and height are dependant on each other. Additional layout pass
+  // may be required.
+  kWidthAndHeight = kWidthOnHeight | kHeightOnWidth
 };
-
-/** Defines how the size in one axis depend on the other axis when a widgets
-   size is
-        affected by constraints. */
-enum SIZE_DEP {
-  /** No dependency (Faster layout). */
-  SIZE_DEP_NONE = 0,
-  /** The width is dependant on the height. Additional layout pass may be
-     required. */
-  SIZE_DEP_WIDTH_DEPEND_ON_HEIGHT = 1,
-  /** The height is dependant on the width. Additional layout pass may be
-     required. */
-  SIZE_DEP_HEIGHT_DEPEND_ON_WIDTH = 2,
-  /** Both width and height are dependant on each other. Additional layout pass
-     may
-          be required. */
-  SIZE_DEP_BOTH =
-      SIZE_DEP_WIDTH_DEPEND_ON_HEIGHT | SIZE_DEP_HEIGHT_DEPEND_ON_WIDTH
-};
-MAKE_ENUM_FLAG_COMBO(SIZE_DEP);
+MAKE_ENUM_FLAG_COMBO(SizeDependency);
 
 /** PreferredSize contains size preferences for a TBWidget.
         This is calculated during layout for each widget from
         the current skin, widget preferences and LayoutParams. */
-
 class PreferredSize {
  public:
   PreferredSize()
@@ -288,7 +253,7 @@ class PreferredSize {
         max_h(10000),
         pref_w(0),
         pref_h(0),
-        size_dependency(SIZE_DEP_NONE) {}
+        size_dependency(SizeDependency::kNone) {}
   PreferredSize(int w, int h)
       : min_w(w),
         min_h(h),
@@ -296,12 +261,13 @@ class PreferredSize {
         max_h(h),
         pref_w(w),
         pref_h(h),
-        size_dependency(SIZE_DEP_NONE) {}
+        size_dependency(SizeDependency::kNone) {}
 
-  int min_w, min_h;          ///< The minimal preferred width and height.
-  int max_w, max_h;          ///< The maximum preferred width and height.
-  int pref_w, pref_h;        ///< The preferred width and height.
-  SIZE_DEP size_dependency;  ///< The size dependency when size is affected by
+  int min_w, min_h;    ///< The minimal preferred width and height.
+  int max_w, max_h;    ///< The maximum preferred width and height.
+  int pref_w, pref_h;  ///< The preferred width and height.
+  SizeDependency
+      size_dependency;  ///< The size dependency when size is affected by
   /// constraints.
 };
 
@@ -310,14 +276,14 @@ class PreferredSize {
         skin and widget. */
 class LayoutParams {
  public:
-  static const int UNSPECIFIED = TB_INVALID_DIMENSION;
+  static const int kUnspecified = kInvalidDimension;
   LayoutParams()
-      : min_w(UNSPECIFIED),
-        min_h(UNSPECIFIED),
-        max_w(UNSPECIFIED),
-        max_h(UNSPECIFIED),
-        pref_w(UNSPECIFIED),
-        pref_h(UNSPECIFIED) {}
+      : min_w(kUnspecified),
+        min_h(kUnspecified),
+        max_w(kUnspecified),
+        max_h(kUnspecified),
+        pref_w(kUnspecified),
+        pref_h(kUnspecified) {}
 
   /** Set both min max and preferred width to the given width. */
   void SetWidth(int width) { min_w = max_w = pref_w = width; }
@@ -369,56 +335,54 @@ class SizeConstraints {
  private:
   int ConstrainByLPMax(int constraint, int lp_min, int lp_max) const {
     if (constraint == NO_RESTRICTION)
-      return lp_max != LayoutParams::UNSPECIFIED ? lp_max : NO_RESTRICTION;
+      return lp_max != LayoutParams::kUnspecified ? lp_max : NO_RESTRICTION;
     int ret = constraint;
-    if (lp_min != LayoutParams::UNSPECIFIED) ret = std::max(ret, lp_min);
-    if (lp_max != LayoutParams::UNSPECIFIED) ret = std::min(ret, lp_max);
+    if (lp_min != LayoutParams::kUnspecified) ret = std::max(ret, lp_min);
+    if (lp_max != LayoutParams::kUnspecified) ret = std::min(ret, lp_max);
     return ret;
   }
 };
 
-/** Defines widget z level, used with TBWidget::SetZ, TBWidget::AddChild. */
-enum WIDGET_Z {
-  WIDGET_Z_TOP,    ///< The toplevel (Visually drawn on top of everything else).
-  WIDGET_Z_BOTTOM  ///< The bottomlevel (Visually drawn behind everything else).
+// Defines widget z level, used with TBWidget::SetZ, TBWidget::AddChild.
+enum class WidgetZ {
+  kTop,     // The toplevel (Visually drawn on top of everything else).
+  kBottom,  // The bottomlevel (Visually drawn behind everything else).
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(WidgetZ, "top", "bottom");
+
+// Defines widget z level relative to another widget, used with
+// TBWidget::AddChildRelative.
+enum class WidgetZRel {
+  kBefore,  // Before the reference widget (visually behind reference).
+  kAfter,   // After the reference widget (visually above reference).
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(WidgetZRel, "before", "after");
+
+// Defines widget visibility, used with TBWidget::SetVisibility.
+enum class Visibility {
+  kVisible,    // Visible (default).
+  kInvisible,  // Invisible, but layouted. Interaction disabled.
+  kGone        // Invisible and no layout. Interaction disabled.
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(Visibility, "visible", "invisible", "gone");
+
+enum class InvokeInfo {
+  kNormal,
+  kNoCallbacks,
 };
 
-/** Defines widget z level relative to another widget, used with
- * TBWidget::AddChildRelative. */
-enum WIDGET_Z_REL {
-  WIDGET_Z_REL_BEFORE,  ///< Before the reference widget (visually behind
-  /// reference).
-  WIDGET_Z_REL_AFTER  ///< After the reference widget (visually above
-  /// reference).
+enum class FocusReason {
+  kNavigation,  // Set focus by navigation (i.e. keyboard tab). This will scroll
+                // to the widget if needed.
+  kPointer,     // Set focus by pointer (i.e. clicking).
+  kUnknown,     // Set focus by anything else.
 };
 
-/** Defines widget visibility, used with TBWidget::SetVisibility. */
-enum WIDGET_VISIBILITY {
-  WIDGET_VISIBILITY_VISIBLE,    ///< Visible (default)
-  WIDGET_VISIBILITY_INVISIBLE,  ///< Invisible, but layouted. Interaction
-  /// disabled.
-  WIDGET_VISIBILITY_GONE  ///< Invisible and no layout. Interaction disabled.
-};
-
-enum WIDGET_INVOKE_INFO {
-  WIDGET_INVOKE_INFO_NORMAL,
-  WIDGET_INVOKE_INFO_NO_CALLBACKS
-};
-
-enum WIDGET_FOCUS_REASON {
-  WIDGET_FOCUS_REASON_NAVIGATION,  ///< Set focus by navigation (i.e. keyboard
-  /// tab). This will
-  ///< scroll to the widget if needed.
-  WIDGET_FOCUS_REASON_POINTER,  ///< Set focus by pointer (i.e. clicking)
-  WIDGET_FOCUS_REASON_UNKNOWN   ///< Set focus by anything else.
-};
-
-/** Hit status return value for TBWidget::GetHitStatus */
-enum WIDGET_HIT_STATUS {
-  WIDGET_HIT_STATUS_NO_HIT = 0,  ///< The widget was not hit
-  WIDGET_HIT_STATUS_HIT,  ///< The widget was hit, any child may be hit too.
-  WIDGET_HIT_STATUS_HIT_NO_CHILDREN  ///< The widget was hit, no children should
-  /// be hit.
+// Hit status return value for TBWidget::GetHitStatus.
+enum class HitStatus {
+  kNoHit,          // The widget was not hit.
+  kHit,            // The widget was hit, any child may be hit too.
+  kHitNoChildren,  // The widget was hit, no children should be hit.
 };
 
 /** The base TBWidget class.
@@ -467,16 +431,16 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      become enabled/disabled.
           Calling this will result in a later call to OnProcessStates().
           This is done automatically for all invoked events of type:
-                  EVENT_TYPE_CLICK, EVENT_TYPE_LONG_CLICK, EVENT_TYPE_CHANGED,
-     EVENT_TYPE_KEYDOWN,
-                  EVENT_TYPE_KEYUP. */
+                  EventType::kClick, EventType::kLongClick, EventType::kChanged,
+     EventType_KEYDOWN,
+                  EventType_KEYUP. */
   void InvalidateStates();
 
   /** Call if something changes that might cause any skin to change due to
      different state
           or conditions. This is called automatically from InvalidateStates(),
      when event
-          EVENT_TYPE_CHANGED is invoked, and in various other situations. */
+          EventType::kChanged is invoked, and in various other situations. */
   void InvalidateSkinStates();
 
   /** Delete the widget with the possibility for some extended life during
@@ -523,36 +487,34 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      is used when drawing.
           Some states are set automatically on interaction. See GetAutoState().
      */
-  void SetState(WIDGET_STATE state, bool on);
+  void SetState(SkinState state, bool on);
 
   /** Get status of the given state(s). Returns true if the given state
    * combination is set. */
-  bool GetState(WIDGET_STATE state) const {
-    return (m_state & state) ? true : false;
-  }
+  bool GetState(SkinState state) const { return any(m_state & state); }
 
   /** Set the widget state. Like SetState but setting the entire state as given,
      instead
           of toggling individual states. See SetState for more info on states.
      */
-  void SetStateRaw(WIDGET_STATE state);
+  void SetStateRaw(SkinState state);
 
   /** Get the widget state. */
-  WIDGET_STATE GetStateRaw() const { return m_state; }
+  SkinState GetStateRaw() const { return m_state; }
 
   /** Return the current combined state for this widget. It will also add some
           automatic states, such as hovered (if the widget is currently
      hovered), or pressed etc.
 
-          Automatic states: WIDGET_STATE_PRESSED, WIDGET_STATE_HOVERED,
-     WIDGET_STATE_FOCUSED.
+          Automatic states: SkinState::kPressed, SkinState::kHovered,
+     SkinState::kFocused.
 
-          Remarks for WIDGET_STATE_FOCUSED: May also be controlled by calling
+          Remarks for SkinState::kFocused: May also be controlled by calling
      SetAutoFocusState and
           the define TB_ALWAYS_SHOW_EDIT_FOCUS. */
-  WIDGET_STATE GetAutoState() const;
+  SkinState GetAutoState() const;
 
-  /** Set if the state WIDGET_STATE_FOCUSED should be set automatically for the
+  /** Set if the state SkinState::kFocused should be set automatically for the
      focused widget.
           This value is set to true when moving focus by keyboard, and set to
      off when clicking
@@ -565,36 +527,35 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   float GetOpacity() const { return m_opacity; }
 
   /** Set visibility for this widget and its children.
-          If visibility is not WIDGET_VISIBILITY_VISIBLE, the widget won't
+          If visibility is not Visibility::kVisible, the widget won't
      receive any input. */
-  void SetVisibilility(WIDGET_VISIBILITY vis);
-  WIDGET_VISIBILITY GetVisibility() const;
+  void SetVisibilility(Visibility vis);
+  Visibility GetVisibility() const;
 
   /** Return true if this widget and all its ancestors are visible
-          (has a opacity > 0 and visibility WIDGET_VISIBILITY_VISIBLE) */
+          (has a opacity > 0 and visibility Visibility::kVisible) */
   bool GetVisibilityCombined() const;
 
   /** Return true if this widget or any of its parents are disabled (has state
-   * WIDGET_STATE_DISABLED). */
+   * SkinState::kDisabled). */
   bool GetDisabled() const;
 
   /** Add the child to this widget. The child widget will automatically be
      deleted when
           this widget is deleted. (If the child isn't removed again with
      RemoveChild.) */
-  void AddChild(TBWidget* child, WIDGET_Z z = WIDGET_Z_TOP,
-                WIDGET_INVOKE_INFO info = WIDGET_INVOKE_INFO_NORMAL);
+  void AddChild(TBWidget* child, WidgetZ z = WidgetZ::kTop,
+                InvokeInfo info = InvokeInfo::kNormal);
 
   /** Add the child to this widget. See AddChild for adding a child to the top
      or bottom.
           This takes a relative Z and insert the child before or after the given
      reference widget.*/
-  void AddChildRelative(TBWidget* child, WIDGET_Z_REL z, TBWidget* reference,
-                        WIDGET_INVOKE_INFO info = WIDGET_INVOKE_INFO_NORMAL);
+  void AddChildRelative(TBWidget* child, WidgetZRel z, TBWidget* reference,
+                        InvokeInfo info = InvokeInfo::kNormal);
 
   /** Remove child from this widget without deleting it. */
-  void RemoveChild(TBWidget* child,
-                   WIDGET_INVOKE_INFO info = WIDGET_INVOKE_INFO_NORMAL);
+  void RemoveChild(TBWidget* child, InvokeInfo info = InvokeInfo::kNormal);
 
   /** Remove and delete all children in this widget.
           Note: This won't invoke Die so there's no chance for widgets to
@@ -606,13 +567,13 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      added with AddChild, it will be
           placed at the top in the parent (Above previously added widget). SetZ
      can be used to change the order. */
-  void SetZ(WIDGET_Z z);
+  void SetZ(WidgetZ z);
 
   /** Set the z order in which children are added during resource loading. */
-  void SetZInflate(WIDGET_Z z) { m_packed.inflate_child_z = z; }
-  WIDGET_Z GetZInflate() const { return (WIDGET_Z)m_packed.inflate_child_z; }
+  void SetZInflate(WidgetZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
+  WidgetZ GetZInflate() const { return (WidgetZ)m_packed.inflate_child_z; }
 
-  /** Set the widget gravity (any combination of WIDGET_GRAVITY).
+  /** Set the widget gravity (any combination of Gravity).
           For child widgets in a layout, the gravity affects how the layout is
      done depending on the layout settings.
           For child widgets in a non layout widget, it will do some basic
@@ -623,8 +584,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
                   -top && bottom: Widget resize vertically when parent resize.
                   -!top && bottom: Widget follows the bottom edge when parent
      resize. */
-  void SetGravity(WIDGET_GRAVITY g);
-  WIDGET_GRAVITY GetGravity() const { return m_gravity; }
+  void SetGravity(Gravity g);
+  Gravity GetGravity() const { return m_gravity; }
 
   /** Set the skin background for this widget and call OnSkinChanged if it
      changed.
@@ -633,16 +594,15 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           etc. if the widget doesn't have any preferences itself.
 
           The skin will be painted according to the current widget state
-     (WIDGET_STATE).
-          If there is no special skin state for WIDGET_STATE_FOCUSED, it will
+     (SkinState).
+          If there is no special skin state for SkinState::kFocused, it will
      paint the skin
           element called "generic_focus" (if it exist) after painting all widget
      children.
 
           It's possible to omit the OnSkinChanged callback using
-     WIDGET_INVOKE_INFO_NO_CALLBACKS. */
-  void SetSkinBg(const TBID& skin_bg,
-                 WIDGET_INVOKE_INFO info = WIDGET_INVOKE_INFO_NORMAL);
+     InvokeInfo::kNoCallbacks. */
+  void SetSkinBg(const TBID& skin_bg, InvokeInfo info = InvokeInfo::kNormal);
 
   /** Return the current skin background, as set by SetSkinBg. */
   TBID GetSkinBg() const { return m_skin_bg; }
@@ -701,14 +661,13 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
           Returns true if successfully focused, or if set as last focus in its
      window. */
-  bool SetFocus(WIDGET_FOCUS_REASON reason,
-                WIDGET_INVOKE_INFO info = WIDGET_INVOKE_INFO_NORMAL);
+  bool SetFocus(FocusReason reason, InvokeInfo info = InvokeInfo::kNormal);
   bool GetIsFocused() const { return focused_widget == this; }
 
   /** Call SetFocus on all children and their children, until a widget is found
      that accepts it.
           Returns true if some child was successfully focused. */
-  bool SetFocusRecursive(WIDGET_FOCUS_REASON reason);
+  bool SetFocusRecursive(FocusReason reason);
 
   /** Move focus from the currently focused widget to another focusable widget.
      It will search
@@ -894,16 +853,16 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           The default implementation checks the visibility, ignored input flag,
      rectangle,
           and disabled status. */
-  virtual WIDGET_HIT_STATUS GetHitStatus(int x, int y);
+  virtual HitStatus GetHitStatus(int x, int y);
 
   /** Get if skin condition applies to this widget. This is called when a skin
      condition has the property
-          PROPERTY_CUSTOM (not a generic one known by skin and the default
+          SkinProperty::kCustom (not a generic one known by skin and the default
      widget condition context).
           This can be used to extend the skin conditions support with properties
      specific to different widgets. */
   virtual bool GetCustomSkinCondition(
-      const TBSkinCondition::CONDITION_INFO& info) {
+      const TBSkinCondition::ConditionInfo& info) {
     return false;
   }
 
@@ -1008,8 +967,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   // == Setter shared for many types of widgets ============
 
   /** Set along which axis the content should be layouted. */
-  virtual void SetAxis(AXIS axis) {}
-  virtual AXIS GetAxis() const { return AXIS_X; }
+  virtual void SetAxis(Axis axis) {}
+  virtual Axis GetAxis() const { return Axis::kX; }
 
   /** Set the value of this widget. Implemented by most widgets (that has a
      value).
@@ -1052,7 +1011,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
   /** Connect this widget to a widget value.
 
-              When this widget invoke EVENT_TYPE_CHANGED, it will automatically
+              When this widget invoke EventType::kChanged, it will automatically
      update the
               connected widget value, and any other widgets that may be
      connected to it.
@@ -1098,12 +1057,12 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
     return GetPreferredSize(SizeConstraints());
   }
 
-  /** Type used for InvalidateLayout */
-  enum INVALIDATE_LAYOUT {
-    INVALIDATE_LAYOUT_TARGET_ONLY,  ///< InvalidateLayout should not be
-    /// recursively called on parents.
-    INVALIDATE_LAYOUT_RECURSIVE  ///< InvalidateLayout should recursively be
-    /// called on parents too.
+  // Type used for InvalidateLayout.
+  enum class InvalidationMode {
+    kTargetOnly,  // InvalidationMode should not be recursively called on
+                  // parents.
+    kRecursive,   // InvalidationMode should recursively be called on parents
+                  // too.
   };
 
   /** Invalidate layout for this widget so it will be scheduled for relayout.
@@ -1119,11 +1078,11 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
      relayout.
           - When setting the size of a layout widget (typically from another
      layout widget or from a OnResize),
-            it should be called with INVALIDATE_LAYOUT_TARGET_ONLY to avoid
+            it should be called with InvalidationMode::kTargetOnly to avoid
      recursing back up to parents when
             already recursing down, to avoid unnecessary computation.
           */
-  virtual void InvalidateLayout(INVALIDATE_LAYOUT il);
+  virtual void InvalidateLayout(InvalidationMode il);
 
   /** Set layout params. Calls InvalidateLayout. */
   void SetLayoutParams(const LayoutParams& lp);
@@ -1163,7 +1122,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
           GetEventDestination (by default the parent) until a widget handles the
      event.
 
-          Note: When invoking event EVENT_TYPE_CHANGED, this will update the
+          Note: When invoking event EventType::kChanged, this will update the
      value of other widgets connected
                     to the same group.
 
@@ -1177,22 +1136,22 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   bool InvokeEvent(TBWidgetEvent& ev);
 
   bool InvokePointerDown(int x, int y, int click_count,
-                         MODIFIER_KEYS modifierkeys, bool touch);
-  bool InvokePointerUp(int x, int y, MODIFIER_KEYS modifierkeys, bool touch);
-  void InvokePointerMove(int x, int y, MODIFIER_KEYS modifierkeys, bool touch);
+                         ModifierKeys modifierkeys, bool touch);
+  bool InvokePointerUp(int x, int y, ModifierKeys modifierkeys, bool touch);
+  void InvokePointerMove(int x, int y, ModifierKeys modifierkeys, bool touch);
   bool InvokeWheel(int x, int y, int delta_x, int delta_y,
-                   MODIFIER_KEYS modifierkeys);
+                   ModifierKeys modifierkeys);
 
-  /** Invoke the EVENT_TYPE_KEY_DOWN and EVENT_TYPE_KEY_UP events on the
+  /** Invoke the EventType::kKeyDown and EventType::kKeyUp events on the
      currently focused widget.
           This will also do some generic key handling, such as cycling focus on
      tab etc. */
-  bool InvokeKey(int key, SPECIAL_KEY special_key, MODIFIER_KEYS modifierkeys,
+  bool InvokeKey(int key, SpecialKey special_key, ModifierKeys modifierkeys,
                  bool down);
 
-  /** A widget that receive a EVENT_TYPE_POINTER_DOWN event, will stay
-     "captured" until EVENT_TYPE_POINTER_UP
-          is received. While captured, all EVENT_TYPE_POINTER_MOVE are sent to
+  /** A widget that receive a EventType::kPointerDown event, will stay
+     "captured" until EventType::kPointerUp
+          is received. While captured, all EventType::kPointerMove are sent to
      it. This method can force release the capture,
           which may happen f.ex if the TBWidget is removed while captured. */
   void ReleaseCapture();
@@ -1252,8 +1211,8 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   TBWidgetValueConnection m_connection;        ///< TBWidget value connection
   TBLinkListOf<TBWidgetListener> m_listeners;  ///< List of listeners
   float m_opacity;                             ///< Opacity 0-1. See SetOpacity.
-  WIDGET_STATE m_state;      ///< The widget state (excluding any auto states)
-  WIDGET_GRAVITY m_gravity;  ///< The layout gravity setting.
+  SkinState m_state;  ///< The widget state (excluding any auto states)
+  Gravity m_gravity;  ///< The layout gravity setting.
   TBFontDescription m_font_desc;  ///< The font description.
   PreferredSize m_cached_ps;      ///< Cached preferred size.
   SizeConstraints m_cached_sc;    ///< Cached size constraints.
@@ -1274,7 +1233,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
       uint16_t is_panning : 1;
       uint16_t want_long_click : 1;
       uint16_t visibility : 2;
-      uint16_t inflate_child_z : 1;  // Should have enough bits to hold WIDGET_Z
+      uint16_t inflate_child_z : 1;  // Should have enough bits to hold WidgetZ
                                      // values.
     } m_packed;
     uint16_t m_packed_init;
@@ -1282,7 +1241,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
 
  public:
   /** This value is free to use for anything. It's not used by TBWidget itself.
-   * Initially TYPE_NULL. */
+   * Initially Type::kNull. */
   TBValue data;
 
 // Debugging
@@ -1337,7 +1296,7 @@ class TBWidget : public TBTypedObject, public TBLinkOf<TBWidget> {
   void MaybeInvokeLongClickOrContextMenu(bool touch);
   /** Returns the opacity for this widget multiplied with its skin opacity and
    * state opacity. */
-  float CalculateOpacityInternal(WIDGET_STATE state,
+  float CalculateOpacityInternal(SkinState state,
                                  TBSkinElement* skin_element) const;
 };
 

@@ -13,7 +13,7 @@ elements
 		bitmap icon128.png
 	background
 		bitmap bg_tile.png
-		type Tile
+		type tile
 	background_solid
 		background-color #3b3b3b
 		padding 10
@@ -48,11 +48,11 @@ elements
 		expand 15
 	Remove
 		bitmap remove.png
-		type Image
+		type image
 		padding 5
 	Star
 		bitmap star_gray.png
-		type Image
+		type image
 		img-position-x 0
 		img-position-y 0
 		img-ofs-x -8
@@ -63,7 +63,7 @@ elements
 				condition: target: parent, property: hover
 	Star.active
 		bitmap star_gold.png
-		type Image
+		type image
 		img-position-x 0
 		img-position-y 0
 		img-ofs-x -10

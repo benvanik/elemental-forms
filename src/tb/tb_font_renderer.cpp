@@ -331,7 +331,7 @@ void TBFontFace::DrawString(int x, int y, const TBColor& color, const char* str,
   }
 
   if (m_font_renderer) {
-    g_renderer->BeginBatchHint(TBRenderer::BATCH_HINT_DRAW_BITMAP_FRAGMENT);
+    g_renderer->BeginBatchHint(TBRenderer::BatchHint::kDrawBitmapFragment);
   }
 
   size_t i = 0;

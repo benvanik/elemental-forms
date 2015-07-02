@@ -81,21 +81,21 @@ void RootWidget::OnInvalid() {
   }
 }
 
-MODIFIER_KEYS GetModifierKeys() {
-  MODIFIER_KEYS code = TB_MODIFIER_NONE;
-  if (key_alt) code |= TB_ALT;
-  if (key_ctrl) code |= TB_CTRL;
-  if (key_shift) code |= TB_SHIFT;
-  if (key_super) code |= TB_SUPER;
+ModifierKeys GetModifierKeys() {
+  ModifierKeys code = ModifierKeys::kNone;
+  if (key_alt) code |= ModifierKeys::kAlt;
+  if (key_ctrl) code |= ModifierKeys::kCtrl;
+  if (key_shift) code |= ModifierKeys::kShift;
+  if (key_super) code |= ModifierKeys::kSuper;
   return code;
 }
 
-MODIFIER_KEYS GetModifierKeys(int modifier) {
-  MODIFIER_KEYS code = TB_MODIFIER_NONE;
-  if (modifier & GLFW_MOD_ALT) code |= TB_ALT;
-  if (modifier & GLFW_MOD_CONTROL) code |= TB_CTRL;
-  if (modifier & GLFW_MOD_SHIFT) code |= TB_SHIFT;
-  if (modifier & GLFW_MOD_SUPER) code |= TB_SUPER;
+ModifierKeys GetModifierKeys(int modifier) {
+  ModifierKeys code = ModifierKeys::kNone;
+  if (modifier & GLFW_MOD_ALT) code |= ModifierKeys::kAlt;
+  if (modifier & GLFW_MOD_CONTROL) code |= ModifierKeys::kCtrl;
+  if (modifier & GLFW_MOD_SHIFT) code |= ModifierKeys::kShift;
+  if (modifier & GLFW_MOD_SUPER) code |= ModifierKeys::kSuper;
   return code;
 }
 
@@ -103,7 +103,8 @@ static bool ShouldEmulateTouchEvent() {
   // Used to emulate that mouse events are touch events when alt, ctrl and shift
   // are pressed.
   // This makes testing a lot easier when there is no touch screen around :)
-  return (GetModifierKeys() & (TB_ALT | TB_CTRL | TB_SHIFT)) ? true : false;
+  return any(GetModifierKeys() &
+             (ModifierKeys::kAlt | ModifierKeys::kCtrl | ModifierKeys::kShift));
 }
 
 // @return Return the upper case of a ascii charcter. Only for shortcut
@@ -113,22 +114,23 @@ static int toupr_ascii(int ascii) {
   return ascii;
 }
 
-static bool InvokeShortcut(int key, SPECIAL_KEY special_key,
-                           MODIFIER_KEYS modifierkeys, bool down) {
+static bool InvokeShortcut(int key, SpecialKey special_key,
+                           ModifierKeys modifierkeys, bool down) {
 #ifdef MACOSX
-  bool shortcut_key = (modifierkeys & TB_SUPER) ? true : false;
+  bool shortcut_key = any(modifierkeys & ModifierKeys::kSuper);
 #else
-  bool shortcut_key = (modifierkeys & TB_CTRL) ? true : false;
+  bool shortcut_key = any(modifierkeys & ModifierKeys::kCtrl);
 #endif
   if (!TBWidget::focused_widget || !down || !shortcut_key) return false;
-  bool reverse_key = (modifierkeys & TB_SHIFT) ? true : false;
+  bool reverse_key = any(modifierkeys & ModifierKeys::kShift);
   int upper_key = toupr_ascii(key);
   TBID id;
   if (upper_key == 'X')
     id = TBIDC("cut");
-  else if (upper_key == 'C' || special_key == TB_KEY_INSERT)
+  else if (upper_key == 'C' || special_key == SpecialKey::kInsert)
     id = TBIDC("copy");
-  else if (upper_key == 'V' || (special_key == TB_KEY_INSERT && reverse_key))
+  else if (upper_key == 'V' ||
+           (special_key == SpecialKey::kInsert && reverse_key))
     id = TBIDC("paste");
   else if (upper_key == 'A')
     id = TBIDC("selectall");
@@ -144,21 +146,21 @@ static bool InvokeShortcut(int key, SPECIAL_KEY special_key,
     id = TBIDC("save");
   else if (upper_key == 'W')
     id = TBIDC("close");
-  else if (special_key == TB_KEY_PAGE_UP)
+  else if (special_key == SpecialKey::kPageUp)
     id = TBIDC("prev_doc");
-  else if (special_key == TB_KEY_PAGE_DOWN)
+  else if (special_key == SpecialKey::kPageDown)
     id = TBIDC("next_doc");
   else
     return false;
 
-  TBWidgetEvent ev(EVENT_TYPE_SHORTCUT);
+  TBWidgetEvent ev(EventType::kShortcut);
   ev.modifierkeys = modifierkeys;
   ev.ref_id = id;
   return TBWidget::focused_widget->InvokeEvent(ev);
 }
 
 static bool InvokeKey(GLFWwindow* window, unsigned int key,
-                      SPECIAL_KEY special_key, MODIFIER_KEYS modifierkeys,
+                      SpecialKey special_key, ModifierKeys modifierkeys,
                       bool down) {
   if (InvokeShortcut(key, special_key, modifierkeys, down)) return true;
   GetBackend(window)->GetRoot()->InvokeKey(key, special_key, modifierkeys,
@@ -171,97 +173,98 @@ static void char_callback(GLFWwindow* window, unsigned int character) {
   // use block when using f.ex arrow keys on osx.
   if (character >= 0xE000 && character <= 0xF8FF) return;
 
-  InvokeKey(window, character, TB_KEY_UNDEFINED, GetModifierKeys(), true);
-  InvokeKey(window, character, TB_KEY_UNDEFINED, GetModifierKeys(), false);
+  InvokeKey(window, character, SpecialKey::kUndefined, GetModifierKeys(), true);
+  InvokeKey(window, character, SpecialKey::kUndefined, GetModifierKeys(),
+            false);
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action,
                          int glfwmod) {
-  MODIFIER_KEYS modifier = GetModifierKeys(glfwmod);
+  ModifierKeys modifier = GetModifierKeys(glfwmod);
   bool down = (action == GLFW_PRESS || action == GLFW_REPEAT);
   switch (key) {
     case GLFW_KEY_F1:
-      InvokeKey(window, 0, TB_KEY_F1, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF1, modifier, down);
       break;
     case GLFW_KEY_F2:
-      InvokeKey(window, 0, TB_KEY_F2, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF2, modifier, down);
       break;
     case GLFW_KEY_F3:
-      InvokeKey(window, 0, TB_KEY_F3, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF3, modifier, down);
       break;
     case GLFW_KEY_F4:
-      InvokeKey(window, 0, TB_KEY_F4, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF4, modifier, down);
       break;
     case GLFW_KEY_F5:
-      InvokeKey(window, 0, TB_KEY_F5, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF5, modifier, down);
       break;
     case GLFW_KEY_F6:
-      InvokeKey(window, 0, TB_KEY_F6, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF6, modifier, down);
       break;
     case GLFW_KEY_F7:
-      InvokeKey(window, 0, TB_KEY_F7, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF7, modifier, down);
       break;
     case GLFW_KEY_F8:
-      InvokeKey(window, 0, TB_KEY_F8, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF8, modifier, down);
       break;
     case GLFW_KEY_F9:
-      InvokeKey(window, 0, TB_KEY_F9, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF9, modifier, down);
       break;
     case GLFW_KEY_F10:
-      InvokeKey(window, 0, TB_KEY_F10, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF10, modifier, down);
       break;
     case GLFW_KEY_F11:
-      InvokeKey(window, 0, TB_KEY_F11, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF11, modifier, down);
       break;
     case GLFW_KEY_F12:
-      InvokeKey(window, 0, TB_KEY_F12, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kF12, modifier, down);
       break;
     case GLFW_KEY_LEFT:
-      InvokeKey(window, 0, TB_KEY_LEFT, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kLeft, modifier, down);
       break;
     case GLFW_KEY_UP:
-      InvokeKey(window, 0, TB_KEY_UP, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kUp, modifier, down);
       break;
     case GLFW_KEY_RIGHT:
-      InvokeKey(window, 0, TB_KEY_RIGHT, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kRight, modifier, down);
       break;
     case GLFW_KEY_DOWN:
-      InvokeKey(window, 0, TB_KEY_DOWN, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kDown, modifier, down);
       break;
     case GLFW_KEY_PAGE_UP:
-      InvokeKey(window, 0, TB_KEY_PAGE_UP, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kPageUp, modifier, down);
       break;
     case GLFW_KEY_PAGE_DOWN:
-      InvokeKey(window, 0, TB_KEY_PAGE_DOWN, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kPageDown, modifier, down);
       break;
     case GLFW_KEY_HOME:
-      InvokeKey(window, 0, TB_KEY_HOME, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kHome, modifier, down);
       break;
     case GLFW_KEY_END:
-      InvokeKey(window, 0, TB_KEY_END, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kEnd, modifier, down);
       break;
     case GLFW_KEY_INSERT:
-      InvokeKey(window, 0, TB_KEY_INSERT, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kInsert, modifier, down);
       break;
     case GLFW_KEY_TAB:
-      InvokeKey(window, 0, TB_KEY_TAB, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kTab, modifier, down);
       break;
     case GLFW_KEY_DELETE:
-      InvokeKey(window, 0, TB_KEY_DELETE, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kDelete, modifier, down);
       break;
     case GLFW_KEY_BACKSPACE:
-      InvokeKey(window, 0, TB_KEY_BACKSPACE, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kBackspace, modifier, down);
       break;
     case GLFW_KEY_ENTER:
     case GLFW_KEY_KP_ENTER:
-      InvokeKey(window, 0, TB_KEY_ENTER, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kEnter, modifier, down);
       break;
     case GLFW_KEY_ESCAPE:
-      InvokeKey(window, 0, TB_KEY_ESC, modifier, down);
+      InvokeKey(window, 0, SpecialKey::kEsc, modifier, down);
       break;
     case GLFW_KEY_MENU:
       if (TBWidget::focused_widget && !down) {
-        TBWidgetEvent ev(EVENT_TYPE_CONTEXT_MENU);
+        TBWidgetEvent ev(EventType::kContextMenu);
         ev.modifierkeys = modifier;
         TBWidget::focused_widget->InvokeEvent(ev);
       }
@@ -292,7 +295,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
       // glfw calls key_callback instead of char_callback
       // when pressing a character while ctrl is also pressed.
       if (key_ctrl && !key_alt && key >= 32 && key <= 255)
-        InvokeKey(window, key, TB_KEY_UNDEFINED, modifier, down);
+        InvokeKey(window, key, SpecialKey::kUndefined, modifier, down);
 #endif
       break;
   }
@@ -300,7 +303,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
 
 static void mouse_button_callback(GLFWwindow* window, int button, int action,
                                   int glfwmod) {
-  MODIFIER_KEYS modifier = GetModifierKeys(glfwmod);
+  ModifierKeys modifier = GetModifierKeys(glfwmod);
   int x = mouse_x;
   int y = mouse_y;
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -330,7 +333,7 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
                                                      ShouldEmulateTouchEvent());
     if (TBWidget::hovered_widget) {
       TBWidget::hovered_widget->ConvertFromRoot(x, y);
-      TBWidgetEvent ev(EVENT_TYPE_CONTEXT_MENU, x, y, false, modifier);
+      TBWidgetEvent ev(EventType::kContextMenu, x, y, false, modifier);
       TBWidget::hovered_widget->InvokeEvent(ev);
     }
   }

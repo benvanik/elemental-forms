@@ -34,10 +34,10 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     DataListener dl;
     dt.AddListener(&dl);
 
-    dt.SetValue("mainbar>size", TBValue("10mm", TBValue::SET_AS_STATIC));
+    dt.SetValue("mainbar>size", TBValue("10mm", TBValue::Set::kAsStatic));
     TB_VERIFY_STR(dl.changed_request, "mainbar>size");
 
-    dt.SetValue("mainbar>axis", TBValue("x", TBValue::SET_AS_STATIC));
+    dt.SetValue("mainbar>axis", TBValue("x", TBValue::Set::kAsStatic));
     TB_VERIFY_STR(dl.changed_request, "mainbar>axis");
 
     dt.SetValue("mainbar>visible", TBValue(42));
@@ -98,11 +98,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Reference in a circular loop. Should not freeze.
     TB_VERIFY(TBNodeRefTree::GetValueFromTree("@test_bar>bar_circular2")
-                  .GetType() == TBValue::TYPE_NULL);
+                  .GetType() == TBValue::Type::kNull);
 
     // References tree is wrong
     TB_VERIFY(TBNodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
-                  .GetType() == TBValue::TYPE_NULL);
+                  .GetType() == TBValue::Type::kNull);
 
     // Reference that is broken (has no matching node).
     TBWidget* button_broken1 = root.GetWidgetByID(TBIDC("button_broken_node"));
@@ -164,9 +164,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     // Inflate & check
     g_widgets_reader->LoadData(&root1, layout_str);
     TBLayout* layout1 = root1.GetWidgetByIDAndType<TBLayout>(TBIDC("layout"));
-    TB_VERIFY(layout1->GetAxis() == AXIS_X);
+    TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
-    TB_VERIFY(layout1->GetGravity() == WIDGET_GRAVITY_ALL);
+    TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
 
     // Change data for condition
     dt.SetValue("layout>landscape", TBValue(0));
@@ -174,9 +174,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     // Inflate & check
     g_widgets_reader->LoadData(&root2, layout_str);
     TBLayout* layout2 = root2.GetWidgetByIDAndType<TBLayout>(TBIDC("layout"));
-    TB_VERIFY(layout2->GetAxis() == AXIS_Y);
+    TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);
-    TB_VERIFY(layout2->GetGravity() == WIDGET_GRAVITY_ALL);
+    TB_VERIFY(layout2->GetGravity() == Gravity::kAll);
   }
 
   TBNode* GetChildNodeFromIndex(TBNode * parent, int index) {

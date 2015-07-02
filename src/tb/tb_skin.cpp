@@ -20,83 +20,20 @@
 
 namespace tb {
 
-/*TB_TEXT_ALIGN StringToTextAlign(const char *align_str)
-{
-        TB_TEXT_ALIGN align = TB_TEXT_ALIGN_CENTER;
-        if (strstr(state_str, "left"))		align = TB_TEXT_ALIGN_LEFT;
-        if (strstr(state_str, "center"))	align = TB_TEXT_ALIGN_CENTER;
-        if (strstr(state_str, "right"))		align = TB_TEXT_ALIGN_RIGHT;
-        return state;
-}*/
-
-SKIN_STATE StringToState(const char* state_str) {
-  SKIN_STATE state = SKIN_STATE_NONE;
-  if (strstr(state_str, "all")) state |= SKIN_STATE_ALL;
-  if (strstr(state_str, "disabled")) state |= SKIN_STATE_DISABLED;
-  if (strstr(state_str, "focused")) state |= SKIN_STATE_FOCUSED;
-  if (strstr(state_str, "pressed")) state |= SKIN_STATE_PRESSED;
-  if (strstr(state_str, "selected")) state |= SKIN_STATE_SELECTED;
-  if (strstr(state_str, "hovered")) state |= SKIN_STATE_HOVERED;
+SkinState StringToState(const char* state_str) {
+  SkinState state = SkinState::kNone;
+  if (strstr(state_str, "all")) state |= SkinState::kAll;
+  if (strstr(state_str, "disabled")) state |= SkinState::kDisabled;
+  if (strstr(state_str, "focused")) state |= SkinState::kFocused;
+  if (strstr(state_str, "pressed")) state |= SkinState::kPressed;
+  if (strstr(state_str, "selected")) state |= SkinState::kSelected;
+  if (strstr(state_str, "hovered")) state |= SkinState::kHovered;
   return state;
 }
 
-SKIN_ELEMENT_TYPE StringToType(const char* type_str) {
-  if (strcmp(type_str, "StretchBox") == 0)
-    return SKIN_ELEMENT_TYPE_STRETCH_BOX;
-  else if (strcmp(type_str, "Image") == 0)
-    return SKIN_ELEMENT_TYPE_IMAGE;
-  else if (strcmp(type_str, "Stretch Image") == 0)
-    return SKIN_ELEMENT_TYPE_STRETCH_IMAGE;
-  else if (strcmp(type_str, "Tile") == 0)
-    return SKIN_ELEMENT_TYPE_TILE;
-  else if (strcmp(type_str, "StretchBorder") == 0)
-    return SKIN_ELEMENT_TYPE_STRETCH_BORDER;
-  TBDebugOut("Skin error: Unknown skin type!\n");
-  return SKIN_ELEMENT_TYPE_STRETCH_BOX;
-}
-
-TBSkinCondition::TARGET StringToTarget(const char* target_str) {
-  if (strcmp(target_str, "this") == 0)
-    return TBSkinCondition::TARGET_THIS;
-  else if (strcmp(target_str, "parent") == 0)
-    return TBSkinCondition::TARGET_PARENT;
-  else if (strcmp(target_str, "ancestors") == 0)
-    return TBSkinCondition::TARGET_ANCESTORS;
-  else if (strcmp(target_str, "prev sibling") == 0)
-    return TBSkinCondition::TARGET_PREV_SIBLING;
-  else if (strcmp(target_str, "next sibling") == 0)
-    return TBSkinCondition::TARGET_NEXT_SIBLING;
-  TBDebugOut("Skin error: Unknown target in condition!\n");
-  return TBSkinCondition::TARGET_THIS;
-}
-
-TBSkinCondition::PROPERTY StringToProperty(const char* prop_str) {
-  if (strcmp(prop_str, "skin") == 0)
-    return TBSkinCondition::PROPERTY_SKIN;
-  else if (strcmp(prop_str, "window active") == 0)
-    return TBSkinCondition::PROPERTY_WINDOW_ACTIVE;
-  else if (strcmp(prop_str, "axis") == 0)
-    return TBSkinCondition::PROPERTY_AXIS;
-  else if (strcmp(prop_str, "align") == 0)
-    return TBSkinCondition::PROPERTY_ALIGN;
-  else if (strcmp(prop_str, "id") == 0)
-    return TBSkinCondition::PROPERTY_ID;
-  else if (strcmp(prop_str, "state") == 0)
-    return TBSkinCondition::PROPERTY_STATE;
-  else if (strcmp(prop_str, "value") == 0)
-    return TBSkinCondition::PROPERTY_VALUE;
-  else if (strcmp(prop_str, "hover") == 0)
-    return TBSkinCondition::PROPERTY_HOVER;
-  else if (strcmp(prop_str, "capture") == 0)
-    return TBSkinCondition::PROPERTY_CAPTURE;
-  else if (strcmp(prop_str, "focus") == 0)
-    return TBSkinCondition::PROPERTY_FOCUS;
-  return TBSkinCondition::PROPERTY_CUSTOM;
-}
-
-TBSkinCondition::TBSkinCondition(TARGET target, PROPERTY prop,
+TBSkinCondition::TBSkinCondition(SkinTarget target, SkinProperty prop,
                                  const TBID& custom_prop, const TBID& value,
-                                 TEST test)
+                                 Test test)
     : m_target(target), m_test(test) {
   m_info.prop = prop;
   m_info.custom_prop = custom_prop;
@@ -105,7 +42,7 @@ TBSkinCondition::TBSkinCondition(TARGET target, PROPERTY prop,
 
 bool TBSkinCondition::GetCondition(TBSkinConditionContext& context) const {
   bool equal = context.GetCondition(m_target, m_info);
-  return equal == (m_test == TEST_EQUAL);
+  return equal == (m_test == Test::kEqual);
 }
 
 TBSkin::TBSkin()
@@ -239,7 +176,7 @@ bool TBSkin::ReloadBitmapsInternal() {
 
       // FIX: dedicated_map is not needed for all backends (only deprecated
       // fixed function GL)
-      bool dedicated_map = element->type == SKIN_ELEMENT_TYPE_TILE;
+      bool dedicated_map = element->type == SkinElementType::kTile;
 
       // Try to load bitmap fragment in the destination DPI (F.ex "foo.png"
       // becomes "foo@192.png")
@@ -272,7 +209,7 @@ TBSkinElement* TBSkin::GetSkinElement(const TBID& skin_id) const {
 }
 
 TBSkinElement* TBSkin::GetSkinElementStrongOverride(
-    const TBID& skin_id, SKIN_STATE state,
+    const TBID& skin_id, SkinState state,
     TBSkinConditionContext& context) const {
   if (TBSkinElement* skin_element = GetSkinElement(skin_id)) {
     // Avoid eternal recursion when overrides refer to elements referring back.
@@ -299,13 +236,13 @@ TBSkinElement* TBSkin::GetSkinElementStrongOverride(
 }
 
 TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, const TBID& skin_id,
-                                 SKIN_STATE state,
+                                 SkinState state,
                                  TBSkinConditionContext& context) {
   return PaintSkin(dst_rect, GetSkinElement(skin_id), state, context);
 }
 
 TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, TBSkinElement* element,
-                                 SKIN_STATE state,
+                                 SkinState state,
                                  TBSkinConditionContext& context) {
   if (!element || element->is_painting) return nullptr;
 
@@ -361,7 +298,7 @@ TBSkinElement* TBSkin::PaintSkin(const TBRect& dst_rect, TBSkinElement* element,
 }
 
 void TBSkin::PaintSkinOverlay(const TBRect& dst_rect, TBSkinElement* element,
-                              SKIN_STATE state,
+                              SkinState state,
                               TBSkinConditionContext& context) {
   if (!element || element->is_painting) return;
 
@@ -385,14 +322,13 @@ void TBSkin::PaintSkinOverlay(const TBRect& dst_rect, TBSkinElement* element,
 void TBSkin::PaintElement(const TBRect& dst_rect, TBSkinElement* element) {
   PaintElementBGColor(dst_rect, element);
   if (!element->bitmap) return;
-  if (element->type == SKIN_ELEMENT_TYPE_IMAGE)
+  if (element->type == SkinElementType::kImage)
     PaintElementImage(dst_rect, element);
-  else if (element->type == SKIN_ELEMENT_TYPE_TILE)
+  else if (element->type == SkinElementType::kTile)
     PaintElementTile(dst_rect, element);
-  else if (element->type == SKIN_ELEMENT_TYPE_STRETCH_IMAGE ||
-           element->cut == 0)
+  else if (element->type == SkinElementType::kStretchImage || element->cut == 0)
     PaintElementStretchImage(dst_rect, element);
-  else if (element->type == SKIN_ELEMENT_TYPE_STRETCH_BORDER)
+  else if (element->type == SkinElementType::kStretchBorder)
     PaintElementStretchBox(dst_rect, element, false);
   else
     PaintElementStretchBox(dst_rect, element, true);
@@ -537,22 +473,22 @@ TBSkinElement::TBSkinElement()
     : bitmap(nullptr),
       cut(0),
       expand(0),
-      type(SKIN_ELEMENT_TYPE_STRETCH_BOX),
+      type(SkinElementType::kStretchBox),
       is_painting(false),
       is_getting(false),
       padding_left(0),
       padding_top(0),
       padding_right(0),
       padding_bottom(0),
-      width(SKIN_VALUE_NOT_SPECIFIED),
-      height(SKIN_VALUE_NOT_SPECIFIED),
-      pref_width(SKIN_VALUE_NOT_SPECIFIED),
-      pref_height(SKIN_VALUE_NOT_SPECIFIED),
-      min_width(SKIN_VALUE_NOT_SPECIFIED),
-      min_height(SKIN_VALUE_NOT_SPECIFIED),
-      max_width(SKIN_VALUE_NOT_SPECIFIED),
-      max_height(SKIN_VALUE_NOT_SPECIFIED),
-      spacing(SKIN_VALUE_NOT_SPECIFIED),
+      width(kSkinValueNotSpecified),
+      height(kSkinValueNotSpecified),
+      pref_width(kSkinValueNotSpecified),
+      pref_height(kSkinValueNotSpecified),
+      min_width(kSkinValueNotSpecified),
+      min_height(kSkinValueNotSpecified),
+      max_width(kSkinValueNotSpecified),
+      max_height(kSkinValueNotSpecified),
+      spacing(kSkinValueNotSpecified),
       content_ofs_x(0),
       content_ofs_y(0),
       img_ofs_x(0),
@@ -583,17 +519,17 @@ int TBSkinElement::GetIntrinsicMinHeight() const {
 }
 
 int TBSkinElement::GetIntrinsicWidth() const {
-  if (width != SKIN_VALUE_NOT_SPECIFIED) return width;
+  if (width != kSkinValueNotSpecified) return width;
   if (bitmap) return bitmap->Width() - expand * 2;
   // FIX: We may want to check child elements etc.
-  return SKIN_VALUE_NOT_SPECIFIED;
+  return kSkinValueNotSpecified;
 }
 
 int TBSkinElement::GetIntrinsicHeight() const {
-  if (height != SKIN_VALUE_NOT_SPECIFIED) return height;
+  if (height != kSkinValueNotSpecified) return height;
   if (bitmap) return bitmap->Height() - expand * 2;
   // FIX: We may want to check child elements etc.
-  return SKIN_VALUE_NOT_SPECIFIED;
+  return kSkinValueNotSpecified;
 }
 
 void TBSkinElement::SetBitmapDPI(const TBDimensionConverter& dim_conv,
@@ -621,17 +557,15 @@ void TBSkinElement::SetBitmapDPI(const TBDimensionConverter& dim_conv,
   this->bitmap_dpi = bitmap_dpi;
 }
 
-bool TBSkinElement::HasState(SKIN_STATE state,
-                             TBSkinConditionContext& context) {
+bool TBSkinElement::HasState(SkinState state, TBSkinConditionContext& context) {
   return m_override_elements.GetStateElement(
              state, context,
-             TBSkinElementState::MATCH_RULE_ONLY_SPECIFIC_STATE) ||
+             TBSkinElementState::MatchRule::kOnlySpecificState) ||
          m_child_elements.GetStateElement(
              state, context,
-             TBSkinElementState::MATCH_RULE_ONLY_SPECIFIC_STATE) ||
+             TBSkinElementState::MatchRule::kOnlySpecificState) ||
          m_overlay_elements.GetStateElement(
-             state, context,
-             TBSkinElementState::MATCH_RULE_ONLY_SPECIFIC_STATE);
+             state, context, TBSkinElementState::MatchRule::kOnlySpecificState);
 }
 
 void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
@@ -696,7 +630,7 @@ void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
     bg_color.SetFromString(color, strlen(color));
 
   if (const char* type_str = n->GetValueString("type", nullptr))
-    type = StringToType(type_str);
+    type = from_string(type_str, type);
 
   // Create all state elements
   m_override_elements.Load(n->GetNode("overrides"));
@@ -705,26 +639,27 @@ void TBSkinElement::Load(TBNode* n, TBSkin* skin, const char* skin_path) {
   m_overlay_elements.Load(n->GetNode("overlays"));
 }
 
-bool TBSkinElementState::IsMatch(SKIN_STATE state,
+bool TBSkinElementState::IsMatch(SkinState state,
                                  TBSkinConditionContext& context,
-                                 MATCH_RULE rule) const {
-  if (rule == MATCH_RULE_ONLY_SPECIFIC_STATE && this->state == SKIN_STATE_ALL)
+                                 MatchRule rule) const {
+  if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll)
     return false;
-  if ((state & this->state) || this->state == SKIN_STATE_ALL) {
+  if (any(state & this->state) || this->state == SkinState::kAll) {
     for (TBSkinCondition* condition = conditions.GetFirst(); condition;
-         condition = condition->GetNext())
+         condition = condition->GetNext()) {
       if (!condition->GetCondition(context)) return false;
+    }
     return true;
   }
   return false;
 }
 
-bool TBSkinElementState::IsExactMatch(SKIN_STATE state,
+bool TBSkinElementState::IsExactMatch(SkinState state,
                                       TBSkinConditionContext& context,
-                                      MATCH_RULE rule) const {
-  if (rule == MATCH_RULE_ONLY_SPECIFIC_STATE && this->state == SKIN_STATE_ALL)
+                                      MatchRule rule) const {
+  if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll)
     return false;
-  if (state == this->state || this->state == SKIN_STATE_ALL) {
+  if (state == this->state || this->state == SkinState::kAll) {
     for (TBSkinCondition* condition = conditions.GetFirst(); condition;
          condition = condition->GetNext())
       if (!condition->GetCondition(context)) return false;
@@ -741,8 +676,8 @@ TBSkinElementStateList::~TBSkinElementStateList() {
 }
 
 TBSkinElementState* TBSkinElementStateList::GetStateElement(
-    SKIN_STATE state, TBSkinConditionContext& context,
-    TBSkinElementState::MATCH_RULE rule) const {
+    SkinState state, TBSkinConditionContext& context,
+    TBSkinElementState::MatchRule rule) const {
   // First try to get a state element with a exact match to the current state
   if (TBSkinElementState* element_state =
           GetStateElementExactMatch(state, context, rule))
@@ -757,8 +692,8 @@ TBSkinElementState* TBSkinElementStateList::GetStateElement(
 }
 
 TBSkinElementState* TBSkinElementStateList::GetStateElementExactMatch(
-    SKIN_STATE state, TBSkinConditionContext& context,
-    TBSkinElementState::MATCH_RULE rule) const {
+    SkinState state, TBSkinConditionContext& context,
+    TBSkinElementState::MatchRule rule) const {
   TBSkinElementState* state_element = m_state_elements.GetFirst();
   while (state_element) {
     if (state_element->IsExactMatch(state, context, rule)) return state_element;
@@ -777,41 +712,45 @@ void TBSkinElementStateList::Load(TBNode* n) {
     if (!state) return;
 
     // By default, a state element applies to all combinations of states
-    state->state = SKIN_STATE_ALL;
+    state->state = SkinState::kAll;
     state->element_id.Set(element_node->GetValue().GetString());
 
     // Loop through all nodes, read state and create all found conditions.
     for (TBNode* condition_node = element_node->GetFirstChild(); condition_node;
          condition_node = condition_node->GetNext()) {
-      if (strcmp(condition_node->GetName(), "state") == 0)
+      if (strcmp(condition_node->GetName(), "state") == 0) {
         state->state = StringToState(condition_node->GetValue().GetString());
-      else if (strcmp(condition_node->GetName(), "condition") == 0) {
-        TBSkinCondition::TARGET target =
-            StringToTarget(condition_node->GetValueString("target", ""));
+      } else if (strcmp(condition_node->GetName(), "condition") == 0) {
+        auto target = from_string(condition_node->GetValueString("target", ""),
+                                  SkinTarget::kThis);
 
         const char* prop_str = condition_node->GetValueString("property", "");
-        TBSkinCondition::PROPERTY prop = StringToProperty(prop_str);
+        auto prop = from_string(prop_str, SkinProperty::kCustom);
         TBID custom_prop;
-        if (prop == TBSkinCondition::PROPERTY_CUSTOM) custom_prop.Set(prop_str);
+        if (prop == SkinProperty::kCustom) {
+          custom_prop.Set(prop_str);
+        }
 
         TBID value;
         if (TBNode* value_n = condition_node->GetNode("value")) {
           // Set the it to number or string. If it's a state, we must first
           // convert the
-          // state string to the SKIN_STATE state combo.
-          if (prop == TBSkinCondition::PROPERTY_STATE)
-            value.Set(StringToState(value_n->GetValue().GetString()));
-          else if (value_n->GetValue().IsString())
+          // state string to the SkinState state combo.
+          if (prop == SkinProperty::kState) {
+            value.Set(uint32_t(StringToState(value_n->GetValue().GetString())));
+          } else if (value_n->GetValue().IsString()) {
             value.Set(value_n->GetValue().GetString());
-          else
+          } else {
             value.Set(value_n->GetValue().GetInt());
+          }
         }
 
-        TBSkinCondition::TEST test = TBSkinCondition::TEST_EQUAL;
+        auto test = TBSkinCondition::Test::kEqual;
         if (const char* test_str =
                 condition_node->GetValueString("test", nullptr)) {
-          if (strcmp(test_str, "!=") == 0)
-            test = TBSkinCondition::TEST_NOT_EQUAL;
+          if (strcmp(test_str, "!=") == 0) {
+            test = TBSkinCondition::Test::kNotEqual;
+          }
         }
 
         if (TBSkinCondition* condition =

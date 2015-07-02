@@ -32,8 +32,8 @@ class TBInlineSelect : public TBWidget {
   ~TBInlineSelect();
 
   /** Set along which axis the content should layouted. */
-  virtual void SetAxis(AXIS axis) { m_layout.SetAxis(axis); }
-  virtual AXIS GetAxis() const { return m_layout.GetAxis(); }
+  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
+  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
 
   void SetLimits(int min, int max);
   int GetMinValue() const { return m_min; }

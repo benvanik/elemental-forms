@@ -42,7 +42,7 @@ void TBDimensionConverter::GetDstDPIFilename(const std::string& filename,
 }
 
 int TBDimensionConverter::DpToPx(int dp) const {
-  if (dp <= TB_INVALID_DIMENSION || dp == 0 || !NeedConversion()) return dp;
+  if (dp <= kInvalidDimension || dp == 0 || !NeedConversion()) return dp;
   if (dp > 0) {
     dp = dp * m_dst_dpi / m_src_dpi;
     return std::max(dp, 1);
@@ -53,7 +53,7 @@ int TBDimensionConverter::DpToPx(int dp) const {
 }
 
 int TBDimensionConverter::MmToPx(int mm) const {
-  if (mm <= TB_INVALID_DIMENSION || mm == 0) return mm;
+  if (mm <= kInvalidDimension || mm == 0) return mm;
 
   return (int)(mm * TBSystem::GetDPI() / 25.4f + 0.5f);
 }
@@ -75,9 +75,9 @@ int TBDimensionConverter::GetPxFromString(const char* str,
 
 int TBDimensionConverter::GetPxFromValue(TBValue* value, int def_value) const {
   if (!value) return def_value;
-  if (value->GetType() == TBValue::TYPE_INT)
+  if (value->GetType() == TBValue::Type::kInt)
     return DpToPx(value->GetInt());
-  else if (value->GetType() == TBValue::TYPE_FLOAT)
+  else if (value->GetType() == TBValue::Type::kFloat)
     // FIX: We might want float versions of all dimension functions.
     return DpToPx((int)value->GetFloat());
   return GetPxFromString(value->GetString(), def_value);

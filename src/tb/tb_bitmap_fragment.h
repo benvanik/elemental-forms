@@ -91,16 +91,14 @@ class TBFragmentSpaceAllocator : public TBSpaceAllocator {
   int y, height;
 };
 
-/** Specify when the bitmap should be validated when calling
- * TBBitmapFragmentMap::GetBitmap. */
-enum TB_VALIDATE_TYPE {
-
-  /** Always validate the bitmap (The bitmap is updated if needed) */
-  TB_VALIDATE_ALWAYS,
-
-  /** Only validate if the bitmap does not yet exist (Make sure there is
-          a valid bitmap pointer, but the data is not necessarily updated) */
-  TB_VALIDATE_FIRST_TIME
+// Specify when the bitmap should be validated when calling
+// TBBitmapFragmentMap::GetBitmap.
+enum class Validate {
+  // Always validate the bitmap (the bitmap is updated if needed).
+  kAlways,
+  // Only validate if the bitmap does not yet exist (make sure there is a valid
+  // bitmap pointer, but the data is not necessarily updated).
+  kFirstTime,
 };
 
 /** TBBitmapFragmentMap is used to pack multiple bitmaps into a single TBBitmap.
@@ -129,8 +127,8 @@ class TBBitmapFragmentMap {
 
   /** Return the bitmap for this map.
           By default, the bitmap is validated if needed before returning (See
-     TB_VALIDATE_TYPE) */
-  TBBitmap* GetBitmap(TB_VALIDATE_TYPE validate_type = TB_VALIDATE_ALWAYS);
+     Validate) */
+  TBBitmap* GetBitmap(Validate validate_type = Validate::kAlways);
 
  private:
   friend class TBBitmapFragmentManager;
@@ -159,8 +157,8 @@ class TBBitmapFragment {
 
   /** Return the bitmap for this fragment.
           By default, the bitmap is validated if needed before returning (See
-     TB_VALIDATE_TYPE) */
-  TBBitmap* GetBitmap(TB_VALIDATE_TYPE validate_type = TB_VALIDATE_ALWAYS) {
+     Validate) */
+  TBBitmap* GetBitmap(Validate validate_type = Validate::kAlways) {
     return m_map->GetBitmap(validate_type);
   }
 

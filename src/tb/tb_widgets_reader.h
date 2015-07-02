@@ -24,7 +24,7 @@ class TBNode;
  * loading. */
 struct INFLATE_INFO {
   INFLATE_INFO(TBWidgetsReader* reader, TBWidget* target, TBNode* node,
-               TBValue::TYPE sync_type)
+               TBValue::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
   TBWidgetsReader* reader;
 
@@ -33,13 +33,13 @@ struct INFLATE_INFO {
   /** The node containing properties. */
   TBNode* node;
   /** The data type that should be synchronized through TBWidgetValue. */
-  TBValue::TYPE sync_type;
+  TBValue::Type sync_type;
 };
 
 /** TBWidgetFactory creates a widget from a TBNode. */
 class TBWidgetFactory : public TBLinkOf<TBWidgetFactory> {
  public:
-  TBWidgetFactory(const char* name, TBValue::TYPE sync_type);
+  TBWidgetFactory(const char* name, TBValue::Type sync_type);
 
   /** Create and return the new widget or nullptr on out of memory. */
   virtual TBWidget* Create(INFLATE_INFO* info) = 0;
@@ -48,7 +48,7 @@ class TBWidgetFactory : public TBLinkOf<TBWidgetFactory> {
 
  public:
   const char* name;
-  TBValue::TYPE sync_type;
+  TBValue::Type sync_type;
   TBWidgetFactory* next_registered_wf;
 };
 
@@ -67,7 +67,7 @@ class TBWidgetFactory : public TBLinkOf<TBWidgetFactory> {
 
         Example:
 
-        TB_WIDGET_FACTORY(MyWidget, TBValue::TYPE_INT, WIDGET_Z_TOP) {}
+        TB_WIDGET_FACTORY(MyWidget, TBValue::Type::kInt, WidgetZ::kTop) {}
         */
 #define TB_WIDGET_FACTORY(classname, sync_type, add_child_z)              \
   class classname##WidgetFactory : public TBWidgetFactory {               \

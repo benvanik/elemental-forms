@@ -111,12 +111,12 @@ void DemoWindow::LoadResource(TBNode& node) {
 }
 
 bool DemoWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_KEY_DOWN && ev.special_key == TB_KEY_ESC) {
+  if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     // We could call Die() to fade away and die, but click the close button
     // instead.
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
-    TBWidgetEvent click_ev(EVENT_TYPE_CLICK);
+    TBWidgetEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -136,9 +136,9 @@ class EditWindow : public DemoWindow {
     if (TBEditField* edit =
             GetWidgetByIDAndType<TBEditField>(TBIDC("editfield"))) {
       if (TBWidget* undo = GetWidgetByID("undo"))
-        undo->SetState(WIDGET_STATE_DISABLED, !edit->GetStyleEdit()->CanUndo());
+        undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
       if (TBWidget* redo = GetWidgetByID("redo"))
-        redo->SetState(WIDGET_STATE_DISABLED, !edit->GetStyleEdit()->CanRedo());
+        redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
       if (TBTextField* info =
               GetWidgetByIDAndType<TBTextField>(TBIDC("info"))) {
         info->SetText(tb::format_string(
@@ -147,7 +147,7 @@ class EditWindow : public DemoWindow {
     }
   }
   virtual bool OnEvent(const TBWidgetEvent& ev) {
-    if (ev.type == EVENT_TYPE_CLICK) {
+    if (ev.type == EventType::kClick) {
       TBEditField* edit = GetWidgetByIDAndType<TBEditField>(TBIDC("editfield"));
       if (!edit) return false;
 
@@ -223,11 +223,11 @@ class EditWindow : public DemoWindow {
         } else if (ev.ref_id == TBIDC("toggle wrapping"))
           edit->SetWrapping(!edit->GetWrapping());
         else if (ev.ref_id == TBIDC("align left"))
-          edit->SetTextAlign(TB_TEXT_ALIGN_LEFT);
+          edit->SetTextAlign(TextAlign::kLeft);
         else if (ev.ref_id == TBIDC("align center"))
-          edit->SetTextAlign(TB_TEXT_ALIGN_CENTER);
+          edit->SetTextAlign(TextAlign::kCenter);
         else if (ev.ref_id == TBIDC("align right"))
-          edit->SetTextAlign(TB_TEXT_ALIGN_RIGHT);
+          edit->SetTextAlign(TextAlign::kRight);
         return true;
       }
     }
@@ -242,27 +242,27 @@ LayoutWindow::LayoutWindow(const std::string& filename) {
 }
 
 bool LayoutWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CHANGED &&
+  if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("select position")) {
-    LAYOUT_POSITION pos = LAYOUT_POSITION_CENTER;
+    LayoutPosition pos = LayoutPosition::kCenter;
     if (TBSelectDropdown* select =
             GetWidgetByIDAndType<TBSelectDropdown>(TBIDC("select position")))
-      pos = static_cast<LAYOUT_POSITION>(select->GetValue());
+      pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
       if (TBLayout* layout = GetWidgetByIDAndType<TBLayout>(i + 1))
         layout->SetLayoutPosition(pos);
     return true;
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("toggle axis")) {
-    static AXIS axis = AXIS_Y;
+    static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
       if (TBLayout* layout = GetWidgetByIDAndType<TBLayout>(i + 1))
         layout->SetAxis(axis);
-    axis = axis == AXIS_X ? AXIS_Y : AXIS_X;
+    axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TBLayout* layout =
             GetWidgetByIDAndType<TBLayout>(TBIDC("switch_layout")))
       layout->SetAxis(axis);
-    ResizeToFitContent(RESIZE_FIT_CURRENT_OR_NEEDED);
+    ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;
   }
   return DemoWindow::OnEvent(ev);
@@ -276,15 +276,16 @@ TabContainerWindow::TabContainerWindow() {
 }
 
 bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && ev.target->GetID() == TBIDC("set_align")) {
+  if (ev.type == EventType::kClick &&
+      ev.target->GetID() == TBIDC("set_align")) {
     if (TBTabContainer* tc =
             GetWidgetByIDAndType<TBTabContainer>(TBIDC("tabcontainer")))
-      tc->SetAlignment(static_cast<TB_ALIGN>(ev.target->data.GetInt()));
-    ResizeToFitContent(RESIZE_FIT_CURRENT_OR_NEEDED);
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+      tc->SetAlignment(static_cast<Align>(ev.target->data.GetInt()));
+    ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("toggle_tab_axis")) {
-    static AXIS axis = AXIS_X;
-    axis = axis == AXIS_X ? AXIS_Y : AXIS_X;
+    static Axis axis = Axis::kX;
+    axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TBTabContainer* tc =
             GetWidgetByIDAndType<TBTabContainer>(TBIDC("tabcontainer"))) {
       for (TBWidget* child = tc->GetTabLayout()->GetFirstChild(); child;
@@ -293,13 +294,13 @@ bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
           button->SetAxis(axis);
       }
     }
-    ResizeToFitContent(RESIZE_FIT_CURRENT_OR_NEEDED);
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+    ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("start_spinner")) {
     if (TBProgressSpinner* spinner =
             GetWidgetByIDAndType<TBProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(1);
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("stop_spinner")) {
     if (TBProgressSpinner* spinner =
             GetWidgetByIDAndType<TBProgressSpinner>(TBIDC("spinner")))
@@ -315,11 +316,11 @@ ConnectionWindow::ConnectionWindow() {
 }
 
 bool ConnectionWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK &&
+  if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("reset-master-volume")) {
     if (TBWidgetValue* val = g_value_group.GetValue(TBIDC("master-volume")))
       val->SetInt(50);
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("reset-user-name")) {
     if (TBWidgetValue* val = g_value_group.GetValue(TBIDC("user-name")))
       val->SetText("");
@@ -342,12 +343,12 @@ ScrollContainerWindow::ScrollContainerWindow() {
 }
 
 bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK) {
+  if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
       TBButton* button = TBSafeCast<TBButton>(ev.target);
       TBSkinImage* skin_image = new TBSkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
-      button->GetContentRoot()->AddChild(skin_image, WIDGET_Z_BOTTOM);
+      button->GetContentRoot()->AddChild(skin_image, WidgetZ::kBottom);
       return true;
     } else if (ev.target->GetID() == TBIDC("new buttons")) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
@@ -403,7 +404,7 @@ ImageWindow::ImageWindow() {
 }
 
 bool ImageWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && ev.target->GetID() == TBIDC("remove")) {
+  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("remove")) {
     TBWidget* image = ev.target->GetParent();
     image->GetParent()->RemoveChild(image);
     delete image;
@@ -444,12 +445,12 @@ void AnimationsWindow::Animate() {
   // Abort any still unfinished animations.
   TBWidgetsAnimationManager::AbortAnimations(this);
 
-  ANIMATION_CURVE curve = ANIMATION_CURVE_SLOW_DOWN;
+  AnimationCurve curve = AnimationCurve::kSlowDown;
   double duration = 500;
   bool fade = true;
 
   if (TBSelectList* curve_select = GetWidgetByIDAndType<TBSelectList>("curve"))
-    curve = static_cast<ANIMATION_CURVE>(curve_select->GetValue());
+    curve = static_cast<AnimationCurve>(curve_select->GetValue());
   if (TBInlineSelect* duration_select =
           GetWidgetByIDAndType<TBInlineSelect>("duration"))
     duration = duration_select->GetValueDouble();
@@ -464,13 +465,13 @@ void AnimationsWindow::Animate() {
   if (fade) {
     if (TBAnimationObject* anim = new TBWidgetAnimationOpacity(
             this, TB_ALMOST_ZERO_OPACITY, 1, false))
-      TBAnimationManager::StartAnimation(anim, ANIMATION_CURVE_SLOW_DOWN,
+      TBAnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown,
                                          duration);
   }
 }
 
 bool AnimationsWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && ev.target->GetID() == TBIDC("Animate!"))
+  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("Animate!"))
     Animate();
   return DemoWindow::OnEvent(ev);
 }
@@ -501,7 +502,7 @@ void MainWindow::OnMessageReceived(TBMessage* msg) {
 }
 
 bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK) {
+  if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("new")) {
       new MainWindow();
       return true;
@@ -538,7 +539,8 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       // to TBWindow (prevent the window from closing)
       TBMessageWindow* msg_win =
           new TBMessageWindow(this, TBIDC("confirm_close_dialog"));
-      TBMessageWindowSettings settings(TB_MSG_YES_NO, TBIDC("Icon48"));
+      TBMessageWindowSettings settings(MessageWindowButtons::kYesNo,
+                                       TBIDC("Icon48"));
       settings.dimmer = true;
       settings.styling = true;
       msg_win->Show("Are you sure?",
@@ -604,7 +606,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       res_edit_win->Load("Demo/demo01/ui_resources/resource_edit_test.tb.txt");
       GetParent()->AddChild(res_edit_win);
       return true;
-    } else if (ev.type == EVENT_TYPE_CLICK &&
+    } else if (ev.type == EventType::kClick &&
                ev.target->GetID() == TBIDC("debug settings")) {
 #ifdef TB_RUNTIME_DEBUG_INFO
       ShowDebugInfoSettingsWindow(GetParentRoot());
@@ -694,8 +696,8 @@ bool DemoApplication::Init() {
   for (int i = 0; boy_names[i]; i++)
     name_source.AddItem(
         new TBGenericStringItem(boy_names[i++], TBIDC("boy_item")));
-  advanced_source.SetSort(TB_SORT_ASCENDING);
-  name_source.SetSort(TB_SORT_ASCENDING);
+  advanced_source.SetSort(Sort::kAscending);
+  name_source.SetSort(Sort::kAscending);
 
   // Prepare a source with submenus (with eternal recursion) so we can test sub
   // menu support.

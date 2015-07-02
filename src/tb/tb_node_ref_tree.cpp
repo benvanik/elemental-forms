@@ -34,7 +34,7 @@ TBValue& TBNodeRefTree::GetValue(const char* request) {
 TBValue& TBNodeRefTree::GetValueFromTree(const char* request) {
   assert(*request == '@');
   TBNode tmp;
-  tmp.GetValue().SetString(request, TBValue::SET_AS_STATIC);
+  tmp.GetValue().SetString(request, TBValue::Set::kAsStatic);
   TBNode* node = TBNodeRefTree::FollowNodeRef(&tmp);
   if (node != &tmp) return node->GetValue();
   static TBValue nullval;
@@ -42,7 +42,7 @@ TBValue& TBNodeRefTree::GetValueFromTree(const char* request) {
 }
 
 void TBNodeRefTree::SetValue(const char* request, const TBValue& value) {
-  if (TBNode* node = m_node.GetNode(request, TBNode::GET_MISS_POLICY_CREATE)) {
+  if (TBNode* node = m_node.GetNode(request, TBNode::MissingPolicy::kCreate)) {
     // FIX: Only invoke the listener if it really changed.
     node->GetValue().Copy(value);
     InvokeChangeListenersInternal(request);
@@ -96,14 +96,14 @@ TBNode* TBNodeRefTree::FollowNodeRef(TBNode* node) {
       TBNode* local_root = node;
       while (local_root->GetParent()) local_root = local_root->GetParent();
       next_node =
-          local_root->GetNode(name_start + 1, TBNode::GET_MISS_POLICY_NULL);
+          local_root->GetNode(name_start + 1, TBNode::MissingPolicy::kNull);
     }
     // We have a "@treename>noderequest" string. Go ahead and look it up from
     // the right node tree.
     else if (TBNodeRefTree* rt =
                  TBNodeRefTree::GetRefTree(name_start, name_end - name_start)) {
       next_node =
-          rt->m_node.GetNode(name_end + 1, TBNode::GET_MISS_POLICY_NULL);
+          rt->m_node.GetNode(name_end + 1, TBNode::MissingPolicy::kNull);
     } else {
       TBDebugPrint(
           "TBNodeRefTree::ResolveNode - No tree found for request \"%s\" from "

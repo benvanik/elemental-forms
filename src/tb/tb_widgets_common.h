@@ -16,15 +16,16 @@
 
 namespace tb {
 
-/** TB_TEXT_ALIGN specifies horizontal text alignment */
-enum TB_TEXT_ALIGN {
-  TB_TEXT_ALIGN_LEFT,   ///< Aligned left
-  TB_TEXT_ALIGN_RIGHT,  ///< Aligned right
-  TB_TEXT_ALIGN_CENTER  ///< Aligned center
+// TextAlign specifies horizontal text alignment.
+enum class TextAlign {
+  kLeft,
+  kRight,
+  kCenter,
 };
+MAKE_ORDERED_ENUM_STRING_UTILS(TextAlign, "left", "right", "center");
 
-/** TBWidgetString holds a string that can be painted as one line with the set
- * alignment. */
+// TBWidgetString holds a string that can be painted as one line with the set
+// alignment.
 class TBWidgetString {
  public:
   TBWidgetString();
@@ -41,12 +42,12 @@ class TBWidgetString {
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text. */
-  void SetTextAlign(TB_TEXT_ALIGN align) { m_text_align = align; }
-  TB_TEXT_ALIGN GetTextAlign() { return m_text_align; }
+  void SetTextAlign(TextAlign align) { m_text_align = align; }
+  TextAlign GetTextAlign() { return m_text_align; }
 
  public:
   std::string m_text;
-  TB_TEXT_ALIGN m_text_align;
+  TextAlign m_text_align;
 };
 
 /** TBTextField is a one line text field that is not editable. */
@@ -67,8 +68,8 @@ class TBTextField : public TBWidget {
 
   /** Set which alignment the text should have if the space
           given when painting is larger than the text. */
-  void SetTextAlign(TB_TEXT_ALIGN align) { m_text.SetTextAlign(align); }
-  TB_TEXT_ALIGN GetTextAlign() { return m_text.GetTextAlign(); }
+  void SetTextAlign(TextAlign align) { m_text.SetTextAlign(align); }
+  TextAlign GetTextAlign() { return m_text.GetTextAlign(); }
 
   /** Set if this text field should be allowed to squeeze below its
           preferred size. If squeezable it may shrink to width 0. */
@@ -102,8 +103,8 @@ class TBButton : public TBWidget, protected TBMessageHandler {
 
   /** Set along which axis the content should layouted (If the button has more
    * content than the text) */
-  virtual void SetAxis(AXIS axis) { m_layout.SetAxis(axis); }
-  virtual AXIS GetAxis() const { return m_layout.GetAxis(); }
+  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
+  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
 
   /** Set if the text field should be allowed to squeeze below its
           preferred size. If squeezable it may shrink to width 0. */
@@ -133,7 +134,7 @@ class TBButton : public TBWidget, protected TBMessageHandler {
   virtual void OnCaptureChanged(bool captured);
   virtual void OnSkinChanged();
   virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual WIDGET_HIT_STATUS GetHitStatus(int x, int y);
+  virtual HitStatus GetHitStatus(int x, int y);
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) {
     return m_layout.GetPreferredSize();
@@ -172,8 +173,8 @@ class TBClickLabel : public TBWidget {
 
   /** Set along which axis the content should layouted (If the label has more
    * content than the text) */
-  virtual void SetAxis(AXIS axis) { m_layout.SetAxis(axis); }
-  virtual AXIS GetAxis() const { return m_layout.GetAxis(); }
+  virtual void SetAxis(Axis axis) { m_layout.SetAxis(axis); }
+  virtual Axis GetAxis() const { return m_layout.GetAxis(); }
 
   /** Set the text of the label. */
   void SetText(const char* text) override { m_textfield.SetText(text); }
@@ -287,9 +288,7 @@ class TBCheckBox : public TBRadioCheckBox {
   // For safe typecasting
   TBOBJECT_SUBCLASS(TBCheckBox, TBRadioCheckBox);
 
-  TBCheckBox() {
-    SetSkinBg(TBIDC("TBCheckBox"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
-  }
+  TBCheckBox() { SetSkinBg(TBIDC("TBCheckBox"), InvokeInfo::kNoCallbacks); }
 };
 
 /** TBRadioButton is a button which unselects other radiobuttons of the same
@@ -302,7 +301,7 @@ class TBRadioButton : public TBRadioCheckBox {
   TBOBJECT_SUBCLASS(TBRadioButton, TBRadioCheckBox);
 
   TBRadioButton() {
-    SetSkinBg(TBIDC("TBRadioButton"), WIDGET_INVOKE_INFO_NO_CALLBACKS);
+    SetSkinBg(TBIDC("TBRadioButton"), InvokeInfo::kNoCallbacks);
   }
 };
 
@@ -317,8 +316,8 @@ class TBScrollBar : public TBWidget {
   ~TBScrollBar();
 
   /** Set along which axis the scrollbar should scroll */
-  virtual void SetAxis(AXIS axis);
-  virtual AXIS GetAxis() const { return m_axis; }
+  virtual void SetAxis(Axis axis);
+  virtual Axis GetAxis() const { return m_axis; }
 
   /** Set the min, max limits for the scrollbar.
           The visible parameter is how much of the range that is visible.
@@ -356,7 +355,7 @@ class TBScrollBar : public TBWidget {
 
  protected:
   TBWidget m_handle;
-  AXIS m_axis;
+  Axis m_axis;
   double m_value;
   double m_min, m_max, m_visible;
   double m_to_pixel_factor;
@@ -377,8 +376,8 @@ class TBSlider : public TBWidget {
   ~TBSlider();
 
   /** Set along which axis the scrollbar should scroll */
-  virtual void SetAxis(AXIS axis);
-  virtual AXIS GetAxis() const { return m_axis; }
+  virtual void SetAxis(Axis axis);
+  virtual Axis GetAxis() const { return m_axis; }
 
   /** Set the min, max limits for the slider. */
   void SetLimits(double min, double max);
@@ -403,7 +402,7 @@ class TBSlider : public TBWidget {
 
  protected:
   TBWidget m_handle;
-  AXIS m_axis;
+  Axis m_axis;
   double m_value;
   double m_min, m_max;
   double m_to_pixel_factor;
@@ -439,7 +438,7 @@ class TBResizer : public TBWidget {
   TBOBJECT_SUBCLASS(TBResizer, TBWidget);
 
   TBResizer();
-  virtual WIDGET_HIT_STATUS GetHitStatus(int x, int y);
+  virtual HitStatus GetHitStatus(int x, int y);
   virtual bool OnEvent(const TBWidgetEvent& ev);
 };
 

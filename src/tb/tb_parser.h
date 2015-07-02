@@ -44,9 +44,13 @@ class TBParserStream {
 
 class TBParser {
  public:
-  enum STATUS { STATUS_OK, STATUS_OUT_OF_MEMORY, STATUS_PARSE_ERROR };
+  enum class Status {
+    kOk,
+    kOutOfMemory,
+    kParseError,
+  };
   TBParser() {}
-  STATUS Read(TBParserStream* stream, TBParserTarget* target);
+  Status Read(TBParserStream* stream, TBParserTarget* target);
 
  private:
   int current_indent;

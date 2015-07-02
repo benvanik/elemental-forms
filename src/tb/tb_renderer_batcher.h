@@ -86,7 +86,7 @@ class TBRendererBatcher : public TBRenderer {
   virtual void FlushBitmap(TBBitmap* bitmap);
   virtual void FlushBitmapFragment(TBBitmapFragment* bitmap_fragment);
 
-  virtual void BeginBatchHint(TBRenderer::BATCH_HINT hint) {}
+  virtual void BeginBatchHint(TBRenderer::BatchHint hint) {}
   virtual void EndBatchHint() {}
 
   virtual TBBitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;

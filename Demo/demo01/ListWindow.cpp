@@ -8,8 +8,8 @@ AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
                                        int index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
   SetSkinBg(TBIDC("TBSelectItem"));
-  SetLayoutDistribution(LAYOUT_DISTRIBUTION_GRAVITY);
-  SetLayoutDistributionPosition(LAYOUT_DISTRIBUTION_POSITION_LEFT_TOP);
+  SetLayoutDistribution(LayoutDistribution::kGravity);
+  SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
   SetPaintOverflowFadeout(false);
 
   g_widgets_reader->LoadFile(GetContentRoot(),
@@ -23,13 +23,13 @@ AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
 }
 
 bool AdvancedItemWidget::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CLICK && ev.target->GetID() == TBIDC("check")) {
+  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
     AdvancedItem* item = m_source->GetItem(m_index);
     item->SetChecked(ev.target->GetValue() ? true : false);
 
     m_source->InvokeItemChanged(m_index, m_source_viewer);
     return true;
-  } else if (ev.type == EVENT_TYPE_CLICK &&
+  } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("delete")) {
     m_source->DeleteItem(m_index);
     return true;
@@ -62,12 +62,12 @@ ListWindow::ListWindow(TBSelectItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
   if (TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list")) {
     select->SetSource(source);
-    select->GetScrollContainer()->SetScrollMode(SCROLL_MODE_Y_AUTO);
+    select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoY);
   }
 }
 
 bool ListWindow::OnEvent(const TBWidgetEvent& ev) {
-  if (ev.type == EVENT_TYPE_CHANGED && ev.target->GetID() == TBIDC("filter")) {
+  if (ev.type == EventType::kChanged && ev.target->GetID() == TBIDC("filter")) {
     TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list");
     select->SetFilter(ev.target->GetText());
     return true;
@@ -83,17 +83,17 @@ AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
   LoadResourceFile("Demo/demo01/ui_resources/test_select_advanced.tb.txt");
   if (TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list")) {
     select->SetSource(source);
-    select->GetScrollContainer()->SetScrollMode(SCROLL_MODE_X_AUTO_Y_AUTO);
+    select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoXAutoY);
   }
 }
 
 bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
   TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list");
-  if (select && ev.type == EVENT_TYPE_CHANGED &&
+  if (select && ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("filter")) {
     select->SetFilter(ev.target->GetText());
     return true;
-  } else if (select && ev.type == EVENT_TYPE_CLICK &&
+  } else if (select && ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("add")) {
     std::string name = GetTextByID(TBIDC("add_name"));
     if (!name.empty()) {
@@ -101,7 +101,7 @@ bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
           new AdvancedItem(name.c_str(), TBIDC("boy_item"), true));
     }
     return true;
-  } else if (select && ev.type == EVENT_TYPE_CLICK &&
+  } else if (select && ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("delete all")) {
     m_source->DeleteAllItems();
     return true;

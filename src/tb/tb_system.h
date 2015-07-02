@@ -114,8 +114,10 @@ class TBClipboard {
 /** TBFile is a porting interface for file access. */
 class TBFile {
  public:
-  enum TBFileMode { MODE_READ };
-  static TBFile* Open(const std::string& filename, TBFileMode mode);
+  enum class Mode {
+    kRead,
+  };
+  static TBFile* Open(const std::string& filename, Mode mode);
 
   virtual ~TBFile() {}
   virtual size_t Size() = 0;

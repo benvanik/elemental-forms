@@ -16,10 +16,10 @@
 
 namespace tb {
 
-/** Dimensions <= this value will be untouched by conversion in
-   TBDimensionConverter.
-        To preserve special constants, those must be <= this value. */
-#define TB_INVALID_DIMENSION -5555
+// Dimensions <= this value will be untouched by conversion in
+// TBDimensionConverter.
+// To preserve special constants, those must be <= this value.
+constexpr int kInvalidDimension = -5555;
 
 class TBTempBuffer;
 class TBValue;

@@ -24,7 +24,7 @@ namespace tb {
 
 TBDebugInfo g_tb_debug;
 
-TBDebugInfo::TBDebugInfo() { memset(settings, 0, sizeof(int) * NUM_SETTINGS); }
+TBDebugInfo::TBDebugInfo() = default;
 
 /** Window showing runtime debug settings. */
 class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
@@ -44,13 +44,13 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
         "0\n"
         "		lp: pref-height: 100dp");
 
-    AddCheckbox(TBDebugInfo::LAYOUT_BOUNDS, "Layout bounds");
-    AddCheckbox(TBDebugInfo::LAYOUT_CLIPPING, "Layout clipping");
-    AddCheckbox(TBDebugInfo::LAYOUT_PS_DEBUGGING, "Layout size calculation");
-    AddCheckbox(TBDebugInfo::RENDER_BATCHES, "Render batches");
-    AddCheckbox(TBDebugInfo::RENDER_SKIN_BITMAP_FRAGMENTS,
+    AddCheckbox(TBDebugInfo::Setting::kLayoutBounds, "Layout bounds");
+    AddCheckbox(TBDebugInfo::Setting::kLayoutClipping, "Layout clipping");
+    AddCheckbox(TBDebugInfo::Setting::kLayoutSizing, "Layout size calculation");
+    AddCheckbox(TBDebugInfo::Setting::kDrawRenderBatches, "Render batches");
+    AddCheckbox(TBDebugInfo::Setting::kDrawSkinBitmapFragments,
                 "Render skin bitmap fragments");
-    AddCheckbox(TBDebugInfo::RENDER_FONT_BITMAP_FRAGMENTS,
+    AddCheckbox(TBDebugInfo::Setting::kDrawFontBitmapFragments,
                 "Render font bitmap fragments");
 
     output = GetWidgetByIDAndType<TBEditField>(TBIDC("output"));
@@ -66,21 +66,21 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
 
   ~DebugSettingsWindow() { TBWidgetListener::RemoveGlobalListener(this); }
 
-  void AddCheckbox(TBDebugInfo::SETTING setting, const char* str) {
+  void AddCheckbox(TBDebugInfo::Setting setting, const char* str) {
     TBCheckBox* check = new TBCheckBox();
-    check->SetValue(g_tb_debug.settings[setting]);
-    check->data.SetInt(setting);
+    check->SetValue(g_tb_debug.settings[int(setting)]);
+    check->data.SetInt(int(setting));
     check->SetID(TBIDC("check"));
 
     TBClickLabel* label = new TBClickLabel();
     label->SetText(str);
-    label->GetContentRoot()->AddChild(check, WIDGET_Z_BOTTOM);
+    label->GetContentRoot()->AddChild(check, WidgetZ::kBottom);
 
     GetWidgetByID(TBIDC("container"))->AddChild(label);
   }
 
   virtual bool OnEvent(const TBWidgetEvent& ev) {
-    if (ev.type == EVENT_TYPE_CLICK && ev.target->GetID() == TBIDC("check")) {
+    if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
       // Update setting and invalidate
       g_tb_debug.settings[ev.target->data.GetInt()] = ev.target->GetValue();
       GetParentRoot()->Invalidate();
@@ -94,10 +94,10 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     g_renderer->Translate(GetRect().w, 0);
 
     // Draw skin bitmap fragments
-    if (TB_DEBUG_SETTING(RENDER_SKIN_BITMAP_FRAGMENTS)) g_tb_skin->Debug();
+    if (TB_DEBUG_SETTING(Setting::kDrawSkinBitmapFragments)) g_tb_skin->Debug();
 
     // Draw font glyph fragments (the font of the hovered widget)
-    if (TB_DEBUG_SETTING(RENDER_FONT_BITMAP_FRAGMENTS)) {
+    if (TB_DEBUG_SETTING(Setting::kDrawFontBitmapFragments)) {
       TBWidget* widget = TBWidget::hovered_widget ? TBWidget::hovered_widget
                                                   : TBWidget::focused_widget;
       g_font_manager->GetFontFace(
@@ -144,7 +144,7 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
       buf.AppendString(GetIDString(ev.ref_id));
     }
 
-    if (ev.type == EVENT_TYPE_CHANGED) {
+    if (ev.type == EventType::kChanged) {
       auto text = ev.target->GetText();
       if (text.size() > 24) {
         text.erase(20);
@@ -173,29 +173,29 @@ class DebugSettingsWindow : public TBWindow, public TBWidgetListener {
     return false;
   }
 
-  const char* GetEventTypeStr(EVENT_TYPE type) const {
+  const char* GetEventTypeStr(EventType type) const {
     switch (type) {
-      case EVENT_TYPE_CLICK:
+      case EventType::kClick:
         return "CLICK";
-      case EVENT_TYPE_LONG_CLICK:
+      case EventType::kLongClick:
         return "LONG_CLICK";
-      case EVENT_TYPE_POINTER_DOWN:
+      case EventType::kPointerDown:
         return "POINTER_DOWN";
-      case EVENT_TYPE_POINTER_UP:
+      case EventType::kPointerUp:
         return "POINTER_UP";
-      case EVENT_TYPE_POINTER_MOVE:
+      case EventType::kPointerMove:
         return "POINTER_MOVE";
-      case EVENT_TYPE_WHEEL:
+      case EventType::kWheel:
         return "WHEEL";
-      case EVENT_TYPE_CHANGED:
+      case EventType::kChanged:
         return "CHANGED";
-      case EVENT_TYPE_KEY_DOWN:
+      case EventType::kKeyDown:
         return "KEY_DOWN";
-      case EVENT_TYPE_KEY_UP:
+      case EventType::kKeyUp:
         return "KEY_UP";
-      case EVENT_TYPE_SHORTCUT:
+      case EventType::kShortcut:
         return "SHORT_CUT";
-      case EVENT_TYPE_CONTEXT_MENU:
+      case EventType::kContextMenu:
         return "CONTEXT_MENU";
       default:
         return "[UNKNOWN]";
