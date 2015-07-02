@@ -16,7 +16,7 @@
 
 namespace tb {
 
-/** TBSelectList is a select widget with no popups. Instead it has two
+/** SelectList is a select widget with no popups. Instead it has two
         arrow buttons that cycle between the choices.
         By default it is a number widget.
 

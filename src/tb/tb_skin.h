@@ -191,9 +191,8 @@ class TBSkinElement {
   ~TBSkinElement();
 
   // Skin properties
-  TBID id;  ///< ID of the skin element
-  std::string
-      name;  ///< Name of the skin element, f.ex "TBSelectDropdown.arrow"
+  TBID id;           ///< ID of the skin element
+  std::string name;  ///< Name of the skin element, f.ex "SelectDropdown.arrow"
   std::string bitmap_file;  ///< File name of the bitmap (might be empty)
   BitmapFragment*
       bitmap;   ///< Bitmap fragment containing the graphics, or nullptr.

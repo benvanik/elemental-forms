@@ -14,32 +14,32 @@
 
 namespace tb {
 
-TBSectionHeader::TBSectionHeader() {
-  SetSkinBg(TBIDC("TBSectionHeader"));
+SectionHeader::SectionHeader() {
+  SetSkinBg(TBIDC("SectionHeader"));
   SetGravity(Gravity::kLeft | Gravity::kRight);
   SetToggleMode(true);
 }
 
-bool TBSectionHeader::OnEvent(const TBWidgetEvent& ev) {
+bool SectionHeader::OnEvent(const TBWidgetEvent& ev) {
   if (ev.target == this && ev.type == EventType::kChanged &&
       GetParent()->GetParent()) {
-    if (TBSection* section = TBSafeCast<TBSection>(GetParent()->GetParent())) {
+    if (Section* section = TBSafeCast<Section>(GetParent()->GetParent())) {
       section->GetContainer()->SetValue(GetValue());
 
-      // Try to scroll the container into view when expanded
+      // Try to scroll the container into view when expanded.
       section->SetPendingScrollIntoView(GetValue() ? true : false);
     }
   }
   return TBButton::OnEvent(ev);
 }
 
-TBSection::TBSection() : m_pending_scroll(false) {
+Section::Section() {
   SetGravity(Gravity::kLeft | Gravity::kRight);
 
-  SetSkinBg(TBIDC("TBSection"), InvokeInfo::kNoCallbacks);
-  m_layout.SetSkinBg(TBIDC("TBSection.layout"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("Section"), InvokeInfo::kNoCallbacks);
+  m_layout.SetSkinBg(TBIDC("Section.layout"), InvokeInfo::kNoCallbacks);
 
-  m_toggle_container.SetSkinBg(TBIDC("TBSection.container"));
+  m_toggle_container.SetSkinBg(TBIDC("Section.container"));
   m_toggle_container.SetToggleAction(ToggleAction::kExpanded);
   m_toggle_container.SetGravity(Gravity::kAll);
   m_layout.SetAxis(Axis::kY);
@@ -51,25 +51,25 @@ TBSection::TBSection() : m_pending_scroll(false) {
   m_layout.AddChild(&m_toggle_container);
 }
 
-TBSection::~TBSection() {
+Section::~Section() {
   m_layout.RemoveChild(&m_toggle_container);
   m_layout.RemoveChild(&m_header);
   RemoveChild(&m_layout);
 }
 
-void TBSection::SetValue(int value) {
+void Section::SetValue(int value) {
   m_header.SetValue(value);
   m_toggle_container.SetValue(value);
 }
 
-void TBSection::OnProcessAfterChildren() {
+void Section::OnProcessAfterChildren() {
   if (m_pending_scroll) {
     m_pending_scroll = false;
     ScrollIntoViewRecursive();
   }
 }
 
-PreferredSize TBSection::OnCalculatePreferredSize(
+PreferredSize Section::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = TBWidget::OnCalculatePreferredContentSize(constraints);
   // We should not grow larger than we are, when there's extra space available.
@@ -77,12 +77,11 @@ PreferredSize TBSection::OnCalculatePreferredSize(
   return ps;
 }
 
-TBToggleContainer::TBToggleContainer()
-    : m_toggle(ToggleAction::kNothing), m_invert(false), m_value(0) {
-  SetSkinBg(TBIDC("TBToggleContainer"), InvokeInfo::kNoCallbacks);
+ToggleContainer::ToggleContainer() {
+  SetSkinBg(TBIDC("ToggleContainer"), InvokeInfo::kNoCallbacks);
 }
 
-void TBToggleContainer::SetToggleAction(ToggleAction toggle) {
+void ToggleContainer::SetToggleAction(ToggleAction toggle) {
   if (toggle == m_toggle) return;
 
   if (m_toggle == ToggleAction::kExpanded) {
@@ -93,20 +92,20 @@ void TBToggleContainer::SetToggleAction(ToggleAction toggle) {
   UpdateInternal();
 }
 
-void TBToggleContainer::SetInvert(bool invert) {
+void ToggleContainer::SetInvert(bool invert) {
   if (invert == m_invert) return;
   m_invert = invert;
   UpdateInternal();
 }
 
-void TBToggleContainer::SetValue(int value) {
+void ToggleContainer::SetValue(int value) {
   if (value == m_value) return;
   m_value = value;
   UpdateInternal();
   InvalidateSkinStates();
 }
 
-void TBToggleContainer::UpdateInternal() {
+void ToggleContainer::UpdateInternal() {
   bool on = GetIsOn();
   switch (m_toggle) {
     case ToggleAction::kNothing:
@@ -119,7 +118,6 @@ void TBToggleContainer::UpdateInternal() {
       break;
     case ToggleAction::kExpanded:
       SetVisibilility(on ? Visibility::kVisible : Visibility::kGone);
-
       // Also disable when collapsed so tab focus skips the children.
       SetState(SkinState::kDisabled, !on);
       break;

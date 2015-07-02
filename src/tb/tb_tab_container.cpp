@@ -14,28 +14,29 @@
 
 namespace tb {
 
-void TBTabLayout::OnChildAdded(TBWidget* child) {
+void TabLayout::OnChildAdded(TBWidget* child) {
   if (TBButton* button = TBSafeCast<TBButton>(child)) {
     button->SetSqueezable(true);
-    button->SetSkinBg(TBIDC("TBTabContainer.tab"));
+    button->SetSkinBg(TBIDC("TabContainer.tab"));
     button->SetID(TBIDC("tab"));
   }
 }
 
-PreferredSize TBTabLayout::OnCalculatePreferredContentSize(
+PreferredSize TabLayout::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = TBLayout::OnCalculatePreferredContentSize(constraints);
   // Make sure the number of tabs doesn't grow parents.
   // It is only the content that should do that. The tabs
   // will scroll anyway.
-  if (GetAxis() == Axis::kX)
+  if (GetAxis() == Axis::kX) {
     ps.min_w = std::min(ps.min_w, 1);
-  else
+  } else {
     ps.min_h = std::min(ps.min_h, 1);
+  }
   return ps;
 }
 
-TBTabContainer::TBTabContainer() {
+TabContainer::TabContainer() {
   AddChild(&m_root_layout);
   // Put the tab layout on top of the content in Z order so their skin can make
   // a seamless overlap over the border. Control which side they are layouted
@@ -46,30 +47,29 @@ TBTabContainer::TBTabContainer() {
   m_root_layout.SetGravity(Gravity::kAll);
   m_root_layout.SetLayoutDistribution(LayoutDistribution::kAvailable);
   m_root_layout.SetLayoutOrder(LayoutOrder::kTopToBottom);
-  m_root_layout.SetSkinBg(TBIDC("TBTabContainer.rootlayout"));
+  m_root_layout.SetSkinBg(TBIDC("TabContainer.rootlayout"));
   m_tab_layout.SetLayoutDistributionPosition(
       LayoutDistributionPosition::kCenter);
-  m_tab_layout.SetSkinBg(TBIDC("TBTabContainer.tablayout_x"));
+  m_tab_layout.SetSkinBg(TBIDC("TabContainer.tablayout_x"));
   m_tab_layout.SetLayoutPosition(LayoutPosition::kRightBottom);
   m_content_root.SetGravity(Gravity::kAll);
-  m_content_root.SetSkinBg(TBIDC("TBTabContainer.container"));
+  m_content_root.SetSkinBg(TBIDC("TabContainer.container"));
 }
 
-TBTabContainer::~TBTabContainer() {
+TabContainer::~TabContainer() {
   m_root_layout.RemoveChild(&m_content_root);
   m_root_layout.RemoveChild(&m_tab_layout);
   RemoveChild(&m_root_layout);
 }
 
-void TBTabContainer::SetAxis(Axis axis) {
+void TabContainer::SetAxis(Axis axis) {
   m_root_layout.SetAxis(axis);
   m_tab_layout.SetAxis(axis == Axis::kX ? Axis::kY : Axis::kX);
-  m_tab_layout.SetSkinBg(axis == Axis::kX
-                             ? TBIDC("TBTabContainer.tablayout_y")
-                             : TBIDC("TBTabContainer.tablayout_x"));
+  m_tab_layout.SetSkinBg(axis == Axis::kX ? TBIDC("TabContainer.tablayout_y")
+                                          : TBIDC("TabContainer.tablayout_x"));
 }
 
-void TBTabContainer::SetValue(int index) {
+void TabContainer::SetValue(int index) {
   if (index == m_current_page) return;
   m_current_page = index;
 
@@ -85,18 +85,20 @@ void TBTabContainer::SetValue(int index) {
   }
 }
 
-int TBTabContainer::GetNumPages() {
+int TabContainer::GetNumPages() {
   int count = 0;
-  for (TBWidget* tab = m_tab_layout.GetFirstChild(); tab; tab = tab->GetNext())
+  for (TBWidget* tab = m_tab_layout.GetFirstChild(); tab;
+       tab = tab->GetNext()) {
     count++;
+  }
   return count;
 }
 
-TBWidget* TBTabContainer::GetCurrentPageWidget() const {
+TBWidget* TabContainer::GetCurrentPageWidget() const {
   return m_content_root.GetChildFromIndex(m_current_page);
 }
 
-void TBTabContainer::SetAlignment(Align align) {
+void TabContainer::SetAlignment(Align align) {
   bool horizontal = (align == Align::kTop || align == Align::kBottom);
   bool reverse = (align == Align::kTop || align == Align::kLeft);
   SetAxis(horizontal ? Axis::kY : Axis::kX);
@@ -107,7 +109,7 @@ void TBTabContainer::SetAlignment(Align align) {
   m_align = align;
 }
 
-bool TBTabContainer::OnEvent(const TBWidgetEvent& ev) {
+bool TabContainer::OnEvent(const TBWidgetEvent& ev) {
   if ((ev.type == EventType::kClick || ev.type == EventType::kPointerDown) &&
       ev.target->GetID() == TBIDC("tab") &&
       ev.target->GetParent() == &m_tab_layout) {
@@ -118,10 +120,10 @@ bool TBTabContainer::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-void TBTabContainer::OnProcess() {
+void TabContainer::OnProcess() {
   if (m_need_page_update) {
     m_need_page_update = false;
-    // Force update value
+    // Force update value.
     int current_page = m_current_page;
     m_current_page = -1;
     SetValue(current_page);

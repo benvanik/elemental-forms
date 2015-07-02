@@ -17,7 +17,7 @@
 
 namespace tb {
 
-class TBSelectItemSource;
+class SelectItemSource;
 
 enum class Sort {
   kNone,       // No sorting. Items appear in list order.
@@ -25,48 +25,47 @@ enum class Sort {
   kDescending  // Descending sort.
 };
 
-/** TBSelectItemViewer is the viewer for items provided by TBSelectItemSource.
-        There can be multiple viewers for each source. The viewer will recieve
-        callbacks when the source is changed, so it can update itself.
-*/
-class TBSelectItemViewer : public TBLinkOf<TBSelectItemViewer> {
+// An observer for items provided by SelectItemSource.
+// There can be multiple observers for each source. The observer will recieve
+// callbacks when the source is changed, so it can update itself.
+class SelectItemObserver : public TBLinkOf<SelectItemObserver> {
  public:
-  TBSelectItemViewer() : m_source(nullptr) {}
-  virtual ~TBSelectItemViewer() {}
+  SelectItemObserver() = default;
+  virtual ~SelectItemObserver() = default;
 
-  /** Set the source which should provide the items for this viewer.
-          This source needs to live longer than this viewer.
-          Set nullptr to unset currently set source. */
-  void SetSource(TBSelectItemSource* source);
-  TBSelectItemSource* GetSource() const { return m_source; }
+  // Sets the source which should provide the items for this observer.
+  // This source needs to live longer than this observer.
+  // Set nullptr to unset currently set source.
+  void SetSource(SelectItemSource* source);
+  SelectItemSource* GetSource() const { return m_source; }
 
-  /** Called when the source has changed or been unset by calling SetSource. */
+  // Called when the source has changed or been unset by calling SetSource.
   virtual void OnSourceChanged() = 0;
 
-  /** Called when the item at the given index has changed in a way that should
-          update the viewer. */
+  // Called when the item at the given index has changed in a way that should
+  // update the observer.
   virtual void OnItemChanged(int index) = 0;
 
-  /** Called when the item at the given index has been added. */
+  // Called when the item at the given index has been added.
   virtual void OnItemAdded(int index) = 0;
 
-  /** Called when the item at the given index has been removed. */
+  // Called when the item at the given index has been removed.
   virtual void OnItemRemoved(int index) = 0;
 
-  /** Called when all items have been removed. */
+  // Called when all items have been removed.
   virtual void OnAllItemsRemoved() = 0;
 
  protected:
-  TBSelectItemSource* m_source;
+  SelectItemSource* m_source = nullptr;
 };
 
-/** TBSelectItemSource is a item provider interface for list widgets
-   (TBSelectList and
-        TBSelectDropdown).
+/** SelectItemSource is a item provider interface for list widgets
+   (SelectList and
+        SelectDropdown).
 
         Instead of feeding all list widgets with all items all the time, the
    list widgets
-        will ask TBSelectItemSource when it needs it. The list widgets may also
+        will ask SelectItemSource when it needs it. The list widgets may also
    apply
         filtering so only a subset of all the items are shown.
 
@@ -75,82 +74,81 @@ class TBSelectItemViewer : public TBLinkOf<TBSelectItemViewer> {
 
         This class has no storage of items. If you want an array storage of
    items,
-        use the subclass TBSelectItemSourceList. If you implement your own
+        use the subclass SelectItemSourceList. If you implement your own
    storage,
-        remember to call InvokeItem[Added/...] to notify viewers that they need
+        remember to call InvokeItem[Added/...] to notify observers that they
+   need
    to update.
 */
 
-class TBSelectItemSource {
+class SelectItemSource {
  public:
-  TBSelectItemSource() : m_sort(Sort::kNone) {}
-  virtual ~TBSelectItemSource();
+  SelectItemSource() = default;
+  virtual ~SelectItemSource();
 
-  /** Return true if a item matches the given filter text.
-          By default, it returns true if GetItemString contains filter. */
+  // Returns true if a item matches the given filter text.
+  // By default, it returns true if GetItemString contains filter.
   virtual bool Filter(int index, const std::string& filter);
 
-  /** Get the string of a item. If a item has more than one string,
-          return the one that should be used for inline-find (pressing keys
-          in the list will scroll to the item starting with the same letters),
-          and for sorting the list. */
+  // Gets the string of a item.
+  // If a item has more than one string, return the one that should be used for
+  // inline-find (pressing keys in the list will scroll to the item starting
+  // with the same letters), and for sorting the list.
   virtual const char* GetItemString(int index) = 0;
 
-  /** Get the source to be used if this item should open a sub menu. */
-  virtual TBSelectItemSource* GetItemSubSource(int index) { return nullptr; }
+  // Gets the source to be used if this item should open a sub menu.
+  virtual SelectItemSource* GetItemSubSource(int index) { return nullptr; }
 
-  /** Get the skin image to be painted before the text for this item. */
+  // Gets the skin image to be painted before the text for this item.
   virtual TBID GetItemImage(int index) { return TBID(); }
 
-  /** Get the if of the item. */
+  // Get the ID of the item.
   virtual TBID GetItemID(int index) { return TBID(); }
 
-  /** Create the item representation widget(s). By default, it will create
-          a TBTextField for string-only items, and other types for items that
-          also has image or submenu. */
-  virtual TBWidget* CreateItemWidget(int index, TBSelectItemViewer* viewer);
+  // Creates the item representation widget(s).
+  // By default, it will create a TBTextField for string-only items, and other
+  // types for items that also has image or submenu.
+  virtual TBWidget* CreateItemWidget(int index, SelectItemObserver* observer);
 
-  /** Get the number of items */
+  // Gets the number of items.
   virtual int GetNumItems() = 0;
 
-  /** Set sort type. Default is Sort::kNone. */
+  // Sets sort type. Default is Sort::kNone.
   void SetSort(Sort sort) { m_sort = sort; }
   Sort GetSort() const { return m_sort; }
 
-  /** Invoke OnItemChanged on all open viewers for this source. */
+  // Invokes OnItemChanged on all open observers for this source.
   void InvokeItemChanged(int index,
-                         TBSelectItemViewer* exclude_viewer = nullptr);
+                         SelectItemObserver* exclude_observer = nullptr);
   void InvokeItemAdded(int index);
   void InvokeItemRemoved(int index);
   void InvokeAllItemsRemoved();
 
  private:
-  friend class TBSelectItemViewer;
-  TBLinkListOf<TBSelectItemViewer> m_viewers;
-  Sort m_sort;
+  friend class SelectItemObserver;
+  TBLinkListOf<SelectItemObserver> m_observers;
+  Sort m_sort = Sort::kNone;
 };
 
-/** TBSelectItemSourceList is a item provider for list widgets (TBSelectList and
-        TBSelectDropdown). It stores items of the type specified by the template
-   in an array. */
-
+// An item provider for list widgets (SelectList and SelectDropdown).
+// It stores items of the type specified by the template in an array.
 template <class T>
-class TBSelectItemSourceList : public TBSelectItemSource {
+class SelectItemSourceList : public SelectItemSource {
  public:
-  TBSelectItemSourceList() {}
-  virtual ~TBSelectItemSourceList() { DeleteAllItems(); }
-  virtual const char* GetItemString(int index) {
+  SelectItemSourceList() = default;
+  ~SelectItemSourceList() override { DeleteAllItems(); }
+  const char* GetItemString(int index) override {
     return GetItem(index)->str.c_str();
   }
-  virtual TBSelectItemSource* GetItemSubSource(int index) {
+  SelectItemSource* GetItemSubSource(int index) override {
     return GetItem(index)->sub_source;
   }
-  virtual TBID GetItemImage(int index) { return GetItem(index)->skin_image; }
-  virtual TBID GetItemID(int index) { return GetItem(index)->id; }
-  virtual int GetNumItems() { return m_items.GetNumItems(); }
-  virtual TBWidget* CreateItemWidget(int index, TBSelectItemViewer* viewer) {
+  TBID GetItemImage(int index) override { return GetItem(index)->skin_image; }
+  TBID GetItemID(int index) override { return GetItem(index)->id; }
+  int GetNumItems() override { return m_items.GetNumItems(); }
+  TBWidget* CreateItemWidget(int index, SelectItemObserver* observer) override {
     if (TBWidget* widget =
-            TBSelectItemSource::CreateItemWidget(index, viewer)) {
+            SelectItemSource::CreateItemWidget(index, observer)) {
       T* item = m_items[index];
       widget->SetID(item->id);
       return widget;
@@ -158,26 +156,26 @@ class TBSelectItemSourceList : public TBSelectItemSource {
     return nullptr;
   }
 
-  /** Add a new item at the given index. */
+  // Adds a new item at the given index.
   void AddItem(T* item, int index) {
     m_items.Add(item, index);
     InvokeItemAdded(index);
   }
 
-  /** Add a new item last. */
+  // Adds a new item list.
   void AddItem(T* item) { AddItem(item, m_items.GetNumItems()); }
 
-  /** Get the item at the given index. */
+  // Gets the item at the given index.
   T* GetItem(int index) { return m_items[index]; }
 
-  /** Delete the item at the given index. */
+  // Deletes the item at the given index.
   void DeleteItem(int index) {
     if (!m_items.GetNumItems()) return;
     m_items.Delete(index);
     InvokeItemRemoved(index);
   }
 
-  /** Delete all items. */
+  // Deletes all items.
   void DeleteAllItems() {
     if (!m_items.GetNumItems()) return;
     m_items.DeleteAll();
@@ -188,26 +186,24 @@ class TBSelectItemSourceList : public TBSelectItemSource {
   TBListOf<T> m_items;
 };
 
-/** TBGenericStringItem item for TBGenericStringItemSource.
-        It has a string and may have a skin image and sub item source. */
-class TBGenericStringItem {
+// An item for GenericStringItemSource.
+// It has a string and may have a skin image and sub item source.
+class GenericStringItem {
  public:
-  TBGenericStringItem(const TBGenericStringItem& other)
+  GenericStringItem(const GenericStringItem& other)
       : str(other.str),
         id(other.id),
         sub_source(other.sub_source),
         tag(other.tag) {}
-  TBGenericStringItem(const char* str) : str(str), sub_source(nullptr) {}
-  TBGenericStringItem(const char* str, TBID id)
-      : str(str), id(id), sub_source(nullptr) {}
-  TBGenericStringItem(const char* str, TBSelectItemSource* sub_source)
+  GenericStringItem(const char* str) : str(str) {}
+  GenericStringItem(const char* str, TBID id) : str(str), id(id) {}
+  GenericStringItem(const char* str, SelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
-  TBGenericStringItem(const std::string& str) : str(str), sub_source(nullptr) {}
-  TBGenericStringItem(const std::string& str, TBID id)
-      : str(str), id(id), sub_source(nullptr) {}
-  TBGenericStringItem(const std::string& str, TBSelectItemSource* sub_source)
+  GenericStringItem(const std::string& str) : str(str) {}
+  GenericStringItem(const std::string& str, TBID id) : str(str), id(id) {}
+  GenericStringItem(const std::string& str, SelectItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
-  const TBGenericStringItem& operator=(const TBGenericStringItem& other) {
+  const GenericStringItem& operator=(const GenericStringItem& other) {
     str = other.str;
     id = other.id;
     sub_source = other.sub_source;
@@ -221,17 +217,15 @@ class TBGenericStringItem {
   std::string str;
   TBID id;
   TBID skin_image;
-  TBSelectItemSource* sub_source;
+  SelectItemSource* sub_source = nullptr;
 
-  /** This value is free to use for anything. It's not used internally. */
+  // This value is free to use for anything. It's not used internally.
   TBValue tag;
 };
 
-/** TBGenericStringItemSource is a item source list providing items of type
- * TBGenericStringItem. */
-
-class TBGenericStringItemSource
-    : public TBSelectItemSourceList<TBGenericStringItem> {};
+// An item source list providing items of type GenericStringItem.
+class GenericStringItemSource : public SelectItemSourceList<GenericStringItem> {
+};
 
 }  // namespace tb
 

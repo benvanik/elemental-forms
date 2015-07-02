@@ -250,8 +250,8 @@ void TBScrollContainer::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBTabContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
-void TBTabContainer::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(TabContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
+void TabContainer::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 
   if (const char* align = info.node->GetValueString("align", nullptr)) {
@@ -300,7 +300,7 @@ void TBSlider::OnInflate(const INFLATE_INFO& info) {
   TBWidget::OnInflate(info);
 }
 
-void ReadItems(TBNode* node, TBGenericStringItemSource* target_source) {
+void ReadItems(TBNode* node, GenericStringItemSource* target_source) {
   // If there is a items node, loop through all its children and add
   // items to the target item source.
   if (TBNode* items = node->GetNode("items")) {
@@ -312,21 +312,21 @@ void ReadItems(TBNode* node, TBGenericStringItemSource* target_source) {
         TBWidgetsReader::SetIDFromNode(item_id, n_id);
       }
 
-      auto item = new TBGenericStringItem(item_str, item_id);
+      auto item = new GenericStringItem(item_str, item_id);
       target_source->AddItem(item);
     }
   }
 }
 
-TB_WIDGET_FACTORY(TBSelectList, TBValue::Type::kInt, WidgetZ::kTop) {}
-void TBSelectList::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(SelectList, TBValue::Type::kInt, WidgetZ::kTop) {}
+void SelectList::OnInflate(const INFLATE_INFO& info) {
   // Read items (if there is any) into the default source
   ReadItems(info.node, GetDefaultSource());
   TBWidget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TBSelectDropdown, TBValue::Type::kInt, WidgetZ::kTop) {}
-void TBSelectDropdown::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(SelectDropdown, TBValue::Type::kInt, WidgetZ::kTop) {}
+void SelectDropdown::OnInflate(const INFLATE_INFO& info) {
   // Read items (if there is any) into the default source
   ReadItems(info.node, GetDefaultSource());
   TBWidget::OnInflate(info);
@@ -348,11 +348,11 @@ TB_WIDGET_FACTORY(TBSkinImage, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBSeparator, TBValue::Type::kNull, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBProgressSpinner, TBValue::Type::kInt, WidgetZ::kTop) {}
 TB_WIDGET_FACTORY(TBContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBSectionHeader, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(TBSection, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SectionHeader, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Section, TBValue::Type::kInt, WidgetZ::kTop) {}
 
-TB_WIDGET_FACTORY(TBToggleContainer, TBValue::Type::kInt, WidgetZ::kTop) {}
-void TBToggleContainer::OnInflate(const INFLATE_INFO& info) {
+TB_WIDGET_FACTORY(ToggleContainer, TBValue::Type::kInt, WidgetZ::kTop) {}
+void ToggleContainer::OnInflate(const INFLATE_INFO& info) {
   if (const char* toggle = info.node->GetValueString("toggle", nullptr)) {
     SetToggleAction(from_string(toggle, GetToggleAction()));
   }

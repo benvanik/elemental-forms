@@ -12,7 +12,7 @@
 // ====================================================================================
 
 ResourceItem::ResourceItem(TBWidget* widget, const std::string& str)
-    : TBGenericStringItem(str), m_widget(widget) {}
+    : GenericStringItem(str), m_widget(widget) {}
 
 // == ResourceEditWindow
 // ==============================================================================
@@ -33,7 +33,7 @@ ResourceEditWindow::ResourceEditWindow()
   m_build_container = m_scroll_container->GetContentRoot();
   m_source_edit = GetWidgetByIDAndType<TBEditField>(TBIDC("source_edit"));
 
-  m_widget_list = GetWidgetByIDAndType<TBSelectList>(TBIDC("widget_list"));
+  m_widget_list = GetWidgetByIDAndType<SelectList>(TBIDC("widget_list"));
   m_widget_list->SetSource(&m_widget_list_source);
 
   SetRect(Rect(100, 50, 900, 600));

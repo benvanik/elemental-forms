@@ -22,8 +22,8 @@
 static Application* application;
 
 AdvancedItemSource advanced_source;
-TBGenericStringItemSource name_source;
-TBGenericStringItemSource popup_menu_source;
+GenericStringItemSource name_source;
+GenericStringItemSource popup_menu_source;
 
 #ifdef TB_SUPPORT_CONSTEXPR
 
@@ -161,31 +161,31 @@ class EditWindow : public DemoWindow {
         edit->GetStyleEdit()->Redo();
         return true;
       } else if (ev.target->GetID() == TBIDC("menu")) {
-        static TBGenericStringItemSource source;
+        static GenericStringItemSource source;
         if (!source.GetNumItems()) {
           source.AddItem(
-              new TBGenericStringItem("Default font", TBIDC("default font")));
-          source.AddItem(new TBGenericStringItem("Default font (larger)",
-                                                 TBIDC("large font")));
-          source.AddItem(new TBGenericStringItem("RGB font (Neon)",
-                                                 TBIDC("rgb font Neon")));
-          source.AddItem(new TBGenericStringItem("RGB font (Orangutang)",
-                                                 TBIDC("rgb font Orangutang")));
-          source.AddItem(new TBGenericStringItem("RGB font (Orange)",
-                                                 TBIDC("rgb font Orange")));
-          source.AddItem(new TBGenericStringItem("-"));
-          source.AddItem(new TBGenericStringItem("Glyph cache stresstest (CJK)",
-                                                 TBIDC("CJK")));
-          source.AddItem(new TBGenericStringItem("-"));
-          source.AddItem(new TBGenericStringItem("Toggle wrapping",
-                                                 TBIDC("toggle wrapping")));
-          source.AddItem(new TBGenericStringItem("-"));
+              new GenericStringItem("Default font", TBIDC("default font")));
+          source.AddItem(new GenericStringItem("Default font (larger)",
+                                               TBIDC("large font")));
           source.AddItem(
-              new TBGenericStringItem("Align left", TBIDC("align left")));
+              new GenericStringItem("RGB font (Neon)", TBIDC("rgb font Neon")));
+          source.AddItem(new GenericStringItem("RGB font (Orangutang)",
+                                               TBIDC("rgb font Orangutang")));
+          source.AddItem(new GenericStringItem("RGB font (Orange)",
+                                               TBIDC("rgb font Orange")));
+          source.AddItem(new GenericStringItem("-"));
+          source.AddItem(new GenericStringItem("Glyph cache stresstest (CJK)",
+                                               TBIDC("CJK")));
+          source.AddItem(new GenericStringItem("-"));
+          source.AddItem(new GenericStringItem("Toggle wrapping",
+                                               TBIDC("toggle wrapping")));
+          source.AddItem(new GenericStringItem("-"));
           source.AddItem(
-              new TBGenericStringItem("Align center", TBIDC("align center")));
+              new GenericStringItem("Align left", TBIDC("align left")));
           source.AddItem(
-              new TBGenericStringItem("Align right", TBIDC("align right")));
+              new GenericStringItem("Align center", TBIDC("align center")));
+          source.AddItem(
+              new GenericStringItem("Align right", TBIDC("align right")));
         }
 
         if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popup_menu")))
@@ -244,8 +244,8 @@ bool LayoutWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
-    if (TBSelectDropdown* select =
-            GetWidgetByIDAndType<TBSelectDropdown>(TBIDC("select position")))
+    if (SelectDropdown* select =
+            GetWidgetByIDAndType<SelectDropdown>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
       if (TBLayout* layout = GetWidgetByIDAndType<TBLayout>(i + 1))
@@ -277,16 +277,16 @@ TabContainerWindow::TabContainerWindow() {
 bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("set_align")) {
-    if (TBTabContainer* tc =
-            GetWidgetByIDAndType<TBTabContainer>(TBIDC("tabcontainer")))
+    if (TabContainer* tc =
+            GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer")))
       tc->SetAlignment(static_cast<Align>(ev.target->data.GetInt()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("toggle_tab_axis")) {
     static Axis axis = Axis::kX;
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (TBTabContainer* tc =
-            GetWidgetByIDAndType<TBTabContainer>(TBIDC("tabcontainer"))) {
+    if (TabContainer* tc =
+            GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
       for (TBWidget* child = tc->GetTabLayout()->GetFirstChild(); child;
            child = child->GetNext()) {
         if (TBButton* button = TBSafeCast<TBButton>(child))
@@ -332,12 +332,12 @@ bool ConnectionWindow::OnEvent(const TBWidgetEvent& ev) {
 ScrollContainerWindow::ScrollContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scrollcontainer.tb.txt");
 
-  if (TBSelectDropdown* select =
-          GetWidgetByIDAndType<TBSelectDropdown>(TBIDC("name dropdown")))
+  if (SelectDropdown* select =
+          GetWidgetByIDAndType<SelectDropdown>(TBIDC("name dropdown")))
     select->SetSource(&name_source);
 
-  if (TBSelectDropdown* select =
-          GetWidgetByIDAndType<TBSelectDropdown>(TBIDC("advanced dropdown")))
+  if (SelectDropdown* select =
+          GetWidgetByIDAndType<SelectDropdown>(TBIDC("advanced dropdown")))
     select->SetSource(&advanced_source);
 }
 
@@ -447,7 +447,7 @@ void AnimationsWindow::Animate() {
   double duration = 500;
   bool fade = true;
 
-  if (TBSelectList* curve_select = GetWidgetByIDAndType<TBSelectList>("curve"))
+  if (SelectList* curve_select = GetWidgetByIDAndType<SelectList>("curve"))
     curve = static_cast<AnimationCurve>(curve_select->GetValue());
   if (TBInlineSelect* duration_select =
           GetWidgetByIDAndType<TBInlineSelect>("duration"))
@@ -674,7 +674,7 @@ bool DemoApplication::Init() {
   // Run unit tests
   int num_failed_tests = TBRunTests();
 
-  // TBSelectList and TBSelectDropdown widgets have a default item source that
+  // SelectList and SelectDropdown widgets have a default item source that
   // are fed with any items
   // specified in the resource files. But it is also possible to set any source
   // which can save memory
@@ -690,24 +690,22 @@ bool DemoApplication::Init() {
         new AdvancedItem(girl_names[i++], TBIDC("girl_item"), false));
   for (int i = 0; girl_names[i]; i++)
     name_source.AddItem(
-        new TBGenericStringItem(girl_names[i++], TBIDC("girl_item")));
+        new GenericStringItem(girl_names[i++], TBIDC("girl_item")));
   for (int i = 0; boy_names[i]; i++)
     name_source.AddItem(
-        new TBGenericStringItem(boy_names[i++], TBIDC("boy_item")));
+        new GenericStringItem(boy_names[i++], TBIDC("boy_item")));
   advanced_source.SetSort(Sort::kAscending);
   name_source.SetSort(Sort::kAscending);
 
   // Prepare a source with submenus (with eternal recursion) so we can test sub
   // menu support.
+  popup_menu_source.AddItem(new GenericStringItem("Option 1", TBIDC("opt 1")));
+  popup_menu_source.AddItem(new GenericStringItem("Option 2", TBIDC("opt 2")));
+  popup_menu_source.AddItem(new GenericStringItem("-"));
   popup_menu_source.AddItem(
-      new TBGenericStringItem("Option 1", TBIDC("opt 1")));
+      new GenericStringItem("Same submenu", &popup_menu_source));
   popup_menu_source.AddItem(
-      new TBGenericStringItem("Option 2", TBIDC("opt 2")));
-  popup_menu_source.AddItem(new TBGenericStringItem("-"));
-  popup_menu_source.AddItem(
-      new TBGenericStringItem("Same submenu", &popup_menu_source));
-  popup_menu_source.AddItem(
-      new TBGenericStringItem("Long submenu", &name_source));
+      new GenericStringItem("Long submenu", &name_source));
   // Give the first item a skin image
   popup_menu_source.GetItem(0)->SetSkinImage(TBIDC("Icon16"));
 

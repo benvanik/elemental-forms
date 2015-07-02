@@ -10,6 +10,6 @@ TBLayout
 		gravity left right
 		placeholder @search
 		type search
-	TBSelectList
+	SelectList
 		id list
 		gravity all

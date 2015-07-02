@@ -18,14 +18,10 @@
 
 namespace tb {
 
-TBSelectList::TBSelectList()
-    : m_value(-1),
-      m_list_is_invalid(false),
-      m_scroll_to_current(false),
-      m_header_lng_string_id(TBIDC("TBList.header")) {
+SelectList::SelectList() : m_header_lng_string_id(TBIDC("TBList.header")) {
   SetSource(&m_default_source);
   SetIsFocusable(true);
-  SetSkinBg(TBIDC("TBSelectList"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("SelectList"), InvokeInfo::kNoCallbacks);
   m_container.SetGravity(Gravity::kAll);
   m_container.SetRect(GetPaddingRect());
   AddChild(&m_container);
@@ -40,57 +36,66 @@ TBSelectList::TBSelectList()
   m_container.SetAdaptContentSize(true);
 }
 
-TBSelectList::~TBSelectList() {
+SelectList::~SelectList() {
   m_container.GetContentRoot()->RemoveChild(&m_layout);
   RemoveChild(&m_container);
   SetSource(nullptr);
 }
 
-void TBSelectList::OnSourceChanged() { InvalidateList(); }
+void SelectList::OnSourceChanged() { InvalidateList(); }
 
-void TBSelectList::OnItemChanged(int index) {
-  if (m_list_is_invalid)  // We're updating all widgets soon.
+void SelectList::OnItemChanged(int index) {
+  if (m_list_is_invalid) {
+    // We're updating all widgets soon.
     return;
+  }
 
   TBWidget* old_widget = GetItemWidget(index);
-  if (!old_widget)  // We don't have this widget so we have nothing to update.
+  if (!old_widget) {
+    // We don't have this widget so we have nothing to update.
     return;
+  }
 
   // Replace the old widget representing the item, with a new one. Preserve its
   // state.
   SkinState old_state = old_widget->GetStateRaw();
 
-  if (TBWidget* widget = CreateAndAddItemAfter(index, old_widget))
+  if (TBWidget* widget = CreateAndAddItemAfter(index, old_widget)) {
     widget->SetStateRaw(old_state);
+  }
 
   old_widget->GetParent()->RemoveChild(old_widget);
   delete old_widget;
 }
 
-void TBSelectList::OnItemAdded(int index) {
-  if (m_list_is_invalid)  // We're updating all widgets soon.
+void SelectList::OnItemAdded(int index) {
+  if (m_list_is_invalid) {
+    // We're updating all widgets soon.
     return;
+  }
 
   // Sorting, filtering etc. makes it messy to handle dynamic addition of items.
   // Resort to invalidate the entire list (may even be faster anyway)
   InvalidateList();
 }
 
-void TBSelectList::OnItemRemoved(int index) {
-  if (m_list_is_invalid)  // We're updating all widgets soon.
+void SelectList::OnItemRemoved(int index) {
+  if (m_list_is_invalid) {
+    // We're updating all widgets soon.
     return;
+  }
 
   // Sorting, filtering etc. makes it messy to handle dynamic addition of items.
   // Resort to invalidate the entire list (may even be faster anyway)
   InvalidateList();
 }
 
-void TBSelectList::OnAllItemsRemoved() {
+void SelectList::OnAllItemsRemoved() {
   InvalidateList();
   m_value = -1;
 }
 
-void TBSelectList::SetFilter(const char* filter) {
+void SelectList::SetFilter(const char* filter) {
   std::string new_filter;
   if (filter && *filter) {
     new_filter = filter;
@@ -102,35 +107,38 @@ void TBSelectList::SetFilter(const char* filter) {
   InvalidateList();
 }
 
-void TBSelectList::SetHeaderString(const TBID& id) {
+void SelectList::SetHeaderString(const TBID& id) {
   if (m_header_lng_string_id == id) return;
   m_header_lng_string_id = id;
   InvalidateList();
 }
 
-void TBSelectList::InvalidateList() {
+void SelectList::InvalidateList() {
   if (m_list_is_invalid) return;
   m_list_is_invalid = true;
   Invalidate();
 }
 
-void TBSelectList::ValidateList() {
+void SelectList::ValidateList() {
   if (!m_list_is_invalid) return;
   m_list_is_invalid = false;
-  // FIX: Could delete and create only the changed items (faster filter change)
+  // FIX: Could delete and create only the changed items (faster filter change).
 
-  // Remove old items
+  // Remove old items.
   while (TBWidget* child = m_layout.GetContentRoot()->GetFirstChild()) {
     child->GetParent()->RemoveChild(child);
     delete child;
   }
-  if (!m_source || !m_source->GetNumItems()) return;
+  if (!m_source || !m_source->GetNumItems()) {
+    return;
+  }
 
   // Create a sorted list of the items we should include using the current
   // filter.
   TBTempBuffer sort_buf;
-  if (!sort_buf.Reserve(m_source->GetNumItems() * sizeof(int)))
+  if (!sort_buf.Reserve(m_source->GetNumItems() * sizeof(int))) {
     return;  // Out of memory
+  }
   int* sorted_index = (int*)sort_buf.GetData();
 
   // Populate the sorted index list
@@ -154,21 +162,21 @@ void TBSelectList::ValidateList() {
 
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
-    if (TBWidget* widget = new TBTextField()) {
-      widget->SetText(
-          tb::format_string(g_tb_lng->GetString(m_header_lng_string_id),
-                            num_sorted_items, m_source->GetNumItems()));
-      widget->SetSkinBg(TBIDC("TBList.header"));
-      widget->SetState(SkinState::kDisabled, true);
-      widget->SetGravity(Gravity::kAll);
-      widget->data.SetInt(-1);
-      m_layout.GetContentRoot()->AddChild(widget);
-    }
+    TBWidget* widget = new TBTextField();
+    widget->SetText(
+        tb::format_string(g_tb_lng->GetString(m_header_lng_string_id),
+                          num_sorted_items, m_source->GetNumItems()));
+    widget->SetSkinBg(TBIDC("TBList.header"));
+    widget->SetState(SkinState::kDisabled, true);
+    widget->SetGravity(Gravity::kAll);
+    widget->data.SetInt(-1);
+    m_layout.GetContentRoot()->AddChild(widget);
   }
 
-  // Create new items
-  for (int i = 0; i < num_sorted_items; i++)
+  // Create new items.
+  for (int i = 0; i < num_sorted_items; i++) {
     CreateAndAddItemAfter(sorted_index[i], nullptr);
+  }
 
   SelectItem(m_value, true);
 
@@ -177,9 +185,9 @@ void TBSelectList::ValidateList() {
   m_scroll_to_current = true;
 }
 
-TBWidget* TBSelectList::CreateAndAddItemAfter(int index, TBWidget* reference) {
+TBWidget* SelectList::CreateAndAddItemAfter(int index, TBWidget* reference) {
   if (TBWidget* widget = m_source->CreateItemWidget(index, this)) {
-    // Use item data as widget to index lookup
+    // Use item data as widget to index lookup.
     widget->data.SetInt(index);
     m_layout.GetContentRoot()->AddChildRelative(widget, WidgetZRel::kAfter,
                                                 reference);
@@ -188,7 +196,7 @@ TBWidget* TBSelectList::CreateAndAddItemAfter(int index, TBWidget* reference) {
   return nullptr;
 }
 
-void TBSelectList::SetValue(int value) {
+void SelectList::SetValue(int value) {
   if (value == m_value) return;
 
   SelectItem(m_value, false);
@@ -197,56 +205,63 @@ void TBSelectList::SetValue(int value) {
   ScrollToSelectedItem();
 
   TBWidgetEvent ev(EventType::kChanged);
-  if (TBWidget* widget = GetItemWidget(m_value)) ev.ref_id = widget->GetID();
+  if (TBWidget* widget = GetItemWidget(m_value)) {
+    ev.ref_id = widget->GetID();
+  }
   InvokeEvent(ev);
 }
 
-TBID TBSelectList::GetSelectedItemID() {
-  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems())
+TBID SelectList::GetSelectedItemID() {
+  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems()) {
     return m_source->GetItemID(m_value);
+  }
   return TBID();
 }
 
-void TBSelectList::SelectItem(int index, bool selected) {
-  if (TBWidget* widget = GetItemWidget(index))
+void SelectList::SelectItem(int index, bool selected) {
+  if (TBWidget* widget = GetItemWidget(index)) {
     widget->SetState(SkinState::kSelected, selected);
+  }
 }
 
-TBWidget* TBSelectList::GetItemWidget(int index) {
+TBWidget* SelectList::GetItemWidget(int index) {
   if (index == -1) return nullptr;
   for (TBWidget* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
-       tmp = tmp->GetNext())
+       tmp = tmp->GetNext()) {
     if (tmp->data.GetInt() == index) return tmp;
+  }
   return nullptr;
 }
 
-void TBSelectList::ScrollToSelectedItem() {
+void SelectList::ScrollToSelectedItem() {
   if (m_list_is_invalid) {
     m_scroll_to_current = true;
     return;
   }
   m_scroll_to_current = false;
-  if (TBWidget* widget = GetItemWidget(m_value))
+  if (TBWidget* widget = GetItemWidget(m_value)) {
     m_container.ScrollIntoView(widget->GetRect());
-  else
+  } else {
     m_container.ScrollTo(0, 0);
+  }
 }
 
-void TBSelectList::OnSkinChanged() { m_container.SetRect(GetPaddingRect()); }
+void SelectList::OnSkinChanged() { m_container.SetRect(GetPaddingRect()); }
 
-void TBSelectList::OnProcess() { ValidateList(); }
+void SelectList::OnProcess() { ValidateList(); }
 
-void TBSelectList::OnProcessAfterChildren() {
-  if (m_scroll_to_current) ScrollToSelectedItem();
+void SelectList::OnProcessAfterChildren() {
+  if (m_scroll_to_current) {
+    ScrollToSelectedItem();
+  }
 }
 
-bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
+bool SelectList::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetParent() == m_layout.GetContentRoot()) {
     // SetValue (EventType::kChanged) might cause something to delete this (f.ex
-    // closing
-    // the dropdown menu. We want to sent another event, so ensure we're still
-    // around.
+    // closing the dropdown menu. We want to sent another event, so ensure we're
+    // still around.
     WeakWidgetPointer this_widget(this);
 
     int index = ev.target->data.GetInt();
@@ -254,23 +269,23 @@ bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
 
     // If we're still around, invoke the click event too.
     if (this_widget.Get()) {
-      TBSelectList* target_list = this;
+      SelectList* target_list = this;
       // If the parent window is a MenuWindow, we will iterate up the event
-      // destination
-      // chain to find the top MenuWindow and invoke the event there.
+      // destination chain to find the top MenuWindow and invoke the event
+      // there.
       // That way events in submenus will reach the caller properly, and seem
-      // like it was
-      // invoked on the top menu.
+      // like it was invoked on the top menu.
       Window* window = GetParentWindow();
       while (MenuWindow* menu_win = TBSafeCast<MenuWindow>(window)) {
         target_list = menu_win->GetList();
         window = menu_win->GetEventDestination()->GetParentWindow();
       }
 
-      // Invoke the click event on the target list
+      // Invoke the click event on the target list.
       TBWidgetEvent ev(EventType::kClick);
-      if (TBWidget* widget = GetItemWidget(m_value))
+      if (TBWidget* widget = GetItemWidget(m_value)) {
         ev.ref_id = widget->GetID();
+      }
       target_list->InvokeEvent(ev);
     }
     return true;
@@ -286,32 +301,38 @@ bool TBSelectList::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-bool TBSelectList::ChangeValue(SpecialKey key) {
-  if (!m_source || !m_layout.GetContentRoot()->GetFirstChild()) return false;
+bool SelectList::ChangeValue(SpecialKey key) {
+  if (!m_source || !m_layout.GetContentRoot()->GetFirstChild()) {
+    return false;
+  }
 
   bool forward;
-  if (key == SpecialKey::kHome || key == SpecialKey::kDown)
+  if (key == SpecialKey::kHome || key == SpecialKey::kDown) {
     forward = true;
-  else if (key == SpecialKey::kEnd || key == SpecialKey::kUp)
+  } else if (key == SpecialKey::kEnd || key == SpecialKey::kUp) {
     forward = false;
-  else
+  } else {
     return false;
+  }
 
   TBWidget* item_root = m_layout.GetContentRoot();
   TBWidget* current = GetItemWidget(m_value);
   TBWidget* origin = nullptr;
-  if (key == SpecialKey::kHome || (!current && key == SpecialKey::kDown))
+  if (key == SpecialKey::kHome || (!current && key == SpecialKey::kDown)) {
     current = item_root->GetFirstChild();
-  else if (key == SpecialKey::kEnd || (!current && key == SpecialKey::kUp))
+  } else if (key == SpecialKey::kEnd || (!current && key == SpecialKey::kUp)) {
     current = item_root->GetLastChild();
-  else
+  } else {
     origin = current;
+  }
 
   while (current) {
-    if (current != origin && !current->GetDisabled()) break;
+    if (current != origin && !current->GetDisabled()) {
+      break;
+    }
     current = forward ? current->GetNext() : current->GetPrev();
   }
-  // Select and focus what we found
+  // Select and focus what we found.
   if (current) {
     SetValue(current->data.GetInt());
     return true;
@@ -319,86 +340,96 @@ bool TBSelectList::ChangeValue(SpecialKey key) {
   return false;
 }
 
-TBSelectDropdown::TBSelectDropdown() : m_value(-1) {
+SelectDropdown::SelectDropdown() {
   SetSource(&m_default_source);
-  SetSkinBg(TBIDC("TBSelectDropdown"), InvokeInfo::kNoCallbacks);
-  m_arrow.SetSkinBg(TBIDC("TBSelectDropdown.arrow"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("SelectDropdown"), InvokeInfo::kNoCallbacks);
+  m_arrow.SetSkinBg(TBIDC("SelectDropdown.arrow"), InvokeInfo::kNoCallbacks);
   GetContentRoot()->AddChild(&m_arrow);
 }
 
-TBSelectDropdown::~TBSelectDropdown() {
+SelectDropdown::~SelectDropdown() {
   GetContentRoot()->RemoveChild(&m_arrow);
   SetSource(nullptr);
   CloseWindow();
 }
 
-void TBSelectDropdown::OnSourceChanged() {
+void SelectDropdown::OnSourceChanged() {
   m_value = -1;
-  if (m_source && m_source->GetNumItems()) SetValue(0);
+  if (m_source && m_source->GetNumItems()) {
+    SetValue(0);
+  }
 }
 
-void TBSelectDropdown::OnItemChanged(int index) {}
+void SelectDropdown::OnItemChanged(int index) {}
 
-void TBSelectDropdown::SetValue(int value) {
+void SelectDropdown::SetValue(int value) {
   if (value == m_value || !m_source) return;
   m_value = value;
 
-  if (m_value < 0)
+  if (m_value < 0) {
     SetText("");
-  else if (m_value < m_source->GetNumItems())
+  } else if (m_value < m_source->GetNumItems()) {
     SetText(m_source->GetItemString(m_value));
+  }
 
   TBWidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-TBID TBSelectDropdown::GetSelectedItemID() {
-  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems())
+TBID SelectDropdown::GetSelectedItemID() {
+  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems()) {
     return m_source->GetItemID(m_value);
+  }
   return TBID();
 }
 
-void TBSelectDropdown::OpenWindow() {
-  if (!m_source || !m_source->GetNumItems() || m_window_pointer.Get()) return;
+void SelectDropdown::OpenWindow() {
+  if (!m_source || !m_source->GetNumItems() || m_window_pointer.Get()) {
+    return;
+  }
 
-  if (MenuWindow* window =
-          new MenuWindow(this, TBIDC("TBSelectDropdown.window"))) {
-    m_window_pointer.Set(window);
-    window->SetSkinBg(TBIDC("TBSelectDropdown.window"));
-    window->Show(m_source, PopupAlignment(), GetValue());
+  MenuWindow* window = new MenuWindow(this, TBIDC("SelectDropdown.window"));
+  m_window_pointer.Set(window);
+  window->SetSkinBg(TBIDC("SelectDropdown.window"));
+  window->Show(m_source, PopupAlignment(), GetValue());
+}
+
+void SelectDropdown::CloseWindow() {
+  if (MenuWindow* window = GetMenuIfOpen()) {
+    window->Close();
   }
 }
 
-void TBSelectDropdown::CloseWindow() {
-  if (MenuWindow* window = GetMenuIfOpen()) window->Close();
-}
-
-MenuWindow* TBSelectDropdown::GetMenuIfOpen() const {
+MenuWindow* SelectDropdown::GetMenuIfOpen() const {
   return TBSafeCast<MenuWindow>(m_window_pointer.Get());
 }
 
-bool TBSelectDropdown::OnEvent(const TBWidgetEvent& ev) {
+bool SelectDropdown::OnEvent(const TBWidgetEvent& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
-    // button)
+    // button).
     if (MenuWindow* menu_window = GetMenuIfOpen()) {
       WeakWidgetPointer tmp(this);
       int value = menu_window->GetList()->GetValue();
       menu_window->Die();
-      if (tmp.Get()) SetValue(value);
-    } else
+      if (tmp.Get()) {
+        SetValue(value);
+      }
+    } else {
       OpenWindow();
+    }
     return true;
-  } else if (ev.target->GetID() == TBIDC("TBSelectDropdown.window") &&
+  } else if (ev.target->GetID() == TBIDC("SelectDropdown.window") &&
              ev.type == EventType::kClick) {
-    // Set the value of the clicked item
-    if (MenuWindow* menu_window = GetMenuIfOpen())
+    // Set the value of the clicked item.
+    if (MenuWindow* menu_window = GetMenuIfOpen()) {
       SetValue(menu_window->GetList()->GetValue());
+    }
     return true;
   } else if (ev.target == this && m_source && ev.IsKeyEvent()) {
     if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      // Redirect the key strokes to the list
+      // Redirect the key strokes to the list.
       TBWidgetEvent redirected_ev(ev);
       return menu_window->GetList()->InvokeEvent(redirected_ev);
     }

@@ -18,157 +18,146 @@ namespace tb {
 
 class MenuWindow;
 
-/** TBSelectList shows a scrollable list of items provided by a
- * TBSelectItemSource. */
-
-class TBSelectList : public TBWidget, public TBSelectItemViewer {
+// Shows a scrollable list of items provided by a SelectItemSource.
+class SelectList : public TBWidget, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(TBSelectList, TBWidget);
+  TBOBJECT_SUBCLASS(SelectList, TBWidget);
 
-  TBSelectList();
-  ~TBSelectList();
+  SelectList();
+  ~SelectList() override;
 
-  /** Get the default item source for this widget. This source can be used to
-     add
-          items of type TBGenericStringItem to this widget.
-          It is the item source that is fed from resource files.
+  // Gets the default item source for this widget.
+  // This source can be used to add items of type GenericStringItem to this
+  // widget.
+  // It is the item source that is fed from resource files.
+  // If you need to add other types of items, or if you want to share item
+  // sources between several SelectDropdown/SelectList widgets, use SetSource
+  // using a external item source.
+  GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
 
-          If you need to add other types of items, or if you want to share item
-     sources
-          between several TBSelectDropDown/TBSelectList widgets, use SetSource
-     using a
-          external item source. */
-  TBGenericStringItemSource* GetDefaultSource() { return &m_default_source; }
-
-  /** Set filter string so only matching items will be showed.
-          Set nullptr or empty string to remove filter and show all items. */
+  // Sets filter string so only matching items will be showed.
+  // Set nullptr or empty string to remove filter and show all items.
   void SetFilter(const char* filter);
   void SetFilter(const std::string& filter) { SetFilter(filter.c_str()); }
   const std::string& GetFilter() const { return m_filter; }
 
-  /** Set the language string id for the header. The header is shown
-          at the top of the list when only a subset of all items are shown. */
+  // Sets the language string id for the header.
+  // The header is shown at the top of the list when only a subset of all items
+  // are shown.
   void SetHeaderString(const TBID& id);
 
-  /** Make the list update its items to reflect the items from the
-          in the current source. The update will take place next time
-          the list is validated. */
+  // Makes the list update its items to reflect the items from the in the
+  // current source. The update will take place next time the list is validated.
   void InvalidateList();
 
-  /** Make sure the list is reflecting the current items in the source. */
+  // Makes sure the list is reflecting the current items in the source.
   void ValidateList();
 
-  /** The value is the selected item. In lists with multiple selectable
-          items it's the item that is the current focus. */
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_value; }
+  // Sets the value that is the selected item.
+  // In lists with multiple selectable items it's the item that is the current
+  // focus.
+  void SetValue(int value) override;
+  int GetValue() override { return m_value; }
 
-  /** Get the ID of the selected item, or 0 if there is no item selected. */
+  // Gets the ID of the selected item, or 0 if there is no item selected.
   TBID GetSelectedItemID();
 
-  /** Change the value to a non disabled item that is visible with the current
-          filter. Returns true if it successfully found another item.
-          Valid keys:
-                  SpecialKey::kUp - Previous item.
-                  SpecialKey::kDown - Next item.
-                  SpecialKey::kHome - First item.
-                  SpecialKey::kEnd - Last item. */
+  // Changes the value to a non disabled item that is visible with the current
+  // filter.
+  // Returns true if it successfully found another item.
+  // Valid keys:
+  //     SpecialKey::kUp   - Previous item.
+  //     SpecialKey::kDown - Next item.
+  //     SpecialKey::kHome - First item.
+  //     SpecialKey::kEnd  - Last item.
   bool ChangeValue(SpecialKey key);
 
-  /** Set the selected state of the item at the given index. If you want
-          to unselect the previously selected item, use SetValue. */
+  // Sets the selected state of the item at the given index. If you want to
+  // unselect the previously selected item, use SetValue.
   void SelectItem(int index, bool selected);
   TBWidget* GetItemWidget(int index);
 
-  /** Scroll to the current selected item. The scroll may be delayed until
-          the items has been layouted if the layout is currently invalid. */
+  // Scrolls to the current selected item. The scroll may be delayed until
+  // the items has been layouted if the layout is currently invalid.
   void ScrollToSelectedItem();
 
-  /** Return the scrollcontainer used in this list. */
+  // Returns the scrollcontainer used in this list.
   TBScrollContainer* GetScrollContainer() { return &m_container; }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual void OnSkinChanged();
-  virtual void OnProcess();
-  virtual void OnProcessAfterChildren();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  void OnInflate(const INFLATE_INFO& info) override;
+  void OnSkinChanged() override;
+  void OnProcess() override;
+  void OnProcessAfterChildren() override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
-  // == TBSelectItemViewer ==================================================
-  virtual void OnSourceChanged();
-  virtual void OnItemChanged(int index);
-  virtual void OnItemAdded(int index);
-  virtual void OnItemRemoved(int index);
-  virtual void OnAllItemsRemoved();
+  void OnSourceChanged() override;
+  void OnItemChanged(int index) override;
+  void OnItemAdded(int index) override;
+  void OnItemRemoved(int index) override;
+  void OnAllItemsRemoved() override;
 
  protected:
   TBScrollContainer m_container;
   TBLayout m_layout;
-  TBGenericStringItemSource m_default_source;
-  int m_value;
+  GenericStringItemSource m_default_source;
+  int m_value = -1;
   std::string m_filter;
-  bool m_list_is_invalid;
-  bool m_scroll_to_current;
+  bool m_list_is_invalid = false;
+  bool m_scroll_to_current = false;
   TBID m_header_lng_string_id;
 
  private:
   TBWidget* CreateAndAddItemAfter(int index, TBWidget* reference);
 };
 
-/** TBSelectDropdown shows a button that opens a popup with a TBSelectList with
-   items
-        provided by a TBSelectItemSource. */
-
-class TBSelectDropdown : public TBButton, public TBSelectItemViewer {
+// Shows a button that opens a popup with a SelectList with items provided by a
+// SelectItemSource.
+class SelectDropdown : public TBButton, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(TBSelectDropdown, TBButton);
+  TBOBJECT_SUBCLASS(SelectDropdown, TBButton);
 
-  TBSelectDropdown();
-  ~TBSelectDropdown();
+  SelectDropdown();
+  ~SelectDropdown() override;
 
-  /** Get the default item source for this widget. This source can be used to
-     add
-          items of type TBGenericStringItem to this widget.
-          It is the item source that is fed from resource files.
+  // Gets the default item source for this widget.
+  // This source can be used to add items of type GenericStringItem to this
+  // widget.
+  // It is the item source that is fed from resource files.
+  // If you need to add other types of items, or if you want to share item
+  // sources between several SelectDropdown/SelectList widgets, use SetSource
+  // using a external item source.
+  GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
 
-          If you need to add other types of items, or if you want to share item
-     sources
-          between several TBSelectDropDown/TBSelectList widgets, use SetSource
-     using a
-          external item source. */
-  TBGenericStringItemSource* GetDefaultSource() { return &m_default_source; }
+  // Sets the selected item.
+  void SetValue(int value) override;
+  int GetValue() override { return m_value; }
 
-  /** Set the selected item. */
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_value; }
-
-  /** Get the ID of the selected item, or 0 if there is no item selected. */
+  // Gets the ID of the selected item, or 0 if there is no item selected.
   TBID GetSelectedItemID();
 
-  /** Open the window if the model has items. */
+  // Opens the window if the model has items.
   void OpenWindow();
 
-  /** Close the window if it is open. */
+  // Closes the window if it is open.
   void CloseWindow();
 
-  /** Return the menu window if it's open, or nullptr. */
+  // Returns the menu window if it's open, or nullptr.
   MenuWindow* GetMenuIfOpen() const;
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  void OnInflate(const INFLATE_INFO& info) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
 
-  // == TBSelectItemViewer ==================================================
-  virtual void OnSourceChanged();
-  virtual void OnItemChanged(int index);
-  virtual void OnItemAdded(int index) {}
-  virtual void OnItemRemoved(int index) {}
-  virtual void OnAllItemsRemoved() {}
+  void OnSourceChanged() override;
+  void OnItemChanged(int index) override;
+  void OnItemAdded(int index) override {}
+  void OnItemRemoved(int index) override {}
+  void OnAllItemsRemoved() override {}
 
  protected:
-  TBGenericStringItemSource m_default_source;
+  GenericStringItemSource m_default_source;
   TBSkinImage m_arrow;
-  int m_value;
-  WeakWidgetPointer
-      m_window_pointer;  ///< Points to the dropdown window if opened
+  int m_value = -1;
+  WeakWidgetPointer m_window_pointer;  // Dropdown window, if opened.
 };
 
 }  // namespace tb

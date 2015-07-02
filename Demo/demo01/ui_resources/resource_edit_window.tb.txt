@@ -22,7 +22,7 @@ TBLayout
 			placeholder @search
 			type search
 			id widget_list_search
-		TBSelectList
+		SelectList
 			id widget_list
 	TBLayout
 		distribution available

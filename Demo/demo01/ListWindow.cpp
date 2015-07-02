@@ -4,10 +4,10 @@
 
 AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
                                        AdvancedItemSource* source,
-                                       TBSelectItemViewer* source_viewer,
+                                       SelectItemObserver* source_viewer,
                                        int index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
-  SetSkinBg(TBIDC("TBSelectItem"));
+  SetSkinBg(TBIDC("SelectItem"));
   SetLayoutDistribution(LayoutDistribution::kGravity);
   SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
   SetPaintOverflowFadeout(false);
@@ -42,14 +42,14 @@ bool AdvancedItemWidget::OnEvent(const TBWidgetEvent& ev) {
 bool AdvancedItemSource::Filter(int index, const char* filter) {
   // Override this method so we can return hits for our extra data too.
 
-  if (TBSelectItemSource::Filter(index, filter)) return true;
+  if (SelectItemSource::Filter(index, filter)) return true;
 
   AdvancedItem* item = GetItem(index);
   return stristr(item->GetMale() ? "Male" : "Female", filter) ? true : false;
 }
 
 TBWidget* AdvancedItemSource::CreateItemWidget(int index,
-                                               TBSelectItemViewer* viewer) {
+                                               SelectItemObserver* viewer) {
   if (TBLayout* layout =
           new AdvancedItemWidget(GetItem(index), this, viewer, index))
     return layout;
@@ -58,9 +58,9 @@ TBWidget* AdvancedItemSource::CreateItemWidget(int index,
 
 // == ListWindow ==============================================================
 
-ListWindow::ListWindow(TBSelectItemSource* source) {
+ListWindow::ListWindow(SelectItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
-  if (TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list")) {
+  if (SelectList* select = GetWidgetByIDAndType<SelectList>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoY);
   }
@@ -68,7 +68,7 @@ ListWindow::ListWindow(TBSelectItemSource* source) {
 
 bool ListWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target->GetID() == TBIDC("filter")) {
-    TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list");
+    SelectList* select = GetWidgetByIDAndType<SelectList>("list");
     select->SetFilter(ev.target->GetText());
     return true;
   }
@@ -81,14 +81,14 @@ bool ListWindow::OnEvent(const TBWidgetEvent& ev) {
 AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
     : m_source(source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select_advanced.tb.txt");
-  if (TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list")) {
+  if (SelectList* select = GetWidgetByIDAndType<SelectList>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoXAutoY);
   }
 }
 
 bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
-  TBSelectList* select = GetWidgetByIDAndType<TBSelectList>("list");
+  SelectList* select = GetWidgetByIDAndType<SelectList>("list");
   if (select && ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("filter")) {
     select->SetFilter(ev.target->GetText());

@@ -24,106 +24,99 @@ enum class ToggleAction {
 MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
                                "expanded");
 
-/** TBToggleContainer is a widget that toggles a property when its value
-        change between 0 and 1. TOGGLE specifies what property will toggle.
-        This is useful f.ex to toggle a whole group of child widgets depending
-        on the value of some other widget. By connecting the TBToggleContainer
-        with a widget connection, this can happen completly automatically. */
-class TBToggleContainer : public TBWidget {
+// A widget that toggles a property when its value change between 0 and 1.
+// ToggleAction specifies what property will toggle.
+// This is useful f.ex to toggle a whole group of child widgets depending on the
+// value of some other widget. By connecting the ToggleContainer with a widget
+// connection, this can happen completly automatically.
+class ToggleContainer : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBToggleContainer, TBWidget);
+  TBOBJECT_SUBCLASS(ToggleContainer, TBWidget);
 
-  TBToggleContainer();
+  ToggleContainer();
 
-  /** Set what should toggle when the value changes. */
   void SetToggleAction(ToggleAction toggle);
   ToggleAction GetToggleAction() const { return m_toggle; }
 
-  /** Set if the toggle state should be inverted. */
+  // Sets if the toggle state should be inverted.
   void SetInvert(bool invert);
   bool GetInvert() const { return m_invert; }
 
-  /** Get the current value, after checking the invert mode. */
+  // Gets the current value, after checking the invert mode.
   bool GetIsOn() const { return m_invert ? !m_value : !!m_value; }
 
-  /** Set the value of this widget. 1 will turn on the toggle, 0 will turn it
-     off (or
-          the opposite if the invert mode is set). */
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_value; }
+  // Sets the value of this widget.
+  // 1 will turn on the toggle, 0 will turn it off (or the opposite if the
+  // invert mode is set).
+  void SetValue(int value) override;
+  int GetValue() override { return m_value; }
 
-  virtual void OnInflate(const INFLATE_INFO& info);
+  void OnInflate(const INFLATE_INFO& info) override;
 
  private:
   void UpdateInternal();
-  ToggleAction m_toggle;
-  bool m_invert;
-  int m_value;
+
+  ToggleAction m_toggle = ToggleAction::kNothing;
+  bool m_invert = false;
+  int m_value = 0;
 };
 
-/** TBSectionHeader is just a thin wrapper for a TBButton that is in toggle
-        mode with the skin TBSectionHeader by default. It is used as the
-   clickable
-        header in TBSection that toggles the section. */
-class TBSectionHeader : public TBButton {
+// Just a thin wrapper for a TBButton that is in toggle mode with the skin
+// SectionHeader by default.
+// It is used as the clickable header in Section that toggles the section.
+class SectionHeader : public TBButton {
  public:
-  TBOBJECT_SUBCLASS(TBSectionHeader, TBButton);
+  TBOBJECT_SUBCLASS(SectionHeader, TBButton);
 
-  TBSectionHeader();
+  SectionHeader();
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  bool OnEvent(const TBWidgetEvent& ev) override;
 };
 
-/** TBSection is a widget with a header that when clicked toggles its children
-        on and off (using a internal TBToggleContainer with
-   ToggleAction::kExpanded).
-
-        The header is a TBSectionHeader.
-
-        The skin names of the internal widgets are:
-                TBSection				- This widget itself.
-                TBSection.layout		- The layout that wraps the
-   header and the container.
-                TBSection.container		- The toggle container with
-   the children that expands/collapses.
-*/
-
-class TBSection : public TBWidget {
+// A widget with a header that when clicked toggles its children on and off
+// (using a internal ToggleContainer with ToggleAction::kExpanded).
+// The header is a SectionHeader.
+// The skin names of the internal widgets are:
+//     Section           - This widget itself.
+//     Section.layout    - The layout that wraps the header and the container.
+//     Section.container - The toggle container with the children that
+//                         expands/collapses.
+class Section : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBSection, TBWidget);
+  TBOBJECT_SUBCLASS(Section, TBWidget);
 
-  TBSection();
-  ~TBSection();
+  Section();
+  ~Section() override;
 
   TBLayout* GetLayout() { return &m_layout; }
-  TBSectionHeader* GetHeader() { return &m_header; }
-  TBToggleContainer* GetContainer() { return &m_toggle_container; }
+  SectionHeader* GetHeader() { return &m_header; }
+  ToggleContainer* GetContainer() { return &m_toggle_container; }
 
-  /** Set if the section should be scrolled into view after next layout. */
+  // Sets if the section should be scrolled into view after next layout.
   void SetPendingScrollIntoView(bool pending_scroll) {
     m_pending_scroll = pending_scroll;
   }
 
-  /** Set the text of the text field. */
+  // Sets the text of the text field.
   void SetText(const char* text) override { m_header.SetText(text); }
   std::string GetText() override { return m_header.GetText(); }
 
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_toggle_container.GetValue(); }
+  void SetValue(int value) override;
+  int GetValue() override { return m_toggle_container.GetValue(); }
 
-  virtual TBWidget* GetContentRoot() {
+  TBWidget* GetContentRoot() override {
     return m_toggle_container.GetContentRoot();
   }
-  virtual void OnProcessAfterChildren();
+  void OnProcessAfterChildren() override;
 
-  virtual PreferredSize OnCalculatePreferredSize(
-      const SizeConstraints& constraints);
+  PreferredSize OnCalculatePreferredSize(
+      const SizeConstraints& constraints) override;
 
  private:
   TBLayout m_layout;
-  TBSectionHeader m_header;
-  TBToggleContainer m_toggle_container;
-  bool m_pending_scroll;
+  SectionHeader m_header;
+  ToggleContainer m_toggle_container;
+  bool m_pending_scroll = false;
 };
 
 }  // namespace tb

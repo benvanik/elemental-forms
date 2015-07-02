@@ -60,7 +60,7 @@ enum class EventType {
   kPointerMove,
   kWheel,
   // Invoked after changing text in a TBTextField, changing selected item in a
-  // TBSelectList etc. Invoking this event trigs synchronization with connected
+  // SelectList etc. Invoking this event trigs synchronization with connected
   // TBWidgetValue and other widgets connected to it.
   kChanged,
   kKeyDown,

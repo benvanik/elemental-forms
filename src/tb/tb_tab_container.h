@@ -14,64 +14,63 @@
 
 namespace tb {
 
-/** TBTabLayout is a TBLayout used in TBTabContainer to apply
-        some default properties on any TBButton added to it. */
-class TBTabLayout : public TBLayout {
+// A TBLayout used in TabContainer to apply some default properties on any
+// TBButton added to it.
+class TabLayout : public TBLayout {
  public:
-  TBOBJECT_SUBCLASS(TBTabLayout, TBLayout);
+  TBOBJECT_SUBCLASS(TabLayout, TBLayout);
 
-  virtual void OnChildAdded(TBWidget* child);
-  virtual PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints);
+  void OnChildAdded(TBWidget* child) override;
+  PreferredSize OnCalculatePreferredContentSize(
+      const SizeConstraints& constraints) override;
 };
 
-/** TBTabContainer - A container with tabs for multiple pages. */
-
-class TBTabContainer : public TBWidget {
+// A container with tabs for multiple pages.
+class TabContainer : public TBWidget {
  public:
-  TBOBJECT_SUBCLASS(TBTabContainer, TBWidget);
+  TBOBJECT_SUBCLASS(TabContainer, TBWidget);
 
-  TBTabContainer();
-  ~TBTabContainer();
+  TabContainer();
+  ~TabContainer() override;
 
-  /** Set along which axis the content should layouted.
-          Use SetAlignment instead for more choice! Also, calling
-          SetAxis directly does not update the current alignment. */
-  virtual void SetAxis(Axis axis);
-  virtual Axis GetAxis() const { return m_root_layout.GetAxis(); }
+  // Sets along which axis the content should layouted.
+  // Use SetAlignment instead for more choice! Also, calling
+  // SetAxis directly does not update the current alignment.
+  void SetAxis(Axis axis) override;
+  Axis GetAxis() const override { return m_root_layout.GetAxis(); }
 
-  /** Set alignment of the tabs. */
+  // Sets alignment of the tabs.
   void SetAlignment(Align align);
   Align GetAlignment() const { return m_align; }
 
-  /** Set which page should be selected and visible. */
-  virtual void SetValue(int value);
-  virtual int GetValue() { return m_current_page; }
+  // Sets which page should be selected and visible.
+  void SetValue(int value) override;
+  int GetValue() override { return m_current_page; }
 
-  /** Set which page should be selected and visible. */
+  // Sets which page should be selected and visible.
   void SetCurrentPage(int index) { SetValue(index); }
   int GetCurrentPage() { return GetValue(); }
   int GetNumPages();
 
-  /** Return the widget that is the current page, or nullptr if none is active.
-   */
+  // Returns the widget that is the current page, or nullptr if none is active.
   TBWidget* GetCurrentPageWidget() const;
 
-  virtual void OnInflate(const INFLATE_INFO& info);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnProcess();
+  void OnInflate(const INFLATE_INFO& info) override;
+  bool OnEvent(const TBWidgetEvent& ev) override;
+  void OnProcess() override;
 
-  virtual TBWidget* GetContentRoot() { return &m_content_root; }
+  TBWidget* GetContentRoot() override { return &m_content_root; }
   TBLayout* GetTabLayout() { return &m_tab_layout; }
 
  protected:
   TBLayout m_root_layout;
-  TBTabLayout m_tab_layout;
+  TabLayout m_tab_layout;
   TBWidget m_content_root;
   bool m_need_page_update = true;
   int m_current_page = 0;
   Align m_align = Align::kTop;
 };
-};
+
+}  // namespace tb
 
 #endif  // TB_TAB_CONTAINER_H

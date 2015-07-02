@@ -245,17 +245,17 @@ bool TBEditField::OnEvent(const TBWidgetEvent& ev) {
     ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
 
     if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"))) {
-      TBGenericStringItemSource* source = menu->GetList()->GetDefaultSource();
-      source->AddItem(new TBGenericStringItem(g_tb_lng->GetString(TBIDC("cut")),
-                                              TBIDC("cut")));
-      source->AddItem(new TBGenericStringItem(
-          g_tb_lng->GetString(TBIDC("copy")), TBIDC("copy")));
-      source->AddItem(new TBGenericStringItem(
-          g_tb_lng->GetString(TBIDC("paste")), TBIDC("paste")));
-      source->AddItem(new TBGenericStringItem(
+      GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
+      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("cut")),
+                                            TBIDC("cut")));
+      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("copy")),
+                                            TBIDC("copy")));
+      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("paste")),
+                                            TBIDC("paste")));
+      source->AddItem(new GenericStringItem(
           g_tb_lng->GetString(TBIDC("delete")), TBIDC("delete")));
-      source->AddItem(new TBGenericStringItem("-"));
-      source->AddItem(new TBGenericStringItem(
+      source->AddItem(new GenericStringItem("-"));
+      source->AddItem(new GenericStringItem(
           g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
       menu->Show(source, PopupAlignment(pos_in_root), -1);
     }

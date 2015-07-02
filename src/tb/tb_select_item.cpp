@@ -27,13 +27,13 @@ namespace tb {
 
 class TBSimpleLayoutItemWidget : public TBLayout, private WidgetListener {
  public:
-  TBSimpleLayoutItemWidget(TBID image, TBSelectItemSource* source,
+  TBSimpleLayoutItemWidget(TBID image, SelectItemSource* source,
                            const char* str);
   ~TBSimpleLayoutItemWidget();
   virtual bool OnEvent(const TBWidgetEvent& ev);
 
  private:
-  TBSelectItemSource* m_source;
+  SelectItemSource* m_source;
   TBTextField m_textfield;
   TBSkinImage m_image;
   TBSkinImage m_image_arrow;
@@ -44,10 +44,10 @@ class TBSimpleLayoutItemWidget : public TBLayout, private WidgetListener {
 };
 
 TBSimpleLayoutItemWidget::TBSimpleLayoutItemWidget(TBID image,
-                                                   TBSelectItemSource* source,
+                                                   SelectItemSource* source,
                                                    const char* str)
     : m_source(source), m_menu(nullptr) {
-  SetSkinBg(TBIDC("TBSelectItem"));
+  SetSkinBg(TBIDC("SelectItem"));
   SetLayoutDistribution(LayoutDistribution::kAvailable);
   SetPaintOverflowFadeout(false);
 
@@ -110,32 +110,36 @@ void TBSimpleLayoutItemWidget::CloseSubMenu() {
   m_menu = nullptr;
 }
 
-void TBSelectItemViewer::SetSource(TBSelectItemSource* source) {
+void SelectItemObserver::SetSource(SelectItemSource* source) {
   if (m_source == source) return;
 
-  if (m_source) m_source->m_viewers.Remove(this);
+  if (m_source) {
+    m_source->m_observers.Remove(this);
+  }
   m_source = source;
-  if (m_source) m_source->m_viewers.AddLast(this);
+  if (m_source) {
+    m_source->m_observers.AddLast(this);
+  }
 
   OnSourceChanged();
 }
 
-TBSelectItemSource::~TBSelectItemSource() {
+SelectItemSource::~SelectItemSource() {
   // If this assert trig, you are deleting a model that's still set on some
-  // TBSelect widget. That might be dangerous.
-  assert(!m_viewers.HasLinks());
+  // Select widget. That might be dangerous.
+  assert(!m_observers.HasLinks());
 }
 
-bool TBSelectItemSource::Filter(int index, const std::string& filter) {
+bool SelectItemSource::Filter(int index, const std::string& filter) {
   const char* str = GetItemString(index);
   if (str && stristr(str, filter.c_str())) return true;
   return false;
 }
 
-TBWidget* TBSelectItemSource::CreateItemWidget(int index,
-                                               TBSelectItemViewer* viewer) {
+TBWidget* SelectItemSource::CreateItemWidget(int index,
+                                             SelectItemObserver* observer) {
   const char* string = GetItemString(index);
-  TBSelectItemSource* sub_source = GetItemSubSource(index);
+  SelectItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);
   if (sub_source || image) {
     if (TBSimpleLayoutItemWidget* itemwidget =
@@ -144,11 +148,11 @@ TBWidget* TBSelectItemSource::CreateItemWidget(int index,
   } else if (string && *string == '-') {
     if (TBSeparator* separator = new TBSeparator) {
       separator->SetGravity(Gravity::kAll);
-      separator->SetSkinBg(TBIDC("TBSelectItem.separator"));
+      separator->SetSkinBg(TBIDC("SelectItem.separator"));
       return separator;
     }
   } else if (TBTextField* textfield = new TBTextField) {
-    textfield->SetSkinBg("TBSelectItem");
+    textfield->SetSkinBg("SelectItem");
     textfield->SetText(string);
     textfield->SetTextAlign(TextAlign::kLeft);
     return textfield;
@@ -156,29 +160,35 @@ TBWidget* TBSelectItemSource::CreateItemWidget(int index,
   return nullptr;
 }
 
-void TBSelectItemSource::InvokeItemChanged(int index,
-                                           TBSelectItemViewer* exclude_viewer) {
-  TBLinkListOf<TBSelectItemViewer>::Iterator iter = m_viewers.IterateForward();
-  while (TBSelectItemViewer* viewer = iter.GetAndStep())
-    if (viewer != exclude_viewer) viewer->OnItemChanged(index);
+void SelectItemSource::InvokeItemChanged(int index,
+                                         SelectItemObserver* exclude_observer) {
+  auto iter = m_observers.IterateForward();
+  while (SelectItemObserver* observer = iter.GetAndStep()) {
+    if (observer != exclude_observer) {
+      observer->OnItemChanged(index);
+    }
+  }
 }
 
-void TBSelectItemSource::InvokeItemAdded(int index) {
-  TBLinkListOf<TBSelectItemViewer>::Iterator iter = m_viewers.IterateForward();
-  while (TBSelectItemViewer* viewer = iter.GetAndStep())
-    viewer->OnItemAdded(index);
+void SelectItemSource::InvokeItemAdded(int index) {
+  auto iter = m_observers.IterateForward();
+  while (SelectItemObserver* observer = iter.GetAndStep()) {
+    observer->OnItemAdded(index);
+  }
 }
 
-void TBSelectItemSource::InvokeItemRemoved(int index) {
-  TBLinkListOf<TBSelectItemViewer>::Iterator iter = m_viewers.IterateForward();
-  while (TBSelectItemViewer* viewer = iter.GetAndStep())
-    viewer->OnItemRemoved(index);
+void SelectItemSource::InvokeItemRemoved(int index) {
+  auto iter = m_observers.IterateForward();
+  while (SelectItemObserver* observer = iter.GetAndStep()) {
+    observer->OnItemRemoved(index);
+  }
 }
 
-void TBSelectItemSource::InvokeAllItemsRemoved() {
-  TBLinkListOf<TBSelectItemViewer>::Iterator iter = m_viewers.IterateForward();
-  while (TBSelectItemViewer* viewer = iter.GetAndStep())
-    viewer->OnAllItemsRemoved();
+void SelectItemSource::InvokeAllItemsRemoved() {
+  auto iter = m_observers.IterateForward();
+  while (SelectItemObserver* observer = iter.GetAndStep()) {
+    observer->OnAllItemsRemoved();
+  }
 }
 
 }  // namespace tb
