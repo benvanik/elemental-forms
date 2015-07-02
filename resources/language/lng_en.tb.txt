@@ -5,10 +5,10 @@ delete Delete
 selectall Select all
 undo Undo
 redo Redo
-TBMessageWindow.ok Ok
-TBMessageWindow.cancel Cancel
-TBMessageWindow.yes Yes
-TBMessageWindow.no No
+MessageWindow.ok Ok
+MessageWindow.cancel Cancel
+MessageWindow.yes Yes
+MessageWindow.no No
 TBList.header Showing %d of %d
 new New
 save Save

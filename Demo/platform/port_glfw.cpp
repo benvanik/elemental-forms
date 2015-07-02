@@ -354,7 +354,7 @@ static void scroll_callback(GLFWwindow* window, double x, double y) {
                                                -(int)y, GetModifierKeys());
 }
 
-/** Reschedule the platform timer, or cancel it if fire_time is TB_NOT_SOON.
+/** Reschedule the platform timer, or cancel it if fire_time is kNotSoon.
         If fire_time is 0, it should be fired ASAP.
         If force is true, it will ask the platform to schedule it again, even if
         the fire_time is the same as last time. */
@@ -362,7 +362,7 @@ static void scroll_callback(GLFWwindow* window, double x, double y) {
 #ifndef TB_TARGET_LINUX
 static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
   static uint64_t set_fire_time = -1;
-  if (fire_time == TB_NOT_SOON) {
+  if (fire_time == kNotSoon) {
     set_fire_time = -1;
     glfwKillTimer();
   } else if (fire_time != set_fire_time || force || fire_time == 0) {
@@ -379,7 +379,7 @@ static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
 }
 
 static void timer_callback() {
-  uint64_t next_fire_time = TBMessageHandler::GetNextMessageFireTime();
+  uint64_t next_fire_time = MessageHandler::GetNextMessageFireTime();
   uint64_t now = tb::TBSystem::GetTimeMS();
   if (now < next_fire_time) {
     // We timed out *before* we were supposed to (the OS is not playing nice).
@@ -389,12 +389,12 @@ static void timer_callback() {
     return;
   }
 
-  TBMessageHandler::ProcessMessages();
+  MessageHandler::ProcessMessages();
 
   // If we still have things to do (because we didn't process all messages,
   // or because there are new messages), we need to rescedule, so call
   // RescheduleTimer.
-  TBSystem::RescheduleTimer(TBMessageHandler::GetNextMessageFireTime());
+  TBSystem::RescheduleTimer(MessageHandler::GetNextMessageFireTime());
 }
 
 // This doesn't really belong here (it belongs in tb_system_[linux/windows].cpp.

@@ -21,12 +21,12 @@ enum class MessageWindowButtons {
   kYesNo,
 };
 
-// TBMessageWindowSettings contains additional settings for TBMessageWindow.
-class TBMessageWindowSettings {
+// MessageWindowSettings contains additional settings for MessageWindow.
+class MessageWindowSettings {
  public:
-  TBMessageWindowSettings()
+  MessageWindowSettings()
       : msg(MessageWindowButtons::kOk), dimmer(false), styling(false) {}
-  TBMessageWindowSettings(MessageWindowButtons msg, TBID icon_skin)
+  MessageWindowSettings(MessageWindowButtons msg, TBID icon_skin)
       : msg(msg), icon_skin(icon_skin), dimmer(false), styling(false) {}
 
  public:
@@ -36,7 +36,7 @@ class TBMessageWindowSettings {
   bool styling;  ///< Enable styling in the textfield.
 };
 
-/** TBMessageWindow is a window for showing simple messages.
+/** MessageWindow is a window for showing simple messages.
         Events invoked in this window will travel up through the target widget.
 
         When the user click any of its buttons, it will invoke a click event
@@ -45,15 +45,15 @@ class TBMessageWindowSettings {
 
         If the target widget is deleted while this window is alive, the
         window will delete itself. */
-class TBMessageWindow : public TBWindow, private TBWidgetListener {
+class MessageWindow : public TBWindow, private TBWidgetListener {
  public:
-  TBOBJECT_SUBCLASS(TBMessageWindow, TBWindow);
+  TBOBJECT_SUBCLASS(MessageWindow, TBWindow);
 
-  TBMessageWindow(TBWidget* target, TBID id);
-  virtual ~TBMessageWindow();
+  MessageWindow(TBWidget* target, TBID id);
+  virtual ~MessageWindow();
 
   bool Show(const std::string& title, const std::string& message,
-            TBMessageWindowSettings* settings = nullptr);
+            MessageWindowSettings* settings = nullptr);
 
   virtual TBWidget* GetEventDestination() { return m_target.Get(); }
 

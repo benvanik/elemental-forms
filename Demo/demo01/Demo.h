@@ -30,13 +30,13 @@ class DemoWindow : public TBWindow {
   virtual bool OnEvent(const TBWidgetEvent& ev);
 };
 
-class MainWindow : public DemoWindow, public TBMessageHandler {
+class MainWindow : public DemoWindow, public MessageHandler {
  public:
   MainWindow();
   virtual bool OnEvent(const TBWidgetEvent& ev);
 
-  // Implement TBMessageHandler
-  virtual void OnMessageReceived(TBMessage* msg);
+  // Implement MessageHandler
+  virtual void OnMessageReceived(Message* msg);
 };
 
 class ImageWindow : public DemoWindow {
@@ -78,13 +78,13 @@ class ConnectionWindow : public DemoWindow {
   virtual bool OnEvent(const TBWidgetEvent& ev);
 };
 
-class ScrollContainerWindow : public DemoWindow, public TBMessageHandler {
+class ScrollContainerWindow : public DemoWindow, public MessageHandler {
  public:
   ScrollContainerWindow();
   virtual bool OnEvent(const TBWidgetEvent& ev);
 
-  // Implement TBMessageHandler
-  virtual void OnMessageReceived(TBMessage* msg);
+  // Implement MessageHandler
+  virtual void OnMessageReceived(Message* msg);
 };
 
 #endif  // DEMO_H

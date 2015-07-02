@@ -40,7 +40,7 @@ bool tb_core_init(TBRenderer* renderer, const char* lng_file) {
   TBSystem::Init();
 #endif
 
-  g_tooltip_mng = new TBTooltipManager();
+  g_tooltip_mng = new TooltipManager();
 
   return true;
 }

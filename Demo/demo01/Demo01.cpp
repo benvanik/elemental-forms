@@ -360,7 +360,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
       return true;
     } else if (ev.target->GetID() == TBIDC("new buttons delayed")) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
-        TBMessageData* data = new TBMessageData();
+        MessageData* data = new MessageData();
         data->id1 = ev.target->GetParent()->GetID();
         data->v1.SetInt(i);
         PostMessageDelayed(TBIDC("new button"), data, 100 + i * 500);
@@ -375,8 +375,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
         menu->Show(&popup_menu_source, TBPopupAlignment());
       return true;
     } else if (ev.target->GetID() == TBIDC("popupmenu1")) {
-      TBMessageWindow* msg_win =
-          new TBMessageWindow(this, TBIDC("popup_dialog"));
+      MessageWindow* msg_win = new MessageWindow(this, TBIDC("popup_dialog"));
       msg_win->Show("Info",
                     tb::format_string("Menu event received!\nref_id: %d",
                                       (int)ev.ref_id));
@@ -386,7 +385,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
   return DemoWindow::OnEvent(ev);
 }
 
-void ScrollContainerWindow::OnMessageReceived(TBMessage* msg) {
+void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
     if (TBWidget* target = GetWidgetByID(msg->data->id1)) {
       TBButton* button = new TBButton;
@@ -484,15 +483,15 @@ MainWindow::MainWindow() {
   SetOpacity(0.97f);
 }
 
-void MainWindow::OnMessageReceived(TBMessage* msg) {
+void MainWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("instantmsg")) {
-    TBMessageWindow* msg_win = new TBMessageWindow(this, TBIDC("test_dialog"));
+    MessageWindow* msg_win = new MessageWindow(this, TBIDC("test_dialog"));
     msg_win->Show("Message window", "Instant message received!");
   } else if (msg->message == TBIDC("busy")) {
     // Keep the message queue busy by posting another "busy" message.
     PostMessage(TBIDC("busy"), nullptr);
   } else if (msg->message == TBIDC("delayedmsg")) {
-    TBMessageWindow* msg_win = new TBMessageWindow(this, TBIDC(""));
+    MessageWindow* msg_win = new MessageWindow(this, TBIDC(""));
     msg_win->Show("Message window",
                   tb::format_string(
                       "Delayed message received!\n\n"
@@ -516,8 +515,8 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
         assert(!GetMessageByID(TBIDC("busy")));
         if (!GetMessageByID(TBIDC("busy"))) {
           PostMessage(TBIDC("busy"), nullptr);
-          TBMessageWindow* msg_win =
-              new TBMessageWindow(this, TBIDC("test_dialog"));
+          MessageWindow* msg_win =
+              new MessageWindow(this, TBIDC("test_dialog"));
           msg_win->Show("Message window",
                         "The message loop is now constantly busy with messages "
                         "to process.\n\n"
@@ -527,7 +526,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       } else {
         // Remove any pending "busy" message when we uncheck the checkbox.
         assert(GetMessageByID(TBIDC("busy")));
-        if (TBMessage* busymsg = GetMessageByID(TBIDC("busy")))
+        if (Message* busymsg = GetMessageByID(TBIDC("busy")))
           DeleteMessage(busymsg);
       }
       return true;
@@ -537,10 +536,10 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("TBWindow.close")) {
       // Intercept the TBWindow.close message and stop it from bubbling
       // to TBWindow (prevent the window from closing)
-      TBMessageWindow* msg_win =
-          new TBMessageWindow(this, TBIDC("confirm_close_dialog"));
-      TBMessageWindowSettings settings(MessageWindowButtons::kYesNo,
-                                       TBIDC("Icon48"));
+      MessageWindow* msg_win =
+          new MessageWindow(this, TBIDC("confirm_close_dialog"));
+      MessageWindowSettings settings(MessageWindowButtons::kYesNo,
+                                     TBIDC("Icon48"));
       settings.dimmer = true;
       settings.styling = true;
       msg_win->Show("Are you sure?",
@@ -548,7 +547,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
                     &settings);
       return true;
     } else if (ev.target->GetID() == TBIDC("confirm_close_dialog")) {
-      if (ev.ref_id == TBIDC("TBMessageWindow.yes")) Close();
+      if (ev.ref_id == TBIDC("MessageWindow.yes")) Close();
       return true;
     } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
@@ -556,7 +555,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
       for (int i = 0; i < reload_count; i++) g_tb_skin->ReloadBitmaps();
       uint64_t t2 = TBSystem::GetTimeMS();
 
-      TBMessageWindow* msg_win = new TBMessageWindow(ev.target, TBID());
+      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show(
           "GFX load performance",
           tb::format_string("Reloading the skin graphics %d times took %dms",
@@ -565,7 +564,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("test context lost")) {
       g_renderer->InvokeContextLost();
       g_renderer->InvokeContextRestored();
-      TBMessageWindow* msg_win = new TBMessageWindow(ev.target, TBID());
+      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Context lost & restore",
                     "Called InvokeContextLost and InvokeContextRestored.\n\n"
                     "Does everything look fine?");
@@ -611,7 +610,7 @@ bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
 #ifdef TB_RUNTIME_DEBUG_INFO
       ShowDebugInfoSettingsWindow(GetParentRoot());
 #else
-      TBMessageWindow* msg_win = new TBMessageWindow(ev.target, TBID());
+      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Debug settings",
                     "Debug settings is only available in builds "
                     "compiled with TB_RUNTIME_DEBUG_INFO defined.\n\n"
@@ -724,7 +723,7 @@ bool DemoApplication::Init() {
   new TabContainerWindow();
 
   if (num_failed_tests) {
-    TBMessageWindow* msg_win = new TBMessageWindow(GetRoot(), TBIDC(""));
+    MessageWindow* msg_win = new MessageWindow(GetRoot(), TBIDC(""));
     msg_win->Show(
         "Testing results",
         tb::format_string(

@@ -18,19 +18,18 @@
 
 namespace tb {
 
-class TBMessageHandler;
+class MessageHandler;
 
-/** TB_NOT_SOON is returned from TBMessageHandler::GetNextMessageFireTime
-        and means that there is currently no more messages to process. */
-constexpr uint64_t TB_NOT_SOON = -1;
+// kNotSoon is returned from MessageHandler::GetNextMessageFireTime
+// and means that there is currently no more messages to process.
+constexpr uint64_t kNotSoon = -1;
 
-/** TBMessageData holds custom data to send with a posted message. */
-
-class TBMessageData : public TBTypedObject {
+// Holds custom data to send with a posted message.
+class MessageData : public TBTypedObject {
  public:
-  TBMessageData() {}
-  TBMessageData(int v1, int v2) : v1(v1), v2(v2) {}
-  virtual ~TBMessageData() {}
+  MessageData() = default;
+  MessageData(int v1, int v2) : v1(v1), v2(v2) {}
+  virtual ~MessageData() {}
 
  public:
   TBValue v1;  ///< Use for anything
@@ -39,103 +38,95 @@ class TBMessageData : public TBTypedObject {
   TBID id2;    ///< Use for anything
 };
 
-/** TBMessageLink should never be created or subclassed anywhere except in
-   TBMessage.
-        It's only purpose is to add a extra typed link for TBMessage, since it
-   needs to be
-        added in multiple lists. */
-class TBMessageLink : public TBLinkOf<TBMessageLink> {};
+// Should never be created or subclassed anywhere except in Message.
+// It's only purpose is to add a extra typed link for Message, since it needs
+// to be added in multiple lists.
+class MessageLink : public TBLinkOf<MessageLink> {};
 
-/** TBMessage is a message created and owned by TBMessageHandler.
-        It carries a message id, and may also carry a TBMessageData with
-        additional parameters. */
-
-class TBMessage : public TBLinkOf<TBMessage>, public TBMessageLink {
+// A message created and owned by MessageHandler.
+// It carries a message id, and may also carry a MessageData with additional
+// parameters.
+class Message : public TBLinkOf<Message>, public MessageLink {
  private:
-  TBMessage(TBID message, TBMessageData* data, uint64_t fire_time_ms,
-            TBMessageHandler* mh);
-  ~TBMessage();
+  Message(TBID message, MessageData* data, uint64_t fire_time_ms,
+          MessageHandler* mh);
+  ~Message();
 
  public:
-  TBID message;         ///< The message id
-  TBMessageData* data;  ///< The message data, or nullptr if no data is set
+  TBID message;       // The message id.
+  MessageData* data;  // The message data, or nullptr if no data is set.
 
-  /** The time which a delayed message should have fired (0 for non delayed
-   * messages) */
-  uint64_t GetFireTime() { return fire_time_ms; }
+  // Gets the time which a delayed message should have fired (0 for non delayed
+  // messages).
+  uint64_t GetFireTime() const { return fire_time_ms; }
 
  private:
-  friend class TBMessageHandler;
+  friend class MessageHandler;
   uint64_t fire_time_ms;
-  TBMessageHandler* mh;
+  MessageHandler* mh;
 };
 
-/** TBMessageHandler handles a list of pending messages posted to itself.
-        Messages can be delivered immediately or after a delay.
-        Delayed message are delivered as close as possible to the time they
-   should fire.
-        Immediate messages are put on a queue and delivered as soon as possible,
-   after any delayed
-        messages that has passed their delivery time. This queue is global
-   (among all TBMessageHandlers) */
-
-class TBMessageHandler {
+// Handles a list of pending messages posted to itself.
+// Messages can be delivered immediately or after a delay.
+// Delayed message are delivered as close as possible to the time they should
+// fire.
+// Immediate messages are put on a queue and delivered as soon as possible,
+// after any delayed messages that has passed their delivery time. This queue is
+// global (among all MessageHandlers).
+class MessageHandler {
  public:
-  TBMessageHandler();
-  virtual ~TBMessageHandler();
+  MessageHandler();
+  virtual ~MessageHandler();
 
-  /** Posts a message to the target after a delay.
-          data may be nullptr if no extra data need to be sent. It will be
-     deleted
-          automatically when the message is deleted. */
-  bool PostMessageDelayed(TBID message, TBMessageData* data,
+  // Posts a message to the target after a delay.
+  // data may be nullptr if no extra data need to be sent. It will be deleted
+  // automatically when the message is deleted.
+  void PostMessageDelayed(TBID message, MessageData* data,
                           uint32_t delay_in_ms);
 
-  /** Posts a message to the target at the given time (relative to
-     TBSystem::GetTimeMS()).
-          data may be nullptr if no extra data need to be sent. It will be
-     deleted
-          automatically when the message is deleted. */
-  bool PostMessageOnTime(TBID message, TBMessageData* data, uint64_t fire_time);
+  // Posts a message to the target at the given time (relative to
+  // TBSystem::GetTimeMS()).
+  // data may be nullptr if no extra data need to be sent. It will be deleted
+  // automatically when the message is deleted.
+  void PostMessageOnTime(TBID message, MessageData* data, uint64_t fire_time);
 
-  /** Posts a message to the target.
-          data may be nullptr if no extra data need to be sent. It will be
-     deleted
-          automatically when the message is deleted. */
-  bool PostMessage(TBID message, TBMessageData* data);
+  // Posts a message to the target.
+  // data may be nullptr if no extra data need to be sent. It will be deleted
+  // automatically when the message is deleted.
+  void PostMessage(TBID message, MessageData* data);
 
-  /** Check if this messagehandler has a pending message with the given id.
-          Returns the message if found, or nullptr.
-          If you want to delete the message, call DeleteMessage. */
-  TBMessage* GetMessageByID(TBID message);
+  // Checks if this messagehandler has a pending message with the given id.
+  // Returns the message if found, or nullptr.
+  // If you want to delete the message, call DeleteMessage.
+  Message* GetMessageByID(TBID message);
 
-  /** Delete the message from this message handler. */
-  void DeleteMessage(TBMessage* msg);
+  // Deletes the message from this message handler.
+  void DeleteMessage(Message* msg);
 
-  /** Delete all messages from this message handler. */
+  // Deletes all messages from this message handler.
   void DeleteAllMessages();
 
-  /** Called when a message is delivered.
-          This message won't be found using GetMessageByID. It is already
-     removed from the list.
-          You should not call DeleteMessage on this message. That is done
-     automatically after this method exit. */
-  virtual void OnMessageReceived(TBMessage* msg) {}
+  // Called when a message is delivered.
+  // This message won't be found using GetMessageByID. It is already removed
+  // from the list.
+  // You should not call DeleteMessage on this message. That is done
+  // automatically after this method exit.
+  virtual void OnMessageReceived(Message* msg) {}
 
-  /** Process any messages in queue. */
+  // Processes any messages in queue.
   static void ProcessMessages();
 
-  /** Get when the time when ProcessMessages needs to be called again.
-          Always returns 0 if there is nondelayed messages to process, which
-     means it needs to be called asap.
-          If there's only delayed messages to process, it returns the time that
-     the earliest delayed message should be fired.
-          If there's no more messages to process at the moment, it returns
-     TB_NOT_SOON (No call to ProcessMessages is needed). */
+  // Gets when the time when ProcessMessages needs to be called again.
+  // Always returns 0 if there is nondelayed messages to process, which means it
+  // needs to be called asap.
+  // If there's only delayed messages to process, it returns the time that the
+  // earliest delayed message should be fired.
+  // If there's no more messages to process at the moment, it returns
+  // kNotSoon (No call to ProcessMessages is needed). */
   static uint64_t GetNextMessageFireTime();
 
  private:
-  TBLinkListOf<TBMessage> m_messages;
+  TBLinkListOf<Message> m_messages;
 };
 
 }  // namespace tb

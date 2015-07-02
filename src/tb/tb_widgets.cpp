@@ -41,14 +41,14 @@ bool TBWidget::update_skin_states = true;
 bool TBWidget::show_focus_state = false;
 
 /** One shot timer for long click event */
-class TBLongClickTimer : private TBMessageHandler {
+class TBLongClickTimer : private MessageHandler {
  public:
   TBLongClickTimer(TBWidget* widget, bool touch)
       : m_widget(widget), m_touch(touch) {
     PostMessageDelayed(TBIDC("TBLongClickTimer"), nullptr,
                        TBSystem::GetLongClickDelayMS());
   }
-  virtual void OnMessageReceived(TBMessage* msg) {
+  virtual void OnMessageReceived(Message* msg) {
     assert(msg->message == TBIDC("TBLongClickTimer"));
     m_widget->MaybeInvokeLongClickOrContextMenu(m_touch);
   }

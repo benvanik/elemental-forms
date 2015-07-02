@@ -20,7 +20,7 @@ class ResourceItem : public TBGenericStringItem {
 };
 
 class ResourceEditWindow : public TBWindow,
-                           public TBMessageHandler,
+                           public MessageHandler,
                            public TBWidgetListener {
  public:
   TBOBJECT_SUBCLASS(ResourceEditWindow, TBWindow);
@@ -46,9 +46,9 @@ class ResourceEditWindow : public TBWindow,
   virtual bool OnEvent(const TBWidgetEvent& ev);
   virtual void OnPaintChildren(const PaintProps& paint_props);
 
-  // == TBMessageHandler
+  // == MessageHandler
   // ==============================================================
-  virtual void OnMessageReceived(TBMessage* msg);
+  virtual void OnMessageReceived(Message* msg);
 
   // == TBWidgetListener
   // ========================================================

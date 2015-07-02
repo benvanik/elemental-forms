@@ -17,17 +17,12 @@
 
 namespace tb {
 
-tb::TBTooltipManager* tb::g_tooltip_mng = nullptr;
-
-unsigned int TBTooltipManager::tooltip_point_offset_y = 20;
-unsigned int TBTooltipManager::tooltip_show_delay_ms = 700;
-unsigned int TBTooltipManager::tooltip_show_duration_ms = 5000;
-unsigned int TBTooltipManager::tooltip_hide_point_dist = 40;
+tb::TooltipManager* tb::g_tooltip_mng = nullptr;
 
 namespace {
 
-const TBID messageShow = TBIDC("TBTooltipManager.show");
-const TBID messageHide = TBIDC("TBTooltipManager.hide");
+const TBID messageShow = TBIDC("TooltipManager.show");
+const TBID messageHide = TBIDC("TooltipManager.hide");
 
 class TTMsgParam : public TBTypedObject {
  public:
@@ -35,9 +30,10 @@ class TTMsgParam : public TBTypedObject {
 
   TBWidget* m_hovered;
 };
-}
 
-TBTooltipWindow::TBTooltipWindow(TBWidget* target) : TBPopupWindow(target) {
+}  // namespace
+
+TooltipWindow::TooltipWindow(TBWidget* target) : TBPopupWindow(target) {
   SetSkinBg("", InvokeInfo::kNoCallbacks);
   SetSettings(WindowSettings::kNone);
   m_content.SetSkinBg(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
@@ -51,9 +47,9 @@ TBTooltipWindow::TBTooltipWindow(TBWidget* target) : TBPopupWindow(target) {
   AddChild(&m_content);
 }
 
-TBTooltipWindow::~TBTooltipWindow() { RemoveChild(&m_content); }
+TooltipWindow::~TooltipWindow() { RemoveChild(&m_content); }
 
-bool TBTooltipWindow::Show(int mouse_x, int mouse_y) {
+bool TooltipWindow::Show(int mouse_x, int mouse_y) {
   m_offset_x = mouse_x;
   m_offset_y = mouse_y;
 
@@ -62,7 +58,7 @@ bool TBTooltipWindow::Show(int mouse_x, int mouse_y) {
   return true;
 }
 
-Rect TBTooltipWindow::GetAlignedRect(int x, int y) {
+Rect TooltipWindow::GetAlignedRect(int x, int y) {
   TBWidget* root = GetParentRoot();
 
   SizeConstraints sc(root->GetRect().w, root->GetRect().h);
@@ -75,32 +71,27 @@ Rect TBTooltipWindow::GetAlignedRect(int x, int y) {
 
   x = pos.x + w > root->GetRect().w ? pos.x - w : pos.x;
   y = pos.y;
-  if (pos.y + h > root->GetRect().h)
-    y = pos.y - TBTooltipManager::tooltip_point_offset_y - h;
+  if (pos.y + h > root->GetRect().h) {
+    y = pos.y - g_tooltip_mng->tooltip_point_offset_y - h;
+  }
 
   return Rect(x, y, w, h);
 }
 
-//////////////////////////////////////////////////////////////////////////
+TooltipManager::TooltipManager() { TBWidgetListener::AddGlobalListener(this); }
 
-TBTooltipManager::TBTooltipManager()
-    : m_tooltip(nullptr), m_last_tipped_widget(nullptr) {
-  TBWidgetListener::AddGlobalListener(this);
-}
-
-TBTooltipManager::~TBTooltipManager() {
+TooltipManager::~TooltipManager() {
   TBWidgetListener::RemoveGlobalListener(this);
 }
 
-bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
-                                           const TBWidgetEvent& ev) {
+bool TooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
+                                         const TBWidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && !TBWidget::captured_widget) {
     TBWidget* tipped_widget = GetTippedWidget();
     if (m_last_tipped_widget != tipped_widget && tipped_widget) {
-      TBMessageData* msg_data = new TBMessageData();
+      MessageData* msg_data = new MessageData();
       msg_data->v1.SetObject(new TTMsgParam(tipped_widget));
       PostMessageDelayed(messageShow, msg_data, tooltip_show_delay_ms);
-
     } else if (m_last_tipped_widget == tipped_widget && tipped_widget &&
                m_tooltip) {
       int x = TBWidget::pointer_move_widget_x;
@@ -118,9 +109,7 @@ bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
       DeleteShowMessages();
     }
     m_last_tipped_widget = tipped_widget;
-  } else  // if (ev.type == EventType::kPointerDown || ev.type ==
-          // EventType::kPointerUp)
-  {
+  } else {
     KillToolTip();
     DeleteShowMessages();
   }
@@ -128,33 +117,34 @@ bool TBTooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
   return false;
 }
 
-void TBTooltipManager::KillToolTip() {
+void TooltipManager::KillToolTip() {
   if (m_tooltip) {
     m_tooltip->Close();
     m_tooltip = nullptr;
   }
 }
 
-void TBTooltipManager::DeleteShowMessages() {
-  TBMessage* msg;
+void TooltipManager::DeleteShowMessages() {
+  Message* msg;
   while ((msg = GetMessageByID(messageShow)) != nullptr) DeleteMessage(msg);
 }
 
-TBWidget* TBTooltipManager::GetTippedWidget() {
+TBWidget* TooltipManager::GetTippedWidget() {
   TBWidget* current = TBWidget::hovered_widget;
-  while (current && current->GetDescription().empty())
+  while (current && current->GetDescription().empty()) {
     current = current->GetParent();
+  }
   return current;
 }
 
-void TBTooltipManager::OnMessageReceived(TBMessage* msg) {
+void TooltipManager::OnMessageReceived(Message* msg) {
   if (msg->message == messageShow) {
     TBWidget* tipped_widget = GetTippedWidget();
     TTMsgParam* param = static_cast<TTMsgParam*>(msg->data->v1.GetObject());
     if (tipped_widget == param->m_hovered) {
       KillToolTip();
 
-      m_tooltip = new TBTooltipWindow(tipped_widget);
+      m_tooltip = new TooltipWindow(tipped_widget);
 
       int x = TBWidget::pointer_move_widget_x;
       int y = TBWidget::pointer_move_widget_y;
@@ -163,7 +153,7 @@ void TBTooltipManager::OnMessageReceived(TBMessage* msg) {
 
       m_tooltip->Show(x, y);
 
-      TBMessageData* msg_data = new TBMessageData();
+      MessageData* msg_data = new MessageData();
       msg_data->v1.SetObject(new TTMsgParam(m_tooltip));
       PostMessageDelayed(messageHide, msg_data, tooltip_show_duration_ms);
     }

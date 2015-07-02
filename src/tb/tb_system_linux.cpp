@@ -73,7 +73,7 @@ int TBSystem::Shutdown() {
 }
 
 void TBSystem::RescheduleTimer(uint64_t fire_time) {
-  if (fire_time == TB_NOT_SOON) return;
+  if (fire_time == kNotSoon) return;
 
   if (fire_time == 0) {
     timer_state = true;
@@ -123,11 +123,11 @@ int TBSystem::PollEvents() {
   if (timer_state) {
     timer_state = false;
 
-    TBMessageHandler::ProcessMessages();
+    MessageHandler::ProcessMessages();
     // If we still have things to do (because we didn't process all messages,
     // or because there are new messages), we need to rescedule, so call
     // RescheduleTimer.
-    TBSystem::RescheduleTimer(TBMessageHandler::GetNextMessageFireTime());
+    TBSystem::RescheduleTimer(MessageHandler::GetNextMessageFireTime());
   }
 
   return 0;

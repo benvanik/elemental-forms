@@ -379,7 +379,7 @@ PreferredSize TBEditField::OnCalculatePreferredContentSize(
   return ps;
 }
 
-void TBEditField::OnMessageReceived(TBMessage* msg) {
+void TBEditField::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("blink")) {
     m_style_edit.caret.on = !m_style_edit.caret.on;
     m_style_edit.caret.Invalidate();
@@ -473,7 +473,7 @@ void TBEditField::CaretBlinkStart() {
 
 void TBEditField::CaretBlinkStop() {
   // Remove the blink message if we have one
-  if (TBMessage* msg = GetMessageByID(TBIDC("blink"))) DeleteMessage(msg);
+  if (Message* msg = GetMessageByID(TBIDC("blink"))) DeleteMessage(msg);
 }
 
 void TBEditFieldScrollRoot::OnPaintChildren(const PaintProps& paint_props) {

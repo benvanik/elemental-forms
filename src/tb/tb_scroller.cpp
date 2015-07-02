@@ -288,7 +288,7 @@ void TBScroller::GetTargetScrollXY(int& x, int& y) const {
   }
 }
 
-void TBScroller::OnMessageReceived(TBMessage* msg) {
+void TBScroller::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("scroll")) {
     int actual_scroll_x = 0, actual_scroll_y = 0;
     GetTargetChildTranslation(actual_scroll_x, actual_scroll_y);

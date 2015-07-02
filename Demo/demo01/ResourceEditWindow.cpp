@@ -62,7 +62,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
     delete file;
   } else  // Error, show message
   {
-    TBMessageWindow* msg_win = new TBMessageWindow(GetParentRoot(), TBIDC(""));
+    MessageWindow* msg_win = new MessageWindow(GetParentRoot(), TBIDC(""));
     msg_win->Show("Error loading resource",
                   tb::format_string("Could not load file %s", resource_file));
   }
@@ -187,7 +187,7 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
   }
 }
 
-void ResourceEditWindow::OnMessageReceived(TBMessage* msg) {
+void ResourceEditWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("update_widget_list")) UpdateWidgetList(true);
 }
 

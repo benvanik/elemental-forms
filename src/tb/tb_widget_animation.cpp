@@ -163,7 +163,7 @@ bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
       AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
-  if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
+  if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
     // Move out dying message windows.
     if (auto anim = new RectWidgetAnimation(
             window, Rect(0, 50, 0, 0), RectWidgetAnimation::Mode::kDeltaIn))
@@ -187,7 +187,7 @@ void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
             new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false))
       AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
-  if (TBMessageWindow* window = TBSafeCast<TBMessageWindow>(widget)) {
+  if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
     // Move in new message windows
     if (auto anim = new RectWidgetAnimation(
             window, Rect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))

@@ -16,54 +16,56 @@
 
 namespace tb {
 
-/** TBTooltipWindow implements functional  of tooltip popup, based on
- * TBPopupWindow and contains TBEditField as content viewer*/
-class TBTooltipWindow : public TBPopupWindow {
+// Implements functionality of tooltip popups, based on TBPopupWindow and
+// contains TBEditField as content viewer.
+class TooltipWindow : public TBPopupWindow {
  public:
-  TBOBJECT_SUBCLASS(TBTooltipWindow, TBPopupWindow);
+  TBOBJECT_SUBCLASS(TooltipWindow, TBPopupWindow);
 
-  TBTooltipWindow(TBWidget* target);
-  virtual ~TBTooltipWindow();
+  TooltipWindow(TBWidget* target);
+  ~TooltipWindow() override;
 
   bool Show(int mouse_x, int mouse_y);
 
   Point GetOffsetPoint() const { return Point(m_offset_x, m_offset_y); }
 
  private:
-  int m_offset_x;
-  int m_offset_y;
-
   Rect GetAlignedRect(int x, int y);
 
   TBEditField m_content;
+  int m_offset_x = 0;
+  int m_offset_y = 0;
 };
 
-/** TBTooltipManager implements logic for show/hiode tooltips*/
-class TBTooltipManager : private TBWidgetListener, public TBMessageHandler {
+// Implements logic for show/hide tooltips.
+class TooltipManager : private TBWidgetListener, public MessageHandler {
  public:
-  TBTooltipManager();
-  virtual ~TBTooltipManager();
+  TooltipManager();
+  ~TooltipManager() override;
 
-  static unsigned int tooltip_point_offset_y;  ///< offset by Y of tooltip point
-  static unsigned int
-      tooltip_show_delay_ms;  ///< delay in ms before tooltip will be shown
-  static unsigned int tooltip_show_duration_ms;  ///< tooltip display duration
-  static unsigned int tooltip_hide_point_dist;   /// distance by X or Y which
-                                                 /// used to hide tooltip
+  // Offset by Y of tooltip point.
+  uint32_t tooltip_point_offset_y = 20;
+  // Delay in ms before tooltip will be shown.
+  uint32_t tooltip_show_delay_ms = 700;
+  // Tooltip display duration.
+  uint32_t tooltip_show_duration_ms = 5000;
+  // Distance by X or Y which used to hide tooltip.
+  uint32_t tooltip_hide_point_dist = 40;
 
  private:
-  virtual bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev);
-  virtual void OnMessageReceived(TBMessage* msg);
+  bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev) override;
+  void OnMessageReceived(Message* msg) override;
   void KillToolTip();
 
   void DeleteShowMessages();
   TBWidget* GetTippedWidget();
 
-  TBTooltipWindow* m_tooltip;
-  TBWidget* m_last_tipped_widget;
+  TooltipWindow* m_tooltip = nullptr;
+  TBWidget* m_last_tipped_widget = nullptr;
 };
 
-extern TBTooltipManager* g_tooltip_mng;
-}
+extern TooltipManager* g_tooltip_mng;
+
+}  // namespace tb
 
 #endif  // TB_TOOLTIPS_H

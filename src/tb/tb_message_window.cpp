@@ -17,12 +17,12 @@
 
 namespace tb {
 
-TBMessageWindow::TBMessageWindow(TBWidget* target, TBID id) : m_target(target) {
+MessageWindow::MessageWindow(TBWidget* target, TBID id) : m_target(target) {
   TBWidgetListener::AddGlobalListener(this);
   SetID(id);
 }
 
-TBMessageWindow::~TBMessageWindow() {
+MessageWindow::~MessageWindow() {
   TBWidgetListener::RemoveGlobalListener(this);
   if (TBWidget* dimmer = m_dimmer.Get()) {
     dimmer->GetParent()->RemoveChild(dimmer);
@@ -30,12 +30,12 @@ TBMessageWindow::~TBMessageWindow() {
   }
 }
 
-bool TBMessageWindow::Show(const std::string& title, const std::string& message,
-                           TBMessageWindowSettings* settings) {
+bool MessageWindow::Show(const std::string& title, const std::string& message,
+                         MessageWindowSettings* settings) {
   TBWidget* target = m_target.Get();
   if (!target) return false;
 
-  TBMessageWindowSettings default_settings;
+  MessageWindowSettings default_settings;
   if (!settings) settings = &default_settings;
 
   TBWidget* root = target->GetParentRoot();
@@ -59,13 +59,13 @@ bool TBMessageWindow::Show(const std::string& title, const std::string& message,
 
   // Create buttons
   if (settings->msg == MessageWindowButtons::kOk) {
-    AddButton("TBMessageWindow.ok", true);
+    AddButton("MessageWindow.ok", true);
   } else if (settings->msg == MessageWindowButtons::kOkCancel) {
-    AddButton("TBMessageWindow.ok", true);
-    AddButton("TBMessageWindow.cancel", false);
+    AddButton("MessageWindow.ok", true);
+    AddButton("MessageWindow.cancel", false);
   } else if (settings->msg == MessageWindowButtons::kYesNo) {
-    AddButton("TBMessageWindow.yes", true);
-    AddButton("TBMessageWindow.no", false);
+    AddButton("MessageWindow.yes", true);
+    AddButton("MessageWindow.no", false);
   }
 
   // Size to fit content. This will use the default size of the textfield.
@@ -94,7 +94,7 @@ bool TBMessageWindow::Show(const std::string& title, const std::string& message,
   return true;
 }
 
-void TBMessageWindow::AddButton(TBID id, bool focused) {
+void MessageWindow::AddButton(TBID id, bool focused) {
   TBLayout* layout = GetWidgetByIDAndType<TBLayout>(3);
   if (!layout) return;
   if (TBButton* btn = new TBButton) {
@@ -105,7 +105,7 @@ void TBMessageWindow::AddButton(TBID id, bool focused) {
   }
 }
 
-bool TBMessageWindow::OnEvent(const TBWidgetEvent& ev) {
+bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<TBButton>()) {
     TBWidgetSafePointer this_widget(this);
 
@@ -126,16 +126,16 @@ bool TBMessageWindow::OnEvent(const TBWidgetEvent& ev) {
   return TBWindow::OnEvent(ev);
 }
 
-void TBMessageWindow::OnDie() {
+void MessageWindow::OnDie() {
   if (TBWidget* dimmer = m_dimmer.Get()) dimmer->Die();
 }
 
-void TBMessageWindow::OnWidgetDelete(TBWidget* widget) {
+void MessageWindow::OnWidgetDelete(TBWidget* widget) {
   // If the target widget is deleted, close!
   if (!m_target.Get()) Close();
 }
 
-bool TBMessageWindow::OnWidgetDying(TBWidget* widget) {
+bool MessageWindow::OnWidgetDying(TBWidget* widget) {
   // If the target widget or an ancestor of it is dying, close!
   if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) Close();
   return false;

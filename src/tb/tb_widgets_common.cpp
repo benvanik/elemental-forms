@@ -166,8 +166,7 @@ void TBButton::OnCaptureChanged(bool captured) {
   if (captured && m_auto_repeat_click)
     PostMessageDelayed(TBIDC("auto_click"), nullptr, auto_click_first_delay);
   else if (!captured) {
-    if (TBMessage* msg = GetMessageByID(TBIDC("auto_click")))
-      DeleteMessage(msg);
+    if (Message* msg = GetMessageByID(TBIDC("auto_click"))) DeleteMessage(msg);
   }
 }
 
@@ -189,7 +188,7 @@ bool TBButton::OnEvent(const TBWidgetEvent& ev) {
   return TBWidget::OnEvent(ev);
 }
 
-void TBButton::OnMessageReceived(TBMessage* msg) {
+void TBButton::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("auto_click")) {
     assert(captured_widget == this);
     if (!cancel_click &&
@@ -314,7 +313,7 @@ void TBProgressSpinner::SetValue(int value) {
     }
   } else {
     // Stop animation
-    if (TBMessage* msg = GetMessageByID(TBID(1))) DeleteMessage(msg);
+    if (Message* msg = GetMessageByID(TBID(1))) DeleteMessage(msg);
   }
 }
 
@@ -332,7 +331,7 @@ void TBProgressSpinner::OnPaint(const PaintProps& paint_props) {
   }
 }
 
-void TBProgressSpinner::OnMessageReceived(TBMessage* msg) {
+void TBProgressSpinner::OnMessageReceived(Message* msg) {
   m_frame++;
   Invalidate();
   // Keep animation running

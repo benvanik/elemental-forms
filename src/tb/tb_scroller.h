@@ -72,7 +72,7 @@ class TBScrollerSnapListener {
         speed over time. It also handles continued scrolling when the pointer
    has
         been released with a flick. */
-class TBScroller : private TBMessageHandler {
+class TBScroller : private MessageHandler {
  public:
   TBScroller(TBWidget* target);
   ~TBScroller();
@@ -114,7 +114,7 @@ class TBScroller : private TBMessageHandler {
   void OnScrollBy(int dx, int dy, bool accumulative);
 
  private:
-  virtual void OnMessageReceived(TBMessage* msg);
+  virtual void OnMessageReceived(Message* msg);
   bool IsScrolling();
   bool StopIfAlmostStill();
   void StopOrSnapScroll();

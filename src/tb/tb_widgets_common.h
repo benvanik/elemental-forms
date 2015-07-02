@@ -92,7 +92,7 @@ class TBTextField : public TBWidget {
    added
         under GetContentRoot(). */
 
-class TBButton : public TBWidget, protected TBMessageHandler {
+class TBButton : public TBWidget, protected MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TBButton, TBWidget);
 
@@ -140,7 +140,7 @@ class TBButton : public TBWidget, protected TBMessageHandler {
 
   virtual TBWidget* GetContentRoot() { return &m_layout; }
 
-  virtual void OnMessageReceived(TBMessage* msg);
+  virtual void OnMessageReceived(Message* msg);
 
  protected:
   void UpdateTextFieldVisibility();
@@ -219,7 +219,7 @@ class TBSeparator : public TBWidget {
 
 /** TBProgressSpinner is a animation that is running while its value is 1.
         Typically used to indicate that the application is working. */
-class TBProgressSpinner : public TBWidget, protected TBMessageHandler {
+class TBProgressSpinner : public TBWidget, protected MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TBProgressSpinner, TBWidget);
 
@@ -243,7 +243,7 @@ class TBProgressSpinner : public TBWidget, protected TBMessageHandler {
 
   virtual void OnPaint(const PaintProps& paint_props);
 
-  virtual void OnMessageReceived(TBMessage* msg);
+  virtual void OnMessageReceived(Message* msg);
 
  protected:
   int m_value;

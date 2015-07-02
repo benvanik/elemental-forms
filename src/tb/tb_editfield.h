@@ -80,7 +80,7 @@ class TBEditFieldScrollRoot : public TBWidget {
 
 class TBEditField : public TBWidget,
                     private TBStyleEditListener,
-                    public TBMessageHandler {
+                    public MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TBEditField, TBWidget);
 
@@ -198,7 +198,7 @@ class TBEditField : public TBWidget,
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints);
 
-  virtual void OnMessageReceived(TBMessage* msg);
+  virtual void OnMessageReceived(Message* msg);
 
  protected:
   TBScrollBar m_scrollbar_x;
