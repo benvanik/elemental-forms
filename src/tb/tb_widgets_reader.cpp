@@ -22,8 +22,8 @@
 
 namespace tb {
 
-TB_WIDGET_FACTORY(TBWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
-void TBWidget::OnInflate(const InflateInfo& info) {
+TB_WIDGET_FACTORY(Widget, TBValue::Type::kNull, WidgetZ::kTop) {}
+void Widget::OnInflate(const InflateInfo& info) {
   WidgetReader::SetIDFromNode(GetID(), info.node->GetNode("id"));
   WidgetReader::SetIDFromNode(GetGroupID(), info.node->GetNode("group-id"));
 
@@ -61,9 +61,9 @@ void TBWidget::OnInflate(const InflateInfo& info) {
     // If we already have a widget value with this name, just connect to it and
     // the widget will adjust its value to it. Otherwise create a new widget
     // value, and give it the value we got from the resource.
-    if (TBWidgetValue* value = g_value_group.GetValue(connection)) {
+    if (WidgetValue* value = g_value_group.GetValue(connection)) {
       Connect(value);
-    } else if (TBWidgetValue* value = g_value_group.CreateValueIfNeeded(
+    } else if (WidgetValue* value = g_value_group.CreateValueIfNeeded(
                    connection, info.sync_type)) {
       value->SetFromWidget(this);
       Connect(value);
@@ -173,7 +173,7 @@ TB_WIDGET_FACTORY(Button, TBValue::Type::kNull, WidgetZ::kBottom) {}
 void Button::OnInflate(const InflateInfo& info) {
   SetToggleMode(info.node->GetValueInt("toggle-mode", GetToggleMode()) ? true
                                                                        : false);
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(SelectInline, TBValue::Type::kInt, WidgetZ::kTop) {}
@@ -181,7 +181,7 @@ void SelectInline::OnInflate(const InflateInfo& info) {
   int min = info.node->GetValueInt("min", GetMinValue());
   int max = info.node->GetValueInt("max", GetMaxValue());
   SetLimits(min, max);
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(LabelContainer, TBValue::Type::kString, WidgetZ::kBottom) {}
@@ -207,7 +207,7 @@ void TextBox::OnInflate(const InflateInfo& info) {
   if (const char* type = info.node->GetValueString("type", nullptr)) {
     SetEditType(from_string(type, GetEditType()));
   }
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(Layout, TBValue::Type::kNull, WidgetZ::kTop) {}
@@ -247,7 +247,7 @@ void Layout::OnInflate(const InflateInfo& info) {
     }
     SetLayoutDistributionPosition(ld);
   }
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(ScrollContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
@@ -263,12 +263,12 @@ void ScrollContainer::OnInflate(const InflateInfo& info) {
   if (const char* mode = info.node->GetValueString("scroll-mode", nullptr)) {
     SetScrollMode(from_string(mode, GetScrollMode()));
   }
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(TabContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
 void TabContainer::OnInflate(const InflateInfo& info) {
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 
   if (const char* align = info.node->GetValueString("align", nullptr)) {
     SetAlignment(tb::from_string(align, GetAlignment()));
@@ -301,7 +301,7 @@ void ScrollBar::OnInflate(const InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
   SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(Slider, TBValue::Type::kFloat, WidgetZ::kTop) {}
@@ -312,7 +312,7 @@ void Slider::OnInflate(const InflateInfo& info) {
   double min = double(info.node->GetValueFloat("min", (float)GetMinValue()));
   double max = double(info.node->GetValueFloat("max", (float)GetMaxValue()));
   SetLimits(min, max);
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 void ReadItems(TBNode* node, GenericStringItemSource* target_source) {
@@ -339,14 +339,14 @@ TB_WIDGET_FACTORY(SelectList, TBValue::Type::kInt, WidgetZ::kTop) {}
 void SelectList::OnInflate(const InflateInfo& info) {
   // Read items (if there is any) into the default source.
   ReadItems(info.node, GetDefaultSource());
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(SelectDropdown, TBValue::Type::kInt, WidgetZ::kTop) {}
 void SelectDropdown::OnInflate(const InflateInfo& info) {
   // Read items (if there is any) into the default source.
   ReadItems(info.node, GetDefaultSource());
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(CheckBox, TBValue::Type::kInt, WidgetZ::kTop) {}
@@ -358,7 +358,7 @@ void Label::OnInflate(const InflateInfo& info) {
           info.node->GetValueString("text-align", nullptr)) {
     SetTextAlign(from_string(text_align, GetTextAlign()));
   }
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(SkinImage, TBValue::Type::kNull, WidgetZ::kTop) {}
@@ -374,7 +374,7 @@ void ToggleContainer::OnInflate(const InflateInfo& info) {
     SetToggleAction(from_string(toggle, GetToggleAction()));
   }
   SetInvert(info.node->GetValueInt("invert", GetInvert()) ? true : false);
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 TB_WIDGET_FACTORY(ImageWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
@@ -382,7 +382,7 @@ void ImageWidget::OnInflate(const InflateInfo& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr)) {
     SetImage(filename);
   }
-  TBWidget::OnInflate(info);
+  Widget::OnInflate(info);
 }
 
 // We can't use a linked list object since we don't know if its constructor
@@ -419,7 +419,7 @@ bool WidgetReader::Init() {
 
 WidgetReader::~WidgetReader() {}
 
-bool WidgetReader::LoadFile(TBWidget* target, const char* filename) {
+bool WidgetReader::LoadFile(Widget* target, const char* filename) {
   TBNode node;
   if (!node.ReadFile(filename)) {
     return false;
@@ -428,22 +428,21 @@ bool WidgetReader::LoadFile(TBWidget* target, const char* filename) {
   return true;
 }
 
-bool WidgetReader::LoadData(TBWidget* target, const char* data) {
+bool WidgetReader::LoadData(Widget* target, const char* data) {
   TBNode node;
   node.ReadData(data);
   LoadNodeTree(target, &node);
   return true;
 }
 
-bool WidgetReader::LoadData(TBWidget* target, const char* data,
-                            size_t data_len) {
+bool WidgetReader::LoadData(Widget* target, const char* data, size_t data_len) {
   TBNode node;
   node.ReadData(data, data_len);
   LoadNodeTree(target, &node);
   return true;
 }
 
-void WidgetReader::LoadNodeTree(TBWidget* target, TBNode* node) {
+void WidgetReader::LoadNodeTree(Widget* target, TBNode* node) {
   // Iterate through all nodes and create widgets
   for (TBNode* child = node->GetFirstChild(); child; child = child->GetNext()) {
     CreateWidget(target, child);
@@ -459,7 +458,7 @@ void WidgetReader::SetIDFromNode(TBID& id, TBNode* node) {
   }
 }
 
-bool WidgetReader::CreateWidget(TBWidget* target, TBNode* node) {
+bool WidgetReader::CreateWidget(Widget* target, TBNode* node) {
   // Find a widget creator from the node name.
   WidgetFactory* wc = nullptr;
   for (wc = factories.GetFirst(); wc; wc = wc->GetNext()) {
@@ -473,7 +472,7 @@ bool WidgetReader::CreateWidget(TBWidget* target, TBNode* node) {
 
   // Create the widget.
   InflateInfo info(this, target->GetContentRoot(), node, wc->sync_type);
-  TBWidget* new_widget = wc->Create(&info);
+  Widget* new_widget = wc->Create(&info);
   if (!new_widget) {
     return false;
   }
@@ -481,7 +480,7 @@ bool WidgetReader::CreateWidget(TBWidget* target, TBNode* node) {
   // Read properties and add i to the hierarchy.
   new_widget->OnInflate(info);
 
-  // If this assert is trigged, you probably forgot to call TBWidget::OnInflate
+  // If this assert is trigged, you probably forgot to call Widget::OnInflate
   // from an overridden version.
   assert(new_widget->GetParent());
 

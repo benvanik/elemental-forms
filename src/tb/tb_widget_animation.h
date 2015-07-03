@@ -27,11 +27,11 @@ class WidgetAnimation : public Animation, public TBLinkOf<WidgetAnimation> {
  public:
   TBOBJECT_SUBCLASS(WidgetAnimation, Animation);
 
-  WidgetAnimation(TBWidget* widget);
+  WidgetAnimation(Widget* widget);
   ~WidgetAnimation() override;
 
  public:
-  TBWidget* m_widget;
+  Widget* m_widget;
 };
 
 // Animates the opacity of the target widget.
@@ -39,7 +39,7 @@ class OpacityWidgetAnimation : public WidgetAnimation {
  public:
   TBOBJECT_SUBCLASS(OpacityWidgetAnimation, WidgetAnimation);
 
-  OpacityWidgetAnimation(TBWidget* widget, float src_opacity, float dst_opacity,
+  OpacityWidgetAnimation(Widget* widget, float src_opacity, float dst_opacity,
                          bool die);
 
   void OnAnimationStart() override;
@@ -64,12 +64,12 @@ class RectWidgetAnimation : public WidgetAnimation {
   };
 
   // Animates the widget between the given source and dest rectangle.
-  RectWidgetAnimation(TBWidget* widget, const Rect& src_rect,
+  RectWidgetAnimation(Widget* widget, const Rect& src_rect,
                       const Rect& dst_rect);
   // Animates the widget between rectangles based on the current widget
   // rectangle and a delta. The reference rectangle will be taken from the
   // target widget on the first OnAnimationUpdate.
-  RectWidgetAnimation(TBWidget* widget, const Rect& delta_rect, Mode mode);
+  RectWidgetAnimation(Widget* widget, const Rect& delta_rect, Mode mode);
 
   void OnAnimationStart() override;
   void OnAnimationUpdate(float progress) override;
@@ -88,20 +88,20 @@ class WidgetAnimationManager : public WidgetListener {
   static void Shutdown();
 
   // Aborts all animations that are running for the given widget.
-  static void AbortAnimations(TBWidget* widget);
+  static void AbortAnimations(Widget* widget);
 
   // Abort all animations matching the given type that are running for the given
   // widget.
   // This example will abort all opacity animations:
   // AbortAnimations(widget,
   //     TBTypedObject::GetTypeId<OpacityWidgetAnimation>())
-  static void AbortAnimations(TBWidget* widget, TB_TYPE_ID type_id);
+  static void AbortAnimations(Widget* widget, TB_TYPE_ID type_id);
 
  private:
-  void OnWidgetDelete(TBWidget* widget) override;
-  bool OnWidgetDying(TBWidget* widget) override;
-  void OnWidgetAdded(TBWidget* parent, TBWidget* child) override;
-  void OnWidgetRemove(TBWidget* parent, TBWidget* child) override;
+  void OnWidgetDelete(Widget* widget) override;
+  bool OnWidgetDying(Widget* widget) override;
+  void OnWidgetAdded(Widget* parent, Widget* child) override;
+  void OnWidgetRemove(Widget* parent, Widget* child) override;
 };
 
 }  // namespace tb

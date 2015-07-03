@@ -23,7 +23,7 @@ bool WidgetSkinConditionContext::GetCondition(
     case SkinTarget::kParent:
       return m_widget->GetParent() && GetCondition(m_widget->GetParent(), info);
     case SkinTarget::kAncestors: {
-      TBWidget* widget = m_widget->GetParent();
+      Widget* widget = m_widget->GetParent();
       while (widget) {
         if (GetCondition(widget, info)) {
           return true;
@@ -40,7 +40,7 @@ bool WidgetSkinConditionContext::GetCondition(
 }
 
 bool WidgetSkinConditionContext::GetCondition(
-    TBWidget* widget, const SkinCondition::ConditionInfo& info) {
+    Widget* widget, const SkinCondition::ConditionInfo& info) {
   switch (info.prop) {
     case SkinProperty::kSkin:
       return widget->GetSkinBg() == info.value;
@@ -73,14 +73,14 @@ bool WidgetSkinConditionContext::GetCondition(
     case SkinProperty::kValue:
       return widget->GetValue() == (int)info.value;
     case SkinProperty::kHover:
-      return TBWidget::hovered_widget &&
-             widget->IsAncestorOf(TBWidget::hovered_widget);
+      return Widget::hovered_widget &&
+             widget->IsAncestorOf(Widget::hovered_widget);
     case SkinProperty::kCapture:
-      return TBWidget::captured_widget &&
-             widget->IsAncestorOf(TBWidget::captured_widget);
+      return Widget::captured_widget &&
+             widget->IsAncestorOf(Widget::captured_widget);
     case SkinProperty::kFocus:
-      return TBWidget::focused_widget &&
-             widget->IsAncestorOf(TBWidget::focused_widget);
+      return Widget::focused_widget &&
+             widget->IsAncestorOf(Widget::focused_widget);
     case SkinProperty::kCustom:
       return widget->GetCustomSkinCondition(info);
   }

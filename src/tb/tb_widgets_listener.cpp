@@ -21,7 +21,7 @@ void WidgetListener::RemoveGlobalListener(WidgetListener* listener) {
   g_listeners.Remove(listener);
 }
 
-void WidgetListener::InvokeWidgetDelete(TBWidget* widget) {
+void WidgetListener::InvokeWidgetDelete(Widget* widget) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = widget->m_listeners.IterateForward();
   while (WidgetListener* listener = local_i.GetAndStep()) {
@@ -32,7 +32,7 @@ void WidgetListener::InvokeWidgetDelete(TBWidget* widget) {
   }
 }
 
-bool WidgetListener::InvokeWidgetDying(TBWidget* widget) {
+bool WidgetListener::InvokeWidgetDying(Widget* widget) {
   bool handled = false;
   auto global_i = g_listeners.IterateForward();
   auto local_i = widget->m_listeners.IterateForward();
@@ -45,7 +45,7 @@ bool WidgetListener::InvokeWidgetDying(TBWidget* widget) {
   return handled;
 }
 
-void WidgetListener::InvokeWidgetAdded(TBWidget* parent, TBWidget* child) {
+void WidgetListener::InvokeWidgetAdded(Widget* parent, Widget* child) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = parent->m_listeners.IterateForward();
   while (WidgetListener* listener = local_i.GetAndStep()) {
@@ -56,7 +56,7 @@ void WidgetListener::InvokeWidgetAdded(TBWidget* parent, TBWidget* child) {
   }
 }
 
-void WidgetListener::InvokeWidgetRemove(TBWidget* parent, TBWidget* child) {
+void WidgetListener::InvokeWidgetRemove(Widget* parent, Widget* child) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = parent->m_listeners.IterateForward();
   while (WidgetListener* listener = local_i.GetAndStep()) {
@@ -67,7 +67,7 @@ void WidgetListener::InvokeWidgetRemove(TBWidget* parent, TBWidget* child) {
   }
 }
 
-void WidgetListener::InvokeWidgetFocusChanged(TBWidget* widget, bool focused) {
+void WidgetListener::InvokeWidgetFocusChanged(Widget* widget, bool focused) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = widget->m_listeners.IterateForward();
   while (WidgetListener* listener = local_i.GetAndStep()) {
@@ -78,8 +78,8 @@ void WidgetListener::InvokeWidgetFocusChanged(TBWidget* widget, bool focused) {
   }
 }
 
-bool WidgetListener::InvokeWidgetInvokeEvent(TBWidget* widget,
-                                             const TBWidgetEvent& ev) {
+bool WidgetListener::InvokeWidgetInvokeEvent(Widget* widget,
+                                             const WidgetEvent& ev) {
   bool handled = false;
   auto global_i = g_listeners.IterateForward();
   auto local_i = widget->m_listeners.IterateForward();
@@ -93,7 +93,7 @@ bool WidgetListener::InvokeWidgetInvokeEvent(TBWidget* widget,
   return handled;
 }
 
-void WeakWidgetPointer::Set(TBWidget* widget) {
+void WeakWidgetPointer::Set(Widget* widget) {
   if (m_widget == widget) {
     return;
   }
@@ -106,7 +106,7 @@ void WeakWidgetPointer::Set(TBWidget* widget) {
   }
 }
 
-void WeakWidgetPointer::OnWidgetDelete(TBWidget* widget) {
+void WeakWidgetPointer::OnWidgetDelete(Widget* widget) {
   if (widget == m_widget) {
     Set(nullptr);
   }

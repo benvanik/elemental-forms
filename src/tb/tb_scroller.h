@@ -15,7 +15,7 @@
 
 namespace tb {
 
-class TBWidget;
+class Widget;
 
 // Does the calculations of time, speed and distance that decides how the slow
 // down of a scroll will happen.
@@ -53,9 +53,9 @@ class ScrollerSnapListener {
   // target_x, target_y is the suggested target scroll position which may be
   // changed to something else in this call.
   // NOTE: The scroll positions are relative to the target widget (inner
-  // scrolled TBWidget). If there's nested scrollable widgets, only the
+  // scrolled Widget). If there's nested scrollable widgets, only the
   // inner scrolled widget applies snapping.
-  virtual void OnScrollSnap(TBWidget* target_widget, int& target_x,
+  virtual void OnScrollSnap(Widget* target_widget, int& target_x,
                             int& target_y) = 0;
 };
 
@@ -64,7 +64,7 @@ class ScrollerSnapListener {
 // released with a flick.
 class Scroller : private MessageHandler {
  public:
-  Scroller(TBWidget* target);
+  Scroller(Widget* target);
   ~Scroller() override;
 
   // Sets the listener that may override the target scroll position.
@@ -84,7 +84,7 @@ class Scroller : private MessageHandler {
 
   // Gets the widget that will be panned/scrolled. Any parent of this widget may
   // also be panned/scrolled.
-  TBWidget* GetTarget() const { return m_target; }
+  Widget* GetTarget() const { return m_target; }
 
   // Pans the target widget (or any parent) with the given deltas.
   // Should be called while the pointer is down. This will track the pan speed
@@ -112,7 +112,7 @@ class Scroller : private MessageHandler {
   void GetTargetChildTranslation(int& x, int& y) const;
   void GetTargetScrollXY(int& x, int& y) const;
 
-  TBWidget* m_target = nullptr;
+  Widget* m_target = nullptr;
   ScrollerSnapListener* m_snap_listener = nullptr;
   ScrollerFunction m_func;
   bool m_is_started = false;

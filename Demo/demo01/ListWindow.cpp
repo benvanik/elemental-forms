@@ -22,7 +22,7 @@ AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
   info->SetText(item->GetMale() ? "Male" : "Female");
 }
 
-bool AdvancedItemWidget::OnEvent(const TBWidgetEvent& ev) {
+bool AdvancedItemWidget::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
     AdvancedItem* item = m_source->GetItem(m_index);
     item->SetChecked(ev.target->GetValue() ? true : false);
@@ -48,8 +48,8 @@ bool AdvancedItemSource::Filter(int index, const char* filter) {
   return stristr(item->GetMale() ? "Male" : "Female", filter) ? true : false;
 }
 
-TBWidget* AdvancedItemSource::CreateItemWidget(int index,
-                                               SelectItemObserver* viewer) {
+Widget* AdvancedItemSource::CreateItemWidget(int index,
+                                             SelectItemObserver* viewer) {
   if (Layout* layout =
           new AdvancedItemWidget(GetItem(index), this, viewer, index))
     return layout;
@@ -66,7 +66,7 @@ ListWindow::ListWindow(SelectItemSource* source) {
   }
 }
 
-bool ListWindow::OnEvent(const TBWidgetEvent& ev) {
+bool ListWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target->GetID() == TBIDC("filter")) {
     SelectList* select = GetWidgetByIDAndType<SelectList>("list");
     select->SetFilter(ev.target->GetText());
@@ -87,7 +87,7 @@ AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
   }
 }
 
-bool AdvancedListWindow::OnEvent(const TBWidgetEvent& ev) {
+bool AdvancedListWindow::OnEvent(const WidgetEvent& ev) {
   SelectList* select = GetWidgetByIDAndType<SelectList>("list");
   if (select && ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("filter")) {

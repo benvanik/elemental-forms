@@ -27,13 +27,13 @@ class DemoWindow : public Window {
   void LoadResourceData(const char* data);
   void LoadResource(TBNode& node);
 
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class MainWindow : public DemoWindow, public MessageHandler {
  public:
   MainWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 
   // Implement MessageHandler
   virtual void OnMessageReceived(Message* msg);
@@ -42,14 +42,14 @@ class MainWindow : public DemoWindow, public MessageHandler {
 class ImageWindow : public DemoWindow {
  public:
   ImageWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class PageWindow : public DemoWindow, public ScrollerSnapListener {
  public:
   PageWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
-  virtual void OnScrollSnap(TBWidget* target_widget, int& target_x,
+  virtual bool OnEvent(const WidgetEvent& ev);
+  virtual void OnScrollSnap(Widget* target_widget, int& target_x,
                             int& target_y);
 };
 
@@ -57,31 +57,31 @@ class AnimationsWindow : public DemoWindow {
  public:
   AnimationsWindow();
   void Animate();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class LayoutWindow : public DemoWindow {
  public:
   LayoutWindow(const std::string& filename);
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class TabContainerWindow : public DemoWindow {
  public:
   TabContainerWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class ConnectionWindow : public DemoWindow {
  public:
   ConnectionWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 };
 
 class ScrollContainerWindow : public DemoWindow, public MessageHandler {
  public:
   ScrollContainerWindow();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 
   // Implement MessageHandler
   virtual void OnMessageReceived(Message* msg);

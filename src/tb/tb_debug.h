@@ -51,7 +51,7 @@ class TBDebugInfo {
 extern TBDebugInfo g_tb_debug;
 
 /** Show a window containing runtime debugging settings. */
-void ShowDebugInfoSettingsWindow(class TBWidget* root);
+void ShowDebugInfoSettingsWindow(class Widget* root);
 
 #define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(TBDebugInfo::setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \

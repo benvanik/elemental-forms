@@ -1709,7 +1709,7 @@ bool StyleEdit::MouseUp(const Point& point, int button,
                         ModifierKeys modifierkeys, bool touch) {
   if (button != 1) return false;
 
-  if (touch && !TBWidget::cancel_click) {
+  if (touch && !Widget::cancel_click) {
     selection.SelectNothing();
     caret.Place(mousedown_point);
     caret.UpdateWantedX();
@@ -1717,7 +1717,7 @@ bool StyleEdit::MouseUp(const Point& point, int button,
   }
 
   select_state = 0;
-  if (caret.pos.block && !TBWidget::cancel_click) {
+  if (caret.pos.block && !Widget::cancel_click) {
     TextFragment* fragment = caret.pos.block->FindFragment(
         point.x + scroll_x, point.y + scroll_y - caret.pos.block->ypos);
     if (fragment && fragment == mousedown_fragment) {

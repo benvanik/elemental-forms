@@ -1,5 +1,5 @@
 WindowInfo
-	title TBWidgetValue connections
+	title WidgetValue connections
 Layout
 	axis y
 	Label

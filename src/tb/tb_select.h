@@ -19,9 +19,9 @@ namespace tb {
 class MenuWindow;
 
 // Shows a scrollable list of items provided by a SelectItemSource.
-class SelectList : public TBWidget, public SelectItemObserver {
+class SelectList : public Widget, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(SelectList, TBWidget);
+  TBOBJECT_SUBCLASS(SelectList, Widget);
 
   SelectList();
   ~SelectList() override;
@@ -75,7 +75,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   // Sets the selected state of the item at the given index. If you want to
   // unselect the previously selected item, use SetValue.
   void SelectItem(int index, bool selected);
-  TBWidget* GetItemWidget(int index);
+  Widget* GetItemWidget(int index);
 
   // Scrolls to the current selected item. The scroll may be delayed until
   // the items has been layouted if the layout is currently invalid.
@@ -88,7 +88,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(int index) override;
@@ -107,7 +107,7 @@ class SelectList : public TBWidget, public SelectItemObserver {
   TBID m_header_lng_string_id;
 
  private:
-  TBWidget* CreateAndAddItemAfter(int index, TBWidget* reference);
+  Widget* CreateAndAddItemAfter(int index, Widget* reference);
 };
 
 // Shows a button that opens a popup with a SelectList with items provided by a
@@ -145,7 +145,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   MenuWindow* GetMenuIfOpen() const;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(int index) override;

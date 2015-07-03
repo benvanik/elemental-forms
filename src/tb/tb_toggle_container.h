@@ -29,9 +29,9 @@ MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
 // This is useful f.ex to toggle a whole group of child widgets depending on the
 // value of some other widget. By connecting the ToggleContainer with a widget
 // connection, this can happen completly automatically.
-class ToggleContainer : public TBWidget {
+class ToggleContainer : public Widget {
  public:
-  TBOBJECT_SUBCLASS(ToggleContainer, TBWidget);
+  TBOBJECT_SUBCLASS(ToggleContainer, Widget);
 
   ToggleContainer();
 
@@ -70,7 +70,7 @@ class SectionHeader : public Button {
 
   SectionHeader();
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 };
 
 // A widget with a header that when clicked toggles its children on and off
@@ -81,9 +81,9 @@ class SectionHeader : public Button {
 //     Section.layout    - The layout that wraps the header and the container.
 //     Section.container - The toggle container with the children that
 //                         expands/collapses.
-class Section : public TBWidget {
+class Section : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Section, TBWidget);
+  TBOBJECT_SUBCLASS(Section, Widget);
 
   Section();
   ~Section() override;
@@ -104,7 +104,7 @@ class Section : public TBWidget {
   void SetValue(int value) override;
   int GetValue() override { return m_toggle_container.GetValue(); }
 
-  TBWidget* GetContentRoot() override {
+  Widget* GetContentRoot() override {
     return m_toggle_container.GetContentRoot();
   }
   void OnProcessAfterChildren() override;

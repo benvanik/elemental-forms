@@ -69,7 +69,7 @@ bool Window::IsActive() const { return GetState(SkinState::kSelected); }
 
 Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
   Window* other_window = nullptr;
-  TBWidget* sibling = GetParent()->GetLastChild();
+  Widget* sibling = GetParent()->GetLastChild();
   while (sibling && !other_window) {
     if (sibling != this) {
       other_window = TBSafeCast<Window>(sibling);
@@ -178,7 +178,7 @@ int Window::GetTitleHeight() {
 }
 
 Rect Window::GetPaddingRect() {
-  Rect padding_rect = TBWidget::GetPaddingRect();
+  Rect padding_rect = Widget::GetPaddingRect();
   int title_height = GetTitleHeight();
   padding_rect.y += title_height;
   padding_rect.h -= title_height;
@@ -203,7 +203,7 @@ PreferredSize Window::OnCalculatePreferredSize(
   return ps;
 }
 
-bool Window::OnEvent(const TBWidgetEvent& ev) {
+bool Window::OnEvent(const WidgetEvent& ev) {
   if (ev.target == &m_close_button) {
     if (ev.type == EventType::kClick) {
       Close();
@@ -228,11 +228,11 @@ void Window::OnRemove() {
     active_window->Activate();
 }
 
-void Window::OnChildAdded(TBWidget* child) { m_resizer.SetZ(WidgetZ::kTop); }
+void Window::OnChildAdded(Widget* child) { m_resizer.SetZ(WidgetZ::kTop); }
 
 void Window::OnResized(int old_w, int old_h) {
   // Apply gravity on children.
-  TBWidget::OnResized(old_w, old_h);
+  Widget::OnResized(old_w, old_h);
   // Manually move our own decoration children.
   // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = GetTitleHeight();

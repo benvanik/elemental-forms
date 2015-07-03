@@ -29,7 +29,7 @@ void Application::Process() {
 
 void Application::RenderFrame(int window_w, int window_h) {
   g_renderer->BeginPaint(window_w, window_h);
-  GetRoot()->InvokePaint(TBWidget::PaintProps());
+  GetRoot()->InvokePaint(Widget::PaintProps());
   g_renderer->EndPaint();
 
   // If animations are running, reinvalidate immediately

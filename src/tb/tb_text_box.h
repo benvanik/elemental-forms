@@ -52,7 +52,7 @@ class TextBoxContentFactory : public TextFragmentContentFactory {
 
 // Internal for TextBox.
 // Acts as a scrollable container for any widget created as embedded content.
-class TextBoxScrollRoot : public TBWidget {
+class TextBoxScrollRoot : public Widget {
  private:
   // May only be used by TextBox.
   friend class TextBox;
@@ -68,11 +68,11 @@ class TextBoxScrollRoot : public TBWidget {
 // It can also be a passwordfield by calling SetEditType(EditType::kPassword).
 // It may perform styling of text and contain custom embedded content, if
 // enabled by SetStyling(true). Disabled by default.
-class TextBox : public TBWidget,
+class TextBox : public Widget,
                 private StyleEditListener,
                 public MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(TextBox, TBWidget);
+  TBOBJECT_SUBCLASS(TextBox, Widget);
 
   TextBox();
   ~TextBox() override;
@@ -141,7 +141,7 @@ class TextBox : public TBWidget,
   void SetText(const char* text) override {
     m_style_edit.SetText(text, CaretPosition::kBeginning);
   }
-  using TBWidget::SetText;
+  using Widget::SetText;
   std::string GetText() override { return m_style_edit.GetText(); }
 
   // Sets the text and also specify if the caret should be positioned at the
@@ -156,7 +156,7 @@ class TextBox : public TBWidget,
     m_style_edit.SetText(text, text_len, pos);
   }
 
-  using TBWidget::Invalidate;
+  using Widget::Invalidate;
 
   // Set the placeholder text. It will be visible only when the textfield is
   // empty.
@@ -166,10 +166,10 @@ class TextBox : public TBWidget,
   virtual std::string GetPlaceholderText() { return m_placeholder.GetText(); }
 
   void ScrollTo(int x, int y) override;
-  TBWidget::ScrollInfo GetScrollInfo() override;
-  TBWidget* GetScrollRoot() override { return &m_root; }
+  Widget::ScrollInfo GetScrollInfo() override;
+  Widget* GetScrollRoot() override { return &m_root; }
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnPaint(const PaintProps& paint_props) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnInflate(const InflateInfo& info) override;
@@ -177,7 +177,7 @@ class TextBox : public TBWidget,
   void OnFontChanged() override;
   void OnFocusChanged(bool focused) override;
   void OnResized(int old_w, int old_h) override;
-  TBWidget* GetContentRoot() override { return &m_root; }
+  Widget* GetContentRoot() override { return &m_root; }
 
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;

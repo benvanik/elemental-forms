@@ -18,9 +18,9 @@ namespace tb {
 // A widget showing a image loaded by ImageManager, constrained in size to its
 // skin.
 // If you need to show a image from the skin, you can use SkinImage.
-class ImageWidget : public TBWidget {
+class ImageWidget : public Widget {
  public:
-  TBOBJECT_SUBCLASS(ImageWidget, TBWidget);
+  TBOBJECT_SUBCLASS(ImageWidget, Widget);
 
   ImageWidget() = default;
 

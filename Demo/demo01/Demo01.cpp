@@ -110,13 +110,13 @@ void DemoWindow::LoadResource(TBNode& node) {
   EnsureFocus();
 }
 
-bool DemoWindow::OnEvent(const TBWidgetEvent& ev) {
+bool DemoWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     // We could call Die() to fade away and die, but click the close button
     // instead.
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
-    TBWidgetEvent click_ev(EventType::kClick);
+    WidgetEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -134,9 +134,9 @@ class EditWindow : public DemoWindow {
     // Update the disabled state of undo/redo buttons, and caret info.
 
     if (TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"))) {
-      if (TBWidget* undo = GetWidgetByID("undo"))
+      if (Widget* undo = GetWidgetByID("undo"))
         undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
-      if (TBWidget* redo = GetWidgetByID("redo"))
+      if (Widget* redo = GetWidgetByID("redo"))
         redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
       if (Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::format_string(
@@ -144,7 +144,7 @@ class EditWindow : public DemoWindow {
       }
     }
   }
-  virtual bool OnEvent(const TBWidgetEvent& ev) {
+  virtual bool OnEvent(const WidgetEvent& ev) {
     if (ev.type == EventType::kClick) {
       TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
@@ -238,7 +238,7 @@ LayoutWindow::LayoutWindow(const std::string& filename) {
   LoadResourceFile(filename);
 }
 
-bool LayoutWindow::OnEvent(const TBWidgetEvent& ev) {
+bool LayoutWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
@@ -271,7 +271,7 @@ TabContainerWindow::TabContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_tabcontainer01.tb.txt");
 }
 
-bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
+bool TabContainerWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("set_align")) {
     if (TabContainer* tc =
@@ -284,7 +284,7 @@ bool TabContainerWindow::OnEvent(const TBWidgetEvent& ev) {
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
             GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
-      for (TBWidget* child = tc->GetTabLayout()->GetFirstChild(); child;
+      for (Widget* child = tc->GetTabLayout()->GetFirstChild(); child;
            child = child->GetNext()) {
         if (Button* button = TBSafeCast<Button>(child)) button->SetAxis(axis);
       }
@@ -310,14 +310,14 @@ ConnectionWindow::ConnectionWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_connections.tb.txt");
 }
 
-bool ConnectionWindow::OnEvent(const TBWidgetEvent& ev) {
+bool ConnectionWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("reset-master-volume")) {
-    if (TBWidgetValue* val = g_value_group.GetValue(TBIDC("master-volume")))
+    if (WidgetValue* val = g_value_group.GetValue(TBIDC("master-volume")))
       val->SetInt(50);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("reset-user-name")) {
-    if (TBWidgetValue* val = g_value_group.GetValue(TBIDC("user-name")))
+    if (WidgetValue* val = g_value_group.GetValue(TBIDC("user-name")))
       val->SetText("");
   }
   return DemoWindow::OnEvent(ev);
@@ -337,7 +337,7 @@ ScrollContainerWindow::ScrollContainerWindow() {
     select->SetSource(&advanced_source);
 }
 
-bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
+bool ScrollContainerWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
       Button* button = TBSafeCast<Button>(ev.target);
@@ -382,7 +382,7 @@ bool ScrollContainerWindow::OnEvent(const TBWidgetEvent& ev) {
 
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
-    if (TBWidget* target = GetWidgetByID(msg->data->id1)) {
+    if (Widget* target = GetWidgetByID(msg->data->id1)) {
       Button* button = new Button;
       button->SetID(TBIDC("remove button"));
       button->SetText(tb::format_string("Remove %d", msg->data->v1.GetInt()));
@@ -397,9 +397,9 @@ ImageWindow::ImageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_image_widget.tb.txt");
 }
 
-bool ImageWindow::OnEvent(const TBWidgetEvent& ev) {
+bool ImageWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("remove")) {
-    TBWidget* image = ev.target->GetParent();
+    Widget* image = ev.target->GetParent();
     image->GetParent()->RemoveChild(image);
     delete image;
     return true;
@@ -413,15 +413,15 @@ PageWindow::PageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scroller_snap.tb.txt");
 
   // Listen to the pagers scroller
-  if (TBWidget* pager = GetWidgetByID(TBIDC("page-scroller")))
+  if (Widget* pager = GetWidgetByID(TBIDC("page-scroller")))
     pager->GetScroller()->SetSnapListener(this);
 }
 
-bool PageWindow::OnEvent(const TBWidgetEvent& ev) {
+bool PageWindow::OnEvent(const WidgetEvent& ev) {
   return DemoWindow::OnEvent(ev);
 }
 
-void PageWindow::OnScrollSnap(TBWidget* target_widget, int& target_x,
+void PageWindow::OnScrollSnap(Widget* target_widget, int& target_x,
                               int& target_y) {
   int page_w = target_widget->GetPaddingRect().w;
   int target_page = (target_x + page_w / 2) / page_w;
@@ -464,7 +464,7 @@ void AnimationsWindow::Animate() {
   }
 }
 
-bool AnimationsWindow::OnEvent(const TBWidgetEvent& ev) {
+bool AnimationsWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("Animate!"))
     Animate();
   return DemoWindow::OnEvent(ev);
@@ -495,7 +495,7 @@ void MainWindow::OnMessageReceived(Message* msg) {
   }
 }
 
-bool MainWindow::OnEvent(const TBWidgetEvent& ev) {
+bool MainWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("new")) {
       new MainWindow();
@@ -733,7 +733,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   // Render
   g_renderer->BeginPaint(window_w, window_h);
-  GetRoot()->InvokePaint(TBWidget::PaintProps());
+  GetRoot()->InvokePaint(Widget::PaintProps());
 
 #if defined(TB_RUNTIME_DEBUG_INFO)
 // Enable to debug image manager fragments
@@ -753,7 +753,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   }
 
   // Draw FPS
-  TBWidgetValue* continuous_repaint_val =
+  WidgetValue* continuous_repaint_val =
       g_value_group.GetValue(TBIDC("continous-repaint"));
   bool continuous_repaint =
       continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;

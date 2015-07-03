@@ -26,14 +26,14 @@ const TBID messageHide = TBIDC("TooltipManager.hide");
 
 class TTMsgParam : public TBTypedObject {
  public:
-  TTMsgParam(TBWidget* hovered) : m_hovered(hovered) {}
+  TTMsgParam(Widget* hovered) : m_hovered(hovered) {}
 
-  TBWidget* m_hovered;
+  Widget* m_hovered;
 };
 
 }  // namespace
 
-TooltipWindow::TooltipWindow(TBWidget* target) : PopupWindow(target) {
+TooltipWindow::TooltipWindow(Widget* target) : PopupWindow(target) {
   SetSkinBg("", InvokeInfo::kNoCallbacks);
   SetSettings(WindowSettings::kNone);
   m_content.SetSkinBg(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
@@ -59,7 +59,7 @@ bool TooltipWindow::Show(int mouse_x, int mouse_y) {
 }
 
 Rect TooltipWindow::GetAlignedRect(int x, int y) {
-  TBWidget* root = GetParentRoot();
+  Widget* root = GetParentRoot();
 
   SizeConstraints sc(root->GetRect().w, root->GetRect().h);
 
@@ -84,18 +84,18 @@ TooltipManager::~TooltipManager() {
   WidgetListener::RemoveGlobalListener(this);
 }
 
-bool TooltipManager::OnWidgetInvokeEvent(TBWidget* widget,
-                                         const TBWidgetEvent& ev) {
-  if (ev.type == EventType::kPointerMove && !TBWidget::captured_widget) {
-    TBWidget* tipped_widget = GetTippedWidget();
+bool TooltipManager::OnWidgetInvokeEvent(Widget* widget,
+                                         const WidgetEvent& ev) {
+  if (ev.type == EventType::kPointerMove && !Widget::captured_widget) {
+    Widget* tipped_widget = GetTippedWidget();
     if (m_last_tipped_widget != tipped_widget && tipped_widget) {
       MessageData* msg_data = new MessageData();
       msg_data->v1.SetObject(new TTMsgParam(tipped_widget));
       PostMessageDelayed(messageShow, msg_data, tooltip_show_delay_ms);
     } else if (m_last_tipped_widget == tipped_widget && tipped_widget &&
                m_tooltip) {
-      int x = TBWidget::pointer_move_widget_x;
-      int y = TBWidget::pointer_move_widget_y;
+      int x = Widget::pointer_move_widget_x;
+      int y = Widget::pointer_move_widget_y;
       tipped_widget->ConvertToRoot(x, y);
       y += tooltip_point_offset_y;
       Point tt_point = m_tooltip->GetOffsetPoint();
@@ -129,8 +129,8 @@ void TooltipManager::DeleteShowMessages() {
   while ((msg = GetMessageByID(messageShow)) != nullptr) DeleteMessage(msg);
 }
 
-TBWidget* TooltipManager::GetTippedWidget() {
-  TBWidget* current = TBWidget::hovered_widget;
+Widget* TooltipManager::GetTippedWidget() {
+  Widget* current = Widget::hovered_widget;
   while (current && current->GetDescription().empty()) {
     current = current->GetParent();
   }
@@ -139,16 +139,16 @@ TBWidget* TooltipManager::GetTippedWidget() {
 
 void TooltipManager::OnMessageReceived(Message* msg) {
   if (msg->message == messageShow) {
-    TBWidget* tipped_widget = GetTippedWidget();
+    Widget* tipped_widget = GetTippedWidget();
     TTMsgParam* param = static_cast<TTMsgParam*>(msg->data->v1.GetObject());
     if (tipped_widget == param->m_hovered) {
       KillToolTip();
 
       m_tooltip = new TooltipWindow(tipped_widget);
 
-      int x = TBWidget::pointer_move_widget_x;
-      int y = TBWidget::pointer_move_widget_y;
-      TBWidget::hovered_widget->ConvertToRoot(x, y);
+      int x = Widget::pointer_move_widget_x;
+      int y = Widget::pointer_move_widget_y;
+      Widget::hovered_widget->ConvertToRoot(x, y);
       y += tooltip_point_offset_y;
 
       m_tooltip->Show(x, y);

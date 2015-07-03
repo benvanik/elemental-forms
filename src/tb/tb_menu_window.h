@@ -23,7 +23,7 @@ class MenuWindow : public PopupWindow {
  public:
   TBOBJECT_SUBCLASS(MenuWindow, PopupWindow);
 
-  MenuWindow(TBWidget* target, TBID id);
+  MenuWindow(Widget* target, TBID id);
   ~MenuWindow() override;
 
   bool Show(SelectItemSource* source, const PopupAlignment& alignment,
@@ -31,7 +31,7 @@ class MenuWindow : public PopupWindow {
 
   SelectList* GetList() { return &m_select_list; }
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
  private:
   SelectList m_select_list;

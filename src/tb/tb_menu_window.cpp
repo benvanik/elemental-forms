@@ -13,7 +13,7 @@
 
 namespace tb {
 
-MenuWindow::MenuWindow(TBWidget* target, TBID id) : PopupWindow(target) {
+MenuWindow::MenuWindow(Widget* target, TBID id) : PopupWindow(target) {
   SetID(id);
   SetSkinBg(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
   m_select_list.GetScrollContainer()->SetAdaptToContentSize(true);
@@ -35,12 +35,12 @@ bool MenuWindow::Show(SelectItemSource* source, const PopupAlignment& alignment,
   return PopupWindow::Show(alignment);
 }
 
-bool MenuWindow::OnEvent(const TBWidgetEvent& ev) {
+bool MenuWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick && &m_select_list == ev.target) {
     WeakWidgetPointer this_widget(this);
 
     // Invoke the click on the target.
-    TBWidgetEvent target_ev(EventType::kClick);
+    WidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.ref_id;
     InvokeEvent(target_ev);
 

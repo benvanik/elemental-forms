@@ -114,7 +114,7 @@ drawing of sub-elements if it can be solved by wrapping a Layout and other
 existing widgets.
 
 Any widget may contain other widgets and may control into which sub-widget other
-widgets are inflated from resources (using `TBWidget::GetContentRoot`).
+widgets are inflated from resources (using `Widget::GetContentRoot`).
 
 Custom widgets can be inflated from UI resources too. See the use of the
 `TB_WIDGET_FACTORY` macro in `tb_widgets_reader.cpp` for examples on how to do

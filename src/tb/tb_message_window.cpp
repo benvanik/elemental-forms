@@ -17,14 +17,14 @@
 
 namespace tb {
 
-MessageWindow::MessageWindow(TBWidget* target, TBID id) : m_target(target) {
+MessageWindow::MessageWindow(Widget* target, TBID id) : m_target(target) {
   WidgetListener::AddGlobalListener(this);
   SetID(id);
 }
 
 MessageWindow::~MessageWindow() {
   WidgetListener::RemoveGlobalListener(this);
-  if (TBWidget* dimmer = m_dimmer.Get()) {
+  if (Widget* dimmer = m_dimmer.Get()) {
     dimmer->GetParent()->RemoveChild(dimmer);
     delete dimmer;
   }
@@ -32,7 +32,7 @@ MessageWindow::~MessageWindow() {
 
 bool MessageWindow::Show(const std::string& title, const std::string& message,
                          MessageWindowSettings* settings) {
-  TBWidget* target = m_target.Get();
+  Widget* target = m_target.Get();
   if (!target) return false;
 
   MessageWindowSettings default_settings;
@@ -40,7 +40,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
     settings = &default_settings;
   }
 
-  TBWidget* root = target->GetParentRoot();
+  Widget* root = target->GetParentRoot();
 
   const char* source =
       "Layout: axis: y, distribution: available\n"
@@ -109,12 +109,12 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   }
 }
 
-bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
+bool MessageWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<Button>()) {
     WeakWidgetPointer this_widget(this);
 
     // Invoke the click on the target.
-    TBWidgetEvent target_ev(EventType::kClick);
+    WidgetEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.target->GetID();
     InvokeEvent(target_ev);
 
@@ -125,7 +125,7 @@ bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
     return true;
   } else if (ev.type == EventType::kKeyDown &&
              ev.special_key == SpecialKey::kEsc) {
-    TBWidgetEvent click_ev(EventType::kClick);
+    WidgetEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -133,19 +133,19 @@ bool MessageWindow::OnEvent(const TBWidgetEvent& ev) {
 }
 
 void MessageWindow::OnDie() {
-  if (TBWidget* dimmer = m_dimmer.Get()) {
+  if (Widget* dimmer = m_dimmer.Get()) {
     dimmer->Die();
   }
 }
 
-void MessageWindow::OnWidgetDelete(TBWidget* widget) {
+void MessageWindow::OnWidgetDelete(Widget* widget) {
   // If the target widget is deleted, close!
   if (!m_target.Get()) {
     Close();
   }
 }
 
-bool MessageWindow::OnWidgetDying(TBWidget* widget) {
+bool MessageWindow::OnWidgetDying(Widget* widget) {
   // If the target widget or an ancestor of it is dying, close!
   if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) {
     Close();

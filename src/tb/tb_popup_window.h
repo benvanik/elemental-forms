@@ -44,7 +44,7 @@ class PopupAlignment {
 
   // Calculates a good rect for the given popup window using its preferred size
   // and the preferred alignment information stored in this class.
-  Rect GetAlignedRect(TBWidget* popup, TBWidget* target) const;
+  Rect GetAlignedRect(Widget* popup, Widget* target) const;
 
   Point pos_in_root;
   Point pos_offset;
@@ -62,22 +62,22 @@ class PopupWindow : public Window, private WidgetListener {
  public:
   TBOBJECT_SUBCLASS(PopupWindow, Window);
 
-  PopupWindow(TBWidget* target);
+  PopupWindow(Widget* target);
   ~PopupWindow() override;
 
   bool Show(const PopupAlignment& alignment);
 
-  TBWidget* GetEventDestination() override { return m_target.Get(); }
+  Widget* GetEventDestination() override { return m_target.Get(); }
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
   const WeakWidgetPointer& GetTargetWidget() { return m_target; }
 
  private:
-  void OnWidgetFocusChanged(TBWidget* widget, bool focused) override;
-  bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev) override;
-  void OnWidgetDelete(TBWidget* widget) override;
-  bool OnWidgetDying(TBWidget* widget) override;
+  void OnWidgetFocusChanged(Widget* widget, bool focused) override;
+  bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) override;
+  void OnWidgetDelete(Widget* widget) override;
+  bool OnWidgetDying(Widget* widget) override;
 
   WeakWidgetPointer m_target;
 };

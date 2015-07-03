@@ -20,15 +20,15 @@ class TabLayout : public Layout {
  public:
   TBOBJECT_SUBCLASS(TabLayout, Layout);
 
-  void OnChildAdded(TBWidget* child) override;
+  void OnChildAdded(Widget* child) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 };
 
 // A container with tabs for multiple pages.
-class TabContainer : public TBWidget {
+class TabContainer : public Widget {
  public:
-  TBOBJECT_SUBCLASS(TabContainer, TBWidget);
+  TBOBJECT_SUBCLASS(TabContainer, Widget);
 
   TabContainer();
   ~TabContainer() override;
@@ -53,19 +53,19 @@ class TabContainer : public TBWidget {
   int GetNumPages();
 
   // Returns the widget that is the current page, or nullptr if none is active.
-  TBWidget* GetCurrentPageWidget() const;
+  Widget* GetCurrentPageWidget() const;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnProcess() override;
 
-  TBWidget* GetContentRoot() override { return &m_content_root; }
+  Widget* GetContentRoot() override { return &m_content_root; }
   Layout* GetTabLayout() { return &m_tab_layout; }
 
  protected:
   Layout m_root_layout;
   TabLayout m_tab_layout;
-  TBWidget m_content_root;
+  Widget m_content_root;
   bool m_need_page_update = true;
   int m_current_page = 0;
   Align m_align = Align::kTop;

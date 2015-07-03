@@ -19,8 +19,8 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_widget_value_text) {
-  TBWidgetValue widget_val(TBIDC("test value text"));
-  TBWidget* a, *b, *c;
+  WidgetValue widget_val(TBIDC("test value text"));
+  Widget* a, *b, *c;
 
   TB_TEST(Init) {
     TB_VERIFY(a = new TextBox);
@@ -77,7 +77,7 @@ TB_TEST_GROUP(tb_widget_value_text) {
 }
 
 TB_TEST_GROUP(tb_widget_value_int) {
-  TBWidgetValue widget_val(TBIDC("test value int"));
+  WidgetValue widget_val(TBIDC("test value int"));
   Slider* a;
   ScrollBar* b;
   SelectInline* c;
@@ -140,7 +140,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
 }
 
 TB_TEST_GROUP(tb_widget_value_listener) {
-  TBWidgetValue widget_val(TBIDC("test value check"));
+  WidgetValue widget_val(TBIDC("test value check"));
   CheckBox* a, *b;
 
   /** Listen to changes and update val to any changed value. */
@@ -150,7 +150,7 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     TBValue val;
     MyListener() : change_counter(0) {}
     virtual void OnValueChanged(const TBValueGroup* group,
-                                const TBWidgetValue* value) {
+                                const WidgetValue* value) {
       val = value->GetValue();
       change_counter++;
     }

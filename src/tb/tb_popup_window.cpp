@@ -15,8 +15,8 @@
 
 namespace tb {
 
-Rect PopupAlignment::GetAlignedRect(TBWidget* popup, TBWidget* target) const {
-  TBWidget* root = target->GetParentRoot();
+Rect PopupAlignment::GetAlignedRect(Widget* popup, Widget* target) const {
+  Widget* root = target->GetParentRoot();
 
   SizeConstraints sc(root->GetRect().w, root->GetRect().h);
 
@@ -71,7 +71,7 @@ Rect PopupAlignment::GetAlignedRect(TBWidget* popup, TBWidget* target) const {
   return Rect(x, y, w, h);
 }
 
-PopupWindow::PopupWindow(TBWidget* target) : m_target(target) {
+PopupWindow::PopupWindow(Widget* target) : m_target(target) {
   WidgetListener::AddGlobalListener(this);
   SetSkinBg(TBIDC("PopupWindow"), InvokeInfo::kNoCallbacks);
   SetSettings(WindowSettings::kNone);
@@ -83,12 +83,12 @@ bool PopupWindow::Show(const PopupAlignment& alignment) {
   // Calculate and set a good size for the popup window
   SetRect(alignment.GetAlignedRect(this, m_target.Get()));
 
-  TBWidget* root = m_target.Get()->GetParentRoot();
+  Widget* root = m_target.Get()->GetParentRoot();
   root->AddChild(this);
   return true;
 }
 
-bool PopupWindow::OnEvent(const TBWidgetEvent& ev) {
+bool PopupWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     Close();
     return true;
@@ -96,14 +96,13 @@ bool PopupWindow::OnEvent(const TBWidgetEvent& ev) {
   return Window::OnEvent(ev);
 }
 
-void PopupWindow::OnWidgetFocusChanged(TBWidget* widget, bool focused) {
+void PopupWindow::OnWidgetFocusChanged(Widget* widget, bool focused) {
   if (focused && !IsEventDestinationFor(widget)) {
     Close();
   }
 }
 
-bool PopupWindow::OnWidgetInvokeEvent(TBWidget* widget,
-                                      const TBWidgetEvent& ev) {
+bool PopupWindow::OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) {
   if ((ev.type == EventType::kPointerDown ||
        ev.type == EventType::kContextMenu) &&
       !IsEventDestinationFor(ev.target)) {
@@ -112,14 +111,14 @@ bool PopupWindow::OnWidgetInvokeEvent(TBWidget* widget,
   return false;
 }
 
-void PopupWindow::OnWidgetDelete(TBWidget* widget) {
+void PopupWindow::OnWidgetDelete(Widget* widget) {
   // If the target widget is deleted, close!
   if (!m_target.Get()) {
     Close();
   }
 }
 
-bool PopupWindow::OnWidgetDying(TBWidget* widget) {
+bool PopupWindow::OnWidgetDying(Widget* widget) {
   // If the target widget or an ancestor of it is dying, close!
   if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) {
     Close();

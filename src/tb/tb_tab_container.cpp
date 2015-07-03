@@ -14,7 +14,7 @@
 
 namespace tb {
 
-void TabLayout::OnChildAdded(TBWidget* child) {
+void TabLayout::OnChildAdded(Widget* child) {
   if (Button* button = TBSafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
@@ -75,8 +75,8 @@ void TabContainer::SetValue(int index) {
 
   // Update the pages visibility and tabs pressed value.
   index = 0;
-  TBWidget* page = m_content_root.GetFirstChild();
-  TBWidget* tab = m_tab_layout.GetFirstChild();
+  Widget* page = m_content_root.GetFirstChild();
+  Widget* tab = m_tab_layout.GetFirstChild();
   for (; page && tab; page = page->GetNext(), tab = tab->GetNext(), index++) {
     bool active = index == m_current_page;
     page->SetVisibilility(active ? Visibility::kVisible
@@ -87,14 +87,13 @@ void TabContainer::SetValue(int index) {
 
 int TabContainer::GetNumPages() {
   int count = 0;
-  for (TBWidget* tab = m_tab_layout.GetFirstChild(); tab;
-       tab = tab->GetNext()) {
+  for (Widget* tab = m_tab_layout.GetFirstChild(); tab; tab = tab->GetNext()) {
     count++;
   }
   return count;
 }
 
-TBWidget* TabContainer::GetCurrentPageWidget() const {
+Widget* TabContainer::GetCurrentPageWidget() const {
   return m_content_root.GetChildFromIndex(m_current_page);
 }
 
@@ -109,7 +108,7 @@ void TabContainer::SetAlignment(Align align) {
   m_align = align;
 }
 
-bool TabContainer::OnEvent(const TBWidgetEvent& ev) {
+bool TabContainer::OnEvent(const WidgetEvent& ev) {
   if ((ev.type == EventType::kClick || ev.type == EventType::kPointerDown) &&
       ev.target->GetID() == TBIDC("tab") &&
       ev.target->GetParent() == &m_tab_layout) {

@@ -24,7 +24,7 @@ enum class ScrollMode {
 MAKE_ORDERED_ENUM_STRING_UTILS(ScrollMode, "xy", "y", "y-auto", "auto", "off");
 
 // Internal for ScrollContainer.
-class ScrollContainerRoot : public TBWidget {
+class ScrollContainerRoot : public Widget {
  private:  // May only be used by ScrollContainer.
   friend class ScrollContainer;
   ScrollContainerRoot() = default;
@@ -57,11 +57,11 @@ class ScrollBarVisibility {
 };
 
 // A container with scrollbars that can scroll its children.
-class ScrollContainer : public TBWidget {
+class ScrollContainer : public Widget {
   friend class ScrollContainerRoot;
 
  public:
-  TBOBJECT_SUBCLASS(ScrollContainer, TBWidget);
+  TBOBJECT_SUBCLASS(ScrollContainer, Widget);
 
   ScrollContainer();
   ~ScrollContainer() override;
@@ -80,8 +80,8 @@ class ScrollContainer : public TBWidget {
   ScrollMode GetScrollMode() { return m_mode; }
 
   void ScrollTo(int x, int y) override;
-  TBWidget::ScrollInfo GetScrollInfo() override;
-  TBWidget* GetScrollRoot() override { return &m_root; }
+  Widget::ScrollInfo GetScrollInfo() override;
+  Widget* GetScrollRoot() override { return &m_root; }
 
   void InvalidateLayout(InvalidationMode il) override;
 
@@ -90,11 +90,11 @@ class ScrollContainer : public TBWidget {
       const SizeConstraints& constraints) override;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
 
-  TBWidget* GetContentRoot() override { return &m_root; }
+  Widget* GetContentRoot() override { return &m_root; }
 
  protected:
   void ValidateLayout(const SizeConstraints& constraints);

@@ -80,13 +80,13 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 
 // Layout lays out its children along the given axis.
 // Each widgets size depend on its preferred size (See
-// TBWidget::GetPreferredSize), gravity, and the specified layout settings (See
+// Widget::GetPreferredSize), gravity, and the specified layout settings (See
 // SetLayoutSize, SetLayoutPosition SetLayoutOverflow, SetLayoutDistribution,
 // SetLayoutDistributionPosition), and the available size.
 // Each widget is also separated by the specified spacing (See SetSpacing).
-class Layout : public TBWidget {
+class Layout : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Layout, TBWidget);
+  TBOBJECT_SUBCLASS(Layout, Widget);
 
   // This means the spacing should be the default, read from the skin.
   static const int kSpacingFromSkin = kInvalidDimension;
@@ -131,14 +131,14 @@ class Layout : public TBWidget {
       const SizeConstraints& constraints) override;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
-  void OnInflateChild(TBWidget* child) override;
+  void OnInflateChild(Widget* child) override;
   void GetChildTranslation(int& x, int& y) const override;
   void ScrollTo(int x, int y) override;
-  TBWidget::ScrollInfo GetScrollInfo() override;
+  Widget::ScrollInfo GetScrollInfo() override;
 
  protected:
   void ValidateLayout(const SizeConstraints& constraints,
@@ -146,11 +146,11 @@ class Layout : public TBWidget {
   bool QualifyForExpansion(Gravity gravity) const;
   int GetWantedHeight(Gravity gravity, const PreferredSize& ps,
                       int available_height) const;
-  TBWidget* GetNextNonCollapsedWidget(TBWidget* child) const;
-  int GetTrailingSpace(TBWidget* child, int spacing) const;
+  Widget* GetNextNonCollapsedWidget(Widget* child) const;
+  int GetTrailingSpace(Widget* child, int spacing) const;
   int CalculateSpacing();
-  TBWidget* GetFirstInLayoutOrder() const;
-  TBWidget* GetNextInLayoutOrder(TBWidget* child) const;
+  Widget* GetFirstInLayoutOrder() const;
+  Widget* GetNextInLayoutOrder(Widget* child) const;
 
   Axis m_axis = Axis::kX;
   int m_spacing = kSpacingFromSkin;

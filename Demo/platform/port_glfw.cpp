@@ -41,7 +41,7 @@ ApplicationBackendGLFW* GetBackend(GLFWwindow* window) {
 }
 
 // The root of all widgets in a GLFW window.
-class RootWidget : public TBWidget {
+class RootWidget : public Widget {
  public:
   RootWidget(ApplicationBackendGLFW* backend) : m_backend(backend) {}
   virtual void OnInvalid();
@@ -62,7 +62,7 @@ class ApplicationBackendGLFW : public ApplicationBackend {
   ~ApplicationBackendGLFW();
 
   virtual void Run();
-  virtual TBWidget* GetRoot() { return &m_root; }
+  virtual Widget* GetRoot() { return &m_root; }
   virtual Renderer* GetRenderer() { return m_renderer; }
 
   int GetWidth() const { return m_root.GetRect().w; }
@@ -121,7 +121,7 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
 #else
   bool shortcut_key = any(modifierkeys & ModifierKeys::kCtrl);
 #endif
-  if (!TBWidget::focused_widget || !down || !shortcut_key) return false;
+  if (!Widget::focused_widget || !down || !shortcut_key) return false;
   bool reverse_key = any(modifierkeys & ModifierKeys::kShift);
   int upper_key = toupr_ascii(key);
   TBID id;
@@ -153,10 +153,10 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
   else
     return false;
 
-  TBWidgetEvent ev(EventType::kShortcut);
+  WidgetEvent ev(EventType::kShortcut);
   ev.modifierkeys = modifierkeys;
   ev.ref_id = id;
-  return TBWidget::focused_widget->InvokeEvent(ev);
+  return Widget::focused_widget->InvokeEvent(ev);
 }
 
 static bool InvokeKey(GLFWwindow* window, unsigned int key,
@@ -263,10 +263,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
       InvokeKey(window, 0, SpecialKey::kEsc, modifier, down);
       break;
     case GLFW_KEY_MENU:
-      if (TBWidget::focused_widget && !down) {
-        TBWidgetEvent ev(EventType::kContextMenu);
+      if (Widget::focused_widget && !down) {
+        WidgetEvent ev(EventType::kContextMenu);
         ev.modifierkeys = modifier;
-        TBWidget::focused_widget->InvokeEvent(ev);
+        Widget::focused_widget->InvokeEvent(ev);
       }
       break;
     case GLFW_KEY_LEFT_SHIFT:
@@ -331,10 +331,10 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
   } else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
     GetBackend(window)->GetRoot()->InvokePointerMove(x, y, modifier,
                                                      ShouldEmulateTouchEvent());
-    if (TBWidget::hovered_widget) {
-      TBWidget::hovered_widget->ConvertFromRoot(x, y);
-      TBWidgetEvent ev(EventType::kContextMenu, x, y, false, modifier);
-      TBWidget::hovered_widget->InvokeEvent(ev);
+    if (Widget::hovered_widget) {
+      Widget::hovered_widget->ConvertFromRoot(x, y);
+      WidgetEvent ev(EventType::kContextMenu, x, y, false, modifier);
+      Widget::hovered_widget->InvokeEvent(ev);
     }
   }
 }
@@ -343,7 +343,7 @@ void cursor_position_callback(GLFWwindow* window, double x, double y) {
   mouse_x = (int)x;
   mouse_y = (int)y;
   if (GetBackend(window)->GetRoot() &&
-      !(ShouldEmulateTouchEvent() && !TBWidget::captured_widget))
+      !(ShouldEmulateTouchEvent() && !Widget::captured_widget))
     GetBackend(window)->GetRoot()->InvokePointerMove(
         mouse_x, mouse_y, GetModifierKeys(), ShouldEmulateTouchEvent());
 }
@@ -430,11 +430,11 @@ static void window_size_callback(GLFWwindow* window, int w, int h) {
 static void drop_callback(GLFWwindow* window, int count,
                           const char** files_utf8) {
   ApplicationBackendGLFW* backend = GetBackend(window);
-  TBWidget* target = TBWidget::hovered_widget;
-  if (!target) target = TBWidget::focused_widget;
+  Widget* target = Widget::hovered_widget;
+  if (!target) target = Widget::focused_widget;
   if (!target) target = backend->GetRoot();
   if (target) {
-    TBWidgetEventFileDrop ev;
+    WidgetEventFileDrop ev;
     for (int i = 0; i < count; i++)
       ev.files.Add(new std::string(files_utf8[i]));
     target->InvokeEvent(ev);

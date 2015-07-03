@@ -16,7 +16,7 @@ class ApplicationBackend {
                                     const char* title);
   virtual ~ApplicationBackend() {}
   virtual void Run() = 0;
-  virtual tb::TBWidget* GetRoot() = 0;
+  virtual tb::Widget* GetRoot() = 0;
   virtual tb::Renderer* GetRenderer() = 0;
 };
 
@@ -26,7 +26,7 @@ class Application {
   Application() {}
   virtual ~Application() {}
 
-  tb::TBWidget* GetRoot() { return m_backend->GetRoot(); }
+  tb::Widget* GetRoot() { return m_backend->GetRoot(); }
 
   /** Run the message loop. */
   void Run();

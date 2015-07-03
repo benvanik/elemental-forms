@@ -18,35 +18,35 @@
 
 namespace tb {
 
-class TBWidget;
-class TBWidgetValue;
+class Widget;
+class WidgetValue;
 class TBValueGroup;
 
-/** TBWidgetValueConnection maintains a connection between TBWidget and
- * TBWidgetValue. */
+/** WidgetValueConnection maintains a connection between Widget and
+ * WidgetValue. */
 
-class TBWidgetValueConnection : public TBLinkOf<TBWidgetValueConnection> {
+class WidgetValueConnection : public TBLinkOf<WidgetValueConnection> {
  public:
-  TBWidgetValueConnection() : m_value(nullptr) {}
-  ~TBWidgetValueConnection() { Unconnect(); }
+  WidgetValueConnection() : m_value(nullptr) {}
+  ~WidgetValueConnection() { Unconnect(); }
 
   /** Connect the value and widget. */
-  void Connect(TBWidgetValue* value, TBWidget* m_widget);
+  void Connect(WidgetValue* value, Widget* m_widget);
 
   /** Unconnect the value and widget if it is connected. */
   void Unconnect();
 
-  /** Synchronize the value of the widget to the TBWidgetValue and all other
+  /** Synchronize the value of the widget to the WidgetValue and all other
           connected widgets. */
-  void SyncFromWidget(TBWidget* source_widget);
+  void SyncFromWidget(Widget* source_widget);
 
  private:
-  friend class TBWidgetValue;
-  TBWidgetValue* m_value;
-  TBWidget* m_widget;
+  friend class WidgetValue;
+  WidgetValue* m_value;
+  Widget* m_widget;
 };
 
-/** TBWidgetValue stores a TBValue that will be synchronized with all widgets
+/** WidgetValue stores a TBValue that will be synchronized with all widgets
    connected to it.
         It has a TBID name, that can be used to identify this value within its
    TBValueGroup.
@@ -56,9 +56,9 @@ class TBWidgetValueConnection : public TBLinkOf<TBWidgetValueConnection> {
         EventType::kChanged event, and when the value is changed with any of the
    setters here.
 
-        The synchronization with widgets is done through the generic TBWidget
+        The synchronization with widgets is done through the generic Widget
    setters/getters,
-        TBWidget::SetValue/GetValue/SetValueDouble/GetValueDouble/GetText/SetText.
+        Widget::SetValue/GetValue/SetValueDouble/GetValueDouble/GetText/SetText.
 
         The type that is synchronized is determined by the TBValue::Type
    specified in the
@@ -68,10 +68,10 @@ class TBWidgetValueConnection : public TBLinkOf<TBWidgetValueConnection> {
    different format!
 */
 
-class TBWidgetValue {
+class WidgetValue {
  public:
-  TBWidgetValue(const TBID& name, TBValue::Type type = TBValue::Type::kInt);
-  ~TBWidgetValue();
+  WidgetValue(const TBID& name, TBValue::Type type = TBValue::Type::kInt);
+  ~WidgetValue();
 
   /** Set integer value and sync to connected widgets. */
   void SetInt(int value);
@@ -83,7 +83,7 @@ class TBWidgetValue {
   void SetDouble(double value);
 
   /** Set the value from the given widget. Using the current format type.*/
-  void SetFromWidget(TBWidget* source_widget);
+  void SetFromWidget(Widget* source_widget);
 
   /** Get value as integer. */
   int GetInt() { return m_value.GetInt(); }
@@ -101,14 +101,14 @@ class TBWidgetValue {
   TBID GetName() const { return m_name; }
 
  private:
-  friend class TBWidgetValueConnection;
+  friend class WidgetValueConnection;
   TBID m_name;
   TBValue m_value;
-  TBLinkListOf<TBWidgetValueConnection> m_connections;
+  TBLinkListOf<WidgetValueConnection> m_connections;
   bool m_syncing;
 
-  void SyncToWidget(TBWidget* dst_widget);
-  void SyncToWidgets(TBWidget* exclude_widget);
+  void SyncToWidget(Widget* dst_widget);
+  void SyncToWidgets(Widget* exclude_widget);
 };
 
 /** Listener that will be notified when any of the values in a TBValueGroup is
@@ -123,10 +123,10 @@ class TBValueGroupListener : public TBLinkOf<TBValueGroupListener> {
   /** Called when a value has changed and all widgets connected to it has been
    * updated. */
   virtual void OnValueChanged(const TBValueGroup* group,
-                              const TBWidgetValue* value) = 0;
+                              const WidgetValue* value) = 0;
 };
 
-/** TBValueGroup is a collection of widget values (TBWidgetValue) that can be
+/** TBValueGroup is a collection of widget values (WidgetValue) that can be
    fetched
         by name (using a TBID). It also keeps a list of TBValueGroupListener
    that listens to
@@ -134,14 +134,14 @@ class TBValueGroupListener : public TBLinkOf<TBValueGroupListener> {
 
 class TBValueGroup {
  public:
-  /** Create a TBWidgetValue with the given name if it does not already exist.
+  /** Create a WidgetValue with the given name if it does not already exist.
           Returns nullptr if out of memory. */
-  TBWidgetValue* CreateValueIfNeeded(const TBID& name,
-                                     TBValue::Type type = TBValue::Type::kInt);
+  WidgetValue* CreateValueIfNeeded(const TBID& name,
+                                   TBValue::Type type = TBValue::Type::kInt);
 
-  /** Get the TBWidgetValue with the given name, or nullptr if no match is
+  /** Get the WidgetValue with the given name, or nullptr if no match is
    * found. */
-  TBWidgetValue* GetValue(const TBID& name) const { return m_values.Get(name); }
+  WidgetValue* GetValue(const TBID& name) const { return m_values.Get(name); }
 
   /** Add listener to this group. It will be removed automatically when deleted,
           but can also be removed by RemoveListener. */
@@ -155,11 +155,11 @@ class TBValueGroup {
   }
 
  private:
-  friend class TBWidgetValue;
-  void InvokeOnValueChanged(const TBWidgetValue* value);
+  friend class WidgetValue;
+  void InvokeOnValueChanged(const WidgetValue* value);
 
-  TBHashTableAutoDeleteOf<TBWidgetValue> m_values;  ///< Hash table of values
-  TBLinkListOf<TBValueGroupListener> m_listeners;   ///< List of listeners
+  TBHashTableAutoDeleteOf<WidgetValue> m_values;   ///< Hash table of values
+  TBLinkListOf<TBValueGroupListener> m_listeners;  ///< List of listeners
 };
 
 /** The global value group. */

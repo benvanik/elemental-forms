@@ -58,11 +58,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "FireButton\n"
         "	skin: 'FireButtonSkin'\n");
 
-    TBWidget root;
+    Widget root;
     g_widgets_reader->LoadData(
         &root, "Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
-    TBWidget* button = root.GetWidgetByID(TBIDC("fire"));
+    Widget* button = root.GetWidgetByID(TBIDC("fire"));
     TB_VERIFY(button->GetSkinBg() == TBIDC("FireButtonSkin"));
   }
 
@@ -79,7 +79,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "bar_broken_node: '@test_foo>foo_broken_node'"
         "bar_broken_tree: '@test_foo>foo_broken_tree'");
 
-    TBWidget root;
+    Widget root;
     g_widgets_reader->LoadData(
         &root,
         "SelectInline: id: 'select', value: '@test_bar>bar_value'\n"
@@ -89,11 +89,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "Button: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
 
     // Reference from resource to one tree to another tree.
-    TBWidget* select = root.GetWidgetByID(TBIDC("select"));
+    Widget* select = root.GetWidgetByID(TBIDC("select"));
     TB_VERIFY(select->GetValue() == 42);
 
     // Reference in a circular loop. Should not freeze.
-    TBWidget* button_circular = root.GetWidgetByID(TBIDC("button_circular"));
+    Widget* button_circular = root.GetWidgetByID(TBIDC("button_circular"));
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
@@ -105,11 +105,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
                   .GetType() == TBValue::Type::kNull);
 
     // Reference that is broken (has no matching node).
-    TBWidget* button_broken1 = root.GetWidgetByID(TBIDC("button_broken_node"));
+    Widget* button_broken1 = root.GetWidgetByID(TBIDC("button_broken_node"));
     TB_VERIFY_STR(button_broken1->GetText(), "@test_foo>foo_broken_node");
 
     // Reference that is broken (has no matching tree).
-    TBWidget* button_broken2 = root.GetWidgetByID(TBIDC("button_broken_tree"));
+    Widget* button_broken2 = root.GetWidgetByID(TBIDC("button_broken_tree"));
     TB_VERIFY_STR(button_broken2->GetText(), "@test_bad_tree>foo");
   }
 
@@ -120,7 +120,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	skin: 'SpecialSkin'\n"
         "	text: 'hello'\n");
 
-    TBWidget root;
+    Widget root;
     g_widgets_reader->LoadData(&root,
                                "TextBox: id: 'edit'\n"
                                "	@include @test_styles>VeryNice");
@@ -130,7 +130,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_local_include) {
-    TBWidget root;
+    Widget root;
     g_widgets_reader->LoadData(&root,
                                "SomeDeclarations\n"
                                "	skin: 'SpecialSkin'\n"
@@ -159,7 +159,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "		spacing: 200px\n"
         "	gravity: 'all'\n";
 
-    TBWidget root1, root2;
+    Widget root1, root2;
 
     // Inflate & check
     g_widgets_reader->LoadData(&root1, layout_str);

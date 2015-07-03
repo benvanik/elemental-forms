@@ -33,7 +33,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
   TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
 
-  DebugSettingsWindow(TBWidget* root) {
+  DebugSettingsWindow(Widget* root) {
     SetText("Debug settings");
     g_widgets_reader->LoadData(
         this,
@@ -79,7 +79,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     GetWidgetByID(TBIDC("container"))->AddChild(label);
   }
 
-  virtual bool OnEvent(const TBWidgetEvent& ev) {
+  virtual bool OnEvent(const WidgetEvent& ev) {
     if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
       // Update setting and invalidate
       g_tb_debug.settings[ev.target->data.GetInt()] = ev.target->GetValue();
@@ -98,8 +98,8 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
     // Draw font glyph fragments (the font of the hovered widget)
     if (TB_DEBUG_SETTING(Setting::kDrawFontBitmapFragments)) {
-      TBWidget* widget = TBWidget::hovered_widget ? TBWidget::hovered_widget
-                                                  : TBWidget::focused_widget;
+      Widget* widget = Widget::hovered_widget ? Widget::hovered_widget
+                                              : Widget::focused_widget;
       g_font_manager->GetFontFace(
                           widget ? widget->GetCalculatedFontDescription()
                                  : g_font_manager->GetDefaultFontDescription())
@@ -122,7 +122,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
   }
 
   // WidgetListener
-  virtual bool OnWidgetInvokeEvent(TBWidget* widget, const TBWidgetEvent& ev) {
+  virtual bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) {
     // Skip these events for now
     if (ev.IsPointerEvent()) return false;
 
@@ -203,7 +203,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
   }
 };
 
-void ShowDebugInfoSettingsWindow(TBWidget* root) {
+void ShowDebugInfoSettingsWindow(Widget* root) {
   new DebugSettingsWindow(root);
 }
 

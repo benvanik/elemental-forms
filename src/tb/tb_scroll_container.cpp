@@ -82,7 +82,7 @@ void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
   TB_IF_DEBUG_SETTING(Setting::kLayoutClipping,
                       g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
 
-  TBWidget::OnPaintChildren(paint_props);
+  Widget::OnPaintChildren(paint_props);
 
   g_renderer->SetClipRect(old_clip_rect, false);
 }
@@ -135,7 +135,7 @@ void ScrollContainer::ScrollTo(int x, int y) {
   }
 }
 
-TBWidget::ScrollInfo ScrollContainer::GetScrollInfo() {
+Widget::ScrollInfo ScrollContainer::GetScrollInfo() {
   ScrollInfo info;
   info.min_x = static_cast<int>(m_scrollbar_x.GetMinValue());
   info.min_y = static_cast<int>(m_scrollbar_y.GetMinValue());
@@ -149,7 +149,7 @@ TBWidget::ScrollInfo ScrollContainer::GetScrollInfo() {
 void ScrollContainer::InvalidateLayout(InvalidationMode il) {
   m_layout_is_invalid = true;
   // No recursion up to parents here unless we adapt to content size.
-  if (m_adapt_to_content_size) TBWidget::InvalidateLayout(il);
+  if (m_adapt_to_content_size) Widget::InvalidateLayout(il);
 }
 
 Rect ScrollContainer::GetPaddingRect() {
@@ -170,7 +170,7 @@ PreferredSize ScrollContainer::OnCalculatePreferredContentSize(
   ps.pref_w = ps.pref_h = 100;
   ps.min_w = ps.min_h = 50;
   if (m_adapt_to_content_size) {
-    if (TBWidget* content_child = m_root.GetFirstChild()) {
+    if (Widget* content_child = m_root.GetFirstChild()) {
       ps = content_child->GetPreferredSize(constraints);
       int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
       int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
@@ -187,7 +187,7 @@ PreferredSize ScrollContainer::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool ScrollContainer::OnEvent(const TBWidgetEvent& ev) {
+bool ScrollContainer::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kChanged &&
       (ev.target == &m_scrollbar_x || ev.target == &m_scrollbar_y)) {
     Invalidate();
@@ -252,7 +252,7 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
   m_scrollbar_y.SetRect(
       Rect(GetRect().w - scrollbar_y_w, 0, scrollbar_y_w, GetRect().h));
 
-  if (TBWidget* content_child = m_root.GetFirstChild()) {
+  if (Widget* content_child = m_root.GetFirstChild()) {
     int horizontal_padding =
         ScrollBarVisibility::IsAlwaysOnY(m_mode) ? scrollbar_y_w : 0;
     int vertical_padding =

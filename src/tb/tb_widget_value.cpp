@@ -13,7 +13,7 @@
 
 namespace tb {
 
-void TBWidgetValueConnection::Connect(TBWidgetValue* value, TBWidget* widget) {
+void WidgetValueConnection::Connect(WidgetValue* value, Widget* widget) {
   Unconnect();
   m_widget = widget;
   m_value = value;
@@ -21,24 +21,24 @@ void TBWidgetValueConnection::Connect(TBWidgetValue* value, TBWidget* widget) {
   m_value->SyncToWidget(m_widget);
 }
 
-void TBWidgetValueConnection::Unconnect() {
+void WidgetValueConnection::Unconnect() {
   if (m_value) m_value->m_connections.Remove(this);
   m_value = nullptr;
   m_widget = nullptr;
 }
 
-void TBWidgetValueConnection::SyncFromWidget(TBWidget* source_widget) {
+void WidgetValueConnection::SyncFromWidget(Widget* source_widget) {
   if (m_value) m_value->SetFromWidget(source_widget);
 }
 
-TBWidgetValue::TBWidgetValue(const TBID& name, TBValue::Type type)
+WidgetValue::WidgetValue(const TBID& name, TBValue::Type type)
     : m_name(name), m_value(type), m_syncing(false) {}
 
-TBWidgetValue::~TBWidgetValue() {
+WidgetValue::~WidgetValue() {
   while (m_connections.GetFirst()) m_connections.GetFirst()->Unconnect();
 }
 
-void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
+void WidgetValue::SetFromWidget(Widget* source_widget) {
   if (m_syncing) return;  // We ended up here because syncing is in progress.
 
   // Get the value in the format
@@ -61,20 +61,20 @@ void TBWidgetValue::SetFromWidget(TBWidget* source_widget) {
   SyncToWidgets(source_widget);
 }
 
-void TBWidgetValue::SyncToWidgets(TBWidget* exclude_widget) {
+void WidgetValue::SyncToWidgets(Widget* exclude_widget) {
   // FIX: Assign group to each value. Currently we only have one global group.
   g_value_group.InvokeOnValueChanged(this);
 
-  TBLinkListOf<TBWidgetValueConnection>::Iterator iter =
+  TBLinkListOf<WidgetValueConnection>::Iterator iter =
       m_connections.IterateForward();
-  while (TBWidgetValueConnection* connection = iter.GetAndStep()) {
+  while (WidgetValueConnection* connection = iter.GetAndStep()) {
     if (connection->m_widget != exclude_widget) {
       SyncToWidget(connection->m_widget);
     }
   }
 }
 
-void TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
+void WidgetValue::SyncToWidget(Widget* dst_widget) {
   if (m_syncing) {
     return;  // We ended up here because syncing is in progress.
   }
@@ -98,17 +98,17 @@ void TBWidgetValue::SyncToWidget(TBWidget* dst_widget) {
   m_syncing = false;
 }
 
-void TBWidgetValue::SetInt(int value) {
+void WidgetValue::SetInt(int value) {
   m_value.SetInt(value);
   SyncToWidgets(nullptr);
 }
 
-void TBWidgetValue::SetText(const char* text) {
+void WidgetValue::SetText(const char* text) {
   m_value.SetString(text, TBValue::Set::kNewCopy);
   SyncToWidgets(nullptr);
 }
 
-void TBWidgetValue::SetDouble(double value) {
+void WidgetValue::SetDouble(double value) {
   // FIX: TBValue should use double instead of float?
   m_value.SetFloat((float)value);
   SyncToWidgets(nullptr);
@@ -116,17 +116,17 @@ void TBWidgetValue::SetDouble(double value) {
 
 /*extern*/ TBValueGroup g_value_group;
 
-TBWidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
-                                                 TBValue::Type type) {
-  if (TBWidgetValue* val = GetValue(name)) {
+WidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
+                                               TBValue::Type type) {
+  if (WidgetValue* val = GetValue(name)) {
     return val;
   }
-  TBWidgetValue* val = new TBWidgetValue(name, type);
+  WidgetValue* val = new WidgetValue(name, type);
   m_values.Add(name, val);
   return val;
 }
 
-void TBValueGroup::InvokeOnValueChanged(const TBWidgetValue* value) {
+void TBValueGroup::InvokeOnValueChanged(const WidgetValue* value) {
   auto iter = m_listeners.IterateForward();
   while (TBValueGroupListener* listener = iter.GetAndStep()) {
     listener->OnValueChanged(this, value);

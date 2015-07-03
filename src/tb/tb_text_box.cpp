@@ -111,7 +111,7 @@ void TextBox::SetMultiline(bool multiline) {
   m_style_edit.SetMultiline(multiline);
   SetWrapping(multiline);
   InvalidateSkinStates();
-  TBWidget::Invalidate();
+  Widget::Invalidate();
 }
 
 void TextBox::SetStyling(bool styling) { m_style_edit.SetStyling(styling); }
@@ -120,7 +120,7 @@ void TextBox::SetReadOnly(bool readonly) {
   if (readonly == GetReadOnly()) return;
   m_style_edit.SetReadOnly(readonly);
   InvalidateSkinStates();
-  TBWidget::Invalidate();
+  Widget::Invalidate();
 }
 
 void TextBox::SetWrapping(bool wrapping) {
@@ -138,7 +138,7 @@ void TextBox::SetEditType(EditType type) {
   m_edit_type = type;
   m_style_edit.SetPassword(type == EditType::kPassword);
   InvalidateSkinStates();
-  TBWidget::Invalidate();
+  Widget::Invalidate();
 }
 
 bool TextBox::GetCustomSkinCondition(const SkinCondition::ConditionInfo& info) {
@@ -172,11 +172,11 @@ void TextBox::ScrollTo(int x, int y) {
   int old_y = m_scrollbar_y.GetValue();
   m_style_edit.SetScrollPos(x, y);
   if (old_x != m_scrollbar_x.GetValue() || old_y != m_scrollbar_y.GetValue()) {
-    TBWidget::Invalidate();
+    Widget::Invalidate();
   }
 }
 
-TBWidget::ScrollInfo TextBox::GetScrollInfo() {
+Widget::ScrollInfo TextBox::GetScrollInfo() {
   ScrollInfo info;
   info.min_x = static_cast<int>(m_scrollbar_x.GetMinValue());
   info.min_y = static_cast<int>(m_scrollbar_y.GetMinValue());
@@ -187,7 +187,7 @@ TBWidget::ScrollInfo TextBox::GetScrollInfo() {
   return info;
 }
 
-bool TextBox::OnEvent(const TBWidgetEvent& ev) {
+bool TextBox::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target == &m_scrollbar_x) {
     m_style_edit.SetScrollPos(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
     OnScroll(m_scrollbar_x.GetValue(), m_style_edit.scroll_y);
@@ -302,7 +302,7 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
 }
 
 void TextBox::OnPaintChildren(const PaintProps& paint_props) {
-  TBWidget::OnPaintChildren(paint_props);
+  Widget::OnPaintChildren(paint_props);
 
   // Draw fadeout skin at the needed edges.
   DrawEdgeFadeout(
@@ -324,7 +324,7 @@ void TextBox::OnFocusChanged(bool focused) { m_style_edit.Focus(focused); }
 
 void TextBox::OnResized(int old_w, int old_h) {
   // Make the scrollbars move.
-  TBWidget::OnResized(old_w, old_h);
+  Widget::OnResized(old_w, old_h);
 
   Rect visible_rect = GetVisibleRect();
   m_style_edit.SetLayoutSize(visible_rect.w, visible_rect.h, false);
@@ -352,7 +352,7 @@ PreferredSize TextBox::OnCalculatePreferredContentSize(
       // int layout_width = old_layout_width > 0 ? std::max(old_layout_width,
       // m_virtual_width) : m_virtual_width;
       int layout_width = m_virtual_width;
-      if (constraints.available_w != SizeConstraints::NO_RESTRICTION) {
+      if (constraints.available_w != SizeConstraints::kNoRestriction) {
         layout_width = constraints.available_w;
         if (SkinElement* bg_skin = GetSkinBgElement()) {
           layout_width -= bg_skin->padding_left + bg_skin->padding_right;
@@ -423,13 +423,13 @@ void TextBox::OnChange() {
     InvalidateLayout(InvalidationMode::kRecursive);
   }
 
-  TBWidgetEvent ev(EventType::kChanged);
+  WidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
 bool TextBox::OnEnter() { return false; }
 
-void TextBox::Invalidate(const Rect& rect) { TBWidget::Invalidate(); }
+void TextBox::Invalidate(const Rect& rect) { Widget::Invalidate(); }
 
 void TextBox::DrawString(int32_t x, int32_t y, FontFace* font,
                          const Color& color, const char* str, size_t len) {
@@ -463,7 +463,7 @@ void TextBox::DrawCaret(const Rect& rect) {
 }
 
 void TextBox::Scroll(int32_t dx, int32_t dy) {
-  TBWidget::Invalidate();
+  Widget::Invalidate();
   m_scrollbar_x.SetValue(m_style_edit.scroll_x);
   m_scrollbar_y.SetValue(m_style_edit.scroll_y);
 }
@@ -495,7 +495,7 @@ void TextBoxScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
   if (!GetFirstChild()) return;
   // Clip children.
   Rect old_clip_rect = g_renderer->SetClipRect(GetPaddingRect(), true);
-  TBWidget::OnPaintChildren(paint_props);
+  Widget::OnPaintChildren(paint_props);
   g_renderer->SetClipRect(old_clip_rect, false);
 }
 
@@ -507,7 +507,7 @@ void TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
 
 HitStatus TextBoxScrollRoot::GetHitStatus(int x, int y) {
   // Return no hit on this widget, but maybe on any of the children.
-  if (TBWidget::GetHitStatus(x, y) != HitStatus::kNoHit &&
+  if (Widget::GetHitStatus(x, y) != HitStatus::kNoHit &&
       GetWidgetAt(x, y, false)) {
     return HitStatus::kHit;
   }
@@ -516,7 +516,7 @@ HitStatus TextBoxScrollRoot::GetHitStatus(int x, int y) {
 
 class TextFragmentContentWidget : public TextFragmentContent {
  public:
-  TextFragmentContentWidget(TBWidget* parent, TBWidget* widget);
+  TextFragmentContentWidget(Widget* parent, Widget* widget);
   ~TextFragmentContentWidget() override;
 
   void UpdatePos(int x, int y) override;
@@ -525,11 +525,11 @@ class TextFragmentContentWidget : public TextFragmentContent {
   int32_t GetBaseline(FontFace* font, TextFragment* fragment) override;
 
  private:
-  TBWidget* m_widget;
+  Widget* m_widget;
 };
 
-TextFragmentContentWidget::TextFragmentContentWidget(TBWidget* parent,
-                                                     TBWidget* widget)
+TextFragmentContentWidget::TextFragmentContentWidget(Widget* parent,
+                                                     Widget* widget)
     : m_widget(widget) {
   parent->GetContentRoot()->AddChild(widget);
 }
@@ -571,7 +571,7 @@ TextFragmentContent* TextBoxContentFactory::CreateFragmentContent(
   if (strncmp(text, "<widget ", std::min(text_len, 8ull)) == 0) {
     // Create a wrapper for the generated widget.
     // Its size will adapt to the content.
-    auto widget = new TBWidget();
+    auto widget = new Widget();
     auto cw = new TextFragmentContentWidget(text_box, widget);
     g_widgets_reader->LoadData(widget, text + 8, text_len - 9);
     return cw;

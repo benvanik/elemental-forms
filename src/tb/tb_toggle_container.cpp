@@ -20,7 +20,7 @@ SectionHeader::SectionHeader() {
   SetToggleMode(true);
 }
 
-bool SectionHeader::OnEvent(const TBWidgetEvent& ev) {
+bool SectionHeader::OnEvent(const WidgetEvent& ev) {
   if (ev.target == this && ev.type == EventType::kChanged &&
       GetParent()->GetParent()) {
     if (Section* section = TBSafeCast<Section>(GetParent()->GetParent())) {
@@ -71,7 +71,7 @@ void Section::OnProcessAfterChildren() {
 
 PreferredSize Section::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = TBWidget::OnCalculatePreferredContentSize(constraints);
+  PreferredSize ps = Widget::OnCalculatePreferredContentSize(constraints);
   // We should not grow larger than we are, when there's extra space available.
   ps.max_h = ps.pref_h;
   return ps;

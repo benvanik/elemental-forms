@@ -18,13 +18,13 @@ namespace tb {
 // Check if a condition is true for a widget when painting a skin.
 class WidgetSkinConditionContext : public SkinConditionContext {
  public:
-  WidgetSkinConditionContext(TBWidget* widget) : m_widget(widget) {}
+  WidgetSkinConditionContext(Widget* widget) : m_widget(widget) {}
   bool GetCondition(SkinTarget target,
                     const SkinCondition::ConditionInfo& info) override;
 
  private:
-  bool GetCondition(TBWidget* widget, const SkinCondition::ConditionInfo& info);
-  TBWidget* m_widget = nullptr;
+  bool GetCondition(Widget* widget, const SkinCondition::ConditionInfo& info);
+  Widget* m_widget = nullptr;
 };
 
 }  // namespace tb

@@ -23,13 +23,13 @@ inline float Lerp(float src, float dst, float progress) {
   return src + (dst - src) * progress;
 }
 
-WidgetAnimation::WidgetAnimation(TBWidget* widget) : m_widget(widget) {
+WidgetAnimation::WidgetAnimation(Widget* widget) : m_widget(widget) {
   widget_animations.AddLast(this);
 }
 
 WidgetAnimation::~WidgetAnimation() { widget_animations.Remove(this); }
 
-OpacityWidgetAnimation::OpacityWidgetAnimation(TBWidget* widget,
+OpacityWidgetAnimation::OpacityWidgetAnimation(Widget* widget,
                                                float src_opacity,
                                                float dst_opacity, bool die)
     : WidgetAnimation(widget),
@@ -59,15 +59,15 @@ void OpacityWidgetAnimation::OnAnimationStop(bool aborted) {
     m_widget->SetOpacity(m_dst_opacity);
 }
 
-RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget, const Rect& src_rect,
+RectWidgetAnimation::RectWidgetAnimation(Widget* widget, const Rect& src_rect,
                                          const Rect& dst_rect)
     : WidgetAnimation(widget),
       m_src_rect(src_rect),
       m_dst_rect(dst_rect),
       m_mode(Mode::kSrcToDest) {}
 
-RectWidgetAnimation::RectWidgetAnimation(TBWidget* widget,
-                                         const Rect& delta_rect, Mode mode)
+RectWidgetAnimation::RectWidgetAnimation(Widget* widget, const Rect& delta_rect,
+                                         Mode mode)
     : WidgetAnimation(widget), m_delta_rect(delta_rect), m_mode(mode) {
   assert(mode == Mode::kDeltaIn || mode == Mode::kDeltaOut);
 }
@@ -129,11 +129,11 @@ void WidgetAnimationManager::Shutdown() {
   WidgetListener::RemoveGlobalListener(&widgets_animation_manager);
 }
 
-void WidgetAnimationManager::AbortAnimations(TBWidget* widget) {
+void WidgetAnimationManager::AbortAnimations(Widget* widget) {
   AbortAnimations(widget, nullptr);
 }
 
-void WidgetAnimationManager::AbortAnimations(TBWidget* widget,
+void WidgetAnimationManager::AbortAnimations(Widget* widget,
                                              TB_TYPE_ID type_id) {
   auto iter = widget_animations.IterateForward();
   while (WidgetAnimation* wao = iter.GetAndStep()) {
@@ -149,12 +149,12 @@ void WidgetAnimationManager::AbortAnimations(TBWidget* widget,
   }
 }
 
-void WidgetAnimationManager::OnWidgetDelete(TBWidget* widget) {
+void WidgetAnimationManager::OnWidgetDelete(Widget* widget) {
   // Kill and delete all animations running for the widget being deleted.
   AbortAnimations(widget);
 }
 
-bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
+bool WidgetAnimationManager::OnWidgetDying(Widget* widget) {
   bool handled = false;
   if (Window* window = TBSafeCast<Window>(widget)) {
     // Fade out dying windows.
@@ -180,7 +180,7 @@ bool WidgetAnimationManager::OnWidgetDying(TBWidget* widget) {
   return handled;
 }
 
-void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
+void WidgetAnimationManager::OnWidgetAdded(Widget* parent, Widget* widget) {
   if (Window* window = TBSafeCast<Window>(widget)) {
     // Fade in new windows
     if (auto anim =
@@ -201,7 +201,6 @@ void WidgetAnimationManager::OnWidgetAdded(TBWidget* parent, TBWidget* widget) {
   }
 }
 
-void WidgetAnimationManager::OnWidgetRemove(TBWidget* parent,
-                                            TBWidget* widget) {}
+void WidgetAnimationManager::OnWidgetRemove(Widget* parent, Widget* widget) {}
 
 }  // namespace tb

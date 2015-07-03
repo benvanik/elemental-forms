@@ -95,7 +95,7 @@ void Layout::SetLayoutOrder(LayoutOrder order) {
 void Layout::InvalidateLayout(InvalidationMode il) {
   m_packed.layout_is_invalid = 1;
   // Continue invalidating parents (depending on il).
-  TBWidget::InvalidateLayout(il);
+  Widget::InvalidateLayout(il);
 }
 
 PreferredSize RotPreferredSize(const PreferredSize& ps, Axis axis) {
@@ -168,15 +168,15 @@ int Layout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
   return height;
 }
 
-TBWidget* Layout::GetNextNonCollapsedWidget(TBWidget* child) const {
-  TBWidget* next = GetNextInLayoutOrder(child);
+Widget* Layout::GetNextNonCollapsedWidget(Widget* child) const {
+  Widget* next = GetNextInLayoutOrder(child);
   while (next && next->GetVisibility() == Visibility::kGone) {
     next = GetNextInLayoutOrder(next);
   }
   return next;
 }
 
-int Layout::GetTrailingSpace(TBWidget* child, int spacing) const {
+int Layout::GetTrailingSpace(Widget* child, int spacing) const {
   if (spacing == 0) return 0;
   if (!GetNextNonCollapsedWidget(child)) return 0;
   return spacing;
@@ -197,11 +197,11 @@ int Layout::CalculateSpacing() {
   return spacing;
 }
 
-TBWidget* Layout::GetFirstInLayoutOrder() const {
+Widget* Layout::GetFirstInLayoutOrder() const {
   return m_packed.mode_reverse_order ? GetLastChild() : GetFirstChild();
 }
 
-TBWidget* Layout::GetNextInLayoutOrder(TBWidget* child) const {
+Widget* Layout::GetNextInLayoutOrder(Widget* child) const {
   return m_packed.mode_reverse_order ? child->GetPrev() : child->GetNext();
 }
 
@@ -232,7 +232,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
   int total_preferred_w = 0;
   int total_min_pref_diff_w = 0;
   int total_max_pref_diff_w = 0;
-  for (TBWidget* child = GetFirstInLayoutOrder(); child;
+  for (Widget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
     if (child->GetVisibility() == Visibility::kGone) {
       continue;
@@ -305,7 +305,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
   // Layout
   int used_space = 0;
-  for (TBWidget* child = GetFirstInLayoutOrder(); child;
+  for (Widget* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
     if (child->GetVisibility() == Visibility::kGone) {
       continue;
@@ -384,7 +384,7 @@ PreferredSize Layout::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool Layout::OnEvent(const TBWidgetEvent& ev) {
+bool Layout::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
@@ -423,7 +423,7 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
   }
 
   // Paint children.
-  TBWidget::OnPaintChildren(paint_props);
+  Widget::OnPaintChildren(paint_props);
 
   // Paint fadeout image over the overflowed edges
   // to the indicate to used that it's overflowed.
@@ -457,7 +457,7 @@ void Layout::OnResized(int old_w, int old_h) {
   ValidateLayout(sc);
 }
 
-void Layout::OnInflateChild(TBWidget* child) {
+void Layout::OnInflateChild(Widget* child) {
   // Do nothing since we're going to layout the child soon.
 }
 
@@ -475,7 +475,7 @@ void Layout::ScrollTo(int x, int y) {
   SetOverflowScroll(m_axis == Axis::kX ? x : y);
 }
 
-TBWidget::ScrollInfo Layout::GetScrollInfo() {
+Widget::ScrollInfo Layout::GetScrollInfo() {
   ScrollInfo info;
   if (m_axis == Axis::kX) {
     info.max_x = m_overflow;

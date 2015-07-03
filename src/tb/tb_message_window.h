@@ -46,21 +46,21 @@ class MessageWindow : public Window, private WidgetListener {
  public:
   TBOBJECT_SUBCLASS(MessageWindow, Window);
 
-  MessageWindow(TBWidget* target, TBID id);
+  MessageWindow(Widget* target, TBID id);
   ~MessageWindow() override;
 
   bool Show(const std::string& title, const std::string& message,
             MessageWindowSettings* settings = nullptr);
 
-  TBWidget* GetEventDestination() override { return m_target.Get(); }
+  Widget* GetEventDestination() override { return m_target.Get(); }
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnDie() override;
 
  private:
   void AddButton(TBID id, bool focused);
-  void OnWidgetDelete(TBWidget* widget) override;
-  bool OnWidgetDying(TBWidget* widget) override;
+  void OnWidgetDelete(Widget* widget) override;
+  bool OnWidgetDying(Widget* widget) override;
   WeakWidgetPointer m_dimmer;
   WeakWidgetPointer m_target;
 };

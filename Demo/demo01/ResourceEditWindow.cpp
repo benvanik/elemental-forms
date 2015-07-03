@@ -11,7 +11,7 @@
 // == ResourceItem
 // ====================================================================================
 
-ResourceItem::ResourceItem(TBWidget* widget, const std::string& str)
+ResourceItem::ResourceItem(Widget* widget, const std::string& str)
     : GenericStringItem(str), m_widget(widget) {}
 
 // == ResourceEditWindow
@@ -72,7 +72,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
 
 void ResourceEditWindow::RefreshFromSource() {
   // Clear old widgets
-  while (TBWidget* child = m_build_container->GetFirstChild()) {
+  while (Widget* child = m_build_container->GetFirstChild()) {
     m_build_container->RemoveChild(child);
     delete child;
   }
@@ -98,7 +98,7 @@ void ResourceEditWindow::UpdateWidgetList(bool immediately) {
   }
 }
 
-void ResourceEditWindow::AddWidgetListItemsRecursive(TBWidget* widget,
+void ResourceEditWindow::AddWidgetListItemsRecursive(Widget* widget,
                                                      int depth) {
   if (depth > 0)  // Ignore the root
   {
@@ -112,14 +112,14 @@ void ResourceEditWindow::AddWidgetListItemsRecursive(TBWidget* widget,
     m_widget_list_source.AddItem(item);
   }
 
-  for (TBWidget* child = widget->GetFirstChild(); child;
+  for (Widget* child = widget->GetFirstChild(); child;
        child = child->GetNext()) {
     AddWidgetListItemsRecursive(child, depth + 1);
   }
 }
 
 ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromWidget(
-    TBWidget* widget) {
+    Widget* widget) {
   ITEM_INFO item_info = {nullptr, -1};
   for (int i = 0; i < m_widget_list_source.GetNumItems(); i++)
     if (m_widget_list_source.GetItem(i)->GetWidget() == widget) {
@@ -130,13 +130,13 @@ ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromWidget(
   return item_info;
 }
 
-void ResourceEditWindow::SetSelectedWidget(TBWidget* widget) {
+void ResourceEditWindow::SetSelectedWidget(Widget* widget) {
   m_selected_widget.Set(widget);
   ITEM_INFO item_info = GetItemFromWidget(widget);
   if (item_info.item) m_widget_list->SetValue(item_info.index);
 }
 
-bool ResourceEditWindow::OnEvent(const TBWidgetEvent& ev) {
+bool ResourceEditWindow::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("widget_list_search")) {
     m_widget_list->SetFilter(ev.target->GetText());
@@ -178,7 +178,7 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
   Window::OnPaintChildren(paint_props);
 
   // Paint the selection of the selected widget
-  if (TBWidget* selected_widget = GetSelectedWidget()) {
+  if (Widget* selected_widget = GetSelectedWidget()) {
     Rect widget_rect(0, 0, selected_widget->GetRect().w,
                      selected_widget->GetRect().h);
     selected_widget->ConvertToRoot(widget_rect.x, widget_rect.y);
@@ -191,8 +191,8 @@ void ResourceEditWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("update_widget_list")) UpdateWidgetList(true);
 }
 
-bool ResourceEditWindow::OnWidgetInvokeEvent(TBWidget* widget,
-                                             const TBWidgetEvent& ev) {
+bool ResourceEditWindow::OnWidgetInvokeEvent(Widget* widget,
+                                             const WidgetEvent& ev) {
   // Intercept all events to widgets in the build container
   if (m_build_container->IsAncestorOf(ev.target)) {
     // Let events through if alt is pressed so we can test some
@@ -208,19 +208,18 @@ bool ResourceEditWindow::OnWidgetInvokeEvent(TBWidget* widget,
   return false;
 }
 
-void ResourceEditWindow::OnWidgetAdded(TBWidget* parent, TBWidget* child) {
+void ResourceEditWindow::OnWidgetAdded(Widget* parent, Widget* child) {
   if (m_build_container && m_build_container->IsAncestorOf(child))
     UpdateWidgetList(false);
 }
 
-void ResourceEditWindow::OnWidgetRemove(TBWidget* parent, TBWidget* child) {
+void ResourceEditWindow::OnWidgetRemove(Widget* parent, Widget* child) {
   if (m_build_container && m_build_container->IsAncestorOf(child))
     UpdateWidgetList(false);
 }
 
-bool ResourceEditWindow::OnDropFileEvent(const TBWidgetEvent& ev) {
-  const TBWidgetEventFileDrop* fd_event =
-      TBSafeCast<TBWidgetEventFileDrop>(&ev);
+bool ResourceEditWindow::OnDropFileEvent(const WidgetEvent& ev) {
+  const WidgetEventFileDrop* fd_event = TBSafeCast<WidgetEventFileDrop>(&ev);
   if (fd_event->files.GetNumItems() > 0) {
     auto data = *fd_event->files.Get(0);
     Load(data.c_str());

@@ -30,7 +30,7 @@ class TBSimpleLayoutItemWidget : public Layout, private WidgetListener {
   TBSimpleLayoutItemWidget(TBID image, SelectItemSource* source,
                            const char* str);
   ~TBSimpleLayoutItemWidget();
-  virtual bool OnEvent(const TBWidgetEvent& ev);
+  virtual bool OnEvent(const WidgetEvent& ev);
 
  private:
   SelectItemSource* m_source;
@@ -38,7 +38,7 @@ class TBSimpleLayoutItemWidget : public Layout, private WidgetListener {
   SkinImage m_image;
   SkinImage m_image_arrow;
   MenuWindow* m_menu;  ///< Points to the submenu window if opened
-  virtual void OnWidgetDelete(TBWidget* widget);
+  virtual void OnWidgetDelete(Widget* widget);
   void OpenSubMenu();
   void CloseSubMenu();
 };
@@ -76,7 +76,7 @@ TBSimpleLayoutItemWidget::~TBSimpleLayoutItemWidget() {
   CloseSubMenu();
 }
 
-bool TBSimpleLayoutItemWidget::OnEvent(const TBWidgetEvent& ev) {
+bool TBSimpleLayoutItemWidget::OnEvent(const WidgetEvent& ev) {
   if (m_source && ev.type == EventType::kClick && ev.target == this) {
     OpenSubMenu();
     return true;
@@ -84,7 +84,7 @@ bool TBSimpleLayoutItemWidget::OnEvent(const TBWidgetEvent& ev) {
   return false;
 }
 
-void TBSimpleLayoutItemWidget::OnWidgetDelete(TBWidget* widget) {
+void TBSimpleLayoutItemWidget::OnWidgetDelete(Widget* widget) {
   assert(widget == m_menu);
   CloseSubMenu();
 }
@@ -136,8 +136,8 @@ bool SelectItemSource::Filter(int index, const std::string& filter) {
   return false;
 }
 
-TBWidget* SelectItemSource::CreateItemWidget(int index,
-                                             SelectItemObserver* observer) {
+Widget* SelectItemSource::CreateItemWidget(int index,
+                                           SelectItemObserver* observer) {
   const char* string = GetItemString(index);
   SelectItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);

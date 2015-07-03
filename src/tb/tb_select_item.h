@@ -108,7 +108,7 @@ class SelectItemSource {
   // Creates the item representation widget(s).
   // By default, it will create a Label for string-only items, and other
   // types for items that also has image or submenu.
-  virtual TBWidget* CreateItemWidget(int index, SelectItemObserver* observer);
+  virtual Widget* CreateItemWidget(int index, SelectItemObserver* observer);
 
   // Gets the number of items.
   virtual int GetNumItems() = 0;
@@ -146,9 +146,8 @@ class SelectItemSourceList : public SelectItemSource {
   TBID GetItemImage(int index) override { return GetItem(index)->skin_image; }
   TBID GetItemID(int index) override { return GetItem(index)->id; }
   int GetNumItems() override { return m_items.GetNumItems(); }
-  TBWidget* CreateItemWidget(int index, SelectItemObserver* observer) override {
-    if (TBWidget* widget =
-            SelectItemSource::CreateItemWidget(index, observer)) {
+  Widget* CreateItemWidget(int index, SelectItemObserver* observer) override {
+    if (Widget* widget = SelectItemSource::CreateItemWidget(index, observer)) {
       T* item = m_items[index];
       widget->SetID(item->id);
       return widget;

@@ -27,65 +27,57 @@
 
 namespace tb {
 
-// static data
-TBWidget* TBWidget::hovered_widget = nullptr;
-TBWidget* TBWidget::captured_widget = nullptr;
-TBWidget* TBWidget::focused_widget = nullptr;
-int TBWidget::pointer_down_widget_x = 0;
-int TBWidget::pointer_down_widget_y = 0;
-int TBWidget::pointer_move_widget_x = 0;
-int TBWidget::pointer_move_widget_y = 0;
-bool TBWidget::cancel_click = false;
-bool TBWidget::update_widget_states = true;
-bool TBWidget::update_skin_states = true;
-bool TBWidget::show_focus_state = false;
+Widget* Widget::hovered_widget = nullptr;
+Widget* Widget::captured_widget = nullptr;
+Widget* Widget::focused_widget = nullptr;
+int Widget::pointer_down_widget_x = 0;
+int Widget::pointer_down_widget_y = 0;
+int Widget::pointer_move_widget_x = 0;
+int Widget::pointer_move_widget_y = 0;
+bool Widget::cancel_click = false;
+bool Widget::update_widget_states = true;
+bool Widget::update_skin_states = true;
+bool Widget::show_focus_state = false;
 
-/** One shot timer for long click event */
-class TBLongClickTimer : private MessageHandler {
+// One shot timer for long click event.
+class LongClickTimer : private MessageHandler {
  public:
-  TBLongClickTimer(TBWidget* widget, bool touch)
+  LongClickTimer(Widget* widget, bool touch)
       : m_widget(widget), m_touch(touch) {
-    PostMessageDelayed(TBIDC("TBLongClickTimer"), nullptr,
+    PostMessageDelayed(TBIDC("LongClickTimer"), nullptr,
                        TBSystem::GetLongClickDelayMS());
   }
-  virtual void OnMessageReceived(Message* msg) {
-    assert(msg->message == TBIDC("TBLongClickTimer"));
+  void OnMessageReceived(Message* msg) override {
+    assert(msg->message == TBIDC("LongClickTimer"));
     m_widget->MaybeInvokeLongClickOrContextMenu(m_touch);
   }
 
  private:
-  TBWidget* m_widget;
+  Widget* m_widget;
   bool m_touch;
 };
 
-TBWidget::PaintProps::PaintProps() {
+Widget::PaintProps::PaintProps() {
   // Set the default properties, used for the root widgets
   // calling InvokePaint. The base values for all inheritance.
   text_color = g_tb_skin->GetDefaultTextColor();
 }
 
-TBWidget::TBWidget()
-    : m_parent(nullptr),
-      m_opacity(1.f),
-      m_state(SkinState::kNone),
-      m_gravity(Gravity::kDefault),
-      m_layout_params(nullptr),
-      m_scroller(nullptr),
-      m_long_click_timer(nullptr),
-      m_packed_init(0) {
-#ifdef TB_RUNTIME_DEBUG_INFO
-  last_measure_time = 0;
-  last_layout_time = 0;
-#endif  // TB_RUNTIME_DEBUG_INFO
-}
+Widget::Widget() = default;
 
-TBWidget::~TBWidget() {
-  assert(!m_parent);  ///< A widget must be removed from parent before deleted
+Widget::~Widget() {
+  assert(!m_parent);  // A widget must be removed from parent before deleted.
   m_packed.is_dying = true;
 
-  if (this == hovered_widget) hovered_widget = nullptr;
-  if (this == captured_widget) captured_widget = nullptr;
-  if (this == focused_widget) focused_widget = nullptr;
+  if (this == hovered_widget) {
+    hovered_widget = nullptr;
+  }
+  if (this == captured_widget) {
+    captured_widget = nullptr;
+  }
+  if (this == focused_widget) {
+    focused_widget = nullptr;
+  }
 
   WidgetListener::InvokeWidgetDelete(this);
   DeleteAllChildren();
@@ -99,176 +91,216 @@ TBWidget::~TBWidget() {
               .HasLinks());  // There's still listeners added to this widget!
 }
 
-void TBWidget::SetRect(const Rect& rect) {
+void Widget::SetRect(const Rect& rect) {
   if (m_rect.Equals(rect)) return;
 
   Rect old_rect = m_rect;
   m_rect = rect;
 
-  if (old_rect.w != m_rect.w || old_rect.h != m_rect.h)
+  if (old_rect.w != m_rect.w || old_rect.h != m_rect.h) {
     OnResized(old_rect.w, old_rect.h);
+  }
 
   Invalidate();
 }
 
-void TBWidget::Invalidate() {
-  if (!GetVisibilityCombined() && !m_rect.IsEmpty()) return;
-  TBWidget* tmp = this;
+void Widget::Invalidate() {
+  if (!GetVisibilityCombined() && !m_rect.IsEmpty()) {
+    return;
+  }
+  Widget* tmp = this;
   while (tmp) {
     tmp->OnInvalid();
     tmp = tmp->m_parent;
   }
 }
 
-void TBWidget::InvalidateStates() {
+void Widget::InvalidateStates() {
   update_widget_states = true;
   InvalidateSkinStates();
 }
 
-void TBWidget::InvalidateSkinStates() { update_skin_states = true; }
+void Widget::InvalidateSkinStates() { update_skin_states = true; }
 
-void TBWidget::Die() {
-  if (m_packed.is_dying) return;
+void Widget::Die() {
+  if (m_packed.is_dying) {
+    return;
+  }
   m_packed.is_dying = true;
   OnDie();
   if (!WidgetListener::InvokeWidgetDying(this)) {
     // No one was interested, so die immediately.
-    if (m_parent) m_parent->RemoveChild(this);
+    if (m_parent) {
+      m_parent->RemoveChild(this);
+    }
     delete this;
   }
 }
 
-TBWidget* TBWidget::GetWidgetByIDInternal(const TBID& id,
-                                          const TB_TYPE_ID type_id) {
-  if (m_id == id && (!type_id || IsOfTypeId(type_id))) return this;
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (TBWidget* sub_child = child->GetWidgetByIDInternal(id, type_id))
+Widget* Widget::GetWidgetByIDInternal(const TBID& id,
+                                      const TB_TYPE_ID type_id) {
+  if (m_id == id && (!type_id || IsOfTypeId(type_id))) {
+    return this;
+  }
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
+    if (Widget* sub_child = child->GetWidgetByIDInternal(id, type_id)) {
       return sub_child;
+    }
   }
   return nullptr;
 }
 
-std::string TBWidget::GetTextByID(const TBID& id) {
-  if (TBWidget* widget = GetWidgetByID(id)) return widget->GetText();
+std::string Widget::GetTextByID(const TBID& id) {
+  if (Widget* widget = GetWidgetByID(id)) {
+    return widget->GetText();
+  }
   return "";
 }
 
-int TBWidget::GetValueByID(const TBID& id) {
-  if (TBWidget* widget = GetWidgetByID(id)) return widget->GetValue();
+int Widget::GetValueByID(const TBID& id) {
+  if (Widget* widget = GetWidgetByID(id)) {
+    return widget->GetValue();
+  }
   return 0;
 }
 
-void TBWidget::SetID(const TBID& id) {
+void Widget::SetID(const TBID& id) {
   m_id = id;
   InvalidateSkinStates();
 }
 
-void TBWidget::SetStateRaw(SkinState state) {
+void Widget::SetStateRaw(SkinState state) {
   if (m_state == state) return;
   m_state = state;
   Invalidate();
   InvalidateSkinStates();
 }
 
-void TBWidget::SetState(SkinState state, bool on) {
+void Widget::SetState(SkinState state, bool on) {
   SetStateRaw(on ? m_state | state : m_state & ~state);
 }
 
-SkinState TBWidget::GetAutoState() const {
+SkinState Widget::GetAutoState() const {
   SkinState state = m_state;
   bool add_pressed_state =
       !cancel_click && this == captured_widget && this == hovered_widget;
-  if (add_pressed_state) state |= SkinState::kPressed;
+  if (add_pressed_state) {
+    state |= SkinState::kPressed;
+  }
   if (this == hovered_widget &&
-      (!m_packed.no_automatic_hover_state || add_pressed_state))
+      (!m_packed.no_automatic_hover_state || add_pressed_state)) {
     state |= SkinState::kHovered;
-  if (this == focused_widget && show_focus_state) state |= SkinState::kFocused;
-#ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
-  else if (this == focused_widget && IsOfType<TextBox>())
+  }
+  if (this == focused_widget && show_focus_state) {
     state |= SkinState::kFocused;
+  }
+#ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
+  else if (this == focused_widget && IsOfType<TextBox>()) {
+    state |= SkinState::kFocused;
+  }
 #endif
   return state;
 }
 
 // static
-void TBWidget::SetAutoFocusState(bool on) {
-  if (show_focus_state == on) return;
+void Widget::SetAutoFocusState(bool on) {
+  if (show_focus_state == on) {
+    return;
+  }
   show_focus_state = on;
-  if (focused_widget) focused_widget->Invalidate();
+  if (focused_widget) {
+    focused_widget->Invalidate();
+  }
 }
 
-void TBWidget::SetOpacity(float opacity) {
+void Widget::SetOpacity(float opacity) {
   opacity = Clamp(opacity, 0.f, 1.f);
-  if (m_opacity == opacity) return;
-  if (opacity == 0)  // Invalidate after setting opacity 0 will do nothing.
+  if (m_opacity == opacity) {
+    return;
+  }
+  if (opacity == 0) {
+    // Invalidate after setting opacity 0 will do nothing.
     Invalidate();
+  }
   m_opacity = opacity;
   Invalidate();
 }
 
-void TBWidget::SetVisibilility(Visibility vis) {
-  if (m_packed.visibility == int(vis)) return;
+void Widget::SetVisibilility(Visibility vis) {
+  if (m_packed.visibility == int(vis)) {
+    return;
+  }
 
   // Invalidate after making it invisible will do nothing.
-  if (vis != Visibility::kVisible) Invalidate();
-  if (vis == Visibility::kGone) InvalidateLayout(InvalidationMode::kRecursive);
+  if (vis != Visibility::kVisible) {
+    Invalidate();
+  }
+  if (vis == Visibility::kGone) {
+    InvalidateLayout(InvalidationMode::kRecursive);
+  }
 
   Visibility old_vis = GetVisibility();
   m_packed.visibility = int(vis);
 
   Invalidate();
-  if (old_vis == Visibility::kGone)
+  if (old_vis == Visibility::kGone) {
     InvalidateLayout(InvalidationMode::kRecursive);
+  }
 
   OnVisibilityChanged();
 }
 
-Visibility TBWidget::GetVisibility() const {
+Visibility Widget::GetVisibility() const {
   return static_cast<Visibility>(m_packed.visibility);
 }
 
-bool TBWidget::GetVisibilityCombined() const {
-  const TBWidget* tmp = this;
+bool Widget::GetVisibilityCombined() const {
+  const Widget* tmp = this;
   while (tmp) {
-    if (tmp->GetOpacity() == 0 || tmp->GetVisibility() != Visibility::kVisible)
+    if (tmp->GetOpacity() == 0 ||
+        tmp->GetVisibility() != Visibility::kVisible) {
       return false;
+    }
     tmp = tmp->m_parent;
   }
   return true;
 }
 
-bool TBWidget::GetDisabled() const {
-  const TBWidget* tmp = this;
+bool Widget::GetDisabled() const {
+  const Widget* tmp = this;
   while (tmp) {
-    if (tmp->GetState(SkinState::kDisabled)) return true;
+    if (tmp->GetState(SkinState::kDisabled)) {
+      return true;
+    }
     tmp = tmp->m_parent;
   }
   return false;
 }
 
-void TBWidget::AddChild(TBWidget* child, WidgetZ z, InvokeInfo info) {
+void Widget::AddChild(Widget* child, WidgetZ z, InvokeInfo info) {
   AddChildRelative(
       child, z == WidgetZ::kTop ? WidgetZRel::kAfter : WidgetZRel::kBefore,
       nullptr, info);
 }
 
-void TBWidget::AddChildRelative(TBWidget* child, WidgetZRel z,
-                                TBWidget* reference, InvokeInfo info) {
+void Widget::AddChildRelative(Widget* child, WidgetZRel z, Widget* reference,
+                              InvokeInfo info) {
   assert(!child->m_parent);
   child->m_parent = this;
 
   if (reference) {
-    if (z == WidgetZRel::kBefore)
+    if (z == WidgetZRel::kBefore) {
       m_children.AddBefore(child, reference);
-    else
+    } else {
       m_children.AddAfter(child, reference);
-  } else  // If there is no reference widget, before means first and after means
-          // last.
-  {
-    if (z == WidgetZRel::kBefore)
+    }
+  } else {
+    // If there is no reference widget, before means first and after means last.
+    if (z == WidgetZRel::kBefore) {
       m_children.AddFirst(child);
-    else
+    } else {
       m_children.AddLast(child);
+    }
   }
 
   if (info == InvokeInfo::kNormal) {
@@ -281,14 +313,15 @@ void TBWidget::AddChildRelative(TBWidget* child, WidgetZRel z,
   InvalidateSkinStates();
 }
 
-void TBWidget::RemoveChild(TBWidget* child, InvokeInfo info) {
+void Widget::RemoveChild(Widget* child, InvokeInfo info) {
   assert(child->m_parent);
 
   if (info == InvokeInfo::kNormal) {
     // If we're not being deleted and delete the focused widget, try
     // to keep the focus in this widget by moving it to the next widget.
-    if (!m_packed.is_dying && child == focused_widget)
+    if (!m_packed.is_dying && child == focused_widget) {
       m_parent->MoveFocus(true);
+    }
 
     OnChildRemove(child);
     child->OnRemove();
@@ -303,39 +336,40 @@ void TBWidget::RemoveChild(TBWidget* child, InvokeInfo info) {
   InvalidateSkinStates();
 }
 
-void TBWidget::DeleteAllChildren() {
-  while (TBWidget* child = GetFirstChild()) {
+void Widget::DeleteAllChildren() {
+  while (Widget* child = GetFirstChild()) {
     RemoveChild(child);
     delete child;
   }
 }
 
-void TBWidget::SetZ(WidgetZ z) {
+void Widget::SetZ(WidgetZ z) {
   if (!m_parent) return;
-  if (z == WidgetZ::kTop && this == m_parent->m_children.GetLast())
+  if (z == WidgetZ::kTop && this == m_parent->m_children.GetLast()) {
     return;  // Already at the top
-  if (z == WidgetZ::kBottom && this == m_parent->m_children.GetFirst())
+  }
+  if (z == WidgetZ::kBottom && this == m_parent->m_children.GetFirst()) {
     return;  // Already at the top
-  TBWidget* parent = m_parent;
+  }
+  Widget* parent = m_parent;
   parent->RemoveChild(this, InvokeInfo::kNoCallbacks);
   parent->AddChild(this, z, InvokeInfo::kNoCallbacks);
 }
 
-void TBWidget::SetGravity(Gravity g) {
+void Widget::SetGravity(Gravity g) {
   if (m_gravity == g) return;
   m_gravity = g;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBWidget::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
+void Widget::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   if (skin_bg == m_skin_bg) return;
 
   // Set the skin and m_skin_bg_expected. During InvokeProcess, we will detect
   // if any widget get a different element due to conditions and strong
   // override.
   // If that happens, OnSkinChanged will be called and m_skin_bg_expected
-  // updated to
-  // match that override.
+  // updated to match that override.
   m_skin_bg = skin_bg;
   m_skin_bg_expected = skin_bg;
 
@@ -343,61 +377,69 @@ void TBWidget::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   InvalidateSkinStates();
   InvalidateLayout(InvalidationMode::kRecursive);
 
-  if (info == InvokeInfo::kNormal) OnSkinChanged();
+  if (info == InvokeInfo::kNormal) {
+    OnSkinChanged();
+  }
 }
 
-SkinElement* TBWidget::GetSkinBgElement() {
+SkinElement* Widget::GetSkinBgElement() {
   WidgetSkinConditionContext context(this);
   SkinState state = GetAutoState();
   return g_tb_skin->GetSkinElementStrongOverride(
       m_skin_bg, static_cast<SkinState>(state), context);
 }
 
-TBWidget* TBWidget::FindScrollableWidget(bool scroll_x, bool scroll_y) {
-  TBWidget* candidate = this;
+Widget* Widget::FindScrollableWidget(bool scroll_x, bool scroll_y) {
+  Widget* candidate = this;
   while (candidate) {
     ScrollInfo scroll_info = candidate->GetScrollInfo();
     if ((scroll_x && scroll_info.CanScrollX()) ||
-        (scroll_y && scroll_info.CanScrollY()))
+        (scroll_y && scroll_info.CanScrollY())) {
       return candidate;
+    }
     candidate = candidate->GetParent();
   }
   return nullptr;
 }
 
-Scroller* TBWidget::FindStartedScroller() {
-  TBWidget* candidate = this;
+Scroller* Widget::FindStartedScroller() {
+  Widget* candidate = this;
   while (candidate) {
-    if (candidate->m_scroller && candidate->m_scroller->IsStarted())
+    if (candidate->m_scroller && candidate->m_scroller->IsStarted()) {
       return candidate->m_scroller;
+    }
     candidate = candidate->GetParent();
   }
   return nullptr;
 }
 
-Scroller* TBWidget::GetReadyScroller(bool scroll_x, bool scroll_y) {
+Scroller* Widget::GetReadyScroller(bool scroll_x, bool scroll_y) {
   if (Scroller* scroller = FindStartedScroller()) return scroller;
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
-  if (TBWidget* scrollable_widget = FindScrollableWidget(scroll_x, scroll_y))
+  if (Widget* scrollable_widget = FindScrollableWidget(scroll_x, scroll_y)) {
     return scrollable_widget->GetScroller();
+  }
   return nullptr;
 }
 
-Scroller* TBWidget::GetScroller() {
-  if (!m_scroller) m_scroller = new Scroller(this);
+Scroller* Widget::GetScroller() {
+  if (!m_scroller) {
+    m_scroller = new Scroller(this);
+  }
   return m_scroller;
 }
 
-void TBWidget::ScrollToSmooth(int x, int y) {
+void Widget::ScrollToSmooth(int x, int y) {
   ScrollInfo info = GetScrollInfo();
   int dx = x - info.x;
   int dy = y - info.y;
-  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0))
+  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0)) {
     scroller->OnScrollBy(dx, dy, false);
+  }
 }
 
-void TBWidget::ScrollBySmooth(int dx, int dy) {
+void Widget::ScrollBySmooth(int dx, int dy) {
   // Clip the values to the scroll limits, so we don't
   // scroll any parents.
   // int x = Clamp(info.x + dx, info.min_x, info.max_x);
@@ -406,31 +448,34 @@ void TBWidget::ScrollBySmooth(int dx, int dy) {
   // dy = y - info.y;
   if (!dx && !dy) return;
 
-  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0))
+  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0)) {
     scroller->OnScrollBy(dx, dy, true);
+  }
 }
 
-void TBWidget::ScrollBy(int dx, int dy) {
+void Widget::ScrollBy(int dx, int dy) {
   ScrollInfo info = GetScrollInfo();
   ScrollTo(info.x + dx, info.y + dy);
 }
 
-void TBWidget::ScrollByRecursive(int& dx, int& dy) {
-  TBWidget* tmp = this;
+void Widget::ScrollByRecursive(int& dx, int& dy) {
+  Widget* tmp = this;
   while (tmp) {
     ScrollInfo old_info = tmp->GetScrollInfo();
     tmp->ScrollTo(old_info.x + dx, old_info.y + dy);
     ScrollInfo new_info = tmp->GetScrollInfo();
     dx -= new_info.x - old_info.x;
     dy -= new_info.y - old_info.y;
-    if (!dx && !dy) break;
+    if (!dx && !dy) {
+      break;
+    }
     tmp = tmp->m_parent;
   }
 }
 
-void TBWidget::ScrollIntoViewRecursive() {
+void Widget::ScrollIntoViewRecursive() {
   Rect scroll_to_rect = m_rect;
-  TBWidget* tmp = this;
+  Widget* tmp = this;
   while (tmp->m_parent) {
     tmp->m_parent->ScrollIntoView(scroll_to_rect);
     scroll_to_rect.x += tmp->m_parent->m_rect.x;
@@ -439,31 +484,34 @@ void TBWidget::ScrollIntoViewRecursive() {
   }
 }
 
-void TBWidget::ScrollIntoView(const Rect& rect) {
+void Widget::ScrollIntoView(const Rect& rect) {
   const ScrollInfo info = GetScrollInfo();
   int new_x = info.x;
   int new_y = info.y;
 
   const Rect visible_rect = GetPaddingRect().Offset(info.x, info.y);
 
-  if (rect.y <= visible_rect.y)
+  if (rect.y <= visible_rect.y) {
     new_y = rect.y;
-  else if (rect.y + rect.h > visible_rect.y + visible_rect.h)
+  } else if (rect.y + rect.h > visible_rect.y + visible_rect.h) {
     new_y = rect.y + rect.h - visible_rect.h;
+  }
 
-  if (rect.x <= visible_rect.x)
+  if (rect.x <= visible_rect.x) {
     new_x = rect.x;
-  else if (rect.x + rect.w > visible_rect.x + visible_rect.w)
+  } else if (rect.x + rect.w > visible_rect.x + visible_rect.w) {
     new_x = rect.x + rect.w - visible_rect.w;
+  }
 
   ScrollTo(new_x, new_y);
 }
 
-bool TBWidget::SetFocus(FocusReason reason, InvokeInfo info) {
+bool Widget::SetFocus(FocusReason reason, InvokeInfo info) {
   if (focused_widget == this) return true;
   if (GetDisabled() || !GetIsFocusable() || !GetVisibilityCombined() ||
-      GetIsDying())
+      GetIsDying()) {
     return false;
+  }
 
   // Update windows last focus
   Window* window = GetParentWindow();
@@ -499,101 +547,123 @@ bool TBWidget::SetFocus(FocusReason reason, InvokeInfo info) {
     // OnFocusChanged.
     // Take some precaution and detect if it change again after
     // OnFocusChanged(false).
-    if (TBWidget* old = old_focus.Get()) {
+    if (Widget* old = old_focus.Get()) {
       // The currently focused widget still has the pressed state set by the
-      // emulated click
-      // (By keyboard), so unset it before we unfocus it so it's not stuck in
-      // pressed state.
+      // emulated click (by keyboard), so unset it before we unfocus it so it's
+      // not stuck in pressed state.
       if (old->m_packed.has_key_pressed_state) {
         old->SetState(SkinState::kPressed, false);
         old->m_packed.has_key_pressed_state = false;
       }
       old->OnFocusChanged(false);
     }
-    if (old_focus.Get())
+    if (old_focus.Get()) {
       WidgetListener::InvokeWidgetFocusChanged(old_focus.Get(), false);
-    if (focused_widget && focused_widget == this)
+    }
+    if (focused_widget && focused_widget == this) {
       focused_widget->OnFocusChanged(true);
-    if (focused_widget && focused_widget == this)
+    }
+    if (focused_widget && focused_widget == this) {
       WidgetListener::InvokeWidgetFocusChanged(focused_widget, true);
+    }
   }
   return true;
 }
 
-bool TBWidget::SetFocusRecursive(FocusReason reason) {
-  // Search for a child widget that accepts focus
-  TBWidget* child = GetFirstChild();
+bool Widget::SetFocusRecursive(FocusReason reason) {
+  // Search for a child widget that accepts focus.
+  Widget* child = GetFirstChild();
   while (child) {
-    if (child->SetFocus(FocusReason::kUnknown)) return true;
+    if (child->SetFocus(FocusReason::kUnknown)) {
+      return true;
+    }
     child = child->GetNextDeep(this);
   }
   return false;
 }
 
-bool TBWidget::MoveFocus(bool forward) {
-  TBWidget* origin = focused_widget;
-  if (!origin) origin = this;
+bool Widget::MoveFocus(bool forward) {
+  Widget* origin = focused_widget;
+  if (!origin) {
+    origin = this;
+  }
 
-  TBWidget* root = origin->GetParentWindow();
-  if (!root) root = origin->GetParentRoot();
+  Widget* root = origin->GetParentWindow();
+  if (!root) {
+    root = origin->GetParentRoot();
+  }
 
-  TBWidget* current = origin;
+  Widget* current = origin;
   while (current) {
     current = forward ? current->GetNextDeep() : current->GetPrevDeep();
-    // Wrap around if we reach the end/beginning
-    if (!current || !root->IsAncestorOf(current))
+    // Wrap around if we reach the end/beginning.
+    if (!current || !root->IsAncestorOf(current)) {
       current = forward ? root->GetFirstChild() : root->GetLastLeaf();
-    // Break if we reached the origin again (we're not finding anything else)
-    if (current == origin) break;
-    // Try to focus what we found
-    if (current && current->SetFocus(FocusReason::kNavigation)) return true;
+    }
+    // Break if we reached the origin again (we're not finding anything else).
+    if (current == origin) {
+      break;
+    }
+    // Try to focus what we found.
+    if (current && current->SetFocus(FocusReason::kNavigation)) {
+      return true;
+    }
   }
   return false;
 }
 
-TBWidget* TBWidget::GetNextDeep(const TBWidget* bounding_ancestor) const {
-  if (m_children.GetFirst()) return GetFirstChild();
-  for (const TBWidget* widget = this; widget != bounding_ancestor;
-       widget = widget->m_parent)
-    if (widget->next) return widget->GetNext();
+Widget* Widget::GetNextDeep(const Widget* bounding_ancestor) const {
+  if (m_children.GetFirst()) {
+    return GetFirstChild();
+  }
+  for (const Widget* widget = this; widget != bounding_ancestor;
+       widget = widget->m_parent) {
+    if (widget->next) {
+      return widget->GetNext();
+    }
+  }
   return nullptr;
 }
 
-TBWidget* TBWidget::GetPrevDeep() const {
+Widget* Widget::GetPrevDeep() const {
   if (!prev) return m_parent;
-  TBWidget* widget = GetPrev();
-  while (widget->m_children.GetLast()) widget = widget->GetLastChild();
+  Widget* widget = GetPrev();
+  while (widget->m_children.GetLast()) {
+    widget = widget->GetLastChild();
+  }
   return widget;
 }
 
-TBWidget* TBWidget::GetLastLeaf() const {
-  if (TBWidget* widget = GetLastChild()) {
-    while (widget->GetLastChild()) widget = widget->GetLastChild();
+Widget* Widget::GetLastLeaf() const {
+  if (Widget* widget = GetLastChild()) {
+    while (widget->GetLastChild()) {
+      widget = widget->GetLastChild();
+    }
     return widget;
   }
   return nullptr;
 }
 
-bool TBWidget::GetIsInteractable() const {
+bool Widget::GetIsInteractable() const {
   return !(m_opacity == 0 || GetIgnoreInput() ||
            GetState(SkinState::kDisabled) || GetIsDying() ||
            GetVisibility() != Visibility::kVisible);
 }
 
-HitStatus TBWidget::GetHitStatus(int x, int y) {
+HitStatus Widget::GetHitStatus(int x, int y) {
   if (!GetIsInteractable()) return HitStatus::kNoHit;
   return x >= 0 && y >= 0 && x < m_rect.w && y < m_rect.h ? HitStatus::kHit
                                                           : HitStatus::kNoHit;
 }
 
-TBWidget* TBWidget::GetWidgetAt(int x, int y, bool include_children) const {
+Widget* Widget::GetWidgetAt(int x, int y, bool include_children) const {
   int child_translation_x, child_translation_y;
   GetChildTranslation(child_translation_x, child_translation_y);
   x -= child_translation_x;
   y -= child_translation_y;
 
-  TBWidget* tmp = GetFirstChild();
-  TBWidget* last_match = nullptr;
+  Widget* tmp = GetFirstChild();
+  Widget* last_match = nullptr;
   while (tmp) {
     HitStatus hit_status =
         tmp->GetHitStatus(x - tmp->m_rect.x, y - tmp->m_rect.y);
@@ -601,74 +671,89 @@ TBWidget* TBWidget::GetWidgetAt(int x, int y, bool include_children) const {
       if (include_children && hit_status != HitStatus::kHitNoChildren) {
         last_match = tmp->GetWidgetAt(x - tmp->m_rect.x, y - tmp->m_rect.y,
                                       include_children);
-        if (!last_match) last_match = tmp;
-      } else
+        if (!last_match) {
+          last_match = tmp;
+        }
+      } else {
         last_match = tmp;
+      }
     }
     tmp = tmp->GetNext();
   }
   return last_match;
 }
 
-TBWidget* TBWidget::GetChildFromIndex(int index) const {
+Widget* Widget::GetChildFromIndex(int index) const {
   int i = 0;
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext())
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
     if (i++ == index) return child;
+  }
   return nullptr;
 }
 
-int TBWidget::GetIndexFromChild(TBWidget* child) const {
+int Widget::GetIndexFromChild(Widget* child) const {
   assert(child->GetParent() == this);
   int i = 0;
-  for (TBWidget* tmp = GetFirstChild(); tmp; tmp = tmp->GetNext(), i++)
-    if (tmp == child) return i;
-  return -1;  ///< Should not happen!
+  for (Widget* tmp = GetFirstChild(); tmp; tmp = tmp->GetNext(), i++) {
+    if (tmp == child) {
+      return i;
+    }
+  }
+  return -1;  // Should not happen!
 }
 
-bool TBWidget::IsAncestorOf(TBWidget* other_widget) const {
+bool Widget::IsAncestorOf(Widget* other_widget) const {
   while (other_widget) {
-    if (other_widget == this) return true;
+    if (other_widget == this) {
+      return true;
+    }
     other_widget = other_widget->m_parent;
   }
   return false;
 }
 
-bool TBWidget::IsEventDestinationFor(TBWidget* other_widget) const {
+bool Widget::IsEventDestinationFor(Widget* other_widget) const {
   while (other_widget) {
-    if (other_widget == this) return true;
+    if (other_widget == this) {
+      return true;
+    }
     other_widget = other_widget->GetEventDestination();
   }
   return false;
 }
 
-TBWidget* TBWidget::GetParentRoot() {
-  TBWidget* tmp = this;
-  while (tmp->m_parent) tmp = tmp->m_parent;
+Widget* Widget::GetParentRoot() {
+  Widget* tmp = this;
+  while (tmp->m_parent) {
+    tmp = tmp->m_parent;
+  }
   return tmp;
 }
 
-Window* TBWidget::GetParentWindow() {
-  TBWidget* tmp = this;
-  while (tmp && !tmp->IsOfType<Window>()) tmp = tmp->m_parent;
+Window* Widget::GetParentWindow() {
+  Widget* tmp = this;
+  while (tmp && !tmp->IsOfType<Window>()) {
+    tmp = tmp->m_parent;
+  }
   return static_cast<Window*>(tmp);
 }
 
-void TBWidget::AddListener(WidgetListener* listener) {
+void Widget::AddListener(WidgetListener* listener) {
   m_listeners.AddLast(listener);
 }
 
-void TBWidget::RemoveListener(WidgetListener* listener) {
+void Widget::RemoveListener(WidgetListener* listener) {
   m_listeners.Remove(listener);
 }
 
-bool TBWidget::HasListener(WidgetListener* listener) const {
+bool Widget::HasListener(WidgetListener* listener) const {
   return m_listeners.ContainsLink(listener);
 }
 
-void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
+void Widget::OnPaintChildren(const PaintProps& paint_props) {
   if (!m_children.GetFirst()) return;
 
-  // Translate renderer with child translation
+  // Translate renderer with child translation.
   int child_translation_x, child_translation_y;
   GetChildTranslation(child_translation_x, child_translation_y);
   g_renderer->Translate(child_translation_x, child_translation_y);
@@ -676,18 +761,20 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   Rect clip_rect = g_renderer->GetClipRect();
 
   // Invoke paint on all children that are in the current visible rect.
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (clip_rect.Intersects(child->m_rect)) child->InvokePaint(paint_props);
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
+    if (clip_rect.Intersects(child->m_rect)) {
+      child->InvokePaint(paint_props);
+    }
   }
 
   // Invoke paint of overlay elements on all children that are in the current
   // visible rect.
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
     if (clip_rect.Intersects(child->m_rect) &&
         child->GetVisibility() == Visibility::kVisible) {
       SkinElement* skin_element = child->GetSkinBgElement();
       if (skin_element && skin_element->HasOverlayElements()) {
-        // Update the renderer with the widgets opacity
+        // Update the renderer with the widgets opacity.
         SkinState state = child->GetAutoState();
         float old_opacity = g_renderer->GetOpacity();
         float opacity =
@@ -706,8 +793,8 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   }
 
   // Draw generic focus skin if the focused widget is one of the children, and
-  // the skin
-  // doesn't have a skin state for focus which would already be painted.
+  // the skin doesn't have a skin state for focus which would already be
+  // painted.
   if (focused_widget && focused_widget->m_parent == this) {
     WidgetSkinConditionContext context(focused_widget);
     SkinElement* skin_element = focused_widget->GetSkinBgElement();
@@ -724,10 +811,10 @@ void TBWidget::OnPaintChildren(const PaintProps& paint_props) {
   g_renderer->Translate(-child_translation_x, -child_translation_y);
 }
 
-void TBWidget::OnResized(int old_w, int old_h) {
+void Widget::OnResized(int old_w, int old_h) {
   int dw = m_rect.w - old_w;
   int dh = m_rect.h - old_h;
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
     if (child->GetVisibility() == Visibility::kGone) continue;
     Rect rect = child->m_rect;
     if (any(child->m_gravity & Gravity::kLeft) &&
@@ -746,7 +833,7 @@ void TBWidget::OnResized(int old_w, int old_h) {
   }
 }
 
-void TBWidget::OnInflateChild(TBWidget* child) {
+void Widget::OnInflateChild(Widget* child) {
   if (child->GetVisibility() == Visibility::kGone) return;
 
   // If the child pull towards only one edge (per axis), stick to that edge
@@ -774,7 +861,7 @@ void TBWidget::OnInflateChild(TBWidget* child) {
   child->SetRect(child_rect);
 }
 
-Rect TBWidget::GetPaddingRect() {
+Rect Widget::GetPaddingRect() {
   Rect padding_rect(0, 0, m_rect.w, m_rect.h);
   if (SkinElement* e = GetSkinBgElement()) {
     padding_rect.x += e->padding_left;
@@ -785,7 +872,7 @@ Rect TBWidget::GetPaddingRect() {
   return padding_rect;
 }
 
-PreferredSize TBWidget::OnCalculatePreferredContentSize(
+PreferredSize Widget::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   // The default preferred size is calculated to satisfy the children
   // in the best way. Since this is the default, it's probably not a
@@ -794,9 +881,9 @@ PreferredSize TBWidget::OnCalculatePreferredContentSize(
   // Allow this widget a larger maximum if our gravity wants both ways,
   // otherwise don't grow more than the largest child.
   bool apply_max_w =
-      !(any(m_gravity & Gravity::kLeft) && any(m_gravity & Gravity::kRight));
+      !any(m_gravity & Gravity::kLeft) && any(m_gravity & Gravity::kRight);
   bool apply_max_h =
-      !(any(m_gravity & Gravity::kTop) && any(m_gravity & Gravity::kBottom));
+      !any(m_gravity & Gravity::kTop) && any(m_gravity & Gravity::kBottom);
   bool has_layouting_children = false;
   PreferredSize ps;
 
@@ -808,8 +895,10 @@ PreferredSize TBWidget::OnCalculatePreferredContentSize(
   SizeConstraints inner_sc =
       constraints.ConstrainByPadding(horizontal_padding, vertical_padding);
 
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (child->GetVisibility() == Visibility::kGone) continue;
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
+    if (child->GetVisibility() == Visibility::kGone) {
+      continue;
+    }
     if (!has_layouting_children) {
       has_layouting_children = true;
       if (apply_max_w) ps.max_w = 0;
@@ -820,15 +909,19 @@ PreferredSize TBWidget::OnCalculatePreferredContentSize(
     ps.pref_h = std::max(ps.pref_h, child_ps.pref_h);
     ps.min_w = std::max(ps.min_w, child_ps.min_w);
     ps.min_h = std::max(ps.min_h, child_ps.min_h);
-    if (apply_max_w) ps.max_w = std::max(ps.max_w, child_ps.max_w);
-    if (apply_max_h) ps.max_h = std::max(ps.max_h, child_ps.max_h);
+    if (apply_max_w) {
+      ps.max_w = std::max(ps.max_w, child_ps.max_w);
+    }
+    if (apply_max_h) {
+      ps.max_h = std::max(ps.max_h, child_ps.max_h);
+    }
     ps.size_dependency |= child_ps.size_dependency;
   }
 
   return ps;
 }
 
-PreferredSize TBWidget::OnCalculatePreferredSize(
+PreferredSize Widget::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = OnCalculatePreferredContentSize(constraints);
   assert(ps.pref_w >= ps.min_w);
@@ -841,59 +934,63 @@ PreferredSize TBWidget::OnCalculatePreferredSize(
     // skin.
 
     const int skin_intrinsic_w = e->GetIntrinsicWidth();
-    if (e->GetPrefWidth() != kSkinValueNotSpecified)
+    if (e->GetPrefWidth() != kSkinValueNotSpecified) {
       ps.pref_w = e->GetPrefWidth();
-    else if (ps.pref_w == 0 && skin_intrinsic_w != kSkinValueNotSpecified)
+    } else if (ps.pref_w == 0 && skin_intrinsic_w != kSkinValueNotSpecified) {
       ps.pref_w = skin_intrinsic_w;
-    else {
+    } else {
       // Grow by padding to get the preferred size from preferred content size.
       ps.min_w += e->padding_left + e->padding_right;
       ps.pref_w += e->padding_left + e->padding_right;
     }
 
     const int skin_intrinsic_h = e->GetIntrinsicHeight();
-    if (e->GetPrefHeight() != kSkinValueNotSpecified)
+    if (e->GetPrefHeight() != kSkinValueNotSpecified) {
       ps.pref_h = e->GetPrefHeight();
-    else if (ps.pref_h == 0 && skin_intrinsic_h != kSkinValueNotSpecified)
+    } else if (ps.pref_h == 0 && skin_intrinsic_h != kSkinValueNotSpecified) {
       ps.pref_h = skin_intrinsic_h;
-    else {
+    } else {
       // Grow by padding to get the preferred size from preferred content size.
       ps.min_h += e->padding_top + e->padding_bottom;
       ps.pref_h += e->padding_top + e->padding_bottom;
     }
 
-    if (e->GetMinWidth() != kSkinValueNotSpecified)
+    if (e->GetMinWidth() != kSkinValueNotSpecified) {
       ps.min_w = e->GetMinWidth();
-    else
+    } else {
       ps.min_w = std::max(ps.min_w, e->GetIntrinsicMinWidth());
+    }
 
-    if (e->GetMinHeight() != kSkinValueNotSpecified)
+    if (e->GetMinHeight() != kSkinValueNotSpecified) {
       ps.min_h = e->GetMinHeight();
-    else
+    } else {
       ps.min_h = std::max(ps.min_h, e->GetIntrinsicMinHeight());
+    }
 
-    if (e->GetMaxWidth() != kSkinValueNotSpecified)
+    if (e->GetMaxWidth() != kSkinValueNotSpecified) {
       ps.max_w = e->GetMaxWidth();
-    else
+    } else {
       ps.max_w += e->padding_left + e->padding_right;
+    }
 
-    if (e->GetMaxHeight() != kSkinValueNotSpecified)
+    if (e->GetMaxHeight() != kSkinValueNotSpecified) {
       ps.max_h = e->GetMaxHeight();
-    else
+    } else {
       ps.max_h += e->padding_top + e->padding_bottom;
+    }
 
-    // Sanitize result
+    // Sanitize results.
     ps.pref_w = std::max(ps.pref_w, ps.min_w);
     ps.pref_h = std::max(ps.pref_h, ps.min_h);
   }
   return ps;
 }
 
-PreferredSize TBWidget::GetPreferredSize(
-    const SizeConstraints& in_constraints) {
+PreferredSize Widget::GetPreferredSize(const SizeConstraints& in_constraints) {
   SizeConstraints constraints(in_constraints);
-  if (m_layout_params)
+  if (m_layout_params) {
     constraints = constraints.ConstrainByLayoutParams(*m_layout_params);
+  }
 
   // Returned cached result if valid and the constraints are the same.
   if (m_packed.is_cached_ps_valid) {
@@ -911,7 +1008,7 @@ PreferredSize TBWidget::GetPreferredSize(
     }
   }
 
-  // Measure and save to cache
+  // Measure and save to cache.
   TB_IF_DEBUG_SETTING(Setting::kLayoutSizing,
                       last_measure_time = TBSystem::GetTimeMS());
   m_packed.is_cached_ps_valid = 1;
@@ -929,8 +1026,8 @@ PreferredSize TBWidget::GetPreferredSize(
     LP_OVERRIDE(max_h);
     LP_OVERRIDE(pref_w);
     LP_OVERRIDE(pref_h);
-
-    // Sanitize results
+#undef LP_OVERRIDE
+    // Sanitize results.
     m_cached_ps.max_w = std::max(m_cached_ps.max_w, m_cached_ps.min_w);
     m_cached_ps.max_h = std::max(m_cached_ps.max_h, m_cached_ps.min_h);
     m_cached_ps.pref_w = std::max(m_cached_ps.pref_w, m_cached_ps.min_w);
@@ -939,34 +1036,39 @@ PreferredSize TBWidget::GetPreferredSize(
   return m_cached_ps;
 }
 
-void TBWidget::SetLayoutParams(const LayoutParams& lp) {
-  if (!m_layout_params) m_layout_params = new LayoutParams;
-  if (!m_layout_params) return;
+void Widget::SetLayoutParams(const LayoutParams& lp) {
+  if (!m_layout_params) {
+    m_layout_params = new LayoutParams();
+  }
   *m_layout_params = lp;
   m_packed.is_cached_ps_valid = 0;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void TBWidget::InvalidateLayout(InvalidationMode il) {
+void Widget::InvalidateLayout(InvalidationMode il) {
   m_packed.is_cached_ps_valid = 0;
-  if (GetVisibility() == Visibility::kGone) return;
+  if (GetVisibility() == Visibility::kGone) {
+    return;
+  }
   Invalidate();
-  if (il == InvalidationMode::kRecursive && m_parent)
+  if (il == InvalidationMode::kRecursive && m_parent) {
     m_parent->InvalidateLayout(il);
+  }
 }
 
-void TBWidget::InvokeProcess() {
+void Widget::InvokeProcess() {
   InvokeSkinUpdatesInternal(false);
   InvokeProcessInternal();
 }
 
-void TBWidget::InvokeSkinUpdatesInternal(bool force_update) {
-  if (!update_skin_states && !force_update) return;
+void Widget::InvokeSkinUpdatesInternal(bool force_update) {
+  if (!update_skin_states && !force_update) {
+    return;
+  }
   update_skin_states = false;
 
   // Check if the skin we get is different from what we expect. That might
-  // happen
-  // if the skin has some strong override dependant a condition that has
+  // happen if the skin has some strong override dependant a condition that has
   // changed.
   // If that happens, call OnSkinChanged so the widget can react to that, and
   // invalidate layout to apply new skin properties.
@@ -978,31 +1080,35 @@ void TBWidget::InvokeSkinUpdatesInternal(bool force_update) {
     }
   }
 
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext())
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
     child->InvokeSkinUpdatesInternal(true);
+  }
 }
 
-void TBWidget::InvokeProcessInternal() {
+void Widget::InvokeProcessInternal() {
   OnProcess();
 
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext())
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
     child->InvokeProcessInternal();
+  }
 
   OnProcessAfterChildren();
 }
 
-void TBWidget::InvokeProcessStates(bool force_update) {
-  if (!update_widget_states && !force_update) return;
+void Widget::InvokeProcessStates(bool force_update) {
+  if (!update_widget_states && !force_update) {
+    return;
+  }
   update_widget_states = false;
 
   OnProcessStates();
 
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext())
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext())
     child->InvokeProcessStates(true);
 }
 
-float TBWidget::CalculateOpacityInternal(SkinState state,
-                                         SkinElement* skin_element) const {
+float Widget::CalculateOpacityInternal(SkinState state,
+                                       SkinElement* skin_element) const {
   float opacity = m_opacity;
   if (skin_element) {
     opacity *= skin_element->opacity;
@@ -1013,11 +1119,12 @@ float TBWidget::CalculateOpacityInternal(SkinState state,
   return opacity;
 }
 
-void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
+void Widget::InvokePaint(const PaintProps& parent_paint_props) {
   // Don't paint invisible widgets
   if (m_opacity == 0 || m_rect.IsEmpty() ||
-      GetVisibility() != Visibility::kVisible)
+      GetVisibility() != Visibility::kVisible) {
     return;
+  }
 
   SkinState state = GetAutoState();
   SkinElement* skin_element = GetSkinBgElement();
@@ -1034,7 +1141,7 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
   int trns_x = m_rect.x, trns_y = m_rect.y;
   g_renderer->Translate(trns_x, trns_y);
 
-  // Paint background skin
+  // Paint background skin.
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
   WidgetSkinConditionContext context(this);
   SkinElement* used_element = g_tb_skin->PaintSkin(
@@ -1048,17 +1155,19 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
   // Inherit properties from parent if not specified in the used skin for this
   // widget.
   PaintProps paint_props = parent_paint_props;
-  if (used_element && used_element->text_color != 0)
+  if (used_element && used_element->text_color != 0) {
     paint_props.text_color = used_element->text_color;
+  }
 
-  // Paint content
+  // Paint content.
   OnPaint(paint_props);
 
-  if (used_element)
+  if (used_element) {
     g_renderer->Translate(used_element->content_ofs_x,
                           used_element->content_ofs_y);
+  }
 
-  // Paint children
+  // Paint children.
   OnPaintChildren(paint_props);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -1079,15 +1188,16 @@ void TBWidget::InvokePaint(const PaintProps& parent_paint_props) {
   }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  if (used_element)
+  if (used_element) {
     g_renderer->Translate(-used_element->content_ofs_x,
                           -used_element->content_ofs_y);
+  }
 
   g_renderer->Translate(-trns_x, -trns_y);
   g_renderer->SetOpacity(old_opacity);
 }
 
-bool TBWidget::InvokeEvent(TBWidgetEvent& ev) {
+bool Widget::InvokeEvent(WidgetEvent& ev) {
   ev.target = this;
 
   // First call the global listener about this event.
@@ -1096,16 +1206,18 @@ bool TBWidget::InvokeEvent(TBWidgetEvent& ev) {
   WeakWidgetPointer this_widget(this);
   if (WidgetListener::InvokeWidgetInvokeEvent(this, ev)) return true;
 
-  if (!this_widget.Get())
+  if (!this_widget.Get()) {
     return true;  // We got removed so we actually handled this event.
+  }
 
   if (ev.type == EventType::kChanged) {
     InvalidateSkinStates();
     m_connection.SyncFromWidget(this);
   }
 
-  if (!this_widget.Get())
+  if (!this_widget.Get()) {
     return true;  // We got removed so we actually handled this event.
+  }
 
   // Always update states after some event types.
   switch (ev.type) {
@@ -1115,6 +1227,7 @@ bool TBWidget::InvokeEvent(TBWidgetEvent& ev) {
     case EventType::kKeyDown:
     case EventType::kKeyUp:
       InvalidateStates();
+      break;
     default:
       break;
   };
@@ -1122,26 +1235,28 @@ bool TBWidget::InvokeEvent(TBWidgetEvent& ev) {
   // Call OnEvent on this widgets and travel up through its parents if not
   // handled.
   bool handled = false;
-  TBWidget* tmp = this;
-  while (tmp && !(handled = tmp->OnEvent(ev))) tmp = tmp->GetEventDestination();
+  Widget* tmp = this;
+  while (tmp && !(handled = tmp->OnEvent(ev))) {
+    tmp = tmp->GetEventDestination();
+  }
   return handled;
 }
 
-void TBWidget::StartLongClickTimer(bool touch) {
+void Widget::StartLongClickTimer(bool touch) {
   StopLongClickTimer();
-  m_long_click_timer = new TBLongClickTimer(this, touch);
+  m_long_click_timer = new LongClickTimer(this, touch);
 }
 
-void TBWidget::StopLongClickTimer() {
+void Widget::StopLongClickTimer() {
   if (!m_long_click_timer) return;
   delete m_long_click_timer;
   m_long_click_timer = nullptr;
 }
 
-bool TBWidget::InvokePointerDown(int x, int y, int click_count,
-                                 ModifierKeys modifierkeys, bool touch) {
+bool Widget::InvokePointerDown(int x, int y, int click_count,
+                               ModifierKeys modifierkeys, bool touch) {
   // If we have a captured widget then the pointer event was handled since focus
-  // is changed here
+  // is changed here.
   if (!captured_widget) {
     SetCapturedWidget(GetWidgetAt(x, y, true));
     SetHoveredWidget(captured_widget, touch);
@@ -1151,17 +1266,20 @@ bool TBWidget::InvokePointerDown(int x, int y, int click_count,
     if (focused_widget != captured_widget) SetAutoFocusState(false);
 
     // Start long click timer. Only for touch events for now.
-    if (touch && captured_widget && captured_widget->GetWantLongClick())
+    if (touch && captured_widget && captured_widget->GetWantLongClick()) {
       captured_widget->StartLongClickTimer(touch);
+    }
 
-    // Get the closest parent window and bring it to the top
+    // Get the closest parent window and bring it to the top.
     Window* window =
         captured_widget ? captured_widget->GetParentWindow() : nullptr;
-    if (window) window->Activate();
+    if (window) {
+      window->Activate();
+    }
   }
   if (captured_widget) {
     // Check if there's any started scroller that should be stopped.
-    TBWidget* tmp = captured_widget;
+    Widget* tmp = captured_widget;
     while (tmp) {
       if (tmp->m_scroller && tmp->m_scroller->IsStarted()) {
         // When we touch down to stop a scroller, we don't
@@ -1173,11 +1291,13 @@ bool TBWidget::InvokePointerDown(int x, int y, int click_count,
       tmp = tmp->GetParent();
     }
 
-    // Focus the captured widget or the closest
-    // focusable parent if it isn't focusable.
-    TBWidget* focus_target = captured_widget;
+    // Focus the captured widget or the closest focusable parent if it isn't
+    // focusable.
+    Widget* focus_target = captured_widget;
     while (focus_target) {
-      if (focus_target->SetFocus(FocusReason::kPointer)) break;
+      if (focus_target->SetFocus(FocusReason::kPointer)) {
+        break;
+      }
       focus_target = focus_target->m_parent;
     }
   }
@@ -1185,24 +1305,23 @@ bool TBWidget::InvokePointerDown(int x, int y, int click_count,
     captured_widget->ConvertFromRoot(x, y);
     pointer_move_widget_x = pointer_down_widget_x = x;
     pointer_move_widget_y = pointer_down_widget_y = y;
-    TBWidgetEvent ev(EventType::kPointerDown, x, y, touch, modifierkeys);
+    WidgetEvent ev(EventType::kPointerDown, x, y, touch, modifierkeys);
     ev.count = click_count;
     captured_widget->InvokeEvent(ev);
-
     return true;
   }
 
   return false;
 }
 
-bool TBWidget::InvokePointerUp(int x, int y, ModifierKeys modifierkeys,
-                               bool touch) {
+bool Widget::InvokePointerUp(int x, int y, ModifierKeys modifierkeys,
+                             bool touch) {
   // If we have a captured widget then we have a focused widget so the pointer
   // up event was handled
   if (captured_widget) {
     captured_widget->ConvertFromRoot(x, y);
-    TBWidgetEvent ev_up(EventType::kPointerUp, x, y, touch, modifierkeys);
-    TBWidgetEvent ev_click(EventType::kClick, x, y, touch, modifierkeys);
+    WidgetEvent ev_up(EventType::kPointerUp, x, y, touch, modifierkeys);
+    WidgetEvent ev_click(EventType::kClick, x, y, touch, modifierkeys);
     captured_widget->InvokeEvent(ev_up);
     if (!cancel_click && captured_widget &&
         captured_widget->GetHitStatus(x, y) != HitStatus::kNoHit) {
@@ -1217,51 +1336,53 @@ bool TBWidget::InvokePointerUp(int x, int y, ModifierKeys modifierkeys,
   return false;
 }
 
-void TBWidget::MaybeInvokeLongClickOrContextMenu(bool touch) {
+void Widget::MaybeInvokeLongClickOrContextMenu(bool touch) {
   StopLongClickTimer();
   if (captured_widget == this && !cancel_click &&
       captured_widget->GetHitStatus(
           pointer_move_widget_x, pointer_move_widget_y) != HitStatus::kNoHit) {
-    // Invoke long click
-    TBWidgetEvent ev_long_click(EventType::kLongClick, pointer_move_widget_x,
-                                pointer_move_widget_y, touch,
-                                ModifierKeys::kNone);
+    // Invoke long click.
+    WidgetEvent ev_long_click(EventType::kLongClick, pointer_move_widget_x,
+                              pointer_move_widget_y, touch,
+                              ModifierKeys::kNone);
     bool handled = captured_widget->InvokeEvent(ev_long_click);
     if (!handled) {
-      // Long click not handled so invoke a context menu event instead
-      TBWidgetEvent ev_context_menu(
-          EventType::kContextMenu, pointer_move_widget_x, pointer_move_widget_y,
-          touch, ModifierKeys::kNone);
+      // Long click not handled so invoke a context menu event instead.
+      WidgetEvent ev_context_menu(EventType::kContextMenu,
+                                  pointer_move_widget_x, pointer_move_widget_y,
+                                  touch, ModifierKeys::kNone);
       handled = captured_widget->InvokeEvent(ev_context_menu);
     }
     // If any event was handled, suppress click when releasing pointer.
-    if (handled) cancel_click = true;
+    if (handled) {
+      cancel_click = true;
+    }
   }
 }
 
-void TBWidget::InvokePointerMove(int x, int y, ModifierKeys modifierkeys,
-                                 bool touch) {
+void Widget::InvokePointerMove(int x, int y, ModifierKeys modifierkeys,
+                               bool touch) {
   SetHoveredWidget(GetWidgetAt(x, y, true), touch);
-  TBWidget* target = captured_widget ? captured_widget : hovered_widget;
+  Widget* target = captured_widget ? captured_widget : hovered_widget;
 
   if (target) {
     target->ConvertFromRoot(x, y);
     pointer_move_widget_x = x;
     pointer_move_widget_y = y;
 
-    TBWidgetEvent ev(EventType::kPointerMove, x, y, touch, modifierkeys);
-
-    if (target->InvokeEvent(ev)) return;
-
+    WidgetEvent ev(EventType::kPointerMove, x, y, touch, modifierkeys);
+    if (target->InvokeEvent(ev)) {
+      return;
+    }
     // The move event was not handled, so handle panning of scrollable widgets.
     HandlePanningOnMove(x, y);
   }
 }
 
-void TBWidget::HandlePanningOnMove(int x, int y) {
+void Widget::HandlePanningOnMove(int x, int y) {
   if (!captured_widget) return;
 
-  // Check pointer movement
+  // Check pointer movement.
   const int dx = pointer_down_widget_x - x;
   const int dy = pointer_down_widget_y - y;
   const int threshold = TBSystem::GetPanThreshold();
@@ -1269,10 +1390,10 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
   const bool maybe_start_panning_y = std::abs(dy) >= threshold;
 
   // Do panning, or attempt starting panning (we don't know if any widget is
-  // scrollable yet)
+  // scrollable yet).
   if (captured_widget->m_packed.is_panning || maybe_start_panning_x ||
       maybe_start_panning_y) {
-    // The threshold is met for not invoking any long click
+    // The threshold is met for not invoking any long click.
     captured_widget->StopLongClickTimer();
 
     int start_compensation_x = 0, start_compensation_y = 0;
@@ -1280,13 +1401,19 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
       // When we start panning, deduct the extra distance caused by the
       // start threshold from the delta so we don't start with a sudden jump.
       int extra = threshold - 1;
-      if (maybe_start_panning_x) start_compensation_x = dx < 0 ? extra : -extra;
-      if (maybe_start_panning_y) start_compensation_y = dy < 0 ? extra : -extra;
+      if (maybe_start_panning_x) {
+        start_compensation_x = dx < 0 ? extra : -extra;
+      }
+      if (maybe_start_panning_y) {
+        start_compensation_y = dy < 0 ? extra : -extra;
+      }
     }
 
     // Get any active scroller and feed it with pan actions.
     Scroller* scroller = captured_widget->GetReadyScroller(dx != 0, dy != 0);
-    if (!scroller) return;
+    if (!scroller) {
+      return;
+    }
 
     int old_translation_x = 0, old_translation_y = 0;
     captured_widget->GetScrollRoot()->GetChildTranslation(old_translation_x,
@@ -1298,9 +1425,8 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
       cancel_click = true;
 
       // If the captured widget (or its scroll root) has panned, we have to
-      // compensate the
-      // pointer down coordinates so we won't accumulate the difference the
-      // following pan.
+      // compensate the pointer down coordinates so we won't accumulate the
+      // difference the following pan.
       int new_translation_x = 0, new_translation_y = 0;
       captured_widget->GetScrollRoot()->GetChildTranslation(new_translation_x,
                                                             new_translation_y);
@@ -1312,59 +1438,59 @@ void TBWidget::HandlePanningOnMove(int x, int y) {
   }
 }
 
-bool TBWidget::InvokeWheel(int x, int y, int delta_x, int delta_y,
-                           ModifierKeys modifierkeys) {
+bool Widget::InvokeWheel(int x, int y, int delta_x, int delta_y,
+                         ModifierKeys modifierkeys) {
   SetHoveredWidget(GetWidgetAt(x, y, true), true);
 
-  // If we have a target then the wheel event should be consumed
-  TBWidget* target = captured_widget ? captured_widget : hovered_widget;
-  if (target) {
-    target->ConvertFromRoot(x, y);
-    pointer_move_widget_x = x;
-    pointer_move_widget_y = y;
-    TBWidgetEvent ev(EventType::kWheel, x, y, true, modifierkeys);
-    ev.delta_x = delta_x;
-    ev.delta_y = delta_y;
-    target->InvokeEvent(ev);
-
-    return true;
+  // If we have a target then the wheel event should be consumed.
+  Widget* target = captured_widget ? captured_widget : hovered_widget;
+  if (!target) {
+    return false;
   }
-
-  return false;
+  target->ConvertFromRoot(x, y);
+  pointer_move_widget_x = x;
+  pointer_move_widget_y = y;
+  WidgetEvent ev(EventType::kWheel, x, y, true, modifierkeys);
+  ev.delta_x = delta_x;
+  ev.delta_y = delta_y;
+  target->InvokeEvent(ev);
+  return true;
 }
 
-bool TBWidget::InvokeKey(int key, SpecialKey special_key,
-                         ModifierKeys modifierkeys, bool down) {
+bool Widget::InvokeKey(int key, SpecialKey special_key,
+                       ModifierKeys modifierkeys, bool down) {
   bool handled = false;
   if (focused_widget) {
-    // Emulate a click on the focused widget when pressing space or enter
+    // Emulate a click on the focused widget when pressing space or enter.
     if (!any(modifierkeys) && focused_widget->GetClickByKey() &&
         !focused_widget->GetDisabled() && !focused_widget->GetIsDying() &&
         (special_key == SpecialKey::kEnter || key == ' ')) {
-      // Set the pressed state while the key is down, if it
-      // didn't already have the pressed state.
+      // Set the pressed state while the key is down, if it didn't already have
+      // the pressed state.
       static bool check_pressed_state = true;
       static bool had_pressed_state = false;
       if (down && check_pressed_state) {
         had_pressed_state = focused_widget->GetState(SkinState::kPressed);
         check_pressed_state = false;
       }
-      if (!down) check_pressed_state = true;
+      if (!down) {
+        check_pressed_state = true;
+      }
 
       if (!had_pressed_state) {
         focused_widget->SetState(SkinState::kPressed, down);
         focused_widget->m_packed.has_key_pressed_state = down;
       }
 
-      // Invoke the click event
+      // Invoke the click event.
       if (!down) {
-        TBWidgetEvent ev(EventType::kClick, m_rect.w / 2, m_rect.h / 2, true);
+        WidgetEvent ev(EventType::kClick, m_rect.w / 2, m_rect.h / 2, true);
         focused_widget->InvokeEvent(ev);
       }
       handled = true;
     } else {
-      // Invoke the key event on the focused widget
-      TBWidgetEvent ev(down ? EventType::kKeyDown : EventType::kKeyUp);
+      // Invoke the key event on the focused widget.
+      WidgetEvent ev(down ? EventType::kKeyDown : EventType::kKeyUp);
       ev.key = key;
       ev.special_key = special_key;
       ev.modifierkeys = modifierkeys;
@@ -1372,11 +1498,11 @@ bool TBWidget::InvokeKey(int key, SpecialKey special_key,
     }
   }
 
-  // Move focus between widgets
+  // Move focus between widgets.
   if (down && !handled && special_key == SpecialKey::kTab) {
     handled = MoveFocus(!any(modifierkeys & ModifierKeys::kShift));
 
-    // Show the focus when we move it by keyboard
+    // Show the focus when we move it by keyboard.
     if (handled) {
       SetAutoFocusState(true);
     }
@@ -1384,14 +1510,14 @@ bool TBWidget::InvokeKey(int key, SpecialKey special_key,
   return handled;
 }
 
-void TBWidget::ReleaseCapture() {
+void Widget::ReleaseCapture() {
   if (this == captured_widget) {
     SetCapturedWidget(nullptr);
   }
 }
 
-void TBWidget::ConvertToRoot(int& x, int& y) const {
-  const TBWidget* tmp = this;
+void Widget::ConvertToRoot(int& x, int& y) const {
+  const Widget* tmp = this;
   while (tmp->m_parent) {
     x += tmp->m_rect.x;
     y += tmp->m_rect.y;
@@ -1406,8 +1532,8 @@ void TBWidget::ConvertToRoot(int& x, int& y) const {
   }
 }
 
-void TBWidget::ConvertFromRoot(int& x, int& y) const {
-  const TBWidget* tmp = this;
+void Widget::ConvertFromRoot(int& x, int& y) const {
+  const Widget* tmp = this;
   while (tmp->m_parent) {
     x -= tmp->m_rect.x;
     y -= tmp->m_rect.y;
@@ -1423,102 +1549,117 @@ void TBWidget::ConvertFromRoot(int& x, int& y) const {
 }
 
 // static
-void TBWidget::SetHoveredWidget(TBWidget* widget, bool touch) {
-  if (TBWidget::hovered_widget == widget) return;
-  if (widget && widget->GetState(SkinState::kDisabled)) return;
+void Widget::SetHoveredWidget(Widget* widget, bool touch) {
+  if (Widget::hovered_widget == widget) {
+    return;
+  }
+  if (widget && widget->GetState(SkinState::kDisabled)) {
+    return;
+  }
 
   // We may apply hover state automatically so the widget might need to be
   // updated.
-  if (TBWidget::hovered_widget) {
-    TBWidget::hovered_widget->Invalidate();
-    TBWidget::hovered_widget->InvalidateSkinStates();
+  if (Widget::hovered_widget) {
+    Widget::hovered_widget->Invalidate();
+    Widget::hovered_widget->InvalidateSkinStates();
   }
 
-  TBWidget::hovered_widget = widget;
+  Widget::hovered_widget = widget;
 
-  if (TBWidget::hovered_widget) {
-    TBWidget::hovered_widget->Invalidate();
-    TBWidget::hovered_widget->InvalidateSkinStates();
+  if (Widget::hovered_widget) {
+    Widget::hovered_widget->Invalidate();
+    Widget::hovered_widget->InvalidateSkinStates();
 
     // Cursor based movement should set hover state automatically, but touch
     // events should not (since touch doesn't really move unless pressed).
-    TBWidget::hovered_widget->m_packed.no_automatic_hover_state = touch;
+    Widget::hovered_widget->m_packed.no_automatic_hover_state = touch;
   }
 }
 
 // static
-void TBWidget::SetCapturedWidget(TBWidget* widget) {
-  if (TBWidget::captured_widget == widget) return;
-  if (widget && widget->GetState(SkinState::kDisabled)) return;
+void Widget::SetCapturedWidget(Widget* widget) {
+  if (Widget::captured_widget == widget) {
+    return;
+  }
+  if (widget && widget->GetState(SkinState::kDisabled)) {
+    return;
+  }
 
-  if (TBWidget::captured_widget) {
+  if (Widget::captured_widget) {
     // Stop panning when capture change (most likely changing to nullptr because
-    // of InvokePointerUp)
+    // of InvokePointerUp).
     // Notify any active scroller so it may begin scrolling.
-    if (Scroller* scroller = TBWidget::captured_widget->FindStartedScroller()) {
-      if (TBWidget::captured_widget->m_packed.is_panning)
+    if (Scroller* scroller = Widget::captured_widget->FindStartedScroller()) {
+      if (Widget::captured_widget->m_packed.is_panning) {
         scroller->OnPanReleased();
-      else
+      } else {
         scroller->Stop();
+      }
     }
-    TBWidget::captured_widget->m_packed.is_panning = false;
+    Widget::captured_widget->m_packed.is_panning = false;
 
     // We apply pressed state automatically so the widget might need to be
     // updated.
-    TBWidget::captured_widget->Invalidate();
-    TBWidget::captured_widget->InvalidateSkinStates();
+    Widget::captured_widget->Invalidate();
+    Widget::captured_widget->InvalidateSkinStates();
 
-    TBWidget::captured_widget->StopLongClickTimer();
+    Widget::captured_widget->StopLongClickTimer();
   }
   cancel_click = false;
 
-  TBWidget* old_capture = TBWidget::captured_widget;
+  Widget* old_capture = Widget::captured_widget;
 
-  TBWidget::captured_widget = widget;
+  Widget::captured_widget = widget;
 
   if (old_capture) old_capture->OnCaptureChanged(false);
 
-  if (TBWidget::captured_widget) {
-    TBWidget::captured_widget->Invalidate();
-    TBWidget::captured_widget->InvalidateSkinStates();
-    TBWidget::captured_widget->OnCaptureChanged(true);
+  if (Widget::captured_widget) {
+    Widget::captured_widget->Invalidate();
+    Widget::captured_widget->InvalidateSkinStates();
+    Widget::captured_widget->OnCaptureChanged(true);
   }
 }
 
-bool TBWidget::SetFontDescription(const FontDescription& font_desc) {
+bool Widget::SetFontDescription(const FontDescription& font_desc) {
   if (m_font_desc == font_desc) return true;
 
   // Set the font description only if we have a matching font, or succeed
   // creating one.
-  if (g_font_manager->HasFontFace(font_desc))
+  if (g_font_manager->HasFontFace(font_desc)) {
     m_font_desc = font_desc;
-  else if (g_font_manager->CreateFontFace(font_desc))
+  } else if (g_font_manager->CreateFontFace(font_desc)) {
     m_font_desc = font_desc;
-  else
+  } else {
     return false;
+  }
 
   InvokeFontChanged();
   return true;
 }
 
-void TBWidget::InvokeFontChanged() {
+void Widget::InvokeFontChanged() {
   OnFontChanged();
 
-  // Recurse to children that inherit the font
-  for (TBWidget* child = GetFirstChild(); child; child = child->GetNext())
-    if (child->m_font_desc.GetFontFaceID() == 0) child->InvokeFontChanged();
+  // Recurse to children that inherit the font.
+  for (Widget* child = GetFirstChild(); child; child = child->GetNext()) {
+    if (child->m_font_desc.GetFontFaceID() == 0) {
+      child->InvokeFontChanged();
+    }
+  }
 }
 
-FontDescription TBWidget::GetCalculatedFontDescription() const {
-  const TBWidget* tmp = this;
+FontDescription Widget::GetCalculatedFontDescription() const {
+  const Widget* tmp = this;
   while (tmp) {
-    if (tmp->m_font_desc.GetFontFaceID() != 0) return tmp->m_font_desc;
+    if (tmp->m_font_desc.GetFontFaceID() != 0) {
+      return tmp->m_font_desc;
+    }
     tmp = tmp->m_parent;
   }
   return g_font_manager->GetDefaultFontDescription();
 }
 
-FontFace* TBWidget::GetFont() const {
+FontFace* Widget::GetFont() const {
   return g_font_manager->GetFontFace(GetCalculatedFontDescription());
 }
 

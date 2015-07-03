@@ -20,9 +20,9 @@ namespace tb {
 // buttons that cycle between the choices. By default it is a number widget.
 // FIX: Should also be possible to set a list of strings that will be shown
 // instead of numbers.
-class SelectInline : public TBWidget {
+class SelectInline : public Widget {
  public:
-  TBOBJECT_SUBCLASS(SelectInline, TBWidget);
+  TBOBJECT_SUBCLASS(SelectInline, Widget);
 
   SelectInline();
   ~SelectInline() override;
@@ -40,7 +40,7 @@ class SelectInline : public TBWidget {
 
   void OnInflate(const InflateInfo& info) override;
   void OnSkinChanged() override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
  protected:
   void SetValueInternal(int value, bool update_text);

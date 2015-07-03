@@ -30,10 +30,10 @@ class WidgetString {
  public:
   WidgetString();
 
-  void Paint(TBWidget* widget, const Rect& rect, const Color& color);
+  void Paint(Widget* widget, const Rect& rect, const Color& color);
 
-  int GetWidth(TBWidget* widget);
-  int GetHeight(TBWidget* widget);
+  int GetWidth(Widget* widget);
+  int GetHeight(Widget* widget);
 
   void SetText(const char* text) { m_text = text; }
   std::string GetText() const { return m_text; }
@@ -51,15 +51,15 @@ class WidgetString {
 };
 
 // A one line text field that is not editable.
-class Label : public TBWidget {
+class Label : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Label, TBWidget);
+  TBOBJECT_SUBCLASS(Label, Widget);
 
   Label();
 
   // Sets the text of the text field.
   void SetText(const char* text) override;
-  using TBWidget::SetText;
+  using Widget::SetText;
   std::string GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
@@ -92,9 +92,9 @@ class Label : public TBWidget {
 // A regular button widget.
 // Has a text field in its internal layout by default. Other widgets can be
 // added under GetContentRoot().
-class Button : public TBWidget, protected MessageHandler {
+class Button : public Widget, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(Button, TBWidget);
+  TBOBJECT_SUBCLASS(Button, Widget);
 
   Button();
   ~Button() override;
@@ -122,7 +122,7 @@ class Button : public TBWidget, protected MessageHandler {
 
   // Sets the text of the button.
   void SetText(const char* text) override;
-  using TBWidget::SetText;
+  using Widget::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
   void SetValue(int value) override;
@@ -131,14 +131,14 @@ class Button : public TBWidget, protected MessageHandler {
   void OnInflate(const InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   HitStatus GetHitStatus(int x, int y) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override {
     return m_layout.GetPreferredSize();
   }
 
-  TBWidget* GetContentRoot() override { return &m_layout; }
+  Widget* GetContentRoot() override { return &m_layout; }
 
   void OnMessageReceived(Message* msg) override;
 
@@ -150,8 +150,8 @@ class Button : public TBWidget, protected MessageHandler {
   bool CanToggle() { return m_toggle_mode || GetGroupID(); }
 
   class ButtonLayout : public Layout {
-    void OnChildAdded(TBWidget* child) override;
-    void OnChildRemove(TBWidget* child) override;
+    void OnChildAdded(Widget* child) override;
+    void OnChildRemove(Widget* child) override;
   };
 
   ButtonLayout m_layout;
@@ -163,9 +163,9 @@ class Button : public TBWidget, protected MessageHandler {
 // Has a text field in its internal layout by default. Pointer input on the text
 // field will be redirected to another child widget (that you add) to it.
 // Typically useful for creating check boxes, radio buttons with labels.
-class LabelContainer : public TBWidget {
+class LabelContainer : public Widget {
  public:
-  TBOBJECT_SUBCLASS(LabelContainer, TBWidget);
+  TBOBJECT_SUBCLASS(LabelContainer, Widget);
 
   LabelContainer();
   ~LabelContainer() override;
@@ -184,9 +184,9 @@ class LabelContainer : public TBWidget {
     return m_layout.GetPreferredSize();
   }
 
-  TBWidget* GetContentRoot() override { return &m_layout; }
+  Widget* GetContentRoot() override { return &m_layout; }
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
  protected:
   Layout m_layout;
@@ -196,9 +196,9 @@ class LabelContainer : public TBWidget {
 // A widget showing a skin element, constrained in size to its skin.
 // If you need to load and show images dynamically (i.e. not always loaded as
 // the skin), you can use ImageWidget.
-class SkinImage : public TBWidget {
+class SkinImage : public Widget {
  public:
-  TBOBJECT_SUBCLASS(SkinImage, TBWidget);
+  TBOBJECT_SUBCLASS(SkinImage, Widget);
 
   SkinImage() = default;
   SkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
@@ -209,18 +209,18 @@ class SkinImage : public TBWidget {
 
 // A widget only showing a skin.
 // It is disabled by default.
-class Separator : public TBWidget {
+class Separator : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Separator, TBWidget);
+  TBOBJECT_SUBCLASS(Separator, Widget);
 
   Separator();
 };
 
 // An animation that is running while its value is 1.
 // Typically used to indicate that the application is working.
-class ProgressSpinner : public TBWidget, protected MessageHandler {
+class ProgressSpinner : public Widget, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(ProgressSpinner, TBWidget);
+  TBOBJECT_SUBCLASS(ProgressSpinner, Widget);
 
   ProgressSpinner();
 
@@ -255,9 +255,9 @@ class ProgressSpinner : public TBWidget, protected MessageHandler {
 };
 
 // Shared functionality for CheckBox and RadioButton.
-class BaseRadioCheckBox : public TBWidget {
+class BaseRadioCheckBox : public Widget {
  public:
-  TBOBJECT_SUBCLASS(BaseRadioCheckBox, TBWidget);
+  TBOBJECT_SUBCLASS(BaseRadioCheckBox, Widget);
 
   BaseRadioCheckBox();
 
@@ -266,11 +266,11 @@ class BaseRadioCheckBox : public TBWidget {
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 
   // Makes sure all widgets sharing the same group as new_leader are set to
   // value 0.
-  static void UpdateGroupWidgets(TBWidget* new_leader);
+  static void UpdateGroupWidgets(Widget* new_leader);
 
  protected:
   int m_value = 0;
@@ -296,9 +296,9 @@ class RadioButton : public BaseRadioCheckBox {
 };
 
 // A scroll bar in the given axis.
-class ScrollBar : public TBWidget {
+class ScrollBar : public Widget {
  public:
-  TBOBJECT_SUBCLASS(ScrollBar, TBWidget);
+  TBOBJECT_SUBCLASS(ScrollBar, Widget);
 
   ScrollBar();
   ~ScrollBar() override;
@@ -336,13 +336,13 @@ class ScrollBar : public TBWidget {
   int GetValue() override { return (int)GetValueDouble(); }
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
   void UpdateHandle();
 
-  TBWidget m_handle;
+  Widget m_handle;
   Axis m_axis;
   double m_value = 0;
   double m_min = 0;
@@ -355,9 +355,9 @@ class ScrollBar : public TBWidget {
 // FIX: Add a "track value" showing as a line within the track (to be used for
 // buffering etc).
 // FIX: Also add a auto track that keeps it up to date with value (default).
-class Slider : public TBWidget {
+class Slider : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Slider, TBWidget);
+  TBOBJECT_SUBCLASS(Slider, Widget);
 
   Slider();
   ~Slider() override;
@@ -384,11 +384,11 @@ class Slider : public TBWidget {
   int GetValue() override { return (int)GetValueDouble(); }
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
-  TBWidget m_handle;
+  Widget m_handle;
   Axis m_axis;
   double m_value = 0;
   double m_min = 0;
@@ -397,41 +397,41 @@ class Slider : public TBWidget {
   void UpdateHandle();
 };
 
-// Container is just a TBWidget with border and padding (using skin
+// Container is just a Widget with border and padding (using skin
 // "Container").
-class Container : public TBWidget {
+class Container : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Container, TBWidget);
+  TBOBJECT_SUBCLASS(Container, Widget);
 
   Container();
 };
 
 // Moves its parent widget when dragged.
-class Mover : public TBWidget {
+class Mover : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Mover, TBWidget);
+  TBOBJECT_SUBCLASS(Mover, Widget);
 
   Mover();
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 };
 
 // A lower right corner resize grip.
 // It will resize its parent widget.
-class Resizer : public TBWidget {
+class Resizer : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Resizer, TBWidget);
+  TBOBJECT_SUBCLASS(Resizer, Widget);
 
   Resizer();
 
   HitStatus GetHitStatus(int x, int y) override;
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
 };
 
 // Dims widgets in the background and blocks input.
-class Dimmer : public TBWidget {
+class Dimmer : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Dimmer, TBWidget);
+  TBOBJECT_SUBCLASS(Dimmer, Widget);
 
   Dimmer();
 

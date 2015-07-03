@@ -20,16 +20,15 @@ namespace tb {
 
 WidgetString::WidgetString() = default;
 
-int WidgetString::GetWidth(TBWidget* widget) {
+int WidgetString::GetWidth(Widget* widget) {
   return widget->GetFont()->GetStringWidth(m_text);
 }
 
-int WidgetString::GetHeight(TBWidget* widget) {
+int WidgetString::GetHeight(Widget* widget) {
   return widget->GetFont()->GetHeight();
 }
 
-void WidgetString::Paint(TBWidget* widget, const Rect& rect,
-                         const Color& color) {
+void WidgetString::Paint(Widget* widget, const Rect& rect, const Color& color) {
   FontFace* font = widget->GetFont();
   int string_w = GetWidth(widget);
 
@@ -148,7 +147,7 @@ void Button::SetValue(int value) {
 
   if (CanToggle()) {
     // Invoke a changed event.
-    TBWidgetEvent ev(EventType::kChanged);
+    WidgetEvent ev(EventType::kChanged);
     InvokeEvent(ev);
   }
 
@@ -172,7 +171,7 @@ void Button::OnCaptureChanged(bool captured) {
 
 void Button::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
-bool Button::OnEvent(const TBWidgetEvent& ev) {
+bool Button::OnEvent(const WidgetEvent& ev) {
   if (CanToggle() && ev.type == EventType::kClick && ev.target == this) {
     WeakWidgetPointer this_widget(this);
 
@@ -188,7 +187,7 @@ bool Button::OnEvent(const TBWidgetEvent& ev) {
     // Intentionally don't return true for this event. We want it to continue
     // propagating.
   }
-  return TBWidget::OnEvent(ev);
+  return Widget::OnEvent(ev);
 }
 
 void Button::OnMessageReceived(Message* msg) {
@@ -197,8 +196,8 @@ void Button::OnMessageReceived(Message* msg) {
     if (!cancel_click &&
         GetHitStatus(pointer_move_widget_x, pointer_move_widget_y) !=
             HitStatus::kNoHit) {
-      TBWidgetEvent ev(EventType::kClick, pointer_move_widget_x,
-                       pointer_move_widget_y, true);
+      WidgetEvent ev(EventType::kClick, pointer_move_widget_x,
+                     pointer_move_widget_y, true);
       captured_widget->InvokeEvent(ev);
     }
     if (kAutoClickRepeattDelayMillis) {
@@ -211,7 +210,7 @@ void Button::OnMessageReceived(Message* msg) {
 HitStatus Button::GetHitStatus(int x, int y) {
   // Never hit any of the children to the button. We always want to the button
   // itself.
-  return TBWidget::GetHitStatus(x, y) != HitStatus::kNoHit
+  return Widget::GetHitStatus(x, y) != HitStatus::kNoHit
              ? HitStatus::kHitNoChildren
              : HitStatus::kNoHit;
 }
@@ -226,11 +225,11 @@ void Button::UpdateLabelVisibility() {
                                                  : Visibility::kVisible);
 }
 
-void Button::ButtonLayout::OnChildAdded(TBWidget* child) {
+void Button::ButtonLayout::OnChildAdded(Widget* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
-void Button::ButtonLayout::OnChildRemove(TBWidget* child) {
+void Button::ButtonLayout::OnChildRemove(Widget* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
@@ -247,15 +246,15 @@ LabelContainer::~LabelContainer() {
   RemoveChild(&m_layout);
 }
 
-bool LabelContainer::OnEvent(const TBWidgetEvent& ev) {
+bool LabelContainer::OnEvent(const WidgetEvent& ev) {
   // Get a widget from the layout that isn't the textfield, or just bail out
   // if we only have the textfield.
   if (m_layout.GetFirstChild() == m_layout.GetLastChild()) {
     return false;
   }
-  TBWidget* click_target = m_layout.GetFirstChild() == &m_textfield
-                               ? m_layout.GetLastChild()
-                               : m_layout.GetFirstChild();
+  Widget* click_target = m_layout.GetFirstChild() == &m_textfield
+                             ? m_layout.GetLastChild()
+                             : m_layout.GetFirstChild();
   // Invoke the event on it, as if it was invoked on the target itself.
   if (click_target && ev.target != click_target) {
     // Focus the target if we clicked the label.
@@ -272,9 +271,9 @@ bool LabelContainer::OnEvent(const TBWidgetEvent& ev) {
 
     click_target->SetState(SkinState::kPressed, pressed_state);
 
-    TBWidgetEvent target_ev(ev.type, ev.target_x - click_target->GetRect().x,
-                            ev.target_y - click_target->GetRect().y, ev.touch,
-                            ev.modifierkeys);
+    WidgetEvent target_ev(ev.type, ev.target_x - click_target->GetRect().x,
+                          ev.target_y - click_target->GetRect().y, ev.touch,
+                          ev.modifierkeys);
     return click_target->InvokeEvent(target_ev);
   }
   return false;
@@ -282,7 +281,7 @@ bool LabelContainer::OnEvent(const TBWidgetEvent& ev) {
 
 PreferredSize SkinImage::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = TBWidget::OnCalculatePreferredSize(constraints);
+  PreferredSize ps = Widget::OnCalculatePreferredSize(constraints);
   // FIX: Make it stretched proportionally if shrunk.
   ps.max_w = ps.pref_w;
   ps.max_h = ps.pref_h;
@@ -346,16 +345,16 @@ BaseRadioCheckBox::BaseRadioCheckBox() {
 }
 
 // static
-void BaseRadioCheckBox::UpdateGroupWidgets(TBWidget* new_leader) {
+void BaseRadioCheckBox::UpdateGroupWidgets(Widget* new_leader) {
   assert(new_leader->GetValue() && new_leader->GetGroupID());
 
   // Find the group root widget.
-  TBWidget* group = new_leader;
+  Widget* group = new_leader;
   while (group && !group->GetIsGroupRoot() && group->GetParent()) {
     group = group->GetParent();
   }
 
-  for (TBWidget* child = group; child; child = child->GetNextDeep(group)) {
+  for (Widget* child = group; child; child = child->GetNextDeep(group)) {
     if (child != new_leader &&
         child->GetGroupID() == new_leader->GetGroupID()) {
       child->SetValue(0);
@@ -369,7 +368,7 @@ void BaseRadioCheckBox::SetValue(int value) {
 
   SetState(SkinState::kSelected, value ? true : false);
 
-  TBWidgetEvent ev(EventType::kChanged);
+  WidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 
   if (value && GetGroupID()) UpdateGroupWidgets(this);
@@ -377,13 +376,13 @@ void BaseRadioCheckBox::SetValue(int value) {
 
 PreferredSize BaseRadioCheckBox::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = TBWidget::OnCalculatePreferredSize(constraints);
+  PreferredSize ps = Widget::OnCalculatePreferredSize(constraints);
   ps.min_w = ps.max_w = ps.pref_w;
   ps.min_h = ps.max_h = ps.pref_h;
   return ps;
 }
 
-bool BaseRadioCheckBox::OnEvent(const TBWidgetEvent& ev) {
+bool BaseRadioCheckBox::OnEvent(const WidgetEvent& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Toggle the value, if it's not a grouped widget with value on.
     if (!(GetGroupID() && GetValue())) {
@@ -448,11 +447,11 @@ void ScrollBar::SetValueDouble(double value) {
   m_value = value;
 
   UpdateHandle();
-  TBWidgetEvent ev(EventType::kChanged);
+  WidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool ScrollBar::OnEvent(const TBWidgetEvent& ev) {
+bool ScrollBar::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_widget_x;
@@ -555,11 +554,11 @@ void Slider::SetValueDouble(double value) {
   m_value = value;
 
   UpdateHandle();
-  TBWidgetEvent ev(EventType::kChanged);
+  WidgetEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool Slider::OnEvent(const TBWidgetEvent& ev) {
+bool Slider::OnEvent(const WidgetEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_widget_x;
@@ -631,8 +630,8 @@ Container::Container() {
 
 Mover::Mover() { SetSkinBg(TBIDC("Mover"), InvokeInfo::kNoCallbacks); }
 
-bool Mover::OnEvent(const TBWidgetEvent& ev) {
-  TBWidget* target = GetParent();
+bool Mover::OnEvent(const WidgetEvent& ev) {
+  Widget* target = GetParent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
     int dx = ev.target_x - pointer_down_widget_x;
@@ -659,11 +658,11 @@ HitStatus Resizer::GetHitStatus(int x, int y) {
   if (x < GetRect().w - y - extra_hit_area) {
     return HitStatus::kNoHit;
   }
-  return TBWidget::GetHitStatus(x, y);
+  return Widget::GetHitStatus(x, y);
 }
 
-bool Resizer::OnEvent(const TBWidgetEvent& ev) {
-  TBWidget* target = GetParent();
+bool Resizer::OnEvent(const WidgetEvent& ev) {
+  Widget* target = GetParent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_widget == this) {
     int dx = ev.target_x - pointer_down_widget_x;

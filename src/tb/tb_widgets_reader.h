@@ -16,22 +16,22 @@
 namespace tb {
 
 class TBNode;
-class TBWidget;
+class Widget;
 class WidgetFactory;
 class WidgetReader;
 
-// Contains info passed to TBWidget::OnInflate during resource loading.
+// Contains info passed to Widget::OnInflate during resource loading.
 struct InflateInfo {
-  InflateInfo(WidgetReader* reader, TBWidget* target, TBNode* node,
+  InflateInfo(WidgetReader* reader, Widget* target, TBNode* node,
               TBValue::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
   WidgetReader* reader;
   // The widget that that will be parent to the inflated widget.
-  TBWidget* target;
+  Widget* target;
   // The node containing properties.
   TBNode* node;
-  // The data type that should be synchronized through TBWidgetValue.
+  // The data type that should be synchronized through WidgetValue.
   TBValue::Type sync_type;
 };
 
@@ -41,7 +41,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
   WidgetFactory(const char* name, TBValue::Type sync_type);
 
   // Creates and returns the new widget or nullptr on out of memory.
-  virtual TBWidget* Create(InflateInfo* info) = 0;
+  virtual Widget* Create(InflateInfo* info) = 0;
 
   void Register();
 
@@ -60,7 +60,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 //
 // It should be followed by an empty block (may eventually be removed).
 // Reading custom properties from resources can be done by overriding
-// TBWidget::OnInflate.
+// Widget::OnInflate.
 //
 // Example:
 //   TB_WIDGET_FACTORY(MyWidget, TBValue::Type::kInt, WidgetZ::kTop) {}
@@ -70,7 +70,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
     classname##WidgetFactory() : WidgetFactory(#classname, sync_type) { \
       Register();                                                       \
     }                                                                   \
-    TBWidget* Create(InflateInfo* info) override {                      \
+    Widget* Create(InflateInfo* info) override {                        \
       classname* widget = new classname();                              \
       if (widget) {                                                     \
         widget->GetContentRoot()->SetZInflate(add_child_z);             \
@@ -107,7 +107,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 // Each factory may have its own set of properties, but a set of generic
 // properties is always supported on all widgets. Those are:
 //
-// Resource name:   TBWidget property:    Values:
+// Resource name:   Widget property:    Values:
 //
 // id					      m_id              TBID (string or
 // int)
@@ -138,7 +138,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 // lp>min-height		SetLayoutParams   dimension
 // lp>max-height		SetLayoutParams   dimension
 // lp>pref-height		SetLayoutParams   dimension
-// autofocus			  The TBWidget will be focused automatically the
+// autofocus			  The Widget will be focused automatically the
 //                  first time its Window is activated.
 // font>name			  Font name
 // font>size			  Font size
@@ -159,14 +159,14 @@ class WidgetReader {
   // Sets the id from the given node.
   static void SetIDFromNode(TBID& id, TBNode* node);
 
-  bool LoadFile(TBWidget* target, const char* filename);
-  bool LoadData(TBWidget* target, const char* data);
-  bool LoadData(TBWidget* target, const char* data, size_t data_len);
-  void LoadNodeTree(TBWidget* target, TBNode* node);
+  bool LoadFile(Widget* target, const char* filename);
+  bool LoadData(Widget* target, const char* data);
+  bool LoadData(Widget* target, const char* data, size_t data_len);
+  void LoadNodeTree(Widget* target, TBNode* node);
 
  private:
   bool Init();
-  bool CreateWidget(TBWidget* target, TBNode* node);
+  bool CreateWidget(Widget* target, TBNode* node);
 
   TBLinkListOf<WidgetFactory> factories;
 };

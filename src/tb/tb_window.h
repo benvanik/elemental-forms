@@ -26,13 +26,13 @@ enum class WindowSettings {
 };
 MAKE_ENUM_FLAG_COMBO(WindowSettings);
 
-// A TBWidget that provides some window-like features.
+// A Widget that provides some window-like features.
 // It can have a titlebar, be movable, resizable etc.
 // It will activate and deactivate other windows on click (which will restore
 // focus to the last focused child widget).
-class Window : public TBWidget {
+class Window : public Widget {
  public:
-  TBOBJECT_SUBCLASS(Window, TBWidget);
+  TBOBJECT_SUBCLASS(Window, Widget);
 
   Window();
   ~Window() override;
@@ -61,9 +61,9 @@ class Window : public TBWidget {
 
   // Sets the widget that should be focused when this window is activated next
   // time.
-  // This should not be used to change focus. Call TBWidget::SetFocus to focus,
+  // This should not be used to change focus. Call Widget::SetFocus to focus,
   // which will call this method if the window is inactive!
-  void SetLastFocus(TBWidget* last_focus) { m_last_focus.Set(last_focus); }
+  void SetLastFocus(Widget* last_focus) { m_last_focus.Set(last_focus); }
 
   // Sets settings for how this window should look and behave.
   void SetSettings(WindowSettings settings);
@@ -88,7 +88,7 @@ class Window : public TBWidget {
 
   // Sets the window title.
   void SetText(const char* text) override { m_textfield.SetText(text); }
-  using TBWidget::SetText;
+  using Widget::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
   // Gets the height of the title bar (or 0 if the WindowSettings say this
@@ -99,10 +99,10 @@ class Window : public TBWidget {
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
 
-  bool OnEvent(const TBWidgetEvent& ev) override;
+  bool OnEvent(const WidgetEvent& ev) override;
   void OnAdded() override;
   void OnRemove() override;
-  void OnChildAdded(TBWidget* child) override;
+  void OnChildAdded(Widget* child) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
