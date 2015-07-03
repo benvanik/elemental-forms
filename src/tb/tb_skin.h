@@ -39,6 +39,30 @@ enum class SkinState {
   kAll = kDisabled | kFocused | kPressed | kSelected | kHovered,
 };
 MAKE_ENUM_FLAG_COMBO(SkinState);
+inline std::string to_string(SkinState value) {
+  if (value == SkinState::kNone) {
+    return "none";
+  } else if (value == SkinState::kAll) {
+    return "all";
+  }
+  std::string result;
+  if (any(value & SkinState::kDisabled)) {
+    result += " disabled";
+  }
+  if (any(value & SkinState::kFocused)) {
+    result += " focused";
+  }
+  if (any(value & SkinState::kPressed)) {
+    result += " pressed";
+  }
+  if (any(value & SkinState::kSelected)) {
+    result += " selected";
+  }
+  if (any(value & SkinState::kHovered)) {
+    result += " hovered";
+  }
+  return result.substr(1);
+}
 
 // Type of painting that should be done for a SkinElement.
 enum class SkinElementType {

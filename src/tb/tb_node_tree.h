@@ -86,10 +86,15 @@ class Node : public TBLinkOf<Node> {
   // Removes and deletes child node n from this node.
   void Delete(Node* n) { m_children.Delete(n); }
 
+  // Creates duplicates of the source node and all child nodes.
+  // NOTE: nodes do not replace existing nodes with the same name. Cloned nodes
+  // are added after any existing nodes.
+  void Clone(Node* source);
+
   // Creates duplicates of all items in source and add them to this node.
   // NOTE: nodes do not replace existing nodes with the same name. Cloned nodes
   // are added after any existing nodes.
-  bool CloneChildren(Node* source);
+  void CloneChildren(Node* source);
 
   enum class MissingPolicy {
     // GetNode will return nullptr if the node doesn't exist.

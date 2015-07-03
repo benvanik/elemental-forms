@@ -24,6 +24,8 @@ class Value;
 // To preserve special constants, those must be <= this value.
 constexpr int kInvalidDimension = -5555;
 
+constexpr int kDefaultDpi = 0;
+
 // Converts device independant points to pixels, based on two DPI values.
 // Dimensions in Turbo Badger are normally in pixels (if not specified
 // differently) and conversion normally take place when loading skin.

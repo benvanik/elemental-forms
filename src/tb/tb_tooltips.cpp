@@ -42,7 +42,7 @@ TooltipWindow::TooltipWindow(Widget* target) : PopupWindow(target) {
   m_content.SetGravity(Gravity::kAll);
   m_content.SetReadOnly(true);
   m_content.SetMultiline(true);
-  m_content.SetText(target->GetDescription());
+  m_content.SetText(target->GetTooltip());
   m_content.SetAdaptToContentSize(true);
   AddChild(&m_content);
 }
@@ -133,7 +133,7 @@ void TooltipManager::DeleteShowMessages() {
 
 Widget* TooltipManager::GetTippedWidget() {
   Widget* current = Widget::hovered_widget;
-  while (current && current->GetDescription().empty()) {
+  while (current && current->GetTooltip().empty()) {
     current = current->GetParent();
   }
   return current;

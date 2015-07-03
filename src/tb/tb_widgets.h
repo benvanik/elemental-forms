@@ -941,11 +941,11 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   virtual std::string GetText() { return ""; }
 
   // Gets the description string of this widget. Used for tooltips.
-  virtual std::string GetDescription() { return m_desc_str; }
+  virtual std::string GetTooltip() { return m_tooltip_str; }
 
   // Sets the description string for this widget. Used for tooltips.
-  virtual void SetDescription(const char* desc) {
-    m_desc_str = desc ? desc : "";
+  virtual void SetTooltip(const char* value) {
+    m_tooltip_str = value ? value : "";
   }
 
   // Connects this widget to a widget value.
@@ -1131,7 +1131,7 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   LayoutParams* m_layout_params = nullptr;
   Scroller* m_scroller = nullptr;
   LongClickTimer* m_long_click_timer = nullptr;
-  std::string m_desc_str;
+  std::string m_tooltip_str;
   union {
     struct {
       uint16_t is_group_root : 1;

@@ -10,7 +10,10 @@
 #ifndef TB_GEOMETRY_H
 #define TB_GEOMETRY_H
 
+#include <string>
+
 #include "tb_core.h"
+#include "tb_str.h"
 
 namespace tb {
 
@@ -69,6 +72,9 @@ class Rect {
   Rect Union(const Rect& rect) const;
   Rect Clip(const Rect& clip_rect) const;
 };
+inline std::string to_string(const Rect& value) {
+  return format_string("%d %d %d %d", value.x, value.y, value.w, value.h);
+}
 
 // Performs calculations on regions represented by a list of rectangles.
 class RectRegion {

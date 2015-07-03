@@ -136,7 +136,7 @@ void Widget::OnInflate(const InflateInfo& info) {
     SetLayoutParams(layout_params);
   }
 
-  SetDescription(info.node->GetValueString("desc", nullptr));
+  SetTooltip(info.node->GetValueString("tooltip", nullptr));
 
   // Add the new widget to the hiearchy if not already added.
   if (!GetParent()) info.target->AddChild(this, info.target->GetZInflate());
@@ -443,7 +443,7 @@ bool WidgetReader::LoadData(Widget* target, const char* data, size_t data_len) {
 }
 
 void WidgetReader::LoadNodeTree(Widget* target, Node* node) {
-  // Iterate through all nodes and create widgets
+  // Iterate through all nodes and create widgets.
   for (Node* child = node->GetFirstChild(); child; child = child->GetNext()) {
     CreateWidget(target, child);
   }

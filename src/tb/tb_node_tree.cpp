@@ -81,19 +81,22 @@ Node* Node::GetNodeInternal(const char* name, size_t name_len) const {
   return nullptr;
 }
 
-bool Node::CloneChildren(Node* source) {
+void Node::Clone(Node* source) {
+  Node* new_child = Create(source->m_name);
+  new_child->m_value.Copy(source->m_value);
+  Add(new_child);
+  new_child->CloneChildren(source);
+}
+
+void Node::CloneChildren(Node* source) {
   Node* item = source->GetFirstChild();
   while (item) {
     Node* new_child = Create(item->m_name);
     new_child->m_value.Copy(item->m_value);
     Add(new_child);
-
-    if (!new_child->CloneChildren(item)) {
-      return false;
-    }
+    new_child->CloneChildren(item);
     item = item->GetNext();
   }
-  return true;
 }
 
 Value& Node::GetValueFollowRef() {
