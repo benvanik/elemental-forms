@@ -27,7 +27,7 @@ TB_TEST_GROUP(tb_text_box) {
 
     /** Set a size so the layout code will be called and we can do some layout
      * tests. */
-    edit->SetRect(Rect(0, 0, 1000, 1000));
+    edit->set_rect({0, 0, 1000, 1000});
 
     /** Force windows style line breaks so testing is the same on all platforms.
      */

@@ -38,7 +38,7 @@ TextFragmentContent* TextFragmentContentFactory::CreateFragmentContent(
     return new TextFragmentContentUnderline();
   } else if (strncmp(text, "<color ", std::min(text_len, 7ull)) == 0) {
     Color color;
-    color.SetFromString(text + 7, text_len - 8);
+    color.reset(text + 7, text_len - 8);
     return new TextFragmentContentTextColor(color);
   } else if (strncmp(text, "</", std::min(text_len, 2ull)) == 0) {
     return new TextFragmentContentStylePop();
@@ -48,18 +48,18 @@ TextFragmentContent* TextFragmentContentFactory::CreateFragmentContent(
 
 TextFragmentContentHR::TextFragmentContentHR(int32_t width_in_percent,
                                              int32_t height)
-    : width_in_percent(width_in_percent), height(height) {}
+    : width_in_percent_(width_in_percent), height_(height) {}
 
 void TextFragmentContentHR::Paint(TextFragment* fragment, int32_t translate_x,
                                   int32_t translate_y, TextProps* props) {
   int x = translate_x + fragment->xpos;
   int y = translate_y + fragment->ypos;
 
-  int w = fragment->block->style_edit->layout_width * width_in_percent / 100;
+  int w = fragment->block->style_edit->layout_width * width_in_percent_ / 100;
   x += (fragment->block->style_edit->layout_width - w) / 2;
 
   StyleEditListener* listener = fragment->block->style_edit->listener;
-  listener->DrawRectFill(Rect(x, y, w, height), props->data->text_color);
+  listener->DrawRectFill(Rect(x, y, w, height_), props->data->text_color);
 }
 
 int32_t TextFragmentContentHR::GetWidth(FontFace* font,
@@ -69,7 +69,7 @@ int32_t TextFragmentContentHR::GetWidth(FontFace* font,
 
 int32_t TextFragmentContentHR::GetHeight(FontFace* font,
                                          TextFragment* fragment) {
-  return height;
+  return height_;
 }
 
 void TextFragmentContentUnderline::Paint(TextFragment* fragment,

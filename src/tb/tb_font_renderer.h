@@ -47,7 +47,7 @@ class FontMetrics {
  public:
   int16_t ascent = 0;   // Ascent. See FontFace::GetAscent().
   int16_t descent = 0;  // Descent. See FontFace::GetDescent().
-  int16_t height = 0;   // Height. See FontFace::GetHeight().
+  int16_t height = 0;   // Height. See FontFace::height().
 };
 
 // Renders glyphs from a font file.
@@ -159,7 +159,7 @@ class FontFace {
   int GetDescent() const { return m_metrics.descent; }
 
   // Gets height of the font in pixels.
-  int GetHeight() const { return m_metrics.height; }
+  int height() const { return m_metrics.height; }
 
   // Gets the font description that was used to create this font.
   FontDescription GetFontDescription() const { return m_font_desc; }

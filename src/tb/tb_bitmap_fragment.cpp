@@ -247,7 +247,7 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
     frag->m_map = this;
     frag->m_row = best_row;
     frag->m_space = space;
-    frag->m_rect.Set(space->x + border, best_row->y + border, frag_w, frag_h);
+    frag->m_rect.reset(space->x + border, best_row->y + border, frag_w, frag_h);
     frag->m_row_height = best_row->height;
     frag->m_batch_id = 0xffffffff;
     CopyData(frag, data_stride, frag_data, border);

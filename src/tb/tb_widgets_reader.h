@@ -126,7 +126,7 @@ class ElementFactory : public TBLinkOf<ElementFactory> {
 //                                    gone)
 // state				    SetState          string (disabled)
 // skin				      SetSkinBg         TBID (string or int)
-// rect				      SetRect           4 integers (x, y, width,
+// rect				      set_rect          4 integers (x, y, width,
 //                                    height)
 // lp>width			    SetLayoutParams   dimension
 // lp>min-width		  SetLayoutParams   dimension

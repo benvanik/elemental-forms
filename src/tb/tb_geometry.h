@@ -20,6 +20,7 @@ namespace tb {
 class Point {
  public:
   int x, y;
+
   Point() : x(0), y(0) {}
   Point(int x, int y) : x(x), y(y) {}
 };
@@ -27,21 +28,22 @@ class Point {
 class Rect {
  public:
   int x, y, w, h;
+
   Rect() : x(0), y(0), w(0), h(0) {}
   Rect(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 
-  inline bool IsEmpty() const { return w <= 0 || h <= 0; }
-  inline bool IsInsideOut() const { return w < 0 || h < 0; }
-  inline bool Equals(const Rect& rect) const {
+  inline bool empty() const { return w <= 0 || h <= 0; }
+  inline bool is_inside_out() const { return w < 0 || h < 0; }
+  inline bool equals(const Rect& rect) const {
     return rect.x == x && rect.y == y && rect.w == w && rect.h == h;
   }
-  bool Intersects(const Rect& rect) const;
-  bool Contains(const Point& p) const {
+  bool intersects(const Rect& rect) const;
+  bool contains(const Point& p) const {
     return p.x >= x && p.y >= y && p.x < x + w && p.y < y + h;
   }
 
-  inline void Reset() { x = y = w = h = 0; }
-  inline void Set(int x, int y, int w, int h) {
+  inline void reset() { x = y = w = h = 0; }
+  inline void reset(int x, int y, int w, int h) {
     this->x = x;
     this->y = y;
     this->w = w;
@@ -115,15 +117,16 @@ class RectRegion {
   bool AddExcludingRects(const Rect& rect, const Rect& exclude_rect,
                          bool coalesce);
 
-  bool IsEmpty() const { return m_num_rects == 0; }
-  int GetNumRects() const { return m_num_rects; }
-  const Rect& GetRect(int index) const;
+  bool empty() const { return m_num_rects == 0; }
+  int size() const { return m_num_rects; }
+  const Rect& operator[](int index) const;
 
  private:
+  void GrowIfNeeded();
+
   Rect* m_rects = nullptr;
   int m_num_rects = 0;
   int m_capacity = 0;
-  void GrowIfNeeded();
 };
 
 };  // namespace tb

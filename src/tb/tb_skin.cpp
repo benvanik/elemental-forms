@@ -100,7 +100,7 @@ bool Skin::LoadInternal(const char* skin_file) {
 
   // Read skin constants.
   if (const char* color = node.GetValueString("defaults>text-color", nullptr)) {
-    m_default_text_color.SetFromString(color, strlen(color));
+    m_default_text_color.reset(color);
   }
   m_default_disabled_opacity = node.GetValueFloat("defaults>disabled>opacity",
                                                   m_default_disabled_opacity);
@@ -375,11 +375,11 @@ void Skin::PaintElementBGColor(const Rect& dst_rect, SkinElement* element) {
 void Skin::PaintElementImage(const Rect& dst_rect, SkinElement* element) {
   Rect src_rect(0, 0, element->bitmap->Width(), element->bitmap->Height());
   Rect rect = dst_rect.Expand(element->expand, element->expand);
-  rect.Set(rect.x + element->img_ofs_x +
-               (rect.w - src_rect.w) * element->img_position_x / 100,
-           rect.y + element->img_ofs_y +
-               (rect.h - src_rect.h) * element->img_position_y / 100,
-           src_rect.w, src_rect.h);
+  rect.reset(rect.x + element->img_ofs_x +
+                 (rect.w - src_rect.w) * element->img_position_x / 100,
+             rect.y + element->img_ofs_y +
+                 (rect.h - src_rect.h) * element->img_position_y / 100,
+             src_rect.w, src_rect.h);
   g_renderer->DrawBitmap(rect, GetFlippedRect(src_rect, element),
                          element->bitmap);
 }
@@ -391,7 +391,7 @@ void Skin::PaintElementTile(const Rect& dst_rect, SkinElement* element) {
 
 void Skin::PaintElementStretchImage(const Rect& dst_rect,
                                     SkinElement* element) {
-  if (dst_rect.IsEmpty()) return;
+  if (dst_rect.empty()) return;
   Rect rect = dst_rect.Expand(element->expand, element->expand);
   Rect src_rect = GetFlippedRect(
       Rect(0, 0, element->bitmap->Width(), element->bitmap->Height()), element);
@@ -400,7 +400,7 @@ void Skin::PaintElementStretchImage(const Rect& dst_rect,
 
 void Skin::PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
                                   bool fill_center) {
-  if (dst_rect.IsEmpty()) {
+  if (dst_rect.empty()) {
     return;
   }
 
@@ -622,11 +622,11 @@ void SkinElement::Load(Node* n, Skin* skin, const char* skin_path) {
   opacity = n->GetValueFloat("opacity", opacity);
 
   if (const char* color = n->GetValueString("text-color", nullptr)) {
-    text_color.SetFromString(color, strlen(color));
+    text_color.reset(color);
   }
 
   if (const char* color = n->GetValueString("background-color", nullptr)) {
-    bg_color.SetFromString(color, strlen(color));
+    bg_color.reset(color);
   }
 
   if (const char* type_str = n->GetValueString("type", nullptr)) {

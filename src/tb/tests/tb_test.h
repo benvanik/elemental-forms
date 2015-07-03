@@ -62,7 +62,7 @@
                 std::string str;
 
                 // Here goes methods with access to data
-                bool is_str_empty() { return str.IsEmpty(); }
+                bool is_str_empty() { return str.empty(); }
 
                 // A test with name Setup will be called before each test.
                 // If it fail, no other tests will be called (not even Cleanup).

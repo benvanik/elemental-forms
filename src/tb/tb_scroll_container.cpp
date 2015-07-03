@@ -153,8 +153,8 @@ void ScrollContainer::InvalidateLayout(InvalidationMode il) {
 }
 
 Rect ScrollContainer::GetPaddingRect() {
-  int visible_w = GetRect().w;
-  int visible_h = GetRect().h;
+  int visible_w = rect().w;
+  int visible_h = rect().h;
   if (m_scrollbar_x.GetOpacity()) {
     visible_h -= m_scrollbar_x.GetPreferredSize().pref_h;
   }
@@ -236,7 +236,7 @@ bool ScrollContainer::OnEvent(const ElementEvent& ev) {
 }
 
 void ScrollContainer::OnProcess() {
-  SizeConstraints sc(GetRect().w, GetRect().h);
+  SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 
@@ -247,10 +247,10 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
   // Layout scrollbars (no matter if they are visible or not).
   int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
   int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
-  m_scrollbar_x.SetRect(Rect(0, GetRect().h - scrollbar_x_h,
-                             GetRect().w - scrollbar_y_w, scrollbar_x_h));
-  m_scrollbar_y.SetRect(
-      Rect(GetRect().w - scrollbar_y_w, 0, scrollbar_y_w, GetRect().h));
+  m_scrollbar_x.set_rect(
+      {0, rect().h - scrollbar_x_h, rect().w - scrollbar_y_w, scrollbar_x_h});
+  m_scrollbar_y.set_rect(
+      {rect().w - scrollbar_y_w, 0, scrollbar_y_w, rect().h});
 
   if (Element* content_child = m_root.GetFirstChild()) {
     int horizontal_padding =
@@ -264,35 +264,35 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
     PreferredSize ps = content_child->GetPreferredSize(inner_sc);
 
     auto visibility =
-        ScrollBarVisibility::Solve(m_mode, ps.pref_w, ps.pref_h, GetRect().w,
-                                   GetRect().h, scrollbar_x_h, scrollbar_y_w);
+        ScrollBarVisibility::Solve(m_mode, ps.pref_w, ps.pref_h, rect().w,
+                                   rect().h, scrollbar_x_h, scrollbar_y_w);
     m_scrollbar_x.SetOpacity(visibility.x_on ? 1.f : 0.f);
     m_scrollbar_y.SetOpacity(visibility.y_on ? 1.f : 0.f);
-    m_root.SetRect(Rect(0, 0, visibility.visible_w, visibility.visible_h));
+    m_root.set_rect({0, 0, visibility.visible_w, visibility.visible_h});
 
     int content_w, content_h;
     if (m_adapt_content_size) {
-      content_w = std::max(ps.pref_w, m_root.GetRect().w);
-      content_h = std::max(ps.pref_h, m_root.GetRect().h);
-      if (!visibility.x_on && m_root.GetRect().w < ps.pref_w) {
-        content_w = std::min(ps.pref_w, m_root.GetRect().w);
+      content_w = std::max(ps.pref_w, m_root.rect().w);
+      content_h = std::max(ps.pref_h, m_root.rect().h);
+      if (!visibility.x_on && m_root.rect().w < ps.pref_w) {
+        content_w = std::min(ps.pref_w, m_root.rect().w);
       }
     } else {
       content_w = ps.pref_w;
       content_h = ps.pref_h;
     }
 
-    content_child->SetRect(Rect(0, 0, content_w, content_h));
-    double limit_max_w = std::max(0, content_w - m_root.GetRect().w);
-    double limit_max_h = std::max(0, content_h - m_root.GetRect().h);
-    m_scrollbar_x.SetLimits(0, limit_max_w, m_root.GetRect().w);
-    m_scrollbar_y.SetLimits(0, limit_max_h, m_root.GetRect().h);
+    content_child->set_rect(Rect(0, 0, content_w, content_h));
+    double limit_max_w = std::max(0, content_w - m_root.rect().w);
+    double limit_max_h = std::max(0, content_h - m_root.rect().h);
+    m_scrollbar_x.SetLimits(0, limit_max_w, m_root.rect().w);
+    m_scrollbar_y.SetLimits(0, limit_max_h, m_root.rect().h);
   }
 }
 
 void ScrollContainer::OnResized(int old_w, int old_h) {
   InvalidateLayout(InvalidationMode::kTargetOnly);
-  SizeConstraints sc(GetRect().w, GetRect().h);
+  SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 

@@ -25,7 +25,7 @@ int ElementString::GetWidth(Element* element) {
 }
 
 int ElementString::GetHeight(Element* element) {
-  return element->GetFont()->GetHeight();
+  return element->GetFont()->height();
 }
 
 void ElementString::Paint(Element* element, const Rect& rect,
@@ -127,7 +127,7 @@ Button::Button() {
   // layout to grow to make the space available.
   m_textfield.SetGravity(Gravity::kAll);
   m_layout.AddChild(&m_textfield);
-  m_layout.SetRect(GetPaddingRect());
+  m_layout.set_rect(GetPaddingRect());
   m_layout.SetGravity(Gravity::kAll);
   m_layout.SetPaintOverflowFadeout(false);
 }
@@ -170,7 +170,7 @@ void Button::OnCaptureChanged(bool captured) {
   }
 }
 
-void Button::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
+void Button::OnSkinChanged() { m_layout.set_rect(GetPaddingRect()); }
 
 bool Button::OnEvent(const ElementEvent& ev) {
   if (CanToggle() && ev.type == EventType::kClick && ev.target == this) {
@@ -237,7 +237,7 @@ void Button::ButtonLayout::OnChildRemove(Element* child) {
 LabelContainer::LabelContainer() {
   AddChild(&m_layout);
   m_layout.AddChild(&m_textfield);
-  m_layout.SetRect(GetPaddingRect());
+  m_layout.set_rect(GetPaddingRect());
   m_layout.SetGravity(Gravity::kAll);
   m_layout.SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
 }
@@ -272,8 +272,8 @@ bool LabelContainer::OnEvent(const ElementEvent& ev) {
 
     click_target->SetState(SkinState::kPressed, pressed_state);
 
-    ElementEvent target_ev(ev.type, ev.target_x - click_target->GetRect().x,
-                           ev.target_y - click_target->GetRect().y, ev.touch,
+    ElementEvent target_ev(ev.type, ev.target_x - click_target->rect().x,
+                           ev.target_y - click_target->rect().y, ev.touch,
                            ev.modifierkeys);
     return click_target->InvokeEvent(target_ev);
   }
@@ -464,8 +464,8 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kPointerMove && ev.target == this) {
     return true;
   } else if (ev.type == EventType::kPointerDown && ev.target == this) {
-    bool after_handle = m_axis == Axis::kX ? ev.target_x > m_handle.GetRect().x
-                                           : ev.target_y > m_handle.GetRect().y;
+    bool after_handle = m_axis == Axis::kX ? ev.target_x > m_handle.rect().x
+                                           : ev.target_y > m_handle.rect().y;
     SetValueDouble(m_value + (after_handle ? m_visible : -m_visible));
     return true;
   } else if (ev.type == EventType::kWheel) {
@@ -479,8 +479,8 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
 void ScrollBar::UpdateHandle() {
   // Calculate the mover size and position.
   bool horizontal = m_axis == Axis::kX;
-  int available_pixels = horizontal ? GetRect().w : GetRect().h;
-  int min_thickness_pixels = std::min(GetRect().h, GetRect().w);
+  int available_pixels = horizontal ? rect().w : rect().h;
+  int min_thickness_pixels = std::min(rect().h, rect().w);
 
   int visible_pixels = available_pixels;
 
@@ -503,14 +503,14 @@ void ScrollBar::UpdateHandle() {
 
   int pixel_pos = (int)(m_value * m_to_pixel_factor);
 
-  Rect rect;
+  Rect handle_rect;
   if (horizontal) {
-    rect.Set(pixel_pos, 0, visible_pixels, GetRect().h);
+    handle_rect.reset(pixel_pos, 0, visible_pixels, rect().h);
   } else {
-    rect.Set(0, pixel_pos, GetRect().w, visible_pixels);
+    handle_rect.reset(0, pixel_pos, rect().w, visible_pixels);
   }
 
-  m_handle.SetRect(rect);
+  m_handle.set_rect(handle_rect);
 }
 
 void ScrollBar::OnResized(int old_w, int old_h) { UpdateHandle(); }
@@ -599,28 +599,30 @@ bool Slider::OnEvent(const ElementEvent& ev) {
 void Slider::UpdateHandle() {
   // Calculate the handle position.
   bool horizontal = m_axis == Axis::kX;
-  int available_pixels = horizontal ? GetRect().w : GetRect().h;
+  int available_pixels = horizontal ? rect().w : rect().h;
 
-  Rect rect;
+  Rect handle_rect;
   if (m_max - m_min > 0) {
     PreferredSize ps = m_handle.GetPreferredSize();
     int handle_pixels = horizontal ? ps.pref_w : ps.pref_h;
     m_to_pixel_factor =
-        (double)(available_pixels - handle_pixels) / (m_max - m_min) /*+ 0.5*/;
+        double(available_pixels - handle_pixels) / (m_max - m_min) /*+ 0.5*/;
 
-    int pixel_pos = (int)((m_value - m_min) * m_to_pixel_factor);
+    int pixel_pos = int((m_value - m_min) * m_to_pixel_factor);
 
     if (horizontal) {
-      rect.Set(pixel_pos, (GetRect().h - ps.pref_h) / 2, ps.pref_w, ps.pref_h);
+      handle_rect.reset(pixel_pos, (rect().h - ps.pref_h) / 2, ps.pref_w,
+                        ps.pref_h);
     } else {
-      rect.Set((GetRect().w - ps.pref_w) / 2,
-               GetRect().h - handle_pixels - pixel_pos, ps.pref_w, ps.pref_h);
+      handle_rect.reset((rect().w - ps.pref_w) / 2,
+                        rect().h - handle_pixels - pixel_pos, ps.pref_w,
+                        ps.pref_h);
     }
   } else {
     m_to_pixel_factor = 0;
   }
 
-  m_handle.SetRect(rect);
+  m_handle.set_rect(handle_rect);
 }
 
 void Slider::OnResized(int old_w, int old_h) { UpdateHandle(); }
@@ -637,15 +639,15 @@ bool Mover::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_element == this) {
     int dx = ev.target_x - pointer_down_element_x;
     int dy = ev.target_y - pointer_down_element_y;
-    Rect rect = target->GetRect().Offset(dx, dy);
+    Rect rect = target->rect().Offset(dx, dy);
     if (target->GetParent()) {
       // Apply limit.
       rect.x = Clamp(rect.x, -pointer_down_element_x,
-                     target->GetParent()->GetRect().w - pointer_down_element_x);
+                     target->GetParent()->rect().w - pointer_down_element_x);
       rect.y = Clamp(rect.y, -pointer_down_element_y,
-                     target->GetParent()->GetRect().h - pointer_down_element_y);
+                     target->GetParent()->rect().h - pointer_down_element_y);
     }
-    target->SetRect(rect);
+    target->set_rect(rect);
     return true;
   }
   return false;
@@ -656,7 +658,7 @@ Resizer::Resizer() { SetSkinBg(TBIDC("Resizer"), InvokeInfo::kNoCallbacks); }
 HitStatus Resizer::GetHitStatus(int x, int y) {
   // Shave off some of the upper left diagonal half from the hit area.
   const int extra_hit_area = 3;
-  if (x < GetRect().w - y - extra_hit_area) {
+  if (x < rect().w - y - extra_hit_area) {
     return HitStatus::kNoHit;
   }
   return Element::GetHitStatus(x, y);
@@ -668,14 +670,14 @@ bool Resizer::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kPointerMove && captured_element == this) {
     int dx = ev.target_x - pointer_down_element_x;
     int dy = ev.target_y - pointer_down_element_y;
-    Rect rect = target->GetRect();
+    Rect rect = target->rect();
     rect.w += dx;
     rect.h += dy;
     // Apply limit. We should not use minimum size since we can squeeze
     // the layout much more, and provide scroll/pan when smaller.
     rect.w = std::max(rect.w, 50);
     rect.h = std::max(rect.h, 50);
-    target->SetRect(rect);
+    target->set_rect(rect);
   } else {
     return false;
   }
@@ -688,7 +690,7 @@ Dimmer::Dimmer() {
 }
 
 void Dimmer::OnAdded() {
-  SetRect(Rect(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h));
+  set_rect({ 0, 0, GetParent()->rect().w, GetParent()->rect().h });
 }
 
 }  // namespace tb

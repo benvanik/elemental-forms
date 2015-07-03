@@ -51,15 +51,15 @@ TextBox::TextBox() {
   m_scrollbar_y.SetAxis(Axis::kY);
   int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
   int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
-  m_scrollbar_x.SetRect(Rect(0, -scrollbar_x_h, -scrollbar_y_w, scrollbar_x_h));
-  m_scrollbar_y.SetRect(Rect(-scrollbar_y_w, 0, scrollbar_y_w, 0));
+  m_scrollbar_x.set_rect({ 0, -scrollbar_x_h, -scrollbar_y_w, scrollbar_x_h });
+  m_scrollbar_y.set_rect({ -scrollbar_y_w, 0, scrollbar_y_w, 0 });
   m_scrollbar_x.SetOpacity(0);
   m_scrollbar_y.SetOpacity(0);
 
   SetSkinBg(TBIDC("TextBox"), InvokeInfo::kNoCallbacks);
   m_style_edit.SetListener(this);
 
-  m_root.SetRect(GetVisibleRect());
+  m_root.set_rect(GetVisibleRect());
 
   m_placeholder.SetTextAlign(TextAlign::kLeft);
 
@@ -76,10 +76,10 @@ TextBox::~TextBox() {
 Rect TextBox::GetVisibleRect() {
   Rect rect = GetPaddingRect();
   if (m_scrollbar_y.GetOpacity()) {
-    rect.w -= m_scrollbar_y.GetRect().w;
+    rect.w -= m_scrollbar_y.rect().w;
   }
   if (m_scrollbar_x.GetOpacity()) {
-    rect.h -= m_scrollbar_x.GetRect().h;
+    rect.h -= m_scrollbar_x.rect().h;
   }
   return rect;
 }
@@ -87,7 +87,7 @@ Rect TextBox::GetVisibleRect() {
 void TextBox::UpdateScrollbarVisibility(bool multiline) {
   bool enable_vertical = multiline && !m_adapt_to_content_size;
   m_scrollbar_y.SetOpacity(enable_vertical ? 1.f : 0.f);
-  m_root.SetRect(GetVisibleRect());
+  m_root.set_rect(GetVisibleRect());
 }
 
 void TextBox::SetAdaptToContentSize(bool adapt) {
@@ -285,12 +285,12 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
                      paint_props.text_color);
 
   // If empty, draw placeholder text with some opacity.
-  if (m_style_edit.IsEmpty()) {
+  if (m_style_edit.empty()) {
     float old_opacity = g_renderer->GetOpacity();
     g_renderer->SetOpacity(old_opacity *
                            g_tb_skin->GetDefaultPlaceholderOpacity());
     Rect placeholder_rect(visible_rect.x, visible_rect.y, visible_rect.w,
-                          GetFont()->GetHeight());
+                          GetFont()->height());
     m_placeholder.Paint(this, placeholder_rect, paint_props.text_color);
     g_renderer->SetOpacity(old_opacity);
   }
@@ -334,7 +334,7 @@ void TextBox::OnResized(int old_w, int old_h) {
 
 PreferredSize TextBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
-  int font_height = GetFont()->GetHeight();
+  int font_height = GetFont()->height();
   PreferredSize ps;
   if (m_adapt_to_content_size) {
     int old_layout_width = m_style_edit.layout_width;
@@ -540,19 +540,19 @@ TextFragmentContentElement::~TextFragmentContentElement() {
 }
 
 void TextFragmentContentElement::UpdatePos(int x, int y) {
-  m_element->SetRect(
-      Rect(x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)));
+  m_element->set_rect(
+      {x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)});
 }
 
 int32_t TextFragmentContentElement::GetWidth(FontFace* font,
                                              TextFragment* fragment) {
-  return m_element->GetRect().w ? m_element->GetRect().w
+  return m_element->rect().w ? m_element->rect().w
                                 : m_element->GetPreferredSize().pref_w;
 }
 
 int32_t TextFragmentContentElement::GetHeight(FontFace* font,
                                               TextFragment* fragment) {
-  return m_element->GetRect().h ? m_element->GetRect().h
+  return m_element->rect().h ? m_element->rect().h
                                 : m_element->GetPreferredSize().pref_h;
 }
 

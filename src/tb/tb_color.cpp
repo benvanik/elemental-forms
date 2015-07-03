@@ -13,22 +13,30 @@
 
 namespace tb {
 
-void Color::SetFromString(const char* str, size_t len) {
+void Color::reset(const char* value, size_t length) {
+  if (!value || !length) {
+    reset();
+    return;
+  }
+  if (length == std::string::npos) {
+    length = std::strlen(value);
+  }
   int r, g, b, a;
-  if (len == 9 && sscanf(str, "#%2x%2x%2x%2x", &r, &g, &b, &a) == 4) {
+  if (length == 9 && std::sscanf(value, "#%2x%2x%2x%2x", &r, &g, &b, &a) == 4) {
     // rrggbbaa
-    Set(Color(r, g, b, a));
-  } else if (len == 7 && sscanf(str, "#%2x%2x%2x", &r, &g, &b) == 3) {
+    reset(r, g, b, a);
+  } else if (length == 7 && std::sscanf(value, "#%2x%2x%2x", &r, &g, &b) == 3) {
     // rrggbb
-    Set(Color(r, g, b));
-  } else if (len == 5 && sscanf(str, "#%1x%1x%1x%1x", &r, &g, &b, &a) == 4) {
+    reset(r, g, b);
+  } else if (length == 5 &&
+             std::sscanf(value, "#%1x%1x%1x%1x", &r, &g, &b, &a) == 4) {
     // rgba
-    Set(Color(r + (r << 4), g + (g << 4), b + (b << 4), a + (a << 4)));
-  } else if (len == 4 && sscanf(str, "#%1x%1x%1x", &r, &g, &b) == 3) {
+    reset(r + (r << 4), g + (g << 4), b + (b << 4), a + (a << 4));
+  } else if (length == 4 && std::sscanf(value, "#%1x%1x%1x", &r, &g, &b) == 3) {
     // rgb
-    Set(Color(r + (r << 4), g + (g << 4), b + (b << 4)));
+    reset(r + (r << 4), g + (g << 4), b + (b << 4));
   } else {
-    Set(Color());
+    reset();
   }
 }
 

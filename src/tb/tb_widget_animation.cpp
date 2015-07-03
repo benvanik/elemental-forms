@@ -79,14 +79,14 @@ void RectElementAnimation::OnAnimationStart() {
   m_element->Invalidate();
 
   if (m_mode == Mode::kSrcToDest) {
-    m_element->SetRect(m_src_rect);
+    m_element->set_rect(m_src_rect);
   }
 }
 
 void RectElementAnimation::OnAnimationUpdate(float progress) {
   if (m_mode == Mode::kDeltaIn || m_mode == Mode::kDeltaOut) {
-    m_dst_rect = m_src_rect = m_element->GetRect();
-    if (m_dst_rect.Equals(Rect())) {
+    m_dst_rect = m_src_rect = m_element->rect();
+    if (m_dst_rect.equals(Rect())) {
       // Element hasn't been laid out yet,
       // the animation was started too soon.
       AnimationManager::AbortAnimation(this, true);
@@ -110,13 +110,13 @@ void RectElementAnimation::OnAnimationUpdate(float progress) {
   rect.y = int(Lerp(float(m_src_rect.y), float(m_dst_rect.y), progress));
   rect.w = int(Lerp(float(m_src_rect.w), float(m_dst_rect.w), progress));
   rect.h = int(Lerp(float(m_src_rect.h), float(m_dst_rect.h), progress));
-  m_element->SetRect(rect);
+  m_element->set_rect(rect);
 }
 
 void RectElementAnimation::OnAnimationStop(bool aborted) {
   if (m_mode == Mode::kSrcToDest) {
     // m_dst_rect may still be unset if aborted.
-    m_element->SetRect(m_dst_rect);
+    m_element->set_rect(m_dst_rect);
   }
 }
 

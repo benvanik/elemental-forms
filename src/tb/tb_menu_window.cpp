@@ -20,7 +20,7 @@ MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
   // Avoid it autoclosing its window on click:
   m_select_list.SetIsFocusable(false);
   m_select_list.SetSkinBg("");
-  m_select_list.SetRect(GetPaddingRect());
+  m_select_list.set_rect(GetPaddingRect());
   m_select_list.SetGravity(Gravity::kAll);
   AddChild(&m_select_list);
 }

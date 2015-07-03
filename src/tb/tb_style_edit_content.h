@@ -55,8 +55,8 @@ class TextFragmentContentHR : public TextFragmentContent {
   int32_t GetHeight(FontFace* font, TextFragment* fragment) override;
 
  private:
-  int32_t width_in_percent;
-  int32_t height;
+  int32_t width_in_percent_;
+  int32_t height_;
 };
 
 // Fragment content that enables underline in a StyleEdit.

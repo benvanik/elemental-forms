@@ -44,7 +44,7 @@ Image::~Image() {
   if (m_image_rep) m_image_rep->DecRef();
 }
 
-bool Image::IsEmpty() const { return m_image_rep && m_image_rep->fragment; }
+bool Image::empty() const { return m_image_rep && m_image_rep->fragment; }
 
 int Image::Width() const {
   if (m_image_rep && m_image_rep->fragment) {

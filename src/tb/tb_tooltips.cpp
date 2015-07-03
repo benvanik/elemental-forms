@@ -54,24 +54,24 @@ bool TooltipWindow::Show(int mouse_x, int mouse_y) {
   m_offset_y = mouse_y;
 
   GetTargetElement().Get()->GetParentRoot()->AddChild(this);
-  SetRect(GetAlignedRect(m_offset_x, mouse_y));
+  set_rect(GetAlignedRect(m_offset_x, mouse_y));
   return true;
 }
 
 Rect TooltipWindow::GetAlignedRect(int x, int y) {
   Element* root = GetParentRoot();
 
-  SizeConstraints sc(root->GetRect().w, root->GetRect().h);
+  SizeConstraints sc(root->rect().w, root->rect().h);
 
   PreferredSize ps = GetPreferredSize(sc);
 
   Point pos(x, y);
-  int w = std::min(ps.pref_w, root->GetRect().w);
-  int h = std::min(ps.pref_h, root->GetRect().h);
+  int w = std::min(ps.pref_w, root->rect().w);
+  int h = std::min(ps.pref_h, root->rect().h);
 
-  x = pos.x + w > root->GetRect().w ? pos.x - w : pos.x;
+  x = pos.x + w > root->rect().w ? pos.x - w : pos.x;
   y = pos.y;
-  if (pos.y + h > root->GetRect().h) {
+  if (pos.y + h > root->rect().h) {
     y = pos.y - g_tooltip_mng->tooltip_point_offset_y - h;
   }
 

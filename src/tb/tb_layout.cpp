@@ -98,7 +98,7 @@ void Layout::InvalidateLayout(InvalidationMode il) {
   Element::InvalidateLayout(il);
 }
 
-PreferredSize RotPreferredSize(const PreferredSize& ps, Axis axis) {
+PreferredSize GetRotatedPreferredSize(const PreferredSize& ps, Axis axis) {
   if (axis == Axis::kX) return ps;
   PreferredSize psr;
   psr.max_w = ps.max_h;
@@ -117,17 +117,17 @@ PreferredSize RotPreferredSize(const PreferredSize& ps, Axis axis) {
   return psr;
 }
 
-SizeConstraints RotSizeConstraints(const SizeConstraints& sc, Axis axis) {
+SizeConstraints GetRotatedSizeConstraints(const SizeConstraints& sc, Axis axis) {
   return axis == Axis::kX ? sc
                           : SizeConstraints(sc.available_h, sc.available_w);
 }
 
-Rect RotRect(const Rect& rect, Axis axis) {
+Rect GetRotatedRect(const Rect& rect, Axis axis) {
   if (axis == Axis::kX) return rect;
   return Rect(rect.y, rect.x, rect.h, rect.w);
 }
 
-Gravity RotGravity(Gravity gravity, Axis axis) {
+Gravity GetRotatedGravity(Gravity gravity, Axis axis) {
   if (axis == Axis::kX) return gravity;
   Gravity r = Gravity::kNone;
   r |= any(gravity & Gravity::kLeft) ? Gravity::kTop : Gravity::kNone;
@@ -223,10 +223,10 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
   const int spacing = CalculateSpacing();
   const Rect padding_rect = GetPaddingRect();
-  const Rect layout_rect = RotRect(padding_rect, m_axis);
+  const Rect layout_rect = GetRotatedRect(padding_rect, m_axis);
 
-  auto inner_sc = constraints.ConstrainByPadding(GetRect().w - padding_rect.w,
-                                                 GetRect().h - padding_rect.h);
+  auto inner_sc = constraints.ConstrainByPadding(rect().w - padding_rect.w,
+                                                 rect().h - padding_rect.h);
 
   // Calculate totals for minimum and preferred width that we need for layout.
   int total_preferred_w = 0;
@@ -240,8 +240,8 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
-        RotPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const Gravity gravity = RotGravity(child->GetGravity(), m_axis);
+        GetRotatedPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
+    const Gravity gravity = GetRotatedGravity(child->GetGravity(), m_axis);
 
     total_preferred_w += ps.pref_w + ending_space;
     total_min_pref_diff_w += ps.pref_w - ps.min_w;
@@ -271,7 +271,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
   if (calculate_ps) {
     // We just wanted to calculate preferred size, so return without layouting.
-    *calculate_ps = RotPreferredSize(*calculate_ps, m_axis);
+    *calculate_ps = GetRotatedPreferredSize(*calculate_ps, m_axis);
     return;
   }
 
@@ -313,8 +313,8 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
-        RotPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const Gravity gravity = RotGravity(child->GetGravity(), m_axis);
+        GetRotatedPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
+    const Gravity gravity = GetRotatedGravity(child->GetGravity(), m_axis);
 
     // Calculate width. May shrink if space is missing, or grow if we have extra
     // space.
@@ -369,7 +369,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
     Rect rect(used_space + offset, pos, width, height);
     used_space += width + ending_space;
 
-    child->SetRect(RotRect(rect, m_axis));
+    child->set_rect(GetRotatedRect(rect, m_axis));
   }
   // Update overflow and overflow scroll.
   m_overflow = std::max(0, used_space - layout_rect.w);
@@ -396,7 +396,7 @@ bool Layout::OnEvent(const ElementEvent& ev) {
 
 void Layout::OnPaintChildren(const PaintProps& paint_props) {
   Rect padding_rect = GetPaddingRect();
-  if (padding_rect.IsEmpty()) return;
+  if (padding_rect.empty()) return;
 
   // If we overflow the layout, apply clipping when painting children.
   Rect old_clip_rect;
@@ -447,13 +447,13 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
 }
 
 void Layout::OnProcess() {
-  SizeConstraints sc(GetRect().w, GetRect().h);
+  SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 
 void Layout::OnResized(int old_w, int old_h) {
   InvalidateLayout(InvalidationMode::kTargetOnly);
-  SizeConstraints sc(GetRect().w, GetRect().h);
+  SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 

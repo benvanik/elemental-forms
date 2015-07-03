@@ -72,8 +72,8 @@ void DemoWindow::LoadResource(Node& node) {
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
 
-  const Rect parent_rect(0, 0, GetParent()->GetRect().w,
-                         GetParent()->GetRect().h);
+  const Rect parent_rect(0, 0, GetParent()->rect().w,
+                         GetParent()->rect().h);
   auto dc = g_tb_skin->GetDimensionConverter();
   Rect window_rect = GetResizeToFitContentRect();
 
@@ -99,7 +99,7 @@ void DemoWindow::LoadResource(Node& node) {
   // Make sure the window is inside the parent, and not larger.
   window_rect = window_rect.MoveIn(parent_rect).Clip(parent_rect);
 
-  SetRect(window_rect);
+  set_rect(window_rect);
 
   // Ensure we have focus - now that we've filled the window with possible
   // focusable
@@ -454,7 +454,7 @@ void AnimationsWindow::Animate() {
 
   // Start move animation
   Animation* anim = new RectElementAnimation(
-      this, GetRect().Offset(-GetRect().x - GetRect().w, 0), GetRect());
+      this, rect().Offset(-rect().x - rect().w, 0), rect());
   AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {

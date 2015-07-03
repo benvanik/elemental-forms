@@ -729,7 +729,7 @@ int32_t TextBlock::CalculateStringWidth(FontFace* font, const char* str,
 }
 
 int32_t TextBlock::CalculateLineHeight(FontFace* font) const {
-  return font->GetHeight();
+  return font->height();
 }
 
 int32_t TextBlock::CalculateBaseline(FontFace* font) const {
@@ -1127,7 +1127,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
   }
 
   if (props->data->underline) {
-    int line_h = font->GetHeight() / 16;
+    int line_h = font->height() / 16;
     line_h = std::max(line_h, 1);
     listener->DrawRectFill(
         Rect(x, y + GetBaseline(font) + 1, GetWidth(font), line_h), color);
@@ -1279,7 +1279,7 @@ void StyleEdit::Clear(bool init_new) {
   undoredo.Clear(true, true);
   selection.SelectNothing();
 
-  if (init_new && blocks.GetFirst() && IsEmpty()) {
+  if (init_new && blocks.GetFirst() && empty()) {
     return;
   }
 
@@ -1436,8 +1436,8 @@ void StyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
     }
 
     // Paint bg selection.
-    for (int i = 0; i < bg_region.GetNumRects(); i++) {
-      listener->DrawTextSelectionBg(bg_region.GetRect(i));
+    for (int i = 0; i < bg_region.size(); i++) {
+      listener->DrawTextSelectionBg(bg_region[i]);
     }
   }
 
@@ -1452,8 +1452,8 @@ void StyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
   }
 
   // Paint fg selection.
-  for (int i = 0; i < fg_region.GetNumRects(); i++) {
-    listener->DrawTextSelectionBg(fg_region.GetRect(i));
+  for (int i = 0; i < fg_region.size(); i++) {
+    listener->DrawTextSelectionBg(fg_region[i]);
   }
 
   // Paint caret.
@@ -1815,7 +1815,7 @@ std::string StyleEdit::GetText() {
   return tmp_selection.GetText();
 }
 
-bool StyleEdit::IsEmpty() const {
+bool StyleEdit::empty() const {
   return blocks.GetFirst() == blocks.GetLast() &&
          blocks.GetFirst()->str.empty();
 }

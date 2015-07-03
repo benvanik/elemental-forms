@@ -280,10 +280,10 @@ class LayoutParams {
   LayoutParams() = default;
 
   // Sets both min max and preferred width to the given width.
-  void SetWidth(int width) { min_w = max_w = pref_w = width; }
+  void set_width(int width) { min_w = max_w = pref_w = width; }
 
   // Set both min max and preferred height to the given height.
-  void SetHeight(int height) { min_h = max_h = pref_h = height; }
+  void set_height(int height) { min_h = max_h = pref_h = height; }
 
   // The minimal preferred width and height.
   int min_w = kUnspecified, min_h = kUnspecified;
@@ -404,18 +404,18 @@ class Element : public TypedObject, public TBLinkOf<Element> {
   // Sets the rect for this element in its parent.
   // The rect is relative to the parent element. The skin may expand outside
   // this rect to draw f.ex shadows.
-  void SetRect(const Rect& rect);
-  inline Rect GetRect() const { return m_rect; }
+  void set_rect(const Rect& rect);
+  inline Rect rect() const { return m_rect; }
 
   // Sets the position of this element in its parent.
   // The position is relative to the parent element.
-  void SetPosition(const Point& pos) {
-    SetRect(Rect(pos.x, pos.y, m_rect.w, m_rect.h));
+  void set_position(const Point& pos) {
+    set_rect(Rect(pos.x, pos.y, m_rect.w, m_rect.h));
   }
 
   // Sets size of this element.
-  void SetSize(int width, int height) {
-    SetRect(Rect(m_rect.x, m_rect.y, width, height));
+  void set_size(int width, int height) {
+    set_rect(Rect(m_rect.x, m_rect.y, width, height));
   }
 
   // Invalidates should be called if the element need to be repainted, to make
@@ -1123,7 +1123,7 @@ class Element : public TypedObject, public TBLinkOf<Element> {
   TBID m_skin_bg_expected;  // ID for the background skin after strong override,
                             // used to indirect skin changes because of
                             // condition changes.
-  // The rectangle of this element, relative to the parent. See SetRect.
+  // The rectangle of this element, relative to the parent. See set_rect.
   Rect m_rect;
   TBLinkListOf<Element> m_children;
   ElementValueConnection m_connection;

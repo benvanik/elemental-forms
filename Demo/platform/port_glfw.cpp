@@ -65,8 +65,8 @@ class ApplicationBackendGLFW : public ApplicationBackend {
   virtual Element* GetRoot() { return &m_root; }
   virtual Renderer* GetRenderer() { return m_renderer; }
 
-  int GetWidth() const { return m_root.GetRect().w; }
-  int GetHeight() const { return m_root.GetRect().h; }
+  int width() const { return m_root.rect().w; }
+  int height() const { return m_root.rect().h; }
 
   Application* m_application;
   RendererGL* m_renderer;
@@ -413,17 +413,17 @@ static void window_refresh_callback(GLFWwindow* window) {
 
   // Bail out if we get here with invalid dimensions.
   // This may happen when minimizing windows (GLFW 3.0.4, Windows 8.1).
-  if (backend->GetWidth() == 0 || backend->GetHeight() == 0) return;
+  if (backend->width() == 0 || backend->height() == 0) return;
 
-  backend->m_application->RenderFrame(backend->GetWidth(),
-                                      backend->GetHeight());
+  backend->m_application->RenderFrame(backend->width(),
+                                      backend->height());
 
   glfwSwapBuffers(window);
 }
 
 static void window_size_callback(GLFWwindow* window, int w, int h) {
   ApplicationBackendGLFW* backend = GetBackend(window);
-  if (backend->GetRoot()) backend->GetRoot()->SetRect(Rect(0, 0, w, h));
+  if (backend->GetRoot()) backend->GetRoot()->set_rect({0, 0, w, h});
 }
 
 #if (GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 1)
@@ -487,7 +487,7 @@ bool ApplicationBackendGLFW::Init(Application* app, int width, int height,
 #endif
 
   m_renderer = new RendererGL();
-  m_root.SetRect(Rect(0, 0, width, height));
+  m_root.set_rect({0, 0, width, height});
 
   // Create the application object for our demo
 

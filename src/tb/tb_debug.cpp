@@ -55,8 +55,8 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
     output = GetElementByIDAndType<TextBox>(TBIDC("output"));
 
-    Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
-    SetRect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
+    Rect bounds(0, 0, root->rect().w, root->rect().h);
+    set_rect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
         bounds));
 
     root->AddChild(this);
@@ -91,7 +91,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   void OnPaint(const PaintProps& paint_props) override {
     // Draw stuff to the right of the debug window.
-    g_renderer->Translate(GetRect().w, 0);
+    g_renderer->Translate(rect().w, 0);
 
     // Draw skin bitmap fragments.
     if (TB_DEBUG_SETTING(Setting::kDrawSkinBitmapFragments)) {
@@ -108,7 +108,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
       font_face->Debug();
     }
 
-    g_renderer->Translate(-GetRect().w, 0);
+    g_renderer->Translate(-rect().w, 0);
   }
 
   std::string GetIDString(const TBID& id) {

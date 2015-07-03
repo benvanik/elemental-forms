@@ -90,7 +90,7 @@ void RendererBatcher::BeginPaint(int render_target_w, int render_target_h) {
   dbg_frame_triangle_count = 0;
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  m_screen_rect.Set(0, 0, render_target_w, render_target_h);
+  m_screen_rect.reset(0, 0, render_target_w, render_target_h);
   m_clip_rect = m_screen_rect;
 }
 
@@ -188,7 +188,7 @@ void RendererBatcher::DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) {
 }
 
 void RendererBatcher::DrawRect(const Rect& dst_rect, const Color& color) {
-  if (dst_rect.IsEmpty()) return;
+  if (dst_rect.empty()) return;
   // Top.
   DrawRectFill(Rect(dst_rect.x, dst_rect.y, dst_rect.w, 1), color);
   // Bottom.
@@ -203,7 +203,7 @@ void RendererBatcher::DrawRect(const Rect& dst_rect, const Color& color) {
 }
 
 void RendererBatcher::DrawRectFill(const Rect& dst_rect, const Color& color) {
-  if (dst_rect.IsEmpty()) return;
+  if (dst_rect.empty()) return;
   uint32_t a = (color.a * m_opacity) / 255;
   AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), Rect(),
                   VER_COL(color.r, color.g, color.b, a), nullptr, nullptr);

@@ -49,18 +49,18 @@ Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
     new_w = ps.min_w;
     new_h = ps.min_h;
   } else if (fit == ResizeFit::kCurrentOrNeeded) {
-    new_w = Clamp(GetRect().w, ps.min_w, ps.max_w);
-    new_h = Clamp(GetRect().h, ps.min_h, ps.max_h);
+    new_w = Clamp(rect().w, ps.min_w, ps.max_w);
+    new_h = Clamp(rect().h, ps.min_h, ps.max_h);
   }
   if (GetParent()) {
-    new_w = std::min(new_w, GetParent()->GetRect().w);
-    new_h = std::min(new_h, GetParent()->GetRect().h);
+    new_w = std::min(new_w, GetParent()->rect().w);
+    new_h = std::min(new_h, GetParent()->rect().h);
   }
-  return Rect(GetRect().x, GetRect().y, new_w, new_h);
+  return Rect(rect().x, rect().y, new_w, new_h);
 }
 
 void Window::ResizeToFitContent(ResizeFit fit) {
-  SetRect(GetResizeToFitContentRect(fit));
+  set_rect(GetResizeToFitContentRect(fit));
 }
 
 void Window::Close() { Die(); }
@@ -236,18 +236,18 @@ void Window::OnResized(int old_w, int old_h) {
   // Manually move our own decoration children.
   // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = GetTitleHeight();
-  m_mover.SetRect(Rect(0, 0, GetRect().w, title_height));
+  m_mover.set_rect({ 0, 0, rect().w, title_height });
   PreferredSize ps = m_resizer.GetPreferredSize();
-  m_resizer.SetRect(Rect(GetRect().w - ps.pref_w, GetRect().h - ps.pref_h,
-                         ps.pref_w, ps.pref_h));
+  m_resizer.set_rect({ rect().w - ps.pref_w, rect().h - ps.pref_h,
+                         ps.pref_w, ps.pref_h });
   Rect mover_rect = m_mover.GetPaddingRect();
   int button_size = mover_rect.h;
-  m_close_button.SetRect(Rect(mover_rect.x + mover_rect.w - button_size,
-                              mover_rect.y, button_size, button_size));
+  m_close_button.set_rect({ mover_rect.x + mover_rect.w - button_size,
+                              mover_rect.y, button_size, button_size });
   if (any(m_settings & WindowSettings::kCloseButton)) {
     mover_rect.w -= button_size;
   }
-  m_textfield.SetRect(mover_rect);
+  m_textfield.set_rect(mover_rect);
 }
 
 }  // namespace tb

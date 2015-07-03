@@ -74,7 +74,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   // Size to fit content. This will use the default size of the textfield.
   ResizeToFitContent();
-  Rect rect = GetRect();
+  Rect rect = this->rect();
 
   // Get how much we overflow the textfield has given the current width, and
   // grow our height to show all we can.
@@ -91,8 +91,8 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   }
 
   // Center and size to the new height.
-  Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
-  SetRect(rect.CenterIn(bounds).MoveIn(bounds).Clip(bounds));
+  Rect bounds(0, 0, root->rect().w, root->rect().h);
+  set_rect(rect.CenterIn(bounds).MoveIn(bounds).Clip(bounds));
   root->AddChild(this);
   return true;
 }

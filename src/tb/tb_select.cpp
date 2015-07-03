@@ -23,7 +23,7 @@ SelectList::SelectList() : m_header_lng_string_id(TBIDC("TBList.header")) {
   SetIsFocusable(true);
   SetSkinBg(TBIDC("SelectList"), InvokeInfo::kNoCallbacks);
   m_container.SetGravity(Gravity::kAll);
-  m_container.SetRect(GetPaddingRect());
+  m_container.set_rect(GetPaddingRect());
   AddChild(&m_container);
   m_layout.SetGravity(Gravity::kAll);
   m_layout.SetAxis(Axis::kY);
@@ -237,13 +237,13 @@ void SelectList::ScrollToSelectedItem() {
   }
   m_scroll_to_current = false;
   if (Element* element = GetItemElement(m_value)) {
-    m_container.ScrollIntoView(element->GetRect());
+    m_container.ScrollIntoView(element->rect());
   } else {
     m_container.ScrollTo(0, 0);
   }
 }
 
-void SelectList::OnSkinChanged() { m_container.SetRect(GetPaddingRect()); }
+void SelectList::OnSkinChanged() { m_container.set_rect(GetPaddingRect()); }
 
 void SelectList::OnProcess() { ValidateList(); }
 

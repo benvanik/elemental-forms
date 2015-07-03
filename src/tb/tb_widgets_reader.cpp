@@ -102,11 +102,11 @@ void Element::OnInflate(const InflateInfo& info) {
     }
     const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
-      layout_params.SetWidth(
+      layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
     }
     if (const char* str = lp->GetValueString("height", nullptr)) {
-      layout_params.SetHeight(
+      layout_params.set_height(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
     }
     if (const char* str = lp->GetValueString("min-width", nullptr)) {
@@ -161,10 +161,10 @@ void Element::OnInflate(const InflateInfo& info) {
     const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
-      SetRect(Rect(dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
-                   dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
-                   dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
-                   dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)));
+      set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)});
     }
   }
 }

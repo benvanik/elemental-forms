@@ -23,7 +23,7 @@ SelectInline::SelectInline() {
   m_layout.AddChild(&m_buttons[0]);
   m_layout.AddChild(&m_text_box);
   m_layout.AddChild(&m_buttons[1]);
-  m_layout.SetRect(GetPaddingRect());
+  m_layout.set_rect(GetPaddingRect());
   m_layout.SetGravity(Gravity::kAll);
   m_layout.SetSpacing(0);
   m_buttons[0].SetSkinBg(TBIDC("Button.flat"));
@@ -71,7 +71,7 @@ void SelectInline::SetValueInternal(int value, bool update_text) {
   //          If needed, check if we are alive using a safe pointer first.
 }
 
-void SelectInline::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
+void SelectInline::OnSkinChanged() { m_layout.set_rect(GetPaddingRect()); }
 
 bool SelectInline::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kKeyDown) {

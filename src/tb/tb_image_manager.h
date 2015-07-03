@@ -51,7 +51,7 @@ class Image {
   ~Image();
 
   // Returns true if this image is empty.
-  bool IsEmpty() const;
+  bool empty() const;
 
   // Returns the width of this image, or 0 if empty.
   int Width() const;

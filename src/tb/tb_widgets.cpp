@@ -91,12 +91,13 @@ Element::~Element() {
               .HasLinks());  // There's still listeners added to this element!
 }
 
-void Element::SetRect(const Rect& rect) {
-  if (m_rect.Equals(rect)) return;
+void Element::set_rect(const Rect& rect) {
+  if (m_rect.equals(rect)) {
+    return;
+  }
 
   Rect old_rect = m_rect;
   m_rect = rect;
-
   if (old_rect.w != m_rect.w || old_rect.h != m_rect.h) {
     OnResized(old_rect.w, old_rect.h);
   }
@@ -105,7 +106,7 @@ void Element::SetRect(const Rect& rect) {
 }
 
 void Element::Invalidate() {
-  if (!GetVisibilityCombined() && !m_rect.IsEmpty()) {
+  if (!GetVisibilityCombined() && !m_rect.empty()) {
     return;
   }
   Element* tmp = this;
@@ -763,7 +764,7 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
 
   // Invoke paint on all children that are in the current visible rect.
   for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (clip_rect.Intersects(child->m_rect)) {
+    if (clip_rect.intersects(child->m_rect)) {
       child->InvokePaint(paint_props);
     }
   }
@@ -771,7 +772,7 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   // Invoke paint of overlay elements on all children that are in the current
   // visible rect.
   for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (clip_rect.Intersects(child->m_rect) &&
+    if (clip_rect.intersects(child->m_rect) &&
         child->GetVisibility() == Visibility::kVisible) {
       SkinElement* skin_element = child->GetSkinBgElement();
       if (skin_element && skin_element->HasOverlayElements()) {
@@ -830,7 +831,7 @@ void Element::OnResized(int old_w, int old_h) {
     } else if (any(child->m_gravity & Gravity::kBottom)) {
       rect.y += dh;
     }
-    child->SetRect(rect);
+    child->set_rect(rect);
   }
 }
 
@@ -859,7 +860,7 @@ void Element::OnInflateChild(Element* child) {
       }
     }
   }
-  child->SetRect(child_rect);
+  child->set_rect(child_rect);
 }
 
 Rect Element::GetPaddingRect() {
@@ -1122,7 +1123,7 @@ float Element::CalculateOpacityInternal(SkinState state,
 
 void Element::InvokePaint(const PaintProps& parent_paint_props) {
   // Don't paint invisible elements
-  if (m_opacity == 0 || m_rect.IsEmpty() ||
+  if (m_opacity == 0 || m_rect.empty() ||
       GetVisibility() != Visibility::kVisible) {
     return;
   }

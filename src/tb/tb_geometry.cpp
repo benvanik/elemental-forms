@@ -14,8 +14,8 @@
 
 namespace tb {
 
-bool Rect::Intersects(const Rect& rect) const {
-  if (IsEmpty() || rect.IsEmpty()) return false;
+bool Rect::intersects(const Rect& rect) const {
+  if (empty() || rect.empty()) return false;
   if (x + w > rect.x && x < rect.x + rect.w && y + h > rect.y &&
       y < rect.y + rect.h)
     return true;
@@ -34,11 +34,11 @@ Rect Rect::CenterIn(const Rect& bounding_rect) const {
 }
 
 Rect Rect::Union(const Rect& rect) const {
-  assert(!IsInsideOut());
-  assert(!rect.IsInsideOut());
+  assert(!is_inside_out());
+  assert(!rect.is_inside_out());
 
-  if (IsEmpty()) return rect;
-  if (rect.IsEmpty()) return *this;
+  if (empty()) return rect;
+  if (rect.empty()) return *this;
 
   int minx = std::min(x, rect.x);
   int miny = std::min(y, rect.y);
@@ -48,9 +48,9 @@ Rect Rect::Union(const Rect& rect) const {
 }
 
 Rect Rect::Clip(const Rect& clip_rect) const {
-  assert(!clip_rect.IsInsideOut());
+  assert(!clip_rect.is_inside_out());
   Rect tmp;
-  if (!Intersects(clip_rect)) return tmp;
+  if (!intersects(clip_rect)) return tmp;
   tmp.x = std::max(x, clip_rect.x);
   tmp.y = std::max(y, clip_rect.y);
   tmp.w = std::min(x + w, clip_rect.x + clip_rect.w) - tmp.x;
@@ -127,7 +127,7 @@ bool RectRegion::AddRect(const Rect& rect, bool coalesce) {
 
 bool RectRegion::IncludeRect(const Rect& include_rect) {
   for (int i = 0; i < m_num_rects; i++) {
-    if (include_rect.Intersects(m_rects[i])) {
+    if (include_rect.intersects(m_rects[i])) {
       // Make a region containing the non intersecting parts and then include
       // those recursively (they might still intersect some other part of the
       // region).
@@ -152,7 +152,7 @@ bool RectRegion::IncludeRect(const Rect& include_rect) {
 bool RectRegion::ExcludeRect(const Rect& exclude_rect) {
   int num_rects_to_check = m_num_rects;
   for (int i = 0; i < num_rects_to_check; i++) {
-    if (m_rects[i].Intersects(exclude_rect)) {
+    if (m_rects[i].intersects(exclude_rect)) {
       // Remove the existing rectangle we found we intersect
       // and add the pieces we don't intersect. New rects
       // will be added at the end of the list, so we can decrease
@@ -172,7 +172,7 @@ bool RectRegion::ExcludeRect(const Rect& exclude_rect) {
 
 bool RectRegion::AddExcludingRects(const Rect& rect, const Rect& exclude_rect,
                                    bool coalesce) {
-  assert(rect.Intersects(exclude_rect));
+  assert(rect.intersects(exclude_rect));
   Rect remove = exclude_rect.Clip(rect);
 
   if (remove.y > rect.y) {
@@ -203,7 +203,7 @@ bool RectRegion::AddExcludingRects(const Rect& rect, const Rect& exclude_rect,
   return true;
 }
 
-const Rect& RectRegion::GetRect(int index) const {
+const Rect& RectRegion::operator[](int index) const {
   assert(index >= 0 && index < m_num_rects);
   return m_rects[index];
 }

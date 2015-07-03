@@ -36,7 +36,7 @@ ResourceEditWindow::ResourceEditWindow()
   m_element_list = GetElementByIDAndType<SelectList>(TBIDC("element_list"));
   m_element_list->SetSource(&m_element_list_source);
 
-  SetRect(Rect(100, 50, 900, 600));
+  set_rect({100, 50, 900, 600});
 }
 
 ResourceEditWindow::~ResourceEditWindow() {
@@ -155,8 +155,8 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
     win->SetText("Test window");
     g_elements_reader->LoadData(win->GetContentRoot(),
                                 m_source_text_box->GetText().c_str());
-    Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
-    win->SetRect(
+    Rect bounds(0, 0, GetParent()->rect().w, GetParent()->rect().h);
+    win->set_rect(
         win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
             bounds));
     GetParent()->AddChild(win);
@@ -176,8 +176,8 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
 
   // Paint the selection of the selected element
   if (Element* selected_element = GetSelectedElement()) {
-    Rect element_rect(0, 0, selected_element->GetRect().w,
-                      selected_element->GetRect().h);
+    Rect element_rect(0, 0, selected_element->rect().w,
+                      selected_element->rect().h);
     selected_element->ConvertToRoot(element_rect.x, element_rect.y);
     ConvertFromRoot(element_rect.x, element_rect.y);
     g_renderer->DrawRect(element_rect, Color(255, 205, 0));

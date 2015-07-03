@@ -83,7 +83,7 @@ class Window : public Element {
   Rect GetResizeToFitContentRect(ResizeFit fit = ResizeFit::kPreferred);
 
   // Resizes the window to fit the its content. This is the same as doing
-  // SetRect(GetResizeToFitContentRect(fit)).
+  // set_rect(GetResizeToFitContentRect(fit)).
   void ResizeToFitContent(ResizeFit fit = ResizeFit::kPreferred);
 
   // Sets the window title.

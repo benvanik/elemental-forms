@@ -352,7 +352,7 @@ class StyleEdit {
   void SetText(const char* text, size_t text_len,
                CaretPosition pos = CaretPosition::kBeginning);
   std::string GetText();
-  bool IsEmpty() const;
+  bool empty() const;
 
   // Sets the default text alignment and all currently selected blocks, or the
   // block of the current caret position if nothing is selected.
