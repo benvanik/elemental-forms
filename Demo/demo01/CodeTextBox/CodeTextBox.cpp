@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 using namespace tb;
-TB_WIDGET_FACTORY(CodeTextBox, Value::Type::kString, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(CodeTextBox, Value::Type::kString, ElementZ::kTop) {}
 
 CodeTextBox::CodeTextBox() : TextBox(), inComment(false) {}
 

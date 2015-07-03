@@ -15,74 +15,75 @@
 
 namespace tb {
 
-bool WidgetSkinConditionContext::GetCondition(
+bool ElementSkinConditionContext::GetCondition(
     SkinTarget target, const SkinCondition::ConditionInfo& info) {
   switch (target) {
     case SkinTarget::kThis:
-      return GetCondition(m_widget, info);
+      return GetCondition(m_element, info);
     case SkinTarget::kParent:
-      return m_widget->GetParent() && GetCondition(m_widget->GetParent(), info);
+      return m_element->GetParent() &&
+             GetCondition(m_element->GetParent(), info);
     case SkinTarget::kAncestors: {
-      Widget* widget = m_widget->GetParent();
-      while (widget) {
-        if (GetCondition(widget, info)) {
+      Element* element = m_element->GetParent();
+      while (element) {
+        if (GetCondition(element, info)) {
           return true;
         }
-        widget = widget->GetParent();
+        element = element->GetParent();
       }
     }
     case SkinTarget::kPrevSibling:
-      return m_widget->GetPrev() && GetCondition(m_widget->GetPrev(), info);
+      return m_element->GetPrev() && GetCondition(m_element->GetPrev(), info);
     case SkinTarget::kNextSibling:
-      return m_widget->GetNext() && GetCondition(m_widget->GetNext(), info);
+      return m_element->GetNext() && GetCondition(m_element->GetNext(), info);
   }
   return false;
 }
 
-bool WidgetSkinConditionContext::GetCondition(
-    Widget* widget, const SkinCondition::ConditionInfo& info) {
+bool ElementSkinConditionContext::GetCondition(
+    Element* element, const SkinCondition::ConditionInfo& info) {
   switch (info.prop) {
     case SkinProperty::kSkin:
-      return widget->GetSkinBg() == info.value;
+      return element->GetSkinBg() == info.value;
     case SkinProperty::kWindowActive:
-      if (Window* window = widget->GetParentWindow()) {
+      if (Window* window = element->GetParentWindow()) {
         return window->IsActive();
       }
       return false;
     case SkinProperty::kAxis:
-      return TBID(widget->GetAxis() == Axis::kX ? "x" : "y") == info.value;
+      return TBID(element->GetAxis() == Axis::kX ? "x" : "y") == info.value;
     case SkinProperty::kAlign:
-      if (TabContainer* tc = TBSafeCast<TabContainer>(widget)) {
-        TBID widget_align;
+      if (TabContainer* tc = TBSafeCast<TabContainer>(element)) {
+        TBID element_align;
         if (tc->GetAlignment() == Align::kLeft) {
-          widget_align = TBIDC("left");
+          element_align = TBIDC("left");
         } else if (tc->GetAlignment() == Align::kTop) {
-          widget_align = TBIDC("top");
+          element_align = TBIDC("top");
         } else if (tc->GetAlignment() == Align::kRight) {
-          widget_align = TBIDC("right");
+          element_align = TBIDC("right");
         } else if (tc->GetAlignment() == Align::kBottom) {
-          widget_align = TBIDC("bottom");
+          element_align = TBIDC("bottom");
         }
-        return widget_align == info.value;
+        return element_align == info.value;
       }
       return false;
     case SkinProperty::kId:
-      return widget->GetID() == info.value;
+      return element->GetID() == info.value;
     case SkinProperty::kState:
-      return !!(uint32_t(widget->GetAutoState()) & info.value);
+      return !!(uint32_t(element->GetAutoState()) & info.value);
     case SkinProperty::kValue:
-      return widget->GetValue() == (int)info.value;
+      return element->GetValue() == (int)info.value;
     case SkinProperty::kHover:
-      return Widget::hovered_widget &&
-             widget->IsAncestorOf(Widget::hovered_widget);
+      return Element::hovered_element &&
+             element->IsAncestorOf(Element::hovered_element);
     case SkinProperty::kCapture:
-      return Widget::captured_widget &&
-             widget->IsAncestorOf(Widget::captured_widget);
+      return Element::captured_element &&
+             element->IsAncestorOf(Element::captured_element);
     case SkinProperty::kFocus:
-      return Widget::focused_widget &&
-             widget->IsAncestorOf(Widget::focused_widget);
+      return Element::focused_element &&
+             element->IsAncestorOf(Element::focused_element);
     case SkinProperty::kCustom:
-      return widget->GetCustomSkinCondition(info);
+      return element->GetCustomSkinCondition(info);
   }
   return false;
 }

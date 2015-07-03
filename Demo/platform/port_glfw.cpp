@@ -40,10 +40,10 @@ ApplicationBackendGLFW* GetBackend(GLFWwindow* window) {
   return static_cast<ApplicationBackendGLFW*>(glfwGetWindowUserPointer(window));
 }
 
-// The root of all widgets in a GLFW window.
-class RootWidget : public Widget {
+// The root of all elements in a GLFW window.
+class RootElement : public Element {
  public:
-  RootWidget(ApplicationBackendGLFW* backend) : m_backend(backend) {}
+  RootElement(ApplicationBackendGLFW* backend) : m_backend(backend) {}
   virtual void OnInvalid();
 
  private:
@@ -62,7 +62,7 @@ class ApplicationBackendGLFW : public ApplicationBackend {
   ~ApplicationBackendGLFW();
 
   virtual void Run();
-  virtual Widget* GetRoot() { return &m_root; }
+  virtual Element* GetRoot() { return &m_root; }
   virtual Renderer* GetRenderer() { return m_renderer; }
 
   int GetWidth() const { return m_root.GetRect().w; }
@@ -70,12 +70,12 @@ class ApplicationBackendGLFW : public ApplicationBackend {
 
   Application* m_application;
   RendererGL* m_renderer;
-  RootWidget m_root;
+  RootElement m_root;
   GLFWwindow* mainWindow;
   bool has_pending_update;
 };
 
-void RootWidget::OnInvalid() {
+void RootElement::OnInvalid() {
   if (!m_backend->has_pending_update) {
     m_backend->has_pending_update = true;
   }
@@ -121,7 +121,7 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
 #else
   bool shortcut_key = any(modifierkeys & ModifierKeys::kCtrl);
 #endif
-  if (!Widget::focused_widget || !down || !shortcut_key) return false;
+  if (!Element::focused_element || !down || !shortcut_key) return false;
   bool reverse_key = any(modifierkeys & ModifierKeys::kShift);
   int upper_key = toupr_ascii(key);
   TBID id;
@@ -153,10 +153,10 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
   else
     return false;
 
-  WidgetEvent ev(EventType::kShortcut);
+  ElementEvent ev(EventType::kShortcut);
   ev.modifierkeys = modifierkeys;
   ev.ref_id = id;
-  return Widget::focused_widget->InvokeEvent(ev);
+  return Element::focused_element->InvokeEvent(ev);
 }
 
 static bool InvokeKey(GLFWwindow* window, unsigned int key,
@@ -263,10 +263,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
       InvokeKey(window, 0, SpecialKey::kEsc, modifier, down);
       break;
     case GLFW_KEY_MENU:
-      if (Widget::focused_widget && !down) {
-        WidgetEvent ev(EventType::kContextMenu);
+      if (Element::focused_element && !down) {
+        ElementEvent ev(EventType::kContextMenu);
         ev.modifierkeys = modifier;
-        Widget::focused_widget->InvokeEvent(ev);
+        Element::focused_element->InvokeEvent(ev);
       }
       break;
     case GLFW_KEY_LEFT_SHIFT:
@@ -331,10 +331,10 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
   } else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
     GetBackend(window)->GetRoot()->InvokePointerMove(x, y, modifier,
                                                      ShouldEmulateTouchEvent());
-    if (Widget::hovered_widget) {
-      Widget::hovered_widget->ConvertFromRoot(x, y);
-      WidgetEvent ev(EventType::kContextMenu, x, y, false, modifier);
-      Widget::hovered_widget->InvokeEvent(ev);
+    if (Element::hovered_element) {
+      Element::hovered_element->ConvertFromRoot(x, y);
+      ElementEvent ev(EventType::kContextMenu, x, y, false, modifier);
+      Element::hovered_element->InvokeEvent(ev);
     }
   }
 }
@@ -343,7 +343,7 @@ void cursor_position_callback(GLFWwindow* window, double x, double y) {
   mouse_x = (int)x;
   mouse_y = (int)y;
   if (GetBackend(window)->GetRoot() &&
-      !(ShouldEmulateTouchEvent() && !Widget::captured_widget))
+      !(ShouldEmulateTouchEvent() && !Element::captured_element))
     GetBackend(window)->GetRoot()->InvokePointerMove(
         mouse_x, mouse_y, GetModifierKeys(), ShouldEmulateTouchEvent());
 }
@@ -430,11 +430,11 @@ static void window_size_callback(GLFWwindow* window, int w, int h) {
 static void drop_callback(GLFWwindow* window, int count,
                           const char** files_utf8) {
   ApplicationBackendGLFW* backend = GetBackend(window);
-  Widget* target = Widget::hovered_widget;
-  if (!target) target = Widget::focused_widget;
+  Element* target = Element::hovered_element;
+  if (!target) target = Element::focused_element;
   if (!target) target = backend->GetRoot();
   if (target) {
-    WidgetEventFileDrop ev;
+    ElementEventFileDrop ev;
     for (int i = 0; i < count; i++)
       ev.files.Add(new std::string(files_utf8[i]));
     target->InvokeEvent(ev);

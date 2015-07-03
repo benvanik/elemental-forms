@@ -60,7 +60,7 @@ class Renderer {
  public:
   virtual ~Renderer() = default;
 
-  // Should be called before invoking paint on any widget.
+  // Should be called before invoking paint on any element.
   // render_target_w and render_target_h should be the size of the render target
   // that the renderer renders to. I.e window size, screen size or frame buffer
   // object.

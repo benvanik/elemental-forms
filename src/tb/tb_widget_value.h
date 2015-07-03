@@ -19,66 +19,66 @@
 namespace tb {
 
 class ValueGroup;
-class Widget;
-class WidgetValue;
+class Element;
+class ElementValue;
 
-// Maintains a connection between Widget and WidgetValue.
-class WidgetValueConnection : public TBLinkOf<WidgetValueConnection> {
+// Maintains a connection between Element and ElementValue.
+class ElementValueConnection : public TBLinkOf<ElementValueConnection> {
  public:
-  WidgetValueConnection() = default;
-  ~WidgetValueConnection() { Disconnect(); }
+  ElementValueConnection() = default;
+  ~ElementValueConnection() { Disconnect(); }
 
-  // Connects the value and widget.
-  void Connect(WidgetValue* value, Widget* m_widget);
+  // Connects the value and element.
+  void Connect(ElementValue* value, Element* m_element);
 
-  // Disconnects the value and widget if it is connected.
+  // Disconnects the value and element if it is connected.
   void Disconnect();
 
-  // Synchronizes the value of the widget to the WidgetValue and all other
-  // connected widgets.
-  void SyncFromWidget(Widget* source_widget);
+  // Synchronizes the value of the element to the ElementValue and all other
+  // connected elements.
+  void SyncFromElement(Element* source_element);
 
  private:
-  friend class WidgetValue;
-  WidgetValue* m_value = nullptr;
-  Widget* m_widget = nullptr;
+  friend class ElementValue;
+  ElementValue* m_value = nullptr;
+  Element* m_element = nullptr;
 };
 
-// Stores a Value that will be synchronized with all widgets connected to it.
+// Stores a Value that will be synchronized with all elements connected to it.
 // It has a TBID name, that can be used to identify this value within its
 // ValueGroup.
 //
-// It will synchronize with widgets when any of the connected widgets change and
-// triggers the EventType::kChanged event, and when the value is changed with
-// any of the setters here.
+// It will synchronize with elements when any of the connected elements change
+// and triggers the EventType::kChanged event, and when the value is changed
+// with any of the setters here.
 //
-// The synchronization with widgets is done through the generic Widget
+// The synchronization with elements is done through the generic Element
 // setters/getters,
-// Widget::SetValue/GetValue/SetValueDouble/GetValueDouble/GetText/SetText.
+// Element::SetValue/GetValue/SetValueDouble/GetValueDouble/GetText/SetText.
 //
 // The type that is synchronized is determined by the Value::Type specified in
 // the constructor.
 //
 // NOTE: The type that is synchronized changes if you request it in a different
 // format!
-class WidgetValue {
+class ElementValue {
  public:
-  WidgetValue(const TBID& name, Value::Type type = Value::Type::kInt);
-  ~WidgetValue();
+  ElementValue(const TBID& name, Value::Type type = Value::Type::kInt);
+  ~ElementValue();
 
   TBID GetName() const { return m_name; }
 
-  // Sets integer value and sync to connected widgets.
+  // Sets integer value and sync to connected elements.
   void SetInt(int value);
 
-  // Sets text value and sync to connected widgets.
+  // Sets text value and sync to connected elements.
   void SetText(const char* text);
 
-  // Sets double value and sync to connected widgets.
+  // Sets double value and sync to connected elements.
   void SetDouble(double value);
 
-  // Sets the value from the given widget. Using the current format type.
-  void SetFromWidget(Widget* source_widget);
+  // Sets the value from the given element. Using the current format type.
+  void SetFromElement(Element* source_element);
 
   int GetInt() { return m_value.GetInt(); }
   std::string GetText() { return m_value.GetString(); }
@@ -86,14 +86,14 @@ class WidgetValue {
   const Value& GetValue() const { return m_value; }
 
  private:
-  friend class WidgetValueConnection;
+  friend class ElementValueConnection;
 
-  void SyncToWidget(Widget* dst_widget);
-  void SyncToWidgets(Widget* exclude_widget);
+  void SyncToElement(Element* dst_element);
+  void SyncToElements(Element* exclude_element);
 
   TBID m_name;
   Value m_value;
-  TBLinkListOf<WidgetValueConnection> m_connections;
+  TBLinkListOf<ElementValueConnection> m_connections;
   bool m_syncing = false;
 };
 
@@ -107,23 +107,23 @@ class ValueGroupListener : public TBLinkOf<ValueGroupListener> {
     }
   }
 
-  // Called when a value has changed and all widgets connected to it has been
+  // Called when a value has changed and all elements connected to it has been
   // updated.
   virtual void OnValueChanged(const ValueGroup* group,
-                              const WidgetValue* value) = 0;
+                              const ElementValue* value) = 0;
 };
 
-// ValueGroup is a collection of widget values (WidgetValue) that can be fetched
-// by name (using a TBID). It also keeps a list of ValueGroupListener that
-// listens to changes to any of the values.
+// ValueGroup is a collection of element values (ElementValue) that can be
+// fetched by name (using a TBID). It also keeps a list of ValueGroupListener
+// that listens to changes to any of the values.
 class ValueGroup {
  public:
-  // Creates a WidgetValue with the given name if it does not already exist.
-  WidgetValue* CreateValueIfNeeded(const TBID& name,
-                                   Value::Type type = Value::Type::kInt);
+  // Creates a ElementValue with the given name if it does not already exist.
+  ElementValue* CreateValueIfNeeded(const TBID& name,
+                                    Value::Type type = Value::Type::kInt);
 
-  // Gets the WidgetValue with the given name, or nullptr if no match is found.
-  WidgetValue* GetValue(const TBID& name) const { return m_values.Get(name); }
+  // Gets the ElementValue with the given name, or nullptr if no match is found.
+  ElementValue* GetValue(const TBID& name) const { return m_values.Get(name); }
 
   // Adds a listener to this group.
   // It will be removed automatically when deleted, but can also be removed by
@@ -138,10 +138,10 @@ class ValueGroup {
   }
 
  private:
-  friend class WidgetValue;
-  void InvokeOnValueChanged(const WidgetValue* value);
+  friend class ElementValue;
+  void InvokeOnValueChanged(const ElementValue* value);
 
-  TBHashTableAutoDeleteOf<WidgetValue> m_values;
+  TBHashTableAutoDeleteOf<ElementValue> m_values;
   TBLinkListOf<ValueGroupListener> m_listeners;
 };
 

@@ -1,5 +1,5 @@
 WindowInfo
-	title ScrollContainer with misc widgets
+	title ScrollContainer with misc elements
 	size 500 500
 Layout
 	gravity all

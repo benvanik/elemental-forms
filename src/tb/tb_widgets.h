@@ -27,8 +27,8 @@ class FontFace;
 struct InflateInfo;
 class LongClickTimer;
 class Scroller;
-class Widget;
-class WidgetListener;
+class Element;
+class ElementListener;
 class Window;
 
 enum class Align {
@@ -41,17 +41,17 @@ MAKE_ORDERED_ENUM_STRING_UTILS(Align, "left", "top", "right", "bottom");
 
 enum class EventType {
   // Click event is what should be used to trig actions in almost all cases.
-  // It is invoked on a widget after POINTER_UP if the pointer is still inside
-  // its hit area. It can also be invoked by keyboard on some clickable widgets
-  // (see Widget::SetClickByKey).
-  // If panning of scrollable widgets start while the pointer is down, CLICK
+  // It is invoked on a element after POINTER_UP if the pointer is still inside
+  // its hit area. It can also be invoked by keyboard on some clickable elements
+  // (see Element::SetClickByKey).
+  // If panning of scrollable elements start while the pointer is down, CLICK
   // won't be invoked when releasing the pointer (since that should stop
   // panning).
   kClick,
   // Long click event is sent when the pointer has been down for some time
   // without moving much.
-  // It is invoked on a widget that has enabled it (Widget::SetWantLongClick).
-  // If this event isn't handled, the widget will invoke a CONTEXT_MENU event.
+  // It is invoked on a element that has enabled it (Element::SetWantLongClick).
+  // If this event isn't handled, the element will invoke a CONTEXT_MENU event.
   // If any of those are handled, the CLICK event that would normally be invoked
   // after the pending POINTER_UP will be suppressed.
   kLongClick,
@@ -61,7 +61,7 @@ enum class EventType {
   kWheel,
   // Invoked after changing text in a Label, changing selected item in a
   // SelectList etc. Invoking this event trigs synchronization with connected
-  // WidgetValue and other widgets connected to it.
+  // ElementValue and other elements connected to it.
   kChanged,
   kKeyDown,
   kKeyUp,
@@ -73,11 +73,11 @@ enum class EventType {
   kShortcut,
   // Invoked when a context menu should be opened at the event x and y
   // coordinates.
-  // It may be invoked automatically for a widget on long click, if nothing
+  // It may be invoked automatically for a element on long click, if nothing
   // handles the long click event.
   kContextMenu,
   // Invoked by the platform when one or multiple files has been dropped on the
-  // widget. The event is guaranteed to be a WidgetEventFileDrop.
+  // element. The event is guaranteed to be a ElementEventFileDrop.
   kFileDrop,
   // Custom event. Not used internally.
   // ref_id may be used for additional type info.
@@ -128,16 +128,16 @@ enum class SpecialKey {
   kF12,
 };
 
-class WidgetEvent : public TypedObject {
+class ElementEvent : public TypedObject {
  public:
-  TBOBJECT_SUBCLASS(WidgetEvent, TypedObject);
+  TBOBJECT_SUBCLASS(ElementEvent, TypedObject);
 
   EventType type;
-  // The widget that invoked the event.
-  Widget* target = nullptr;
-  // X position in target widget. Set for all pointer events, click and wheel.
+  // The element that invoked the event.
+  Element* target = nullptr;
+  // X position in target element. Set for all pointer events, click and wheel.
   int target_x = 0;
-  // Y position in target widget. Set for all pointer events, click and wheel.
+  // Y position in target element. Set for all pointer events, click and wheel.
   int target_y = 0;
   // Set for EventType::kWheel. Positive is a turn right.
   int delta_x = 0;
@@ -156,10 +156,10 @@ class WidgetEvent : public TypedObject {
   // on screen).
   bool touch = false;
 
-  WidgetEvent(EventType type) : type(type) {}
+  ElementEvent(EventType type) : type(type) {}
 
-  WidgetEvent(EventType type, int x, int y, bool touch,
-              ModifierKeys modifierkeys = ModifierKeys::kNone)
+  ElementEvent(EventType type, int x, int y, bool touch,
+               ModifierKeys modifierkeys = ModifierKeys::kNone)
       : type(type),
         target_x(x),
         target_y(y),
@@ -183,16 +183,16 @@ class WidgetEvent : public TypedObject {
 
 // An event of type EventType::kFileDrop.
 // It contains a list of filenames of the files that was dropped.
-class WidgetEventFileDrop : public WidgetEvent {
+class ElementEventFileDrop : public ElementEvent {
  public:
-  TBOBJECT_SUBCLASS(WidgetEventFileDrop, WidgetEvent);
+  TBOBJECT_SUBCLASS(ElementEventFileDrop, ElementEvent);
 
   TBListAutoDeleteOf<std::string> files;
 
-  WidgetEventFileDrop() : WidgetEvent(EventType::kFileDrop) {}
+  ElementEventFileDrop() : ElementEvent(EventType::kFileDrop) {}
 };
 
-// Widget gravity (may be combined).
+// Element gravity (may be combined).
 // Gravity gives hints about positioning and sizing preferences.
 enum class Gravity {
   kNone = 0,
@@ -235,8 +235,8 @@ enum class Axis {
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(Axis, "x", "y");
 
-// Defines how the size in one axis depend on the other axis when a widgets size
-// is affected by constraints.
+// Defines how the size in one axis depend on the other axis when a elements
+// size is affected by constraints.
 enum class SizeDependency {
   // No dependency (Faster layout).
   kNone = 0,
@@ -252,9 +252,9 @@ enum class SizeDependency {
 };
 MAKE_ENUM_FLAG_COMBO(SizeDependency);
 
-// Contains size preferences for a Widget.
-// This is calculated during layout for each widget from the current skin,
-// widget preferences and LayoutParams.
+// Contains size preferences for a Element.
+// This is calculated during layout for each element from the current skin,
+// element preferences and LayoutParams.
 class PreferredSize {
  public:
   PreferredSize() = default;
@@ -271,8 +271,8 @@ class PreferredSize {
   SizeDependency size_dependency = SizeDependency::kNone;
 };
 
-// Defines size preferences for a Widget that are set on the widget to override
-// size preferences from skin and widget.
+// Defines size preferences for a Element that are set on the element to
+// override size preferences from skin and element.
 class LayoutParams {
  public:
   static const int kUnspecified = kInvalidDimension;
@@ -344,22 +344,22 @@ class SizeConstraints {
   }
 };
 
-// Defines widget z level, used with Widget::SetZ, Widget::AddChild.
-enum class WidgetZ {
+// Defines element z level, used with Element::SetZ, Element::AddChild.
+enum class ElementZ {
   kTop,     // The toplevel (Visually drawn on top of everything else).
   kBottom,  // The bottomlevel (Visually drawn behind everything else).
 };
-MAKE_ORDERED_ENUM_STRING_UTILS(WidgetZ, "top", "bottom");
+MAKE_ORDERED_ENUM_STRING_UTILS(ElementZ, "top", "bottom");
 
-// Defines widget z level relative to another widget, used with
-// Widget::AddChildRelative.
-enum class WidgetZRel {
-  kBefore,  // Before the reference widget (visually behind reference).
-  kAfter,   // After the reference widget (visually above reference).
+// Defines element z level relative to another element, used with
+// Element::AddChildRelative.
+enum class ElementZRel {
+  kBefore,  // Before the reference element (visually behind reference).
+  kAfter,   // After the reference element (visually above reference).
 };
-MAKE_ORDERED_ENUM_STRING_UTILS(WidgetZRel, "before", "after");
+MAKE_ORDERED_ENUM_STRING_UTILS(ElementZRel, "before", "after");
 
-// Defines widget visibility, used with Widget::SetVisibility.
+// Defines element visibility, used with Element::SetVisibility.
 enum class Visibility {
   kVisible,    // Visible (default).
   kInvisible,  // Invisible, but layouted. Interaction disabled.
@@ -374,57 +374,57 @@ enum class InvokeInfo {
 
 enum class FocusReason {
   kNavigation,  // Set focus by navigation (i.e. keyboard tab). This will scroll
-                // to the widget if needed.
+                // to the element if needed.
   kPointer,     // Set focus by pointer (i.e. clicking).
   kUnknown,     // Set focus by anything else.
 };
 
-// Hit status return value for Widget::GetHitStatus.
+// Hit status return value for Element::GetHitStatus.
 enum class HitStatus {
-  kNoHit,          // The widget was not hit.
-  kHit,            // The widget was hit, any child may be hit too.
-  kHitNoChildren,  // The widget was hit, no children should be hit.
+  kNoHit,          // The element was not hit.
+  kHit,            // The element was hit, any child may be hit too.
+  kHitNoChildren,  // The element was hit, no children should be hit.
 };
 
-// The base Widget class.
+// The base Element class.
 // Make a subclass to implement UI controls.
-// Each widget has a background skin (no skin specified by default) which will
+// Each element has a background skin (no skin specified by default) which will
 // be used to calculate the default size preferences and padding around the
 // preferred content size.
 //
-// NOTE: When you subclass a widget, use the TBOBJECT_SUBCLASS macro to define
+// NOTE: When you subclass a element, use the TBOBJECT_SUBCLASS macro to define
 // the type casting functions instead of implementing those manually.
-class Widget : public TypedObject, public TBLinkOf<Widget> {
+class Element : public TypedObject, public TBLinkOf<Element> {
  public:
-  TBOBJECT_SUBCLASS(Widget, TypedObject);
+  TBOBJECT_SUBCLASS(Element, TypedObject);
 
-  Widget();
-  virtual ~Widget();
+  Element();
+  virtual ~Element();
 
-  // Sets the rect for this widget in its parent.
-  // The rect is relative to the parent widget. The skin may expand outside this
-  // rect to draw f.ex shadows.
+  // Sets the rect for this element in its parent.
+  // The rect is relative to the parent element. The skin may expand outside
+  // this rect to draw f.ex shadows.
   void SetRect(const Rect& rect);
   inline Rect GetRect() const { return m_rect; }
 
-  // Sets the position of this widget in its parent.
-  // The position is relative to the parent widget.
+  // Sets the position of this element in its parent.
+  // The position is relative to the parent element.
   void SetPosition(const Point& pos) {
     SetRect(Rect(pos.x, pos.y, m_rect.w, m_rect.h));
   }
 
-  // Sets size of this widget.
+  // Sets size of this element.
   void SetSize(int width, int height) {
     SetRect(Rect(m_rect.x, m_rect.y, width, height));
   }
 
-  // Invalidates should be called if the widget need to be repainted, to make
+  // Invalidates should be called if the element need to be repainted, to make
   // sure the renderer repaints it and its children next frame.
   void Invalidate();
 
-  // Call if something changes that might need other widgets to update their
+  // Call if something changes that might need other elements to update their
   // state.
-  // F.ex if a action availability changes, some widget might have to become
+  // F.ex if a action availability changes, some element might have to become
   // enabled/disabled.
   // Calling this will result in a later call to OnProcessStates().
   //
@@ -439,40 +439,40 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   // various other situations.
   void InvalidateSkinStates();
 
-  // Deletes the widget with the possibility for some extended life during
+  // Deletes the element with the possibility for some extended life during
   // animations.
-  // If any widget listener responds true to OnWidgetDying it will be kept as a
-  // child and live until the animations are done, but the widgets and all its
-  // children are marked as dying. Dying widgets get no input or focus.
-  // If no widget listener responded, it will be deleted immediately.
+  // If any element listener responds true to OnElementDying it will be kept as
+  // a child and live until the animations are done, but the elements and all
+  // its children are marked as dying. Dying elements get no input or focus.
+  // If no element listener responded, it will be deleted immediately.
   void Die();
 
-  // Returns true if this widget or any of its parents is dying.
+  // Returns true if this element or any of its parents is dying.
   bool GetIsDying() const {
     return m_packed.is_dying || (m_parent && m_parent->GetIsDying());
   }
 
-  // Sets the id reference for this widgets. This id is 0 by default.
-  // You can use this id to receive the widget from GetWidgetByID (or
+  // Sets the id reference for this elements. This id is 0 by default.
+  // You can use this id to receive the element from GetElementByID (or
   // preferable TBSafeGetByID to avoid dangerous casts).
   void SetID(const TBID& id);
   TBID& GetID() { return m_id; }
 
-  // Sets the group id reference for this widgets. This id is 0 by default.
-  // All widgets with the same group id under the same group root will be
+  // Sets the group id reference for this elements. This id is 0 by default.
+  // All elements with the same group id under the same group root will be
   // automatically changed when one change its value.
   void SetGroupID(const TBID& id) { m_group_id = id; }
   TBID& GetGroupID() { return m_group_id; }
 
-  // Gets this widget or any child widget with a matching id, or nullptr if none
-  // is found.
-  Widget* GetWidgetByID(const TBID& id) { return GetWidgetByIDInternal(id); }
+  // Gets this element or any child element with a matching id, or nullptr if
+  // none is found.
+  Element* GetElementByID(const TBID& id) { return GetElementByIDInternal(id); }
 
-  // Gets this widget or any child widget with a matching id and type, or
+  // Gets this element or any child element with a matching id and type, or
   // nullptr if none is found.
   template <class T>
-  T* GetWidgetByIDAndType(const TBID& id) {
-    return (T*)GetWidgetByIDInternal(id, GetTypeId<T>());
+  T* GetElementByIDAndType(const TBID& id) {
+    return (T*)GetElementByIDInternal(id, GetTypeId<T>());
   }
 
   // Enables or disables the given state(s).
@@ -484,16 +484,16 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   // Returns true if the given state combination is set.
   bool GetState(SkinState state) const { return any(m_state & state); }
 
-  // Sets the widget state.
+  // Sets the element state.
   // Like SetState but setting the entire state as given, instead of toggling
   // individual states. See SetState for more info on states.
   void SetStateRaw(SkinState state);
 
-  // Gets the widget state.
+  // Gets the element state.
   SkinState GetStateRaw() const { return m_state; }
 
-  // Returns the current combined state for this widget. It will also add some
-  // automatic states, such as hovered (if the widget is currently hovered), or
+  // Returns the current combined state for this element. It will also add some
+  // automatic states, such as hovered (if the element is currently hovered), or
   // pressed etc.
   //
   // Automatic states:
@@ -504,82 +504,83 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   SkinState GetAutoState() const;
 
   // Sets whether the state SkinState::kFocused should be set automatically for
-  // the focused widget.
+  // the focused element.
   // This value is set to true when moving focus by keyboard, and set to off
   // when clicking with the pointer.
   static void SetAutoFocusState(bool on);
 
-  // Sets opacity for this widget and its children from 0.0 - 1.0.
-  // If opacity is 0 (invisible), the widget won't receive any input.
+  // Sets opacity for this element and its children from 0.0 - 1.0.
+  // If opacity is 0 (invisible), the element won't receive any input.
   void SetOpacity(float opacity);
   float GetOpacity() const { return m_opacity; }
 
-  // Sets visibility for this widget and its children.
-  // If visibility is not Visibility::kVisible, the widget won't receive any
+  // Sets visibility for this element and its children.
+  // If visibility is not Visibility::kVisible, the element won't receive any
   // input.
   void SetVisibilility(Visibility vis);
   Visibility GetVisibility() const;
 
-  // Returns true if this widget and all its ancestors are visible (has a
+  // Returns true if this element and all its ancestors are visible (has a
   // opacity > 0 and visibility Visibility::kVisible).
   bool GetVisibilityCombined() const;
 
-  // Returns true if this widget or any of its parents are disabled (has state
+  // Returns true if this element or any of its parents are disabled (has state
   // SkinState::kDisabled).
   bool GetDisabled() const;
 
-  // Adds a child to this widget.
-  // The child widget will automatically be deleted when this widget is deleted
-  // unless the child is removed again with RemoveChild.
-  void AddChild(Widget* child, WidgetZ z = WidgetZ::kTop,
+  // Adds a child to this element.
+  // The child element will automatically be deleted when this element is
+  // deleted unless the child is removed again with RemoveChild.
+  void AddChild(Element* child, ElementZ z = ElementZ::kTop,
                 InvokeInfo info = InvokeInfo::kNormal);
 
-  // Adds a child to this widget.
+  // Adds a child to this element.
   // See AddChild for adding a child to the top or bottom.
   // This takes a relative Z and insert the child before or after the given
-  // reference widget.
-  void AddChildRelative(Widget* child, WidgetZRel z, Widget* reference,
+  // reference element.
+  void AddChildRelative(Element* child, ElementZRel z, Element* reference,
                         InvokeInfo info = InvokeInfo::kNormal);
 
-  // Removes child from this widget without deleting it.
-  void RemoveChild(Widget* child, InvokeInfo info = InvokeInfo::kNormal);
+  // Removes child from this element without deleting it.
+  void RemoveChild(Element* child, InvokeInfo info = InvokeInfo::kNormal);
 
-  // Removes and deletes all children in this widget.
-  // NOTE: This won't invoke Die so there's no chance for widgets to survive or
+  // Removes and deletes all children in this element.
+  // NOTE: This won't invoke Die so there's no chance for elements to survive or
   // animate. They will be instantly removed and deleted.
   void DeleteAllChildren();
 
-  // Sets the z-order of this widget related to its siblings.
-  // When a widget is added with AddChild, it will be placed at the top in the
-  // parent (Above previously added widget). SetZ can be used to change the
+  // Sets the z-order of this element related to its siblings.
+  // When a element is added with AddChild, it will be placed at the top in the
+  // parent (Above previously added element). SetZ can be used to change the
   // order.
-  void SetZ(WidgetZ z);
+  void SetZ(ElementZ z);
 
   // Sets the z-order in which children are added during resource loading.
-  void SetZInflate(WidgetZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
-  WidgetZ GetZInflate() const { return (WidgetZ)m_packed.inflate_child_z; }
+  void SetZInflate(ElementZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
+  ElementZ GetZInflate() const { return (ElementZ)m_packed.inflate_child_z; }
 
-  // Sets the widget gravity (any combination of Gravity).
-  // For child widgets in a layout, the gravity affects how the layout is done
+  // Sets the element gravity (any combination of Gravity).
+  // For child elements in a layout, the gravity affects how the layout is done
   // depending on the layout settings.
-  // For child widgets in a non-layout widget, it will do some basic
+  // For child elements in a non-layout element, it will do some basic
   // resizing/moving:
-  // - left && right: Widget resize horizontally when parent resize.
-  // - !left && right: Widget follows the right edge when parent resize.
-  // - top && bottom: Widget resize vertically when parent resize.
-  // - !top && bottom: Widget follows the bottom edge when parent resize.
+  // - left && right: Element resize horizontally when parent resize.
+  // - !left && right: Element follows the right edge when parent resize.
+  // - top && bottom: Element resize vertically when parent resize.
+  // - !top && bottom: Element follows the bottom edge when parent resize.
   void SetGravity(Gravity g);
   Gravity GetGravity() const { return m_gravity; }
 
-  // Sets the skin background for this widget and call OnSkinChanged if it
+  // Sets the skin background for this element and call OnSkinChanged if it
   // changed.
   // The skin background is used for calculating padding, preferred size etc. if
-  // the widget doesn't have any preferences itself.
+  // the element doesn't have any preferences itself.
   //
-  // The skin will be painted according to the current widget state (SkinState).
+  // The skin will be painted according to the current element state
+  // (SkinState).
   // If there is no special skin state for SkinState::kFocused, it will paint
   // the skin element called "generic_focus" (if it exist) after painting all
-  // widget children.
+  // element children.
   //
   // It's possible to omit the OnSkinChanged callback using
   // InvokeInfo::kNoCallbacks.
@@ -591,136 +592,138 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   // Returns the skin background element, or nullptr.
   SkinElement* GetSkinBgElement();
 
-  // Sets if this widget is a group root.
-  // Grouped widgets (such as RadioButton) will toggle all other widgets with
+  // Sets if this element is a group root.
+  // Grouped elements (such as RadioButton) will toggle all other elements with
   // the same group_id under the nearest parent group root.
   // Window is a group root by default.
   void SetIsGroupRoot(bool group_root) { m_packed.is_group_root = group_root; }
   bool GetIsGroupRoot() const { return m_packed.is_group_root; }
 
-  // Sets if this widget should be able to receive focus or not.
+  // Sets if this element should be able to receive focus or not.
   void SetIsFocusable(bool focusable) { m_packed.is_focusable = focusable; }
   bool GetIsFocusable() const { return m_packed.is_focusable; }
 
-  // Sets if this widget should emulate a click when it's focused and pressing
+  // Sets if this element should emulate a click when it's focused and pressing
   // enter or space.
   void SetClickByKey(bool click_by_key) {
     m_packed.click_by_key = click_by_key;
   }
   bool GetClickByKey() const { return m_packed.click_by_key; }
 
-  // Sets if this widget should generate long-click event (or context menu event
-  // if nothing handles the long click event). The default is false.
+  // Sets if this element should generate long-click event (or context menu
+  // event if nothing handles the long click event). The default is false.
   void SetWantLongClick(bool want_long_click) {
     m_packed.want_long_click = want_long_click;
   }
   bool GetWantLongClick() const { return m_packed.want_long_click; }
 
-  // Sets if this widget should ignore input, as if it didn't exist.
+  // Sets if this element should ignore input, as if it didn't exist.
   void SetIgnoreInput(bool ignore_input) {
     m_packed.ignore_input = ignore_input;
   }
   bool GetIgnoreInput() const { return m_packed.ignore_input; }
 
-  // Gets if this widget wants interaction depending on various states.
+  // Gets if this element wants interaction depending on various states.
   // Cares about zero opacity, visibility, flag set by SetIgnoreInput, disabled
-  // state, and if the widget is currently dying.
+  // state, and if the element is currently dying.
   bool GetIsInteractable() const;
 
-  // Sets this widget to be the focused widget. It will be the one receiving
+  // Sets this element to be the focused element. It will be the one receiving
   // keyboard input.
-  // Widgets can be focused only after enabling it (see SetIsFocusable(true)).
-  // Invisible or disabled widgets can not be focused.
-  // If SetFocus is called on a widget in a inactive window, it will succeed
+  // Elements can be focused only after enabling it (see SetIsFocusable(true)).
+  // Invisible or disabled elements can not be focused.
+  // If SetFocus is called on a element in a inactive window, it will succeed
   // (return true), but it won't actually become focused until that window is
   // activated (see Window::SetLastFocus).
   // Returns true if successfully focused, or if set as last focus in its
   // window.
   bool SetFocus(FocusReason reason, InvokeInfo info = InvokeInfo::kNormal);
-  bool GetIsFocused() const { return focused_widget == this; }
+  bool GetIsFocused() const { return focused_element == this; }
 
-  // Calls SetFocus on all children and their children, until a widget is found
+  // Calls SetFocus on all children and their children, until a element is found
   // that accepts it.
   // Returns true if some child was successfully focused.
   bool SetFocusRecursive(FocusReason reason);
 
-  // Moves focus from the currently focused widget to another focusable widget.
-  // It will search for a focusable widget in the same Window (or top root if
-  // there is no window) forward or backwards in the widget order.
+  // Moves focus from the currently focused element to another focusable
+  // element.
+  // It will search for a focusable element in the same Window (or top root if
+  // there is no window) forward or backwards in the element order.
   bool MoveFocus(bool forward);
 
-  // Returns the child widget that contains the coordinate or nullptr if no one
+  // Returns the child element that contains the coordinate or nullptr if no one
   // does.
   // If include_children is true, the search will recurse into the childrens
   // children.
-  Widget* GetWidgetAt(int x, int y, bool include_children) const;
+  Element* GetElementAt(int x, int y, bool include_children) const;
 
   // Gets the child at the given index, or nullptr if there was no child at that
   // index.
   // NOTE: avoid calling this in loops since it does iteration. Consider
-  // iterating the widgets directly instead!
-  Widget* GetChildFromIndex(int index) const;
+  // iterating the elements directly instead!
+  Element* GetChildFromIndex(int index) const;
 
-  // Gets the child index of the given widget (that must be a child of this
-  // widget).
+  // Gets the child index of the given element (that must be a child of this
+  // element).
   // NOTE: avoid calling this in loops since it does iteration. Consider
-  // iterating the widgets directly instead!
-  int GetIndexFromChild(Widget* child) const;
+  // iterating the elements directly instead!
+  int GetIndexFromChild(Element* child) const;
 
-  // Gets the text of a child widget with the given id, or an empty string if
-  // there was no widget with that id.
+  // Gets the text of a child element with the given id, or an empty string if
+  // there was no element with that id.
   std::string GetTextByID(const TBID& id);
 
-  // Gets the value of a child widget with the given id, or 0 if there was no
-  // widget with that id.
+  // Gets the value of a child element with the given id, or 0 if there was no
+  // element with that id.
   int GetValueByID(const TBID& id);
 
-  Widget* GetNextDeep(const Widget* bounding_ancestor = nullptr) const;
-  Widget* GetPrevDeep() const;
-  Widget* GetLastLeaf() const;
-  inline Widget* GetFirstChild() const { return m_children.GetFirst(); }
-  inline Widget* GetLastChild() const { return m_children.GetLast(); }
-  TBLinkListOf<Widget>::Iterator GetIteratorForward() {
+  Element* GetNextDeep(const Element* bounding_ancestor = nullptr) const;
+  Element* GetPrevDeep() const;
+  Element* GetLastLeaf() const;
+  inline Element* GetFirstChild() const { return m_children.GetFirst(); }
+  inline Element* GetLastChild() const { return m_children.GetLast(); }
+  TBLinkListOf<Element>::Iterator GetIteratorForward() {
     return m_children.IterateForward();
   }
-  TBLinkListOf<Widget>::Iterator GetIteratorBackward() {
+  TBLinkListOf<Element>::Iterator GetIteratorBackward() {
     return m_children.IterateBackward();
   }
 
-  // Returns true if this widget is the same or a ancestor of other_widget.
-  bool IsAncestorOf(Widget* other_widget) const;
+  // Returns true if this element is the same or a ancestor of other_element.
+  bool IsAncestorOf(Element* other_element) const;
 
-  // Returns true if this widget is the same as other_widget or if other_widget
-  // events are going through this widget (see GetEventDestination()).
-  bool IsEventDestinationFor(Widget* other_widget) const;
+  // Returns true if this element is the same as other_element or if
+  // other_element events are going through this element (see
+  // GetEventDestination()).
+  bool IsEventDestinationFor(Element* other_element) const;
 
-  // Adds a listener to this widget. It should be removed again with
-  // RemoveListener before the widget is deleted.
-  void AddListener(WidgetListener* listener);
-  void RemoveListener(WidgetListener* listener);
-  bool HasListener(WidgetListener* listener) const;
+  // Adds a listener to this element. It should be removed again with
+  // RemoveListener before the element is deleted.
+  void AddListener(ElementListener* listener);
+  void RemoveListener(ElementListener* listener);
+  bool HasListener(ElementListener* listener) const;
 
   // Callback for handling events.
   // Return true if the event is handled and should not continue to be handled
-  // by any parent widgets.
-  virtual bool OnEvent(const WidgetEvent& ev) { return false; }
+  // by any parent elements.
+  virtual bool OnEvent(const ElementEvent& ev) { return false; }
 
   // Callback for doing anything that might be needed before paint.
   // F.ex Updating invalid layout, formatting text etc.
   virtual void OnProcess() {}
 
   // Callback for doing anything that might be needed before paint.
-  // This is called after OnProcess has been called on this widgets children.
+  // This is called after OnProcess has been called on this elements children.
   virtual void OnProcessAfterChildren() {}
 
   // Callback for doing state updates that depend on your application state.
-  // F.ex setting the disabled state on a widget which action is currently not
-  // available. This callback is called for all widgets before OnProcess if
+  // F.ex setting the disabled state on a element which action is currently not
+  // available. This callback is called for all elements before OnProcess if
   // something has called InvalidateStates().
   virtual void OnProcessStates() {}
 
-  // Contains properties needed for painting a widget.
-  // Properties may be inherited from the parent widget if not specified in the
+  // Contains properties needed for painting a element.
+  // Properties may be inherited from the parent element if not specified in the
   // skin.
   class PaintProps {
    public:
@@ -730,16 +733,16 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
     Color text_color;
   };
 
-  // Callback for painting this widget.
-  // The skin is already painted and the opacity set to reflect this widgets.
-  // This is only called for widgets with a opacity > 0.
+  // Callback for painting this element.
+  // The skin is already painted and the opacity set to reflect this elements.
+  // This is only called for elements with a opacity > 0.
   virtual void OnPaint(const PaintProps& paint_props) {}
 
-  // Callback for painting child widgets.
+  // Callback for painting child elements.
   // The default implementation is painting all children.
   virtual void OnPaintChildren(const PaintProps& paint_props);
 
-  // Callback for when this widget or any of its children have called
+  // Callback for when this element or any of its children have called
   // Invalidate().
   virtual void OnInvalid() {}
 
@@ -764,113 +767,116 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   // Called when the capture has changed.
   virtual void OnCaptureChanged(bool captured) {}
 
-  // Called when a child widget has been added to this widget (before calling
+  // Called when a child element has been added to this element (before calling
   // OnAdded on child).
-  virtual void OnChildAdded(Widget* child) {}
+  virtual void OnChildAdded(Element* child) {}
 
-  // Called when a child widget is about to be removed from this widget (before
-  // calling OnRemove on child).
-  virtual void OnChildRemove(Widget* child) {}
+  // Called when a child element is about to be removed from this element
+  // (before calling OnRemove on child).
+  virtual void OnChildRemove(Element* child) {}
 
-  // Called when this widget has been added to a parent (after calling
+  // Called when this element has been added to a parent (after calling
   // OnChildAdded on parent).
   virtual void OnAdded() {}
 
-  // Called when a this widget has been removed from its parent (after calling
+  // Called when a this element has been removed from its parent (after calling
   // OnChildRemove on parent).
   virtual void OnRemove() {}
 
-  // Called when Die() is called on this widget. Note: Not called for children
-  // to the widget Die() was invoked on even though they are also dying.
+  // Called when Die() is called on this element. Note: Not called for children
+  // to the element Die() was invoked on even though they are also dying.
   virtual void OnDie() {}
 
-  // Called when this widget has been resized.
+  // Called when this element has been resized.
   // The default implementation move and resize all children according to their
   // gravity.
   virtual void OnResized(int old_w, int old_h);
 
-  // Called when this widget has been scrolled.
+  // Called when this element has been scrolled.
   virtual void OnScroll(int scroll_x, int scroll_y) {}
 
-  // Called just after a child has been inflated into this widget.
+  // Called just after a child has been inflated into this element.
   // The default implementation will resize the child to it's preferred size and
-  // position it according to the gravity. If you implement a layouting widget,
+  // position it according to the gravity. If you implement a layouting element,
   // you should override this to prevent doing unnecessary measuring.
-  virtual void OnInflateChild(Widget* child);
+  virtual void OnInflateChild(Element* child);
 
-  // Called when this widget is inflated from resources, before any children has
-  // been inflated.
-  // This will read generic widget properties and add the widget to the
+  // Called when this element is inflated from resources, before any children
+  // has been inflated.
+  // This will read generic element properties and add the element to the
   // hierarchy if it's not already added. If overridden, you must call the super
   // implementation.
   virtual void OnInflate(const InflateInfo& info);
 
-  // Gets hit status tests if this widget should be hit at the given coordinate.
+  // Gets hit status tests if this element should be hit at the given
+  // coordinate.
   // The default implementation checks the visibility, ignored input flag,
   // rectangle, and disabled status.
   virtual HitStatus GetHitStatus(int x, int y);
 
-  // Gets if skin condition applies to this widget.
+  // Gets if skin condition applies to this element.
   // This is called when a skin condition has the property SkinProperty::kCustom
-  // (not a generic one known by skin and the default widget condition context).
+  // (not a generic one known by skin and the default element condition
+  // context).
   // This can be used to extend the skin conditions support with properties
-  // specific to different widgets.
+  // specific to different elements.
   virtual bool GetCustomSkinCondition(
       const SkinCondition::ConditionInfo& info) {
     return false;
   }
 
-  // Gets this widget or a child widget that should be root for other children.
-  // This is useful for widgets having multiple children by default, to specify
+  // Gets this element or a child element that should be root for other
+  // children.
+  // This is useful for elements having multiple children by default, to specify
   // which one that should get the children.
-  virtual Widget* GetContentRoot() { return this; }
+  virtual Element* GetContentRoot() { return this; }
 
-  // Gets this widget or a parent widget that is the absolute root parent.
-  Widget* GetParentRoot();
+  // Gets this element or a parent element that is the absolute root parent.
+  Element* GetParentRoot();
 
-  // Gets the closest parent widget that is a Window or nullptr if there is
+  // Gets the closest parent element that is a Window or nullptr if there is
   // none.
-  // If this widget is a window itself, this will be returned.
+  // If this element is a window itself, this will be returned.
   Window* GetParentWindow();
 
-  // Gets the parent widget, or nullptr if this widget is not added.
-  inline Widget* GetParent() const { return m_parent; }
+  // Gets the parent element, or nullptr if this element is not added.
+  inline Element* GetParent() const { return m_parent; }
 
-  // Gets the widget that should receive the events this widget invoke. By
+  // Gets the element that should receive the events this element invoke. By
   // default the parent.
-  virtual Widget* GetEventDestination() { return m_parent; }
+  virtual Element* GetEventDestination() { return m_parent; }
 
   // Returns translation the children should have.
-  // Any scrolling of child widgets should be done with this method, by
+  // Any scrolling of child elements should be done with this method, by
   // returning the wanted translation.
   //
   // When implementing this, you must also implement ScrollTo and GetScrollInfo
   // so focus-scroll and panning will work automatically when dragging this or
-  // any child widget.
+  // any child element.
   //
-  // NOTE: you can apply the translation on one widget and implement those
-  // methods on a parent, by returning this widget from the parents
+  // NOTE: you can apply the translation on one element and implement those
+  // methods on a parent, by returning this element from the parents
   // GetScrollRoot().
   virtual void GetChildTranslation(int& x, int& y) const { x = y = 0; }
 
-  // If this is a widget that scroll children (see GetChildTranslation), it
+  // If this is a element that scroll children (see GetChildTranslation), it
   // should scroll to the coordinates x, y.
   // This must result in calling OnScroll if scrolling occured.
   virtual void ScrollTo(int x, int y) {}
 
-  // Starts the Scroller for this widget and scroll it to the given position.
+  // Starts the Scroller for this element and scroll it to the given position.
   // Will cancel any on going smooth scroll operation.
   void ScrollToSmooth(int x, int y);
 
-  // If this is a widget that scroll children (see GetChildTranslation), it will
-  // scroll by delta dx, dy relative to its current position.
+  // If this is a element that scroll children (see GetChildTranslation), it
+  // will scroll by delta dx, dy relative to its current position.
   void ScrollBy(int dx, int dy);
 
-  // Starts the Scroller for this widget and scroll it by the given delta.
+  // Starts the Scroller for this element and scroll it by the given delta.
   // Consecutive calls will accumulate the scroll speed.
   void ScrollBySmooth(int dx, int dy);
 
-  // Information about scrolling for a widget at the time of calling
+  // Information about scrolling for a element at the time of calling
   // GetScrollInfo.
   class ScrollInfo {
    public:
@@ -887,99 +893,101 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
     int x = 0, y = 0;          // Current x and y scroll position.
   };
 
-  // If this is a widget that scroll children (see GetChildTranslation), it
+  // If this is a element that scroll children (see GetChildTranslation), it
   // should return the current scroll information.
   virtual ScrollInfo GetScrollInfo() { return ScrollInfo(); }
 
-  // If this widget is implementing ScrollTo and GetScrollInfo but the
+  // If this element is implementing ScrollTo and GetScrollInfo but the
   // corresponding GetChildTranslation is implemented on a child, you should
   // return that child from this method.
-  virtual Widget* GetScrollRoot() { return this; }
+  virtual Element* GetScrollRoot() { return this; }
 
-  // Scrolls this widget and/or any parent widgets by the given delta.
+  // Scrolls this element and/or any parent elements by the given delta.
   // dx and dy will be reduced by the amount that was successfully scrolled.
   void ScrollByRecursive(int& dx, int& dy);
 
-  // Makes this widget visible by calling ScrollIntoView on all parent widgets.
+  // Makes this element visible by calling ScrollIntoView on all parent
+  // elements.
   void ScrollIntoViewRecursive();
 
-  // If this is a widget that scroll children (see GetChildTranslation), it will
-  // scroll so that rect is visible. Rect is relative to this widget.
+  // If this is a element that scroll children (see GetChildTranslation), it
+  // will scroll so that rect is visible. Rect is relative to this element.
   void ScrollIntoView(const Rect& rect);
 
-  // Returns the Scroller set up for this widget, or nullptr if creation failed.
+  // Returns the Scroller set up for this element, or nullptr if creation
+  // failed.
   Scroller* GetScroller();
 
   // Sets along which axis the content should layout.
   virtual void SetAxis(Axis axis) {}
   virtual Axis GetAxis() const { return Axis::kX; }
 
-  // Sets the value of this widget.
-  // Implemented by most widgets that have a value.
-  // NOTE: some widgets also provide special setters with other types (such as
+  // Sets the value of this element.
+  // Implemented by most elements that have a value.
+  // NOTE: some elements also provide special setters with other types (such as
   // double).
   virtual void SetValue(int value) {}
   virtual int GetValue() { return 0; }
 
   // Sets the value in double precision.
-  // It only makes sense to use this instead of SetValue() on widgets that store
-  // the value as double.
+  // It only makes sense to use this instead of SetValue() on elements that
+  // store the value as double.
   // F.ex ScrollBar, Slider.
   virtual void SetValueDouble(double value) { SetValue(int(value)); }
 
   // Returns the value in double precision.
-  // It only makes sense to use this instead of GetValue() on widgets that store
-  // the value as double.
+  // It only makes sense to use this instead of GetValue() on elements that
+  // store the value as double.
   // F.ex ScrollBar, Slider.
   virtual double GetValueDouble() { return double(GetValue()); }
 
-  // Sets the text of this widget. Implemented by most widgets that have text.
+  // Sets the text of this element. Implemented by most elements that have text.
   virtual void SetText(const char* text) {}
   void SetText(const std::string& text) { SetText(text.c_str()); }
 
-  // Gets the text of this widget. Implemented by most widgets that have text.
+  // Gets the text of this element. Implemented by most elements that have text.
   virtual std::string GetText() { return ""; }
 
-  // Gets the description string of this widget. Used for tooltips.
+  // Gets the description string of this element. Used for tooltips.
   virtual std::string GetTooltip() { return m_tooltip_str; }
 
-  // Sets the description string for this widget. Used for tooltips.
+  // Sets the description string for this element. Used for tooltips.
   virtual void SetTooltip(const char* value) {
     m_tooltip_str = value ? value : "";
   }
 
-  // Connects this widget to a widget value.
-  // When this widget invoke EventType::kChanged, it will automatically update
-  // the connected widget value, and any other widgets that may be connected to
-  // it.
-  // On connection, the value of this widget will be updated to the value of the
-  // given WidgetValue.
-  void Connect(WidgetValue* value) { m_connection.Connect(value, this); }
+  // Connects this element to a element value.
+  // When this element invoke EventType::kChanged, it will automatically update
+  // the connected element value, and any other elements that may be connected
+  // to it.
+  // On connection, the value of this element will be updated to the value of
+  // the given ElementValue.
+  void Connect(ElementValue* value) { m_connection.Connect(value, this); }
 
-  // Disconnects, if this widget is connected to a WidgetValue.
+  // Disconnects, if this element is connected to a ElementValue.
   void Disconnect() { m_connection.Disconnect(); }
 
-  // Gets the rectangle inside any padding, relative to this widget.
+  // Gets the rectangle inside any padding, relative to this element.
   // This is the rectangle in which the content should be rendered.
   // This may be overridden to f.ex deduct space allocated by visible scrollbars
-  // managed by this widget. Anything that removes space from the content area.
+  // managed by this element. Anything that removes space from the content area.
   virtual Rect GetPaddingRect();
 
-  // Calculates the preferred content size for this widget.
+  // Calculates the preferred content size for this element.
   // This is the size of the actual content. Don't care about padding or other
   // decoration.
   virtual PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints);
 
-  // Calculates the preferred size for this widget.
-  // This is the full size of the widget, content + padding + eventual other
+  // Calculates the preferred size for this element.
+  // This is the full size of the element, content + padding + eventual other
   // decoration (but not skin expansion).
-  // This is the size that should be used for laying out a widget.
+  // This is the size that should be used for laying out a element.
   // The returned PreferredSize also contains minimal size and maximum size.
   virtual PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints);
 
-  // Gets the PreferredSize for this widget.
+  // Gets the PreferredSize for this element.
   // This returns cached data if valid, or calls OnCalculatePreferredSize if
   // needed.
   PreferredSize GetPreferredSize(const SizeConstraints& constraints);
@@ -995,17 +1003,17 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
                   // too.
   };
 
-  // Invalidates layout for this widget so it will be scheduled for relayout.
-  // Any change to the size preferences for a widget should call this to let
+  // Invalidates layout for this element so it will be scheduled for relayout.
+  // Any change to the size preferences for a element should call this to let
   // parent layout adjust to the change.
   //
-  // Remarks for layout widgets:
-  // - When a layout widget get this, it should mark its layout as invalid and
+  // Remarks for layout elements:
+  // - When a layout element get this, it should mark its layout as invalid and
   //   do the layout later (in GetPreferredContentSize/GetPreferredSize are
   //   called). If a layout knows that no parents will be affected, it may stop
   //   recursion to parents to avoid unnecessary relayout.
-  // - When setting the size of a layout widget (typically from another layout
-  //   widget or from a OnResize), it should be called with
+  // - When setting the size of a layout element (typically from another layout
+  //   element or from a OnResize), it should be called with
   //   InvalidationMode::kTargetOnly to avoid recursing back up to parents when
   //   already recursing down, to avoid unnecessary computation.
   virtual void InvalidateLayout(InvalidationMode il);
@@ -1019,38 +1027,38 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   // params.
   const LayoutParams* GetLayoutParams() const { return m_layout_params; }
 
-  // TODO(benvanik): move to a special RootWidget type.
+  // TODO(benvanik): move to a special RootElement type.
 
-  // Invoke OnProcess and OnProcessAfterChildren on this widget and its
+  // Invoke OnProcess and OnProcessAfterChildren on this element and its
   // children.
   void InvokeProcess();
 
-  // Invoke OnProcessStates on all child widgets, if state processing is needed
+  // Invoke OnProcessStates on all child elements, if state processing is needed
   // (InvalidateStates() has been called).
   void InvokeProcessStates(bool force_update = false);
 
-  // Invoke paint on this widget and all its children.
+  // Invoke paint on this element and all its children.
   void InvokePaint(const PaintProps& parent_paint_props);
 
-  // Invoke OnFontChanged on this widget and recursively on any children that
+  // Invoke OnFontChanged on this element and recursively on any children that
   // inherit the font.
   void InvokeFontChanged();
 
-  // Invoke a event on this widget.
-  // This will first check with all registered WidgetListener if the event
+  // Invoke a event on this element.
+  // This will first check with all registered ElementListener if the event
   // should be dispatched.
-  // If the widgets OnEvent returns false (event not handled), it will continue
-  // traversing to GetEventDestination (by default the parent) until a widget
+  // If the elements OnEvent returns false (event not handled), it will continue
+  // traversing to GetEventDestination (by default the parent) until a element
   // handles the event.
   //
   // NOTE: when invoking event EventType::kChanged, this will update the value
-  // of other widgets connected to the same group.
+  // of other elements connected to the same group.
   // NOTE: some event types will automatically invalidate states (see
   // InvalidateStates(), InvalidateSkinStates()).
-  // NOTE: remember that this widgets may be deleted after this call! So if you
+  // NOTE: remember that this elements may be deleted after this call! So if you
   // really must do something after this call and are not sure what the event
-  // will cause, use WeakWidgetPointer to detect self deletion.
-  bool InvokeEvent(WidgetEvent& ev);
+  // will cause, use WeakElementPointer to detect self deletion.
+  bool InvokeEvent(ElementEvent& ev);
 
   bool InvokePointerDown(int x, int y, int click_count,
                          ModifierKeys modifierkeys, bool touch);
@@ -1060,69 +1068,69 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
                    ModifierKeys modifierkeys);
 
   // Invoke the EventType::kKeyDown and EventType::kKeyUp events on the
-  // currently focused widget.
+  // currently focused element.
   // This will also do some generic key handling, such as cycling focus on tab
   // etc.
   bool InvokeKey(int key, SpecialKey special_key, ModifierKeys modifierkeys,
                  bool down);
 
-  // A widget that receive a EventType::kPointerDown event will stay "captured"
+  // A element that receive a EventType::kPointerDown event will stay "captured"
   // until EventType::kPointerUp is received.
   // While captured all EventType::kPointerMove are sent to it. This method can
-  // force release the capture, which may happen f.ex if the Widget is removed
+  // force release the capture, which may happen f.ex if the Element is removed
   // while captured.
   void ReleaseCapture();
 
-  // Makes x and y (relative to this widget) relative to the upper left corner
-  // of the root widget.
+  // Makes x and y (relative to this element) relative to the upper left corner
+  // of the root element.
   void ConvertToRoot(int& x, int& y) const;
 
-  // Makes x and y (relative to the upper left corner of the root widget)
-  // relative to this widget.
+  // Makes x and y (relative to the upper left corner of the root element)
+  // relative to this element.
   void ConvertFromRoot(int& x, int& y) const;
 
-  // Sets the font description for this widget and any children that inherit the
-  // font.
+  // Sets the font description for this element and any children that inherit
+  // the font.
   // Setting an unspecified FontDescription (no changes made since construction)
   // means it will be inherited from parent (the default).
-  // Returns true and invokes OnFontChanged on all affected widgets, if the font
-  // was successfully set.
+  // Returns true and invokes OnFontChanged on all affected elements, if the
+  // font was successfully set.
   // Returns false and keep the font onchanged if it no matching font exists or
   // fails creation.
   bool SetFontDescription(const FontDescription& font_desc);
 
   // Gets the font description as set with SetFontDescription.
   // Use GetCalculatedFontDescription() to get the calculated font description
-  // (inherit from parent widget, etc).
+  // (inherit from parent element, etc).
   FontDescription GetFontDescription() const { return m_font_desc; }
 
-  // Calculates the font description for this widget.
-  // If this widget have unspecified font description, it will be inheritted
+  // Calculates the font description for this element.
+  // If this element have unspecified font description, it will be inheritted
   // from parent. If no parent specify any font, the default font description
   // will be returned.
   FontDescription GetCalculatedFontDescription() const;
 
-  // Gets the FontFace for this widget from the current font description
+  // Gets the FontFace for this element from the current font description
   // (calculated by GetCalculatedFontDescription).
   FontFace* GetFont() const;
 
  private:
-  friend class WidgetListener;
-  Widget* m_parent = nullptr;
-  TBID m_id;                // ID for GetWidgetByID and others.
+  friend class ElementListener;
+  Element* m_parent = nullptr;
+  TBID m_id;                // ID for GetElementByID and others.
   TBID m_group_id;          // ID for button groups (such as RadioButton)
   TBID m_skin_bg;           // ID for the background skin (0 for no skin).
   TBID m_skin_bg_expected;  // ID for the background skin after strong override,
                             // used to indirect skin changes because of
                             // condition changes.
-  // The rectangle of this widget, relative to the parent. See SetRect.
+  // The rectangle of this element, relative to the parent. See SetRect.
   Rect m_rect;
-  TBLinkListOf<Widget> m_children;
-  WidgetValueConnection m_connection;
-  TBLinkListOf<WidgetListener> m_listeners;
+  TBLinkListOf<Element> m_children;
+  ElementValueConnection m_connection;
+  TBLinkListOf<ElementListener> m_listeners;
   // Opacity 0-1. See SetOpacity.
   float m_opacity = 1.0f;
-  // The widget state (excluding any auto states).
+  // The element state (excluding any auto states).
   SkinState m_state = SkinState::kNone;
   Gravity m_gravity = Gravity::kDefault;
   FontDescription m_font_desc;
@@ -1145,14 +1153,14 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
       uint16_t is_panning : 1;
       uint16_t want_long_click : 1;
       uint16_t visibility : 2;
-      uint16_t inflate_child_z : 1;  // Should have enough bits to hold WidgetZ
+      uint16_t inflate_child_z : 1;  // Should have enough bits to hold ElementZ
                                      // values.
     } m_packed;
     uint16_t m_packed_init = 0;
   };
 
  public:
-  // This value is free to use for anything. It's not used by Widget itself.
+  // This value is free to use for anything. It's not used by Element itself.
   // Initially Type::kNull.
   Value data;
 
@@ -1161,27 +1169,27 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   uint64_t last_layout_time = 0;
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  // The currently hovered widget, or nullptr.
-  static Widget* hovered_widget;
-  // The currently captured widget, or nullptr.
-  static Widget* captured_widget;
-  // The currently focused widget, or nullptr.
-  static Widget* focused_widget;
-  // Pointer x position on down event, relative to the captured widget.
-  static int pointer_down_widget_x;
-  // Pointer y position on down event, relative to the captured widget.
-  static int pointer_down_widget_y;
-  // Pointer x position on last pointer event, relative to the captured widget
-  // (if any) or hovered widget.
-  static int pointer_move_widget_x;
-  // Pointer y position on last pointer event, relative to the captured widget
-  // (if any) or hovered widget.
-  static int pointer_move_widget_y;
+  // The currently hovered element, or nullptr.
+  static Element* hovered_element;
+  // The currently captured element, or nullptr.
+  static Element* captured_element;
+  // The currently focused element, or nullptr.
+  static Element* focused_element;
+  // Pointer x position on down event, relative to the captured element.
+  static int pointer_down_element_x;
+  // Pointer y position on down event, relative to the captured element.
+  static int pointer_down_element_y;
+  // Pointer x position on last pointer event, relative to the captured element
+  // (if any) or hovered element.
+  static int pointer_move_element_x;
+  // Pointer y position on last pointer event, relative to the captured element
+  // (if any) or hovered element.
+  static int pointer_move_element_y;
   // true if the pointer up event should not generate a click event.
   static bool cancel_click;
   // true if something has called InvalidateStates() and it still hasn't been
   // updated.
-  static bool update_widget_states;
+  static bool update_element_states;
   // true if something has called InvalidateStates() and skin still hasn't been
   // updated.
   static bool update_skin_states;
@@ -1189,23 +1197,23 @@ class Widget : public TypedObject, public TBLinkOf<Widget> {
   static bool show_focus_state;
 
  private:
-  // Returns this widget or the nearest parent that is scrollable in the given
+  // Returns this element or the nearest parent that is scrollable in the given
   // axis, or nullptr if there is none.
-  Widget* FindScrollableWidget(bool scroll_x, bool scroll_y);
+  Element* FindScrollableElement(bool scroll_x, bool scroll_y);
   Scroller* FindStartedScroller();
   Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
-  Widget* GetWidgetByIDInternal(const TBID& id,
-                                const tb_type_id_t type_id = nullptr);
+  Element* GetElementByIDInternal(const TBID& id,
+                                  const tb_type_id_t type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);
   void InvokeProcessInternal();
-  static void SetHoveredWidget(Widget* widget, bool touch);
-  static void SetCapturedWidget(Widget* widget);
+  static void SetHoveredElement(Element* element, bool touch);
+  static void SetCapturedElement(Element* element);
   void HandlePanningOnMove(int x, int y);
   void StartLongClickTimer(bool touch);
   void StopLongClickTimer();
   friend class LongClickTimer;
   void MaybeInvokeLongClickOrContextMenu(bool touch);
-  // Returns the opacity for this widget multiplied with its skin opacity and
+  // Returns the opacity for this element multiplied with its skin opacity and
   // state opacity.
   float CalculateOpacityInternal(SkinState state,
                                  SkinElement* skin_element) const;

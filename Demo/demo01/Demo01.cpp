@@ -50,7 +50,7 @@ void const_expr_test() {
 DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 
 bool DemoWindow::LoadResourceFile(const std::string& filename) {
-  // We could do g_widgets_reader->LoadFile(this, filename) but we want
+  // We could do g_elements_reader->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   if (!node.ReadFile(filename)) return false;
@@ -59,7 +59,7 @@ bool DemoWindow::LoadResourceFile(const std::string& filename) {
 }
 
 void DemoWindow::LoadResourceData(const char* data) {
-  // We could do g_widgets_reader->LoadData(this, filename) but we want
+  // We could do g_elements_reader->LoadData(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   node.ReadData(data);
@@ -67,7 +67,7 @@ void DemoWindow::LoadResourceData(const char* data) {
 }
 
 void DemoWindow::LoadResource(Node& node) {
-  g_widgets_reader->LoadNodeTree(this, &node);
+  g_elements_reader->LoadNodeTree(this, &node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
@@ -103,20 +103,21 @@ void DemoWindow::LoadResource(Node& node) {
 
   // Ensure we have focus - now that we've filled the window with possible
   // focusable
-  // widgets. EnsureFocus was automatically called when the window was activated
+  // elements. EnsureFocus was automatically called when the window was
+  // activated
   // (by
   // adding the window to the root), but then we had nothing to focus.
   // Alternatively, we could add the window after setting it up properly.
   EnsureFocus();
 }
 
-bool DemoWindow::OnEvent(const WidgetEvent& ev) {
+bool DemoWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     // We could call Die() to fade away and die, but click the close button
     // instead.
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
-    WidgetEvent click_ev(EventType::kClick);
+    ElementEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -133,20 +134,20 @@ class EditWindow : public DemoWindow {
   virtual void OnProcessStates() {
     // Update the disabled state of undo/redo buttons, and caret info.
 
-    if (TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"))) {
-      if (Widget* undo = GetWidgetByID("undo"))
+    if (TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"))) {
+      if (Element* undo = GetElementByID("undo"))
         undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
-      if (Widget* redo = GetWidgetByID("redo"))
+      if (Element* redo = GetElementByID("redo"))
         redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
-      if (Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"))) {
+      if (Label* info = GetElementByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::format_string(
             "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOffset()));
       }
     }
   }
-  virtual bool OnEvent(const WidgetEvent& ev) {
+  virtual bool OnEvent(const ElementEvent& ev) {
     if (ev.type == EventType::kClick) {
-      TextBox* edit = GetWidgetByIDAndType<TextBox>(TBIDC("text_box"));
+      TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
 
       if (ev.target->GetID() == TBIDC("clear")) {
@@ -238,25 +239,25 @@ LayoutWindow::LayoutWindow(const std::string& filename) {
   LoadResourceFile(filename);
 }
 
-bool LayoutWindow::OnEvent(const WidgetEvent& ev) {
+bool LayoutWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
     if (SelectDropdown* select =
-            GetWidgetByIDAndType<SelectDropdown>(TBIDC("select position")))
+            GetElementByIDAndType<SelectDropdown>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
-      if (Layout* layout = GetWidgetByIDAndType<Layout>(i + 1))
+      if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
         layout->SetLayoutPosition(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
-      if (Layout* layout = GetWidgetByIDAndType<Layout>(i + 1))
+      if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
         layout->SetAxis(axis);
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (Layout* layout = GetWidgetByIDAndType<Layout>(TBIDC("switch_layout")))
+    if (Layout* layout = GetElementByIDAndType<Layout>(TBIDC("switch_layout")))
       layout->SetAxis(axis);
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;
@@ -271,11 +272,11 @@ TabContainerWindow::TabContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_tabcontainer01.tb.txt");
 }
 
-bool TabContainerWindow::OnEvent(const WidgetEvent& ev) {
+bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("set_align")) {
     if (TabContainer* tc =
-            GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer")))
+            GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer")))
       tc->SetAlignment(static_cast<Align>(ev.target->data.GetInt()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
@@ -283,8 +284,8 @@ bool TabContainerWindow::OnEvent(const WidgetEvent& ev) {
     static Axis axis = Axis::kX;
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
-            GetWidgetByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
-      for (Widget* child = tc->GetTabLayout()->GetFirstChild(); child;
+            GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
+      for (Element* child = tc->GetTabLayout()->GetFirstChild(); child;
            child = child->GetNext()) {
         if (Button* button = TBSafeCast<Button>(child)) button->SetAxis(axis);
       }
@@ -293,12 +294,12 @@ bool TabContainerWindow::OnEvent(const WidgetEvent& ev) {
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("start_spinner")) {
     if (ProgressSpinner* spinner =
-            GetWidgetByIDAndType<ProgressSpinner>(TBIDC("spinner")))
+            GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(1);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("stop_spinner")) {
     if (ProgressSpinner* spinner =
-            GetWidgetByIDAndType<ProgressSpinner>(TBIDC("spinner")))
+            GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(0);
   }
   return DemoWindow::OnEvent(ev);
@@ -310,14 +311,14 @@ ConnectionWindow::ConnectionWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_connections.tb.txt");
 }
 
-bool ConnectionWindow::OnEvent(const WidgetEvent& ev) {
+bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("reset-master-volume")) {
-    if (WidgetValue* val = g_value_group.GetValue(TBIDC("master-volume")))
+    if (ElementValue* val = g_value_group.GetValue(TBIDC("master-volume")))
       val->SetInt(50);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("reset-user-name")) {
-    if (WidgetValue* val = g_value_group.GetValue(TBIDC("user-name")))
+    if (ElementValue* val = g_value_group.GetValue(TBIDC("user-name")))
       val->SetText("");
   }
   return DemoWindow::OnEvent(ev);
@@ -329,21 +330,21 @@ ScrollContainerWindow::ScrollContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scrollcontainer.tb.txt");
 
   if (SelectDropdown* select =
-          GetWidgetByIDAndType<SelectDropdown>(TBIDC("name dropdown")))
+          GetElementByIDAndType<SelectDropdown>(TBIDC("name dropdown")))
     select->SetSource(&name_source);
 
   if (SelectDropdown* select =
-          GetWidgetByIDAndType<SelectDropdown>(TBIDC("advanced dropdown")))
+          GetElementByIDAndType<SelectDropdown>(TBIDC("advanced dropdown")))
     select->SetSource(&advanced_source);
 }
 
-bool ScrollContainerWindow::OnEvent(const WidgetEvent& ev) {
+bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
       Button* button = TBSafeCast<Button>(ev.target);
       SkinImage* skin_image = new SkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
-      button->GetContentRoot()->AddChild(skin_image, WidgetZ::kBottom);
+      button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
       return true;
     } else if (ev.target->GetID() == TBIDC("new buttons")) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
@@ -382,7 +383,7 @@ bool ScrollContainerWindow::OnEvent(const WidgetEvent& ev) {
 
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
-    if (Widget* target = GetWidgetByID(msg->data->id1)) {
+    if (Element* target = GetElementByID(msg->data->id1)) {
       Button* button = new Button;
       button->SetID(TBIDC("remove button"));
       button->SetText(tb::format_string("Remove %d", msg->data->v1.GetInt()));
@@ -397,9 +398,9 @@ ImageWindow::ImageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_image_widget.tb.txt");
 }
 
-bool ImageWindow::OnEvent(const WidgetEvent& ev) {
+bool ImageWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("remove")) {
-    Widget* image = ev.target->GetParent();
+    Element* image = ev.target->GetParent();
     image->GetParent()->RemoveChild(image);
     delete image;
     return true;
@@ -413,17 +414,17 @@ PageWindow::PageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scroller_snap.tb.txt");
 
   // Listen to the pagers scroller
-  if (Widget* pager = GetWidgetByID(TBIDC("page-scroller")))
+  if (Element* pager = GetElementByID(TBIDC("page-scroller")))
     pager->GetScroller()->SetSnapListener(this);
 }
 
-bool PageWindow::OnEvent(const WidgetEvent& ev) {
+bool PageWindow::OnEvent(const ElementEvent& ev) {
   return DemoWindow::OnEvent(ev);
 }
 
-void PageWindow::OnScrollSnap(Widget* target_widget, int& target_x,
+void PageWindow::OnScrollSnap(Element* target_element, int& target_x,
                               int& target_y) {
-  int page_w = target_widget->GetPaddingRect().w;
+  int page_w = target_element->GetPaddingRect().w;
   int target_page = (target_x + page_w / 2) / page_w;
   target_x = target_page * page_w;
 }
@@ -437,34 +438,34 @@ AnimationsWindow::AnimationsWindow() {
 
 void AnimationsWindow::Animate() {
   // Abort any still unfinished animations.
-  WidgetAnimationManager::AbortAnimations(this);
+  ElementAnimationManager::AbortAnimations(this);
 
   AnimationCurve curve = AnimationCurve::kSlowDown;
   double duration = 500;
   bool fade = true;
 
-  if (SelectList* curve_select = GetWidgetByIDAndType<SelectList>("curve"))
+  if (SelectList* curve_select = GetElementByIDAndType<SelectList>("curve"))
     curve = static_cast<AnimationCurve>(curve_select->GetValue());
   if (SelectInline* duration_select =
-          GetWidgetByIDAndType<SelectInline>("duration"))
+          GetElementByIDAndType<SelectInline>("duration"))
     duration = duration_select->GetValueDouble();
-  if (CheckBox* fade_check = GetWidgetByIDAndType<CheckBox>("fade"))
+  if (CheckBox* fade_check = GetElementByIDAndType<CheckBox>("fade"))
     fade = fade_check->GetValue() ? true : false;
 
   // Start move animation
-  Animation* anim = new RectWidgetAnimation(
+  Animation* anim = new RectElementAnimation(
       this, GetRect().Offset(-GetRect().x - GetRect().w, 0), GetRect());
   AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {
     if (Animation* anim =
-            new OpacityWidgetAnimation(this, kAlmostZeroOpacity, 1, false))
+            new OpacityElementAnimation(this, kAlmostZeroOpacity, 1, false))
       AnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown,
                                        duration);
   }
 }
 
-bool AnimationsWindow::OnEvent(const WidgetEvent& ev) {
+bool AnimationsWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("Animate!"))
     Animate();
   return DemoWindow::OnEvent(ev);
@@ -495,7 +496,7 @@ void MainWindow::OnMessageReceived(Message* msg) {
   }
 }
 
-bool MainWindow::OnEvent(const WidgetEvent& ev) {
+bool MainWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("new")) {
       new MainWindow();
@@ -670,13 +671,13 @@ bool DemoApplication::Init() {
   // Run unit tests
   int num_failed_tests = TBRunTests();
 
-  // SelectList and SelectDropdown widgets have a default item source that
+  // SelectList and SelectDropdown elements have a default item source that
   // are fed with any items
   // specified in the resource files. But it is also possible to set any source
   // which can save memory
   // and improve performance. Then you don't have to populate each instance with
   // its own set of items,
-  // for widgets that occur many times in a UI, always with the same items.
+  // for elements that occur many times in a UI, always with the same items.
   // Here we prepare the name source, that is used in a few places.
   for (int i = 0; boy_names[i]; i++)
     advanced_source.AddItem(
@@ -733,7 +734,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   // Render
   g_renderer->BeginPaint(window_w, window_h);
-  GetRoot()->InvokePaint(Widget::PaintProps());
+  GetRoot()->InvokePaint(Element::PaintProps());
 
 #if defined(TB_RUNTIME_DEBUG_INFO)
 // Enable to debug image manager fragments
@@ -753,7 +754,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   }
 
   // Draw FPS
-  WidgetValue* continuous_repaint_val =
+  ElementValue* continuous_repaint_val =
       g_value_group.GetValue(TBIDC("continous-repaint"));
   bool continuous_repaint =
       continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;
@@ -816,7 +817,7 @@ int app_main() {
   g_font_manager->AddFontInfo("Demo/fonts/orange.tb.txt", "Orange");
 #endif
 
-  // Set the default font description for widgets to one of the fonts we just
+  // Set the default font description for elements to one of the fonts we just
   // added
   FontDescription fd;
 #ifdef TB_FONT_RENDERER_TBBF
@@ -841,7 +842,7 @@ int app_main() {
         "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`"
         "abcdefghijklmnopqrstuvwxyz{|}~•·åäöÅÄÖ");
 
-  // Give the root widget a background skin
+  // Give the root element a background skin
   application->GetRoot()->SetSkinBg(TBIDC("background"));
 
   application->Init();

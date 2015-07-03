@@ -72,7 +72,7 @@ class TBSystem {
           event. */
   static int GetLongClickDelayMS();
 
-  /** Get how many pixels of dragging should start panning scrollable widgets.
+  /** Get how many pixels of dragging should start panning scrollable elements.
    */
   static int GetPanThreshold();
 

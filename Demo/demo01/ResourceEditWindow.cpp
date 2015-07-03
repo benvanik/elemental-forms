@@ -11,39 +11,39 @@
 // == ResourceItem
 // ====================================================================================
 
-ResourceItem::ResourceItem(Widget* widget, const std::string& str)
-    : GenericStringItem(str), m_widget(widget) {}
+ResourceItem::ResourceItem(Element* element, const std::string& str)
+    : GenericStringItem(str), m_element(element) {}
 
 // == ResourceEditWindow
 // ==============================================================================
 
 ResourceEditWindow::ResourceEditWindow()
-    : m_widget_list(nullptr),
+    : m_element_list(nullptr),
       m_scroll_container(nullptr),
       m_build_container(nullptr),
       m_source_text_box(nullptr) {
   // Register as global listener to intercept events in the build container
-  WidgetListener::AddGlobalListener(this);
+  ElementListener::AddGlobalListener(this);
 
-  g_widgets_reader->LoadFile(
+  g_elements_reader->LoadFile(
       this, "Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
-      GetWidgetByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
+      GetElementByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
   m_build_container = m_scroll_container->GetContentRoot();
-  m_source_text_box = GetWidgetByIDAndType<TextBox>(TBIDC("source_edit"));
+  m_source_text_box = GetElementByIDAndType<TextBox>(TBIDC("source_edit"));
 
-  m_widget_list = GetWidgetByIDAndType<SelectList>(TBIDC("widget_list"));
-  m_widget_list->SetSource(&m_widget_list_source);
+  m_element_list = GetElementByIDAndType<SelectList>(TBIDC("element_list"));
+  m_element_list->SetSource(&m_element_list_source);
 
   SetRect(Rect(100, 50, 900, 600));
 }
 
 ResourceEditWindow::~ResourceEditWindow() {
-  WidgetListener::RemoveGlobalListener(this);
+  ElementListener::RemoveGlobalListener(this);
 
   // avoid assert
-  m_widget_list->SetSource(nullptr);
+  m_element_list->SetSource(nullptr);
 }
 
 void ResourceEditWindow::Load(const char* resource_file) {
@@ -69,82 +69,82 @@ void ResourceEditWindow::Load(const char* resource_file) {
 }
 
 void ResourceEditWindow::RefreshFromSource() {
-  // Clear old widgets
-  while (Widget* child = m_build_container->GetFirstChild()) {
+  // Clear old elements
+  while (Element* child = m_build_container->GetFirstChild()) {
     m_build_container->RemoveChild(child);
     delete child;
   }
 
-  // Create new widgets from source
-  g_widgets_reader->LoadData(m_build_container,
-                             m_source_text_box->GetText().c_str());
+  // Create new elements from source
+  g_elements_reader->LoadData(m_build_container,
+                              m_source_text_box->GetText().c_str());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
   m_source_text_box->SetFocus(FocusReason::kUnknown);
 }
 
-void ResourceEditWindow::UpdateWidgetList(bool immediately) {
+void ResourceEditWindow::UpdateElementList(bool immediately) {
   if (!immediately) {
-    TBID id = TBIDC("update_widget_list");
+    TBID id = TBIDC("update_element_list");
     if (!GetMessageByID(id)) PostMessage(id, nullptr);
   } else {
-    m_widget_list_source.DeleteAllItems();
-    AddWidgetListItemsRecursive(m_build_container, 0);
+    m_element_list_source.DeleteAllItems();
+    AddElementListItemsRecursive(m_build_container, 0);
 
-    m_widget_list->InvalidateList();
+    m_element_list->InvalidateList();
   }
 }
 
-void ResourceEditWindow::AddWidgetListItemsRecursive(Widget* widget,
-                                                     int depth) {
+void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
+                                                      int depth) {
   if (depth > 0)  // Ignore the root
   {
-    // Add a new ResourceItem for this widget
-    const char* classname = widget->GetClassName();
+    // Add a new ResourceItem for this element
+    const char* classname = element->GetClassName();
     if (!*classname) {
-      classname = "<Unknown widget type>";
+      classname = "<Unknown element type>";
     }
     auto str = tb::format_string("% *s%s", depth - 1, "", classname);
-    ResourceItem* item = new ResourceItem(widget, str.c_str());
-    m_widget_list_source.AddItem(item);
+    ResourceItem* item = new ResourceItem(element, str.c_str());
+    m_element_list_source.AddItem(item);
   }
 
-  for (Widget* child = widget->GetFirstChild(); child;
+  for (Element* child = element->GetFirstChild(); child;
        child = child->GetNext()) {
-    AddWidgetListItemsRecursive(child, depth + 1);
+    AddElementListItemsRecursive(child, depth + 1);
   }
 }
 
-ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromWidget(
-    Widget* widget) {
+ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromElement(
+    Element* element) {
   ITEM_INFO item_info = {nullptr, -1};
-  for (int i = 0; i < m_widget_list_source.GetNumItems(); i++)
-    if (m_widget_list_source.GetItem(i)->GetWidget() == widget) {
+  for (int i = 0; i < m_element_list_source.GetNumItems(); i++)
+    if (m_element_list_source.GetItem(i)->GetElement() == element) {
       item_info.index = i;
-      item_info.item = m_widget_list_source.GetItem(i);
+      item_info.item = m_element_list_source.GetItem(i);
       break;
     }
   return item_info;
 }
 
-void ResourceEditWindow::SetSelectedWidget(Widget* widget) {
-  m_selected_widget.Set(widget);
-  ITEM_INFO item_info = GetItemFromWidget(widget);
-  if (item_info.item) m_widget_list->SetValue(item_info.index);
+void ResourceEditWindow::SetSelectedElement(Element* element) {
+  m_selected_element.Set(element);
+  ITEM_INFO item_info = GetItemFromElement(element);
+  if (item_info.item) m_element_list->SetValue(item_info.index);
 }
 
-bool ResourceEditWindow::OnEvent(const WidgetEvent& ev) {
+bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
-      ev.target->GetID() == TBIDC("widget_list_search")) {
-    m_widget_list->SetFilter(ev.target->GetText());
+      ev.target->GetID() == TBIDC("element_list_search")) {
+    m_element_list->SetFilter(ev.target->GetText());
     return true;
-  } else if (ev.type == EventType::kChanged && ev.target == m_widget_list) {
-    if (m_widget_list->GetValue() >= 0 &&
-        m_widget_list->GetValue() < m_widget_list_source.GetNumItems())
+  } else if (ev.type == EventType::kChanged && ev.target == m_element_list) {
+    if (m_element_list->GetValue() >= 0 &&
+        m_element_list->GetValue() < m_element_list_source.GetNumItems())
       if (ResourceItem* item =
-              m_widget_list_source.GetItem(m_widget_list->GetValue()))
-        SetSelectedWidget(item->GetWidget());
+              m_element_list_source.GetItem(m_element_list->GetValue()))
+        SetSelectedElement(item->GetElement());
   } else if (ev.type == EventType::kChanged && ev.target == m_source_text_box) {
     RefreshFromSource();
     return true;
@@ -153,8 +153,8 @@ bool ResourceEditWindow::OnEvent(const WidgetEvent& ev) {
     // Create a window containing the current layout, resize and center it.
     Window* win = new Window();
     win->SetText("Test window");
-    g_widgets_reader->LoadData(win->GetContentRoot(),
-                               m_source_text_box->GetText().c_str());
+    g_elements_reader->LoadData(win->GetContentRoot(),
+                                m_source_text_box->GetText().c_str());
     Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
     win->SetRect(
         win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -174,30 +174,30 @@ bool ResourceEditWindow::OnEvent(const WidgetEvent& ev) {
 void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
   Window::OnPaintChildren(paint_props);
 
-  // Paint the selection of the selected widget
-  if (Widget* selected_widget = GetSelectedWidget()) {
-    Rect widget_rect(0, 0, selected_widget->GetRect().w,
-                     selected_widget->GetRect().h);
-    selected_widget->ConvertToRoot(widget_rect.x, widget_rect.y);
-    ConvertFromRoot(widget_rect.x, widget_rect.y);
-    g_renderer->DrawRect(widget_rect, Color(255, 205, 0));
+  // Paint the selection of the selected element
+  if (Element* selected_element = GetSelectedElement()) {
+    Rect element_rect(0, 0, selected_element->GetRect().w,
+                      selected_element->GetRect().h);
+    selected_element->ConvertToRoot(element_rect.x, element_rect.y);
+    ConvertFromRoot(element_rect.x, element_rect.y);
+    g_renderer->DrawRect(element_rect, Color(255, 205, 0));
   }
 }
 
 void ResourceEditWindow::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("update_widget_list")) UpdateWidgetList(true);
+  if (msg->message == TBIDC("update_element_list")) UpdateElementList(true);
 }
 
-bool ResourceEditWindow::OnWidgetInvokeEvent(Widget* widget,
-                                             const WidgetEvent& ev) {
-  // Intercept all events to widgets in the build container
+bool ResourceEditWindow::OnElementInvokeEvent(Element* element,
+                                              const ElementEvent& ev) {
+  // Intercept all events to elements in the build container
   if (m_build_container->IsAncestorOf(ev.target)) {
     // Let events through if alt is pressed so we can test some
     // functionality right in the editor (like toggle hidden UI).
     if (any(ev.modifierkeys & ModifierKeys::kAlt)) return false;
 
-    // Select widget when clicking
-    if (ev.type == EventType::kPointerDown) SetSelectedWidget(ev.target);
+    // Select element when clicking
+    if (ev.type == EventType::kPointerDown) SetSelectedElement(ev.target);
 
     if (ev.type == EventType::kFileDrop) OnDropFileEvent(ev);
     return true;
@@ -205,18 +205,18 @@ bool ResourceEditWindow::OnWidgetInvokeEvent(Widget* widget,
   return false;
 }
 
-void ResourceEditWindow::OnWidgetAdded(Widget* parent, Widget* child) {
+void ResourceEditWindow::OnElementAdded(Element* parent, Element* child) {
   if (m_build_container && m_build_container->IsAncestorOf(child))
-    UpdateWidgetList(false);
+    UpdateElementList(false);
 }
 
-void ResourceEditWindow::OnWidgetRemove(Widget* parent, Widget* child) {
+void ResourceEditWindow::OnElementRemove(Element* parent, Element* child) {
   if (m_build_container && m_build_container->IsAncestorOf(child))
-    UpdateWidgetList(false);
+    UpdateElementList(false);
 }
 
-bool ResourceEditWindow::OnDropFileEvent(const WidgetEvent& ev) {
-  const WidgetEventFileDrop* fd_event = TBSafeCast<WidgetEventFileDrop>(&ev);
+bool ResourceEditWindow::OnDropFileEvent(const ElementEvent& ev) {
+  const ElementEventFileDrop* fd_event = TBSafeCast<ElementEventFileDrop>(&ev);
   if (fd_event->files.GetNumItems() > 0) {
     auto data = *fd_event->files.Get(0);
     Load(data.c_str());

@@ -277,7 +277,7 @@ class FontManager {
   FontFace* CreateFontFace(const FontDescription& font_desc);
 
   // Sets the default font description. This is the font description that will
-  // be used by default for widgets. By default, the default description is
+  // be used by default for elements. By default, the default description is
   // using the test dummy font.
   void SetDefaultFontDescription(const FontDescription& font_desc) {
     m_default_font_desc = font_desc;

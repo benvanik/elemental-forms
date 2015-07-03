@@ -1,6 +1,6 @@
 #
-# List of supported resource attributes for all default widgets in Turbo Badger.
-# All widgets of course support the attributes read by the classes they inherit (such as Widget).
+# List of supported resource attributes for all default elements in Turbo Badger.
+# All elements of course support the attributes read by the classes they inherit (such as Element).
 #
 # <bool> 				- 0 or 1
 # <number> 				- number
@@ -8,7 +8,7 @@
 # <dimension> 			- numbers with optional unit (default is dp). F.ex 10mm
 # <string> 				- string
 # <string/lngstring>	- string or language string (f.ex "@search")
-# <sub...>				- child widgets or attributes
+# <sub...>				- child elements or attributes
 # foo, bar				- either foo or bar.
 # foo | bar				- flag combo of foo and bar.
 #
@@ -16,7 +16,7 @@
 #       use conditions and local & file includes.
 #
 
-Widget
+Element
 	id <id>
 	group-id <id>
 	value <number>
@@ -109,5 +109,5 @@ Section
 ToggleContainer
 	toggle enabled, opacity, expanded
 	invert <bool>
-ImageWidget
+ImageElement
 	filename <string>

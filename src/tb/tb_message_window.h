@@ -31,38 +31,38 @@ class MessageWindowSettings {
  public:
   MessageWindowButtons msg;  // The type of response for the message.
   TBID icon_skin;            // The icon skin (0 for no icon)
-  bool dimmer = false;   // Set to true to dim background widgets by a Dimmer.
+  bool dimmer = false;   // Set to true to dim background elements by a Dimmer.
   bool styling = false;  // Enable styling in the textfield.
 };
 
 // A window for showing simple messages.
-// Events invoked in this window will travel up through the target widget.
+// Events invoked in this window will travel up through the target element.
 // When the user click any of its buttons, it will invoke a click event
 // (with the window ID), with the clicked buttons id as ref_id.
 // Then it will delete itself.
-// If the target widget is deleted while this window is alive, the window will
+// If the target element is deleted while this window is alive, the window will
 // delete itself.
-class MessageWindow : public Window, private WidgetListener {
+class MessageWindow : public Window, private ElementListener {
  public:
   TBOBJECT_SUBCLASS(MessageWindow, Window);
 
-  MessageWindow(Widget* target, TBID id);
+  MessageWindow(Element* target, TBID id);
   ~MessageWindow() override;
 
   bool Show(const std::string& title, const std::string& message,
             MessageWindowSettings* settings = nullptr);
 
-  Widget* GetEventDestination() override { return m_target.Get(); }
+  Element* GetEventDestination() override { return m_target.Get(); }
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnDie() override;
 
  private:
   void AddButton(TBID id, bool focused);
-  void OnWidgetDelete(Widget* widget) override;
-  bool OnWidgetDying(Widget* widget) override;
-  WeakWidgetPointer m_dimmer;
-  WeakWidgetPointer m_target;
+  void OnElementDelete(Element* element) override;
+  bool OnElementDying(Element* element) override;
+  WeakElementPointer m_dimmer;
+  WeakElementPointer m_target;
 };
 
 }  // namespace tb

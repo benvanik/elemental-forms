@@ -16,13 +16,13 @@
 
 namespace tb {
 
-// InlineSelect is a select widget with no popups. Instead it has two arrow
-// buttons that cycle between the choices. By default it is a number widget.
+// InlineSelect is a select element with no popups. Instead it has two arrow
+// buttons that cycle between the choices. By default it is a number element.
 // FIX: Should also be possible to set a list of strings that will be shown
 // instead of numbers.
-class SelectInline : public Widget {
+class SelectInline : public Element {
  public:
-  TBOBJECT_SUBCLASS(SelectInline, Widget);
+  TBOBJECT_SUBCLASS(SelectInline, Element);
 
   SelectInline();
   ~SelectInline() override;
@@ -40,7 +40,7 @@ class SelectInline : public Widget {
 
   void OnInflate(const InflateInfo& info) override;
   void OnSkinChanged() override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
  protected:
   void SetValueInternal(int value, bool update_text);

@@ -19,19 +19,19 @@ namespace tb {
 class MenuWindow;
 
 // Shows a scrollable list of items provided by a SelectItemSource.
-class SelectList : public Widget, public SelectItemObserver {
+class SelectList : public Element, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(SelectList, Widget);
+  TBOBJECT_SUBCLASS(SelectList, Element);
 
   SelectList();
   ~SelectList() override;
 
-  // Gets the default item source for this widget.
+  // Gets the default item source for this element.
   // This source can be used to add items of type GenericStringItem to this
-  // widget.
+  // element.
   // It is the item source that is fed from resource files.
   // If you need to add other types of items, or if you want to share item
-  // sources between several SelectDropdown/SelectList widgets, use SetSource
+  // sources between several SelectDropdown/SelectList elements, use SetSource
   // using a external item source.
   GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
 
@@ -75,7 +75,7 @@ class SelectList : public Widget, public SelectItemObserver {
   // Sets the selected state of the item at the given index. If you want to
   // unselect the previously selected item, use SetValue.
   void SelectItem(int index, bool selected);
-  Widget* GetItemWidget(int index);
+  Element* GetItemElement(int index);
 
   // Scrolls to the current selected item. The scroll may be delayed until
   // the items has been layouted if the layout is currently invalid.
@@ -88,7 +88,7 @@ class SelectList : public Widget, public SelectItemObserver {
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(int index) override;
@@ -107,7 +107,7 @@ class SelectList : public Widget, public SelectItemObserver {
   TBID m_header_lng_string_id;
 
  private:
-  Widget* CreateAndAddItemAfter(int index, Widget* reference);
+  Element* CreateAndAddItemAfter(int index, Element* reference);
 };
 
 // Shows a button that opens a popup with a SelectList with items provided by a
@@ -119,12 +119,12 @@ class SelectDropdown : public Button, public SelectItemObserver {
   SelectDropdown();
   ~SelectDropdown() override;
 
-  // Gets the default item source for this widget.
+  // Gets the default item source for this element.
   // This source can be used to add items of type GenericStringItem to this
-  // widget.
+  // element.
   // It is the item source that is fed from resource files.
   // If you need to add other types of items, or if you want to share item
-  // sources between several SelectDropdown/SelectList widgets, use SetSource
+  // sources between several SelectDropdown/SelectList elements, use SetSource
   // using a external item source.
   GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
 
@@ -145,7 +145,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   MenuWindow* GetMenuIfOpen() const;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(int index) override;
@@ -157,7 +157,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   GenericStringItemSource m_default_source;
   SkinImage m_arrow;
   int m_value = -1;
-  WeakWidgetPointer m_window_pointer;  // Dropdown window, if opened.
+  WeakElementPointer m_window_pointer;  // Dropdown window, if opened.
 };
 
 }  // namespace tb

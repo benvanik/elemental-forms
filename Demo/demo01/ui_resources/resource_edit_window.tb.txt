@@ -21,9 +21,9 @@ Layout
 		TextBox
 			placeholder @search
 			type search
-			id widget_list_search
+			id element_list_search
 		SelectList
-			id widget_list
+			id element_list
 	Layout
 		distribution available
 		TextBox

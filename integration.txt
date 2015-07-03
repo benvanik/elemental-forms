@@ -20,11 +20,11 @@ more info).
 Input
 -----
 
-You need to create at least one "root widget" for your UI widgets. A Widget that
-act as receiver for input, painting etc, and is parent to your other widgets.
+You need to create at least one "root element" for your UI elements. A Element that
+act as receiver for input, painting etc, and is parent to your other elements.
 Turbo Badger will handle input capture, focus, etc. automatically.
 
-List of input triggers (root is your root Widget):
+List of input triggers (root is your root Element):
 
 	root->InvokePointer[Down/Up/Move] - Mouse or touch input.
 	root->InvokeWheel                 - Mouse wheel input
@@ -33,18 +33,18 @@ List of input triggers (root is your root Widget):
 Animations, Layout and Painting
 -------------------------------
 
-Before painting, it is a good time to run animations, update widgets input states
+Before painting, it is a good time to run animations, update elements input states
 and layout, since all that affect the rendering. This is done by calling:
 
 	AnimationManager::Update()
 	root->InvokeProcessStates()
 	root->InvokeProcess()
 
-Before painting the root widget (and all its children), you need to prepare
+Before painting the root element (and all its children), you need to prepare
 the renderer to set up the correct matrix etc.
 
 	g_renderer->BeginPaint(window_width, window_height);
-	root->InvokePaint(Widget::PaintProps())
+	root->InvokePaint(Element::PaintProps())
 	g_renderer->EndPaint();
 
 Message handling

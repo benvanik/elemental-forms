@@ -64,7 +64,7 @@ void SelectInline::SetValueInternal(int value, bool update_text) {
     m_text_box.SetText(std::to_string(m_value));
   }
 
-  WidgetEvent ev(EventType::kChanged);
+  ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 
   // Warning: Do nothing here since the event might have deleted us.
@@ -73,7 +73,7 @@ void SelectInline::SetValueInternal(int value, bool update_text) {
 
 void SelectInline::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
-bool SelectInline::OnEvent(const WidgetEvent& ev) {
+bool SelectInline::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kUp ||
         ev.special_key == SpecialKey::kDown) {

@@ -12,60 +12,60 @@ using namespace tb;
 
 class ResourceItem : public GenericStringItem {
  public:
-  ResourceItem(Widget* widget, const std::string& str);
-  Widget* GetWidget() { return m_widget; }
+  ResourceItem(Element* element, const std::string& str);
+  Element* GetElement() { return m_element; }
 
  private:
-  Widget* m_widget;
+  Element* m_element;
 };
 
 class ResourceEditWindow : public Window,
                            public MessageHandler,
-                           public WidgetListener {
+                           public ElementListener {
  public:
   TBOBJECT_SUBCLASS(ResourceEditWindow, Window);
 
   ResourceEditWindow();
   ~ResourceEditWindow();
 
-  void UpdateWidgetList(bool immediately);
+  void UpdateElementList(bool immediately);
 
   struct ITEM_INFO {
     ResourceItem* item;
     int index;
   };
-  ITEM_INFO GetItemFromWidget(Widget* widget);
-  Widget* GetSelectedWidget() { return m_selected_widget.Get(); }
-  void SetSelectedWidget(Widget* widget);
+  ITEM_INFO GetItemFromElement(Element* element);
+  Element* GetSelectedElement() { return m_selected_element.Get(); }
+  void SetSelectedElement(Element* element);
 
   void Load(const char* resource_file);
   void RefreshFromSource();
 
   // == Window
   // ======================================================================
-  virtual bool OnEvent(const WidgetEvent& ev);
+  virtual bool OnEvent(const ElementEvent& ev);
   virtual void OnPaintChildren(const PaintProps& paint_props);
 
   // == MessageHandler
   // ==============================================================
   virtual void OnMessageReceived(Message* msg);
 
-  // == WidgetListener
+  // == ElementListener
   // ========================================================
-  virtual bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev);
-  virtual void OnWidgetAdded(Widget* parent, Widget* child);
-  virtual void OnWidgetRemove(Widget* parent, Widget* child);
+  virtual bool OnElementInvokeEvent(Element* element, const ElementEvent& ev);
+  virtual void OnElementAdded(Element* parent, Element* child);
+  virtual void OnElementRemove(Element* parent, Element* child);
 
  private:
-  SelectList* m_widget_list;
-  SelectItemSourceList<ResourceItem> m_widget_list_source;
+  SelectList* m_element_list;
+  SelectItemSourceList<ResourceItem> m_element_list_source;
   ScrollContainer* m_scroll_container;
-  Widget* m_build_container;
+  Element* m_build_container;
   TextBox* m_source_text_box;
   std::string m_resource_filename;
-  WeakWidgetPointer m_selected_widget;
-  void AddWidgetListItemsRecursive(Widget* widget, int depth);
-  bool OnDropFileEvent(const WidgetEvent& ev);
+  WeakElementPointer m_selected_element;
+  void AddElementListItemsRecursive(Element* element, int depth);
+  bool OnDropFileEvent(const ElementEvent& ev);
 };
 
 #endif  // ResourceEditWindow_H

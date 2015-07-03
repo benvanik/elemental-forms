@@ -19,20 +19,21 @@
 
 namespace tb {
 
-// SimpleLayoutItemWidget is a item containing a layout with the following:
+// SimpleLayoutItemElement is a item containing a layout with the following:
 // - SkinImage showing the item image.
 // - Label showing the item string.
 // - SkinImage showing the arrow for items with a submenu.
 // It also handles submenu events.
-class SimpleLayoutItemWidget : public Layout, private WidgetListener {
+class SimpleLayoutItemElement : public Layout, private ElementListener {
  public:
-  SimpleLayoutItemWidget(TBID image, SelectItemSource* source, const char* str);
-  ~SimpleLayoutItemWidget() override;
+  SimpleLayoutItemElement(TBID image, SelectItemSource* source,
+                          const char* str);
+  ~SimpleLayoutItemElement() override;
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
  private:
-  void OnWidgetDelete(Widget* widget) override;
+  void OnElementDelete(Element* element) override;
   void OpenSubMenu();
   void CloseSubMenu();
 
@@ -43,9 +44,9 @@ class SimpleLayoutItemWidget : public Layout, private WidgetListener {
   MenuWindow* m_menu = nullptr;  // Points to the submenu window if opened.
 };
 
-SimpleLayoutItemWidget::SimpleLayoutItemWidget(TBID image,
-                                               SelectItemSource* source,
-                                               const char* str)
+SimpleLayoutItemElement::SimpleLayoutItemElement(TBID image,
+                                                 SelectItemSource* source,
+                                                 const char* str)
     : m_source(source) {
   SetSkinBg(TBIDC("SelectItem"));
   SetLayoutDistribution(LayoutDistribution::kAvailable);
@@ -69,7 +70,7 @@ SimpleLayoutItemWidget::SimpleLayoutItemWidget(TBID image,
   }
 }
 
-SimpleLayoutItemWidget::~SimpleLayoutItemWidget() {
+SimpleLayoutItemElement::~SimpleLayoutItemElement() {
   if (m_image_arrow.GetParent()) {
     RemoveChild(&m_image_arrow);
   }
@@ -80,7 +81,7 @@ SimpleLayoutItemWidget::~SimpleLayoutItemWidget() {
   CloseSubMenu();
 }
 
-bool SimpleLayoutItemWidget::OnEvent(const WidgetEvent& ev) {
+bool SimpleLayoutItemElement::OnEvent(const ElementEvent& ev) {
   if (m_source && ev.type == EventType::kClick && ev.target == this) {
     OpenSubMenu();
     return true;
@@ -88,22 +89,22 @@ bool SimpleLayoutItemWidget::OnEvent(const WidgetEvent& ev) {
   return false;
 }
 
-void SimpleLayoutItemWidget::OnWidgetDelete(Widget* widget) {
-  assert(widget == m_menu);
+void SimpleLayoutItemElement::OnElementDelete(Element* element) {
+  assert(element == m_menu);
   CloseSubMenu();
 }
 
-void SimpleLayoutItemWidget::OpenSubMenu() {
+void SimpleLayoutItemElement::OpenSubMenu() {
   if (m_menu) return;
 
-  // Open a new menu window for the submenu with this widget as target.
+  // Open a new menu window for the submenu with this element as target.
   m_menu = new MenuWindow(this, TBIDC("submenu"));
   SetState(SkinState::kSelected, true);
   m_menu->AddListener(this);
   m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);
 }
 
-void SimpleLayoutItemWidget::CloseSubMenu() {
+void SimpleLayoutItemElement::CloseSubMenu() {
   if (!m_menu) return;
 
   SetState(SkinState::kSelected, false);
@@ -130,7 +131,7 @@ void SelectItemObserver::SetSource(SelectItemSource* source) {
 
 SelectItemSource::~SelectItemSource() {
   // If this assert trig, you are deleting a model that's still set on some
-  // Select widget. That might be dangerous.
+  // Select element. That might be dangerous.
   assert(!m_observers.HasLinks());
 }
 
@@ -142,15 +143,15 @@ bool SelectItemSource::Filter(int index, const std::string& filter) {
   return false;
 }
 
-Widget* SelectItemSource::CreateItemWidget(int index,
-                                           SelectItemObserver* observer) {
+Element* SelectItemSource::CreateItemElement(int index,
+                                             SelectItemObserver* observer) {
   const char* string = GetItemString(index);
   SelectItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);
   if (sub_source || image) {
-    SimpleLayoutItemWidget* itemwidget =
-        new SimpleLayoutItemWidget(image, sub_source, string);
-    return itemwidget;
+    SimpleLayoutItemElement* itemelement =
+        new SimpleLayoutItemElement(image, sub_source, string);
+    return itemelement;
   } else if (string && *string == '-') {
     Separator* separator = new Separator();
     separator->SetGravity(Gravity::kAll);

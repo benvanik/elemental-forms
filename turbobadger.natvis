@@ -22,7 +22,7 @@
 		<DisplayString Condition="m_data != 0">length = {m_data->num}</DisplayString>
 		<DisplayString>length = 0</DisplayString>
 	</Type>
-	<Type Name="tb::WidgetEvent">
+	<Type Name="tb::ElementEvent">
 		<DisplayString>type={type}</DisplayString>
 	</Type>
 </AutoVisualizer>

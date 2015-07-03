@@ -21,26 +21,26 @@ namespace tb {
 // think focus should not be set in that window and fail.
 constexpr float kAlmostZeroOpacity = 0.001f;
 
-// Base class for widget animations. This animation object will be deleted
-// automatically if the widget is deleted.
-class WidgetAnimation : public Animation, public TBLinkOf<WidgetAnimation> {
+// Base class for element animations. This animation object will be deleted
+// automatically if the element is deleted.
+class ElementAnimation : public Animation, public TBLinkOf<ElementAnimation> {
  public:
-  TBOBJECT_SUBCLASS(WidgetAnimation, Animation);
+  TBOBJECT_SUBCLASS(ElementAnimation, Animation);
 
-  WidgetAnimation(Widget* widget);
-  ~WidgetAnimation() override;
+  ElementAnimation(Element* element);
+  ~ElementAnimation() override;
 
  public:
-  Widget* m_widget;
+  Element* m_element;
 };
 
-// Animates the opacity of the target widget.
-class OpacityWidgetAnimation : public WidgetAnimation {
+// Animates the opacity of the target element.
+class OpacityElementAnimation : public ElementAnimation {
  public:
-  TBOBJECT_SUBCLASS(OpacityWidgetAnimation, WidgetAnimation);
+  TBOBJECT_SUBCLASS(OpacityElementAnimation, ElementAnimation);
 
-  OpacityWidgetAnimation(Widget* widget, float src_opacity, float dst_opacity,
-                         bool die);
+  OpacityElementAnimation(Element* element, float src_opacity,
+                          float dst_opacity, bool die);
 
   void OnAnimationStart() override;
   void OnAnimationUpdate(float progress) override;
@@ -52,10 +52,10 @@ class OpacityWidgetAnimation : public WidgetAnimation {
   bool m_die;
 };
 
-// Animates the rectangle of the target widget.
-class RectWidgetAnimation : public WidgetAnimation {
+// Animates the rectangle of the target element.
+class RectElementAnimation : public ElementAnimation {
  public:
-  TBOBJECT_SUBCLASS(RectWidgetAnimation, WidgetAnimation);
+  TBOBJECT_SUBCLASS(RectElementAnimation, ElementAnimation);
 
   enum class Mode {
     kSrcToDest,  // Animate from source to dest.
@@ -63,13 +63,13 @@ class RectWidgetAnimation : public WidgetAnimation {
     kDeltaOut,   // Animate from current to current + delta.
   };
 
-  // Animates the widget between the given source and dest rectangle.
-  RectWidgetAnimation(Widget* widget, const Rect& src_rect,
-                      const Rect& dst_rect);
-  // Animates the widget between rectangles based on the current widget
+  // Animates the element between the given source and dest rectangle.
+  RectElementAnimation(Element* element, const Rect& src_rect,
+                       const Rect& dst_rect);
+  // Animates the element between rectangles based on the current element
   // rectangle and a delta. The reference rectangle will be taken from the
-  // target widget on the first OnAnimationUpdate.
-  RectWidgetAnimation(Widget* widget, const Rect& delta_rect, Mode mode);
+  // target element on the first OnAnimationUpdate.
+  RectElementAnimation(Element* element, const Rect& delta_rect, Mode mode);
 
   void OnAnimationStart() override;
   void OnAnimationUpdate(float progress) override;
@@ -82,26 +82,26 @@ class RectWidgetAnimation : public WidgetAnimation {
   Mode m_mode;
 };
 
-class WidgetAnimationManager : public WidgetListener {
+class ElementAnimationManager : public ElementListener {
  public:
   static void Init();
   static void Shutdown();
 
-  // Aborts all animations that are running for the given widget.
-  static void AbortAnimations(Widget* widget);
+  // Aborts all animations that are running for the given element.
+  static void AbortAnimations(Element* element);
 
   // Abort all animations matching the given type that are running for the given
-  // widget.
+  // element.
   // This example will abort all opacity animations:
-  // AbortAnimations(widget,
-  //     TypedObject::GetTypeId<OpacityWidgetAnimation>())
-  static void AbortAnimations(Widget* widget, tb_type_id_t type_id);
+  // AbortAnimations(element,
+  //     TypedObject::GetTypeId<OpacityElementAnimation>())
+  static void AbortAnimations(Element* element, tb_type_id_t type_id);
 
  private:
-  void OnWidgetDelete(Widget* widget) override;
-  bool OnWidgetDying(Widget* widget) override;
-  void OnWidgetAdded(Widget* parent, Widget* child) override;
-  void OnWidgetRemove(Widget* parent, Widget* child) override;
+  void OnElementDelete(Element* element) override;
+  bool OnElementDying(Element* element) override;
+  void OnElementAdded(Element* parent, Element* child) override;
+  void OnElementRemove(Element* parent, Element* child) override;
 };
 
 }  // namespace tb

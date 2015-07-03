@@ -1,28 +1,28 @@
 #include "ListWindow.h"
 
-// == AdvancedItemWidget ======================================================
+// == AdvancedItemElement ======================================================
 
-AdvancedItemWidget::AdvancedItemWidget(AdvancedItem* item,
-                                       AdvancedItemSource* source,
-                                       SelectItemObserver* source_viewer,
-                                       int index)
+AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
+                                         AdvancedItemSource* source,
+                                         SelectItemObserver* source_viewer,
+                                         int index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
   SetSkinBg(TBIDC("SelectItem"));
   SetLayoutDistribution(LayoutDistribution::kGravity);
   SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
   SetPaintOverflowFadeout(false);
 
-  g_widgets_reader->LoadFile(GetContentRoot(),
-                             "Demo/demo01/ui_resources/test_list_item.tb.txt");
-  CheckBox* checkbox = GetWidgetByIDAndType<CheckBox>(TBIDC("check"));
-  Label* name = GetWidgetByIDAndType<Label>(TBIDC("name"));
-  Label* info = GetWidgetByIDAndType<Label>(TBIDC("info"));
+  g_elements_reader->LoadFile(GetContentRoot(),
+                              "Demo/demo01/ui_resources/test_list_item.tb.txt");
+  CheckBox* checkbox = GetElementByIDAndType<CheckBox>(TBIDC("check"));
+  Label* name = GetElementByIDAndType<Label>(TBIDC("name"));
+  Label* info = GetElementByIDAndType<Label>(TBIDC("info"));
   checkbox->SetValue(item->GetChecked() ? true : false);
   name->SetText(item->str);
   info->SetText(item->GetMale() ? "Male" : "Female");
 }
 
-bool AdvancedItemWidget::OnEvent(const WidgetEvent& ev) {
+bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
     AdvancedItem* item = m_source->GetItem(m_index);
     item->SetChecked(ev.target->GetValue() ? true : false);
@@ -48,10 +48,10 @@ bool AdvancedItemSource::Filter(int index, const char* filter) {
   return stristr(item->GetMale() ? "Male" : "Female", filter) ? true : false;
 }
 
-Widget* AdvancedItemSource::CreateItemWidget(int index,
-                                             SelectItemObserver* viewer) {
+Element* AdvancedItemSource::CreateItemElement(int index,
+                                               SelectItemObserver* viewer) {
   if (Layout* layout =
-          new AdvancedItemWidget(GetItem(index), this, viewer, index))
+          new AdvancedItemElement(GetItem(index), this, viewer, index))
     return layout;
   return nullptr;
 }
@@ -60,15 +60,15 @@ Widget* AdvancedItemSource::CreateItemWidget(int index,
 
 ListWindow::ListWindow(SelectItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
-  if (SelectList* select = GetWidgetByIDAndType<SelectList>("list")) {
+  if (SelectList* select = GetElementByIDAndType<SelectList>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoY);
   }
 }
 
-bool ListWindow::OnEvent(const WidgetEvent& ev) {
+bool ListWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target->GetID() == TBIDC("filter")) {
-    SelectList* select = GetWidgetByIDAndType<SelectList>("list");
+    SelectList* select = GetElementByIDAndType<SelectList>("list");
     select->SetFilter(ev.target->GetText());
     return true;
   }
@@ -81,14 +81,14 @@ bool ListWindow::OnEvent(const WidgetEvent& ev) {
 AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
     : m_source(source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select_advanced.tb.txt");
-  if (SelectList* select = GetWidgetByIDAndType<SelectList>("list")) {
+  if (SelectList* select = GetElementByIDAndType<SelectList>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoXAutoY);
   }
 }
 
-bool AdvancedListWindow::OnEvent(const WidgetEvent& ev) {
-  SelectList* select = GetWidgetByIDAndType<SelectList>("list");
+bool AdvancedListWindow::OnEvent(const ElementEvent& ev) {
+  SelectList* select = GetElementByIDAndType<SelectList>("list");
   if (select && ev.type == EventType::kChanged &&
       ev.target->GetID() == TBIDC("filter")) {
     select->SetFilter(ev.target->GetText());

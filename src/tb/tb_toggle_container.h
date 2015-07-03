@@ -24,14 +24,14 @@ enum class ToggleAction {
 MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
                                "expanded");
 
-// A widget that toggles a property when its value change between 0 and 1.
+// A element that toggles a property when its value change between 0 and 1.
 // ToggleAction specifies what property will toggle.
-// This is useful f.ex to toggle a whole group of child widgets depending on the
-// value of some other widget. By connecting the ToggleContainer with a widget
-// connection, this can happen completly automatically.
-class ToggleContainer : public Widget {
+// This is useful f.ex to toggle a whole group of child elements depending on
+// the value of some other element. By connecting the ToggleContainer with a
+// element connection, this can happen completly automatically.
+class ToggleContainer : public Element {
  public:
-  TBOBJECT_SUBCLASS(ToggleContainer, Widget);
+  TBOBJECT_SUBCLASS(ToggleContainer, Element);
 
   ToggleContainer();
 
@@ -45,7 +45,7 @@ class ToggleContainer : public Widget {
   // Gets the current value, after checking the invert mode.
   bool GetIsOn() const { return m_invert ? !m_value : !!m_value; }
 
-  // Sets the value of this widget.
+  // Sets the value of this element.
   // 1 will turn on the toggle, 0 will turn it off (or the opposite if the
   // invert mode is set).
   void SetValue(int value) override;
@@ -70,20 +70,20 @@ class SectionHeader : public Button {
 
   SectionHeader();
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 };
 
-// A widget with a header that when clicked toggles its children on and off
+// A element with a header that when clicked toggles its children on and off
 // (using a internal ToggleContainer with ToggleAction::kExpanded).
 // The header is a SectionHeader.
-// The skin names of the internal widgets are:
-//     Section           - This widget itself.
+// The skin names of the internal elements are:
+//     Section           - This element itself.
 //     Section.layout    - The layout that wraps the header and the container.
 //     Section.container - The toggle container with the children that
 //                         expands/collapses.
-class Section : public Widget {
+class Section : public Element {
  public:
-  TBOBJECT_SUBCLASS(Section, Widget);
+  TBOBJECT_SUBCLASS(Section, Element);
 
   Section();
   ~Section() override;
@@ -104,7 +104,7 @@ class Section : public Widget {
   void SetValue(int value) override;
   int GetValue() override { return m_toggle_container.GetValue(); }
 
-  Widget* GetContentRoot() override {
+  Element* GetContentRoot() override {
     return m_toggle_container.GetContentRoot();
   }
   void OnProcessAfterChildren() override;

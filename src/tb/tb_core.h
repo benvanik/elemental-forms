@@ -48,13 +48,13 @@ extern Renderer* g_renderer;
 class Skin;
 extern Skin* g_tb_skin;
 
-class WidgetReader;
-extern WidgetReader* g_widgets_reader;
+class ElementReader;
+extern ElementReader* g_elements_reader;
 
 // Initializes turbo badger. Call this before using any turbo badger API.
 bool tb_core_init(Renderer* renderer, const char* lng_file);
 
-// Shuts down turbo badger. Call this after deleting the last widget, to free
+// Shuts down turbo badger. Call this after deleting the last element, to free
 // turbo badger internals.
 void tb_core_shutdown();
 

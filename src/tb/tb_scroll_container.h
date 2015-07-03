@@ -24,7 +24,7 @@ enum class ScrollMode {
 MAKE_ORDERED_ENUM_STRING_UTILS(ScrollMode, "xy", "y", "y-auto", "auto", "off");
 
 // Internal for ScrollContainer.
-class ScrollContainerRoot : public Widget {
+class ScrollContainerRoot : public Element {
  private:  // May only be used by ScrollContainer.
   friend class ScrollContainer;
   ScrollContainerRoot() = default;
@@ -57,11 +57,11 @@ class ScrollBarVisibility {
 };
 
 // A container with scrollbars that can scroll its children.
-class ScrollContainer : public Widget {
+class ScrollContainer : public Element {
   friend class ScrollContainerRoot;
 
  public:
-  TBOBJECT_SUBCLASS(ScrollContainer, Widget);
+  TBOBJECT_SUBCLASS(ScrollContainer, Element);
 
   ScrollContainer();
   ~ScrollContainer() override;
@@ -80,8 +80,8 @@ class ScrollContainer : public Widget {
   ScrollMode GetScrollMode() { return m_mode; }
 
   void ScrollTo(int x, int y) override;
-  Widget::ScrollInfo GetScrollInfo() override;
-  Widget* GetScrollRoot() override { return &m_root; }
+  Element::ScrollInfo GetScrollInfo() override;
+  Element* GetScrollRoot() override { return &m_root; }
 
   void InvalidateLayout(InvalidationMode il) override;
 
@@ -90,11 +90,11 @@ class ScrollContainer : public Widget {
       const SizeConstraints& constraints) override;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
 
-  Widget* GetContentRoot() override { return &m_root; }
+  Element* GetContentRoot() override { return &m_root; }
 
  protected:
   void ValidateLayout(const SizeConstraints& constraints);

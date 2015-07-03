@@ -69,7 +69,7 @@ bool Window::IsActive() const { return GetState(SkinState::kSelected); }
 
 Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
   Window* other_window = nullptr;
-  Widget* sibling = GetParent()->GetLastChild();
+  Element* sibling = GetParent()->GetLastChild();
   while (sibling && !other_window) {
     if (sibling != this) {
       other_window = TBSafeCast<Window>(sibling);
@@ -101,18 +101,18 @@ void Window::Activate() {
   }
 
   // Activate this window.
-  SetZ(WidgetZ::kTop);
+  SetZ(ElementZ::kTop);
   SetWindowActiveState(true);
   EnsureFocus();
 }
 
 bool Window::EnsureFocus() {
   // If we already have focus, we're done.
-  if (focused_widget && IsAncestorOf(focused_widget)) {
+  if (focused_element && IsAncestorOf(focused_element)) {
     return true;
   }
 
-  // Focus last focused widget (if we have one)
+  // Focus last focused element (if we have one)
   bool success = false;
   if (m_last_focus.Get()) {
     success = m_last_focus.Get()->SetFocus(FocusReason::kUnknown);
@@ -178,7 +178,7 @@ int Window::GetTitleHeight() {
 }
 
 Rect Window::GetPaddingRect() {
-  Rect padding_rect = Widget::GetPaddingRect();
+  Rect padding_rect = Element::GetPaddingRect();
   int title_height = GetTitleHeight();
   padding_rect.y += title_height;
   padding_rect.h -= title_height;
@@ -203,7 +203,7 @@ PreferredSize Window::OnCalculatePreferredSize(
   return ps;
 }
 
-bool Window::OnEvent(const WidgetEvent& ev) {
+bool Window::OnEvent(const ElementEvent& ev) {
   if (ev.target == &m_close_button) {
     if (ev.type == EventType::kClick) {
       Close();
@@ -228,11 +228,11 @@ void Window::OnRemove() {
     active_window->Activate();
 }
 
-void Window::OnChildAdded(Widget* child) { m_resizer.SetZ(WidgetZ::kTop); }
+void Window::OnChildAdded(Element* child) { m_resizer.SetZ(ElementZ::kTop); }
 
 void Window::OnResized(int old_w, int old_h) {
   // Apply gravity on children.
-  Widget::OnResized(old_w, old_h);
+  Element::OnResized(old_w, old_h);
   // Manually move our own decoration children.
   // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = GetTitleHeight();

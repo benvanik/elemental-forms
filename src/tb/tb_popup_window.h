@@ -15,27 +15,27 @@
 
 namespace tb {
 
-// Describes the preferred alignment of a popup relative to a target widget or a
-// given point.
+// Describes the preferred alignment of a popup relative to a target element or
+// a given point.
 // It calculates the rect to be used to match these preferences for any given
 // popup and target.
 class PopupAlignment {
  public:
   static const int kUnspecified = kInvalidDimension;
 
-  // Aligns relative to the target widget.
+  // Aligns relative to the target element.
   PopupAlignment(Align align = Align::kBottom)
       : pos_in_root(kUnspecified, kUnspecified),
         align(align),
         expand_to_target_width(true) {}
 
   // Aligns relative to the given position (coordinates relative to the root
-  // widget).
+  // element).
   PopupAlignment(const Point& pos_in_root, Align align = Align::kBottom)
       : pos_in_root(pos_in_root), align(align), expand_to_target_width(true) {}
 
   // Aligns relative to the given position (coordinates relative to the root
-  // widget). Applies an additional offset.
+  // element). Applies an additional offset.
   PopupAlignment(const Point& pos_in_root, const Point& pos_offset)
       : pos_in_root(pos_in_root),
         pos_offset(pos_offset),
@@ -44,42 +44,42 @@ class PopupAlignment {
 
   // Calculates a good rect for the given popup window using its preferred size
   // and the preferred alignment information stored in this class.
-  Rect GetAlignedRect(Widget* popup, Widget* target) const;
+  Rect GetAlignedRect(Element* popup, Element* target) const;
 
   Point pos_in_root;
   Point pos_offset;
 
   Align align;
   // If true the width of the popup will be at least the same as the target
-  // widget if the alignment is Align::kTop or Align::kBottom.
+  // element if the alignment is Align::kTop or Align::kBottom.
   bool expand_to_target_width;
 };
 
-// A popup window that redirects any child widgets events through the given
+// A popup window that redirects any child elements events through the given
 // target. It will automatically close on click events that are not sent through
 // this popup.
-class PopupWindow : public Window, private WidgetListener {
+class PopupWindow : public Window, private ElementListener {
  public:
   TBOBJECT_SUBCLASS(PopupWindow, Window);
 
-  PopupWindow(Widget* target);
+  PopupWindow(Element* target);
   ~PopupWindow() override;
 
   bool Show(const PopupAlignment& alignment);
 
-  Widget* GetEventDestination() override { return m_target.Get(); }
+  Element* GetEventDestination() override { return m_target.Get(); }
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
-  const WeakWidgetPointer& GetTargetWidget() { return m_target; }
+  const WeakElementPointer& GetTargetElement() { return m_target; }
 
  private:
-  void OnWidgetFocusChanged(Widget* widget, bool focused) override;
-  bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) override;
-  void OnWidgetDelete(Widget* widget) override;
-  bool OnWidgetDying(Widget* widget) override;
+  void OnElementFocusChanged(Element* element, bool focused) override;
+  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override;
+  void OnElementDelete(Element* element) override;
+  bool OnElementDying(Element* element) override;
 
-  WeakWidgetPointer m_target;
+  WeakElementPointer m_target;
 };
 
 }  // namespace tb

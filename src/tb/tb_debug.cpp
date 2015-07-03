@@ -27,15 +27,15 @@ DebugInfo g_tb_debug;
 DebugInfo::DebugInfo() = default;
 
 // Window showing runtime debug settings.
-class DebugSettingsWindow : public Window, public WidgetListener {
+class DebugSettingsWindow : public Window, public ElementListener {
  public:
   TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
 
   TextBox* output;
 
-  DebugSettingsWindow(Widget* root) {
+  DebugSettingsWindow(Element* root) {
     SetText("Debug settings");
-    g_widgets_reader->LoadData(
+    g_elements_reader->LoadData(
         this,
         "Layout: axis: y, distribution: available, position: left\n"
         "	Layout: id: 'container', axis: y, size: available\n"
@@ -53,7 +53,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     AddCheckbox(DebugInfo::Setting::kDrawFontBitmapFragments,
                 "Render font bitmap fragments");
 
-    output = GetWidgetByIDAndType<TextBox>(TBIDC("output"));
+    output = GetElementByIDAndType<TextBox>(TBIDC("output"));
 
     Rect bounds(0, 0, root->GetRect().w, root->GetRect().h);
     SetRect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -61,10 +61,10 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
     root->AddChild(this);
 
-    WidgetListener::AddGlobalListener(this);
+    ElementListener::AddGlobalListener(this);
   }
 
-  ~DebugSettingsWindow() { WidgetListener::RemoveGlobalListener(this); }
+  ~DebugSettingsWindow() { ElementListener::RemoveGlobalListener(this); }
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     CheckBox* check = new CheckBox();
@@ -74,12 +74,12 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
     LabelContainer* label = new LabelContainer();
     label->SetText(str);
-    label->GetContentRoot()->AddChild(check, WidgetZ::kBottom);
+    label->GetContentRoot()->AddChild(check, ElementZ::kBottom);
 
-    GetWidgetByID(TBIDC("container"))->AddChild(label);
+    GetElementByID(TBIDC("container"))->AddChild(label);
   }
 
-  bool OnEvent(const WidgetEvent& ev) override {
+  bool OnEvent(const ElementEvent& ev) override {
     if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
       // Update setting and invalidate
       g_tb_debug.settings[ev.target->data.GetInt()] = ev.target->GetValue();
@@ -98,13 +98,13 @@ class DebugSettingsWindow : public Window, public WidgetListener {
       g_tb_skin->Debug();
     }
 
-    // Draw font glyph fragments (the font of the hovered widget).
+    // Draw font glyph fragments (the font of the hovered element).
     if (TB_DEBUG_SETTING(Setting::kDrawFontBitmapFragments)) {
-      Widget* widget = Widget::hovered_widget ? Widget::hovered_widget
-                                              : Widget::focused_widget;
+      Element* element = Element::hovered_element ? Element::hovered_element
+                                                  : Element::focused_element;
       auto font_face = g_font_manager->GetFontFace(
-          widget ? widget->GetCalculatedFontDescription()
-                 : g_font_manager->GetDefaultFontDescription());
+          element ? element->GetCalculatedFontDescription()
+                  : g_font_manager->GetDefaultFontDescription());
       font_face->Debug();
     }
 
@@ -121,7 +121,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     return str;
   }
 
-  bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) override {
+  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override {
     // Skip these events for now.
     if (ev.IsPointerEvent()) {
       return false;
@@ -129,7 +129,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
     // Always ignore activity in this window (or we might get endless
     // recursion).
-    if (Window* window = widget->GetParentWindow()) {
+    if (Window* window = element->GetParentWindow()) {
       if (TBSafeCast<DebugSettingsWindow>(window)) {
         return false;
       }
@@ -138,7 +138,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     StringBuilder buf;
     buf.AppendString(to_string(ev.type));
     buf.AppendString(" (");
-    buf.AppendString(widget->GetClassName());
+    buf.AppendString(element->GetClassName());
     buf.AppendString(")");
 
     buf.AppendString(" id: ");
@@ -179,7 +179,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
   }
 };
 
-void ShowDebugInfoSettingsWindow(Widget* root) {
+void ShowDebugInfoSettingsWindow(Element* root) {
   new DebugSettingsWindow(root);
 }
 

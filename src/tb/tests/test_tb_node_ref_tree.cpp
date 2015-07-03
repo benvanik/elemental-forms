@@ -58,11 +58,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "FireButton\n"
         "	skin: 'FireButtonSkin'\n");
 
-    Widget root;
-    g_widgets_reader->LoadData(
+    Element root;
+    g_elements_reader->LoadData(
         &root, "Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
-    Widget* button = root.GetWidgetByID(TBIDC("fire"));
+    Element* button = root.GetElementByID(TBIDC("fire"));
     TB_VERIFY(button->GetSkinBg() == TBIDC("FireButtonSkin"));
   }
 
@@ -79,8 +79,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "bar_broken_node: '@test_foo>foo_broken_node'"
         "bar_broken_tree: '@test_foo>foo_broken_tree'");
 
-    Widget root;
-    g_widgets_reader->LoadData(
+    Element root;
+    g_elements_reader->LoadData(
         &root,
         "SelectInline: id: 'select', value: '@test_bar>bar_value'\n"
         "Button: id: 'button_circular', text: '@test_bar>bar_circular'\n"
@@ -89,11 +89,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "Button: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
 
     // Reference from resource to one tree to another tree.
-    Widget* select = root.GetWidgetByID(TBIDC("select"));
+    Element* select = root.GetElementByID(TBIDC("select"));
     TB_VERIFY(select->GetValue() == 42);
 
     // Reference in a circular loop. Should not freeze.
-    Widget* button_circular = root.GetWidgetByID(TBIDC("button_circular"));
+    Element* button_circular = root.GetElementByID(TBIDC("button_circular"));
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
@@ -105,11 +105,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
                   .GetType() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
-    Widget* button_broken1 = root.GetWidgetByID(TBIDC("button_broken_node"));
+    Element* button_broken1 = root.GetElementByID(TBIDC("button_broken_node"));
     TB_VERIFY_STR(button_broken1->GetText(), "@test_foo>foo_broken_node");
 
     // Reference that is broken (has no matching tree).
-    Widget* button_broken2 = root.GetWidgetByID(TBIDC("button_broken_tree"));
+    Element* button_broken2 = root.GetElementByID(TBIDC("button_broken_tree"));
     TB_VERIFY_STR(button_broken2->GetText(), "@test_bad_tree>foo");
   }
 
@@ -120,24 +120,24 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	skin: 'SpecialSkin'\n"
         "	text: 'hello'\n");
 
-    Widget root;
-    g_widgets_reader->LoadData(&root,
-                               "TextBox: id: 'edit'\n"
-                               "	@include @test_styles>VeryNice");
-    TextBox* edit = root.GetWidgetByIDAndType<TextBox>(TBIDC("edit"));
+    Element root;
+    g_elements_reader->LoadData(&root,
+                                "TextBox: id: 'edit'\n"
+                                "	@include @test_styles>VeryNice");
+    TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }
 
   TB_TEST(reference_local_include) {
-    Widget root;
-    g_widgets_reader->LoadData(&root,
-                               "SomeDeclarations\n"
-                               "	skin: 'SpecialSkin'\n"
-                               "	text: 'hello'\n"
-                               "TextBox: id: 'edit'\n"
-                               "	@include SomeDeclarations");
-    TextBox* edit = root.GetWidgetByIDAndType<TextBox>(TBIDC("edit"));
+    Element root;
+    g_elements_reader->LoadData(&root,
+                                "SomeDeclarations\n"
+                                "	skin: 'SpecialSkin'\n"
+                                "	text: 'hello'\n"
+                                "TextBox: id: 'edit'\n"
+                                "	@include SomeDeclarations");
+    TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }
@@ -159,11 +159,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "		spacing: 200px\n"
         "	gravity: 'all'\n";
 
-    Widget root1, root2;
+    Element root1, root2;
 
     // Inflate & check
-    g_widgets_reader->LoadData(&root1, layout_str);
-    Layout* layout1 = root1.GetWidgetByIDAndType<Layout>(TBIDC("layout"));
+    g_elements_reader->LoadData(&root1, layout_str);
+    Layout* layout1 = root1.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
     TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
@@ -172,8 +172,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     dt.SetValue("layout>landscape", Value(0));
 
     // Inflate & check
-    g_widgets_reader->LoadData(&root2, layout_str);
-    Layout* layout2 = root2.GetWidgetByIDAndType<Layout>(TBIDC("layout"));
+    g_elements_reader->LoadData(&root2, layout_str);
+    Layout* layout2 = root2.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);

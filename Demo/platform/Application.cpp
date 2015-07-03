@@ -10,13 +10,13 @@ using namespace tb;
 void Application::Run() { m_backend->Run(); }
 
 bool Application::Init() {
-  WidgetAnimationManager::Init();
+  ElementAnimationManager::Init();
 
   return true;
 }
 
 void Application::ShutDown() {
-  WidgetAnimationManager::Shutdown();
+  ElementAnimationManager::Shutdown();
   delete m_backend;
   m_backend = nullptr;
 }
@@ -29,7 +29,7 @@ void Application::Process() {
 
 void Application::RenderFrame(int window_w, int window_h) {
   g_renderer->BeginPaint(window_w, window_h);
-  GetRoot()->InvokePaint(Widget::PaintProps());
+  GetRoot()->InvokePaint(Element::PaintProps());
   g_renderer->EndPaint();
 
   // If animations are running, reinvalidate immediately

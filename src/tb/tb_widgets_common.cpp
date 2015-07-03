@@ -18,19 +18,20 @@
 
 namespace tb {
 
-WidgetString::WidgetString() = default;
+ElementString::ElementString() = default;
 
-int WidgetString::GetWidth(Widget* widget) {
-  return widget->GetFont()->GetStringWidth(m_text);
+int ElementString::GetWidth(Element* element) {
+  return element->GetFont()->GetStringWidth(m_text);
 }
 
-int WidgetString::GetHeight(Widget* widget) {
-  return widget->GetFont()->GetHeight();
+int ElementString::GetHeight(Element* element) {
+  return element->GetFont()->GetHeight();
 }
 
-void WidgetString::Paint(Widget* widget, const Rect& rect, const Color& color) {
-  FontFace* font = widget->GetFont();
-  int string_w = GetWidth(widget);
+void ElementString::Paint(Element* element, const Rect& rect,
+                          const Color& color) {
+  FontFace* font = element->GetFont();
+  int string_w = GetWidth(element);
 
   int x = rect.x;
   if (m_text_align == TextAlign::kRight) {
@@ -38,7 +39,7 @@ void WidgetString::Paint(Widget* widget, const Rect& rect, const Color& color) {
   } else if (m_text_align == TextAlign::kCenter) {
     x += std::max(0, (rect.w - string_w) / 2);
   }
-  int y = rect.y + (rect.h - GetHeight(widget)) / 2;
+  int y = rect.y + (rect.h - GetHeight(element)) / 2;
 
   if (string_w <= rect.w) {
     font->DrawString(x, y, color, m_text);
@@ -147,12 +148,12 @@ void Button::SetValue(int value) {
 
   if (CanToggle()) {
     // Invoke a changed event.
-    WidgetEvent ev(EventType::kChanged);
+    ElementEvent ev(EventType::kChanged);
     InvokeEvent(ev);
   }
 
   if (value && GetGroupID()) {
-    BaseRadioCheckBox::UpdateGroupWidgets(this);
+    BaseRadioCheckBox::UpdateGroupElements(this);
   }
 }
 
@@ -171,34 +172,34 @@ void Button::OnCaptureChanged(bool captured) {
 
 void Button::OnSkinChanged() { m_layout.SetRect(GetPaddingRect()); }
 
-bool Button::OnEvent(const WidgetEvent& ev) {
+bool Button::OnEvent(const ElementEvent& ev) {
   if (CanToggle() && ev.type == EventType::kClick && ev.target == this) {
-    WeakWidgetPointer this_widget(this);
+    WeakElementPointer this_element(this);
 
-    // Toggle the value, if it's not a grouped widget with value on.
+    // Toggle the value, if it's not a grouped element with value on.
     if (!(GetGroupID() && GetValue())) {
       SetValue(!GetValue());
     }
 
-    if (!this_widget.Get()) {
+    if (!this_element.Get()) {
       return true;  // We got removed so we actually handled this event.
     }
 
     // Intentionally don't return true for this event. We want it to continue
     // propagating.
   }
-  return Widget::OnEvent(ev);
+  return Element::OnEvent(ev);
 }
 
 void Button::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("auto_click")) {
-    assert(captured_widget == this);
+    assert(captured_element == this);
     if (!cancel_click &&
-        GetHitStatus(pointer_move_widget_x, pointer_move_widget_y) !=
+        GetHitStatus(pointer_move_element_x, pointer_move_element_y) !=
             HitStatus::kNoHit) {
-      WidgetEvent ev(EventType::kClick, pointer_move_widget_x,
-                     pointer_move_widget_y, true);
-      captured_widget->InvokeEvent(ev);
+      ElementEvent ev(EventType::kClick, pointer_move_element_x,
+                      pointer_move_element_y, true);
+      captured_element->InvokeEvent(ev);
     }
     if (kAutoClickRepeattDelayMillis) {
       PostMessageDelayed(TBIDC("auto_click"), nullptr,
@@ -210,26 +211,26 @@ void Button::OnMessageReceived(Message* msg) {
 HitStatus Button::GetHitStatus(int x, int y) {
   // Never hit any of the children to the button. We always want to the button
   // itself.
-  return Widget::GetHitStatus(x, y) != HitStatus::kNoHit
+  return Element::GetHitStatus(x, y) != HitStatus::kNoHit
              ? HitStatus::kHitNoChildren
              : HitStatus::kNoHit;
 }
 
 void Button::UpdateLabelVisibility() {
   // Auto-collapse the textfield if the text is empty and there are other
-  // widgets added apart from the textfield. This removes the extra spacing
-  // added between the textfield and the other widget.
+  // elements added apart from the textfield. This removes the extra spacing
+  // added between the textfield and the other element.
   bool collapse_textfield = m_textfield.empty() &&
                             m_layout.GetFirstChild() != m_layout.GetLastChild();
   m_textfield.SetVisibilility(collapse_textfield ? Visibility::kGone
                                                  : Visibility::kVisible);
 }
 
-void Button::ButtonLayout::OnChildAdded(Widget* child) {
+void Button::ButtonLayout::OnChildAdded(Element* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
-void Button::ButtonLayout::OnChildRemove(Widget* child) {
+void Button::ButtonLayout::OnChildRemove(Element* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
@@ -246,15 +247,15 @@ LabelContainer::~LabelContainer() {
   RemoveChild(&m_layout);
 }
 
-bool LabelContainer::OnEvent(const WidgetEvent& ev) {
-  // Get a widget from the layout that isn't the textfield, or just bail out
+bool LabelContainer::OnEvent(const ElementEvent& ev) {
+  // Get a element from the layout that isn't the textfield, or just bail out
   // if we only have the textfield.
   if (m_layout.GetFirstChild() == m_layout.GetLastChild()) {
     return false;
   }
-  Widget* click_target = m_layout.GetFirstChild() == &m_textfield
-                             ? m_layout.GetLastChild()
-                             : m_layout.GetFirstChild();
+  Element* click_target = m_layout.GetFirstChild() == &m_textfield
+                              ? m_layout.GetLastChild()
+                              : m_layout.GetFirstChild();
   // Invoke the event on it, as if it was invoked on the target itself.
   if (click_target && ev.target != click_target) {
     // Focus the target if we clicked the label.
@@ -271,9 +272,9 @@ bool LabelContainer::OnEvent(const WidgetEvent& ev) {
 
     click_target->SetState(SkinState::kPressed, pressed_state);
 
-    WidgetEvent target_ev(ev.type, ev.target_x - click_target->GetRect().x,
-                          ev.target_y - click_target->GetRect().y, ev.touch,
-                          ev.modifierkeys);
+    ElementEvent target_ev(ev.type, ev.target_x - click_target->GetRect().x,
+                           ev.target_y - click_target->GetRect().y, ev.touch,
+                           ev.modifierkeys);
     return click_target->InvokeEvent(target_ev);
   }
   return false;
@@ -281,7 +282,7 @@ bool LabelContainer::OnEvent(const WidgetEvent& ev) {
 
 PreferredSize SkinImage::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = Widget::OnCalculatePreferredSize(constraints);
+  PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
   // FIX: Make it stretched proportionally if shrunk.
   ps.max_w = ps.pref_w;
   ps.max_h = ps.pref_h;
@@ -345,16 +346,16 @@ BaseRadioCheckBox::BaseRadioCheckBox() {
 }
 
 // static
-void BaseRadioCheckBox::UpdateGroupWidgets(Widget* new_leader) {
+void BaseRadioCheckBox::UpdateGroupElements(Element* new_leader) {
   assert(new_leader->GetValue() && new_leader->GetGroupID());
 
-  // Find the group root widget.
-  Widget* group = new_leader;
+  // Find the group root element.
+  Element* group = new_leader;
   while (group && !group->GetIsGroupRoot() && group->GetParent()) {
     group = group->GetParent();
   }
 
-  for (Widget* child = group; child; child = child->GetNextDeep(group)) {
+  for (Element* child = group; child; child = child->GetNextDeep(group)) {
     if (child != new_leader &&
         child->GetGroupID() == new_leader->GetGroupID()) {
       child->SetValue(0);
@@ -368,23 +369,23 @@ void BaseRadioCheckBox::SetValue(int value) {
 
   SetState(SkinState::kSelected, value ? true : false);
 
-  WidgetEvent ev(EventType::kChanged);
+  ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 
-  if (value && GetGroupID()) UpdateGroupWidgets(this);
+  if (value && GetGroupID()) UpdateGroupElements(this);
 }
 
 PreferredSize BaseRadioCheckBox::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = Widget::OnCalculatePreferredSize(constraints);
+  PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
   ps.min_w = ps.max_w = ps.pref_w;
   ps.min_h = ps.max_h = ps.pref_h;
   return ps;
 }
 
-bool BaseRadioCheckBox::OnEvent(const WidgetEvent& ev) {
+bool BaseRadioCheckBox::OnEvent(const ElementEvent& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
-    // Toggle the value, if it's not a grouped widget with value on.
+    // Toggle the value, if it's not a grouped element with value on.
     if (!(GetGroupID() && GetValue())) {
       SetValue(!GetValue());
     }
@@ -428,14 +429,14 @@ void ScrollBar::SetLimits(double min, double max, double visible) {
   // If we're currently dragging the scrollbar handle, convert the down point
   // to root and then back after the applying the new limit.
   // This prevents sudden jumps to unexpected positions when scrolling.
-  if (captured_widget == &m_handle) {
-    m_handle.ConvertToRoot(pointer_down_widget_x, pointer_down_widget_y);
+  if (captured_element == &m_handle) {
+    m_handle.ConvertToRoot(pointer_down_element_x, pointer_down_element_y);
   }
 
   UpdateHandle();
 
-  if (captured_widget == &m_handle) {
-    m_handle.ConvertFromRoot(pointer_down_widget_x, pointer_down_widget_y);
+  if (captured_element == &m_handle) {
+    m_handle.ConvertFromRoot(pointer_down_element_x, pointer_down_element_y);
   }
 }
 
@@ -447,15 +448,15 @@ void ScrollBar::SetValueDouble(double value) {
   m_value = value;
 
   UpdateHandle();
-  WidgetEvent ev(EventType::kChanged);
+  ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool ScrollBar::OnEvent(const WidgetEvent& ev) {
-  if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
+bool ScrollBar::OnEvent(const ElementEvent& ev) {
+  if (ev.type == EventType::kPointerMove && captured_element == &m_handle) {
     if (m_to_pixel_factor > 0) {
-      int dx = ev.target_x - pointer_down_widget_x;
-      int dy = ev.target_y - pointer_down_widget_y;
+      int dx = ev.target_x - pointer_down_element_x;
+      int dy = ev.target_y - pointer_down_element_y;
       double delta_val = (m_axis == Axis::kX ? dx : dy) / m_to_pixel_factor;
       SetValueDouble(m_value + delta_val);
     }
@@ -554,15 +555,15 @@ void Slider::SetValueDouble(double value) {
   m_value = value;
 
   UpdateHandle();
-  WidgetEvent ev(EventType::kChanged);
+  ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool Slider::OnEvent(const WidgetEvent& ev) {
-  if (ev.type == EventType::kPointerMove && captured_widget == &m_handle) {
+bool Slider::OnEvent(const ElementEvent& ev) {
+  if (ev.type == EventType::kPointerMove && captured_element == &m_handle) {
     if (m_to_pixel_factor > 0) {
-      int dx = ev.target_x - pointer_down_widget_x;
-      int dy = ev.target_y - pointer_down_widget_y;
+      int dx = ev.target_x - pointer_down_element_x;
+      int dy = ev.target_y - pointer_down_element_y;
       double delta_val = (m_axis == Axis::kX ? dx : -dy) / m_to_pixel_factor;
       SetValueDouble(m_value + delta_val);
     }
@@ -630,19 +631,19 @@ Container::Container() {
 
 Mover::Mover() { SetSkinBg(TBIDC("Mover"), InvokeInfo::kNoCallbacks); }
 
-bool Mover::OnEvent(const WidgetEvent& ev) {
-  Widget* target = GetParent();
+bool Mover::OnEvent(const ElementEvent& ev) {
+  Element* target = GetParent();
   if (!target) return false;
-  if (ev.type == EventType::kPointerMove && captured_widget == this) {
-    int dx = ev.target_x - pointer_down_widget_x;
-    int dy = ev.target_y - pointer_down_widget_y;
+  if (ev.type == EventType::kPointerMove && captured_element == this) {
+    int dx = ev.target_x - pointer_down_element_x;
+    int dy = ev.target_y - pointer_down_element_y;
     Rect rect = target->GetRect().Offset(dx, dy);
     if (target->GetParent()) {
       // Apply limit.
-      rect.x = Clamp(rect.x, -pointer_down_widget_x,
-                     target->GetParent()->GetRect().w - pointer_down_widget_x);
-      rect.y = Clamp(rect.y, -pointer_down_widget_y,
-                     target->GetParent()->GetRect().h - pointer_down_widget_y);
+      rect.x = Clamp(rect.x, -pointer_down_element_x,
+                     target->GetParent()->GetRect().w - pointer_down_element_x);
+      rect.y = Clamp(rect.y, -pointer_down_element_y,
+                     target->GetParent()->GetRect().h - pointer_down_element_y);
     }
     target->SetRect(rect);
     return true;
@@ -658,15 +659,15 @@ HitStatus Resizer::GetHitStatus(int x, int y) {
   if (x < GetRect().w - y - extra_hit_area) {
     return HitStatus::kNoHit;
   }
-  return Widget::GetHitStatus(x, y);
+  return Element::GetHitStatus(x, y);
 }
 
-bool Resizer::OnEvent(const WidgetEvent& ev) {
-  Widget* target = GetParent();
+bool Resizer::OnEvent(const ElementEvent& ev) {
+  Element* target = GetParent();
   if (!target) return false;
-  if (ev.type == EventType::kPointerMove && captured_widget == this) {
-    int dx = ev.target_x - pointer_down_widget_x;
-    int dy = ev.target_y - pointer_down_widget_y;
+  if (ev.type == EventType::kPointerMove && captured_element == this) {
+    int dx = ev.target_x - pointer_down_element_x;
+    int dy = ev.target_y - pointer_down_element_y;
     Rect rect = target->GetRect();
     rect.w += dx;
     rect.h += dy;

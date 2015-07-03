@@ -16,77 +16,77 @@
 namespace tb {
 
 class Node;
-class Widget;
-class WidgetFactory;
-class WidgetReader;
+class Element;
+class ElementFactory;
+class ElementReader;
 
-// Contains info passed to Widget::OnInflate during resource loading.
+// Contains info passed to Element::OnInflate during resource loading.
 struct InflateInfo {
-  InflateInfo(WidgetReader* reader, Widget* target, Node* node,
+  InflateInfo(ElementReader* reader, Element* target, Node* node,
               Value::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
-  WidgetReader* reader;
-  // The widget that that will be parent to the inflated widget.
-  Widget* target;
+  ElementReader* reader;
+  // The element that that will be parent to the inflated element.
+  Element* target;
   // The node containing properties.
   Node* node;
-  // The data type that should be synchronized through WidgetValue.
+  // The data type that should be synchronized through ElementValue.
   Value::Type sync_type;
 };
 
-// Creates a widget from a Node.
-class WidgetFactory : public TBLinkOf<WidgetFactory> {
+// Creates a element from a Node.
+class ElementFactory : public TBLinkOf<ElementFactory> {
  public:
-  WidgetFactory(const char* name, Value::Type sync_type);
+  ElementFactory(const char* name, Value::Type sync_type);
 
-  // Creates and returns the new widget.
-  virtual Widget* Create(InflateInfo* info) = 0;
+  // Creates and returns the new element.
+  virtual Element* Create(InflateInfo* info) = 0;
 
   void Register();
 
  public:
   const char* name;
   Value::Type sync_type;
-  WidgetFactory* next_registered_wf = nullptr;
+  ElementFactory* next_registered_wf = nullptr;
 };
 
-// Creates a new WidgetFactory for the given class name so it can be created
-// from resources (using WidgetReader).
+// Creates a new ElementFactory for the given class name so it can be created
+// from resources (using ElementReader).
 //
 // classname   - The name of the class.
-// sync_type   - The data type that should be synchronized through WidgetValue.
+// sync_type   - The data type that should be synchronized through ElementValue.
 // add_child_z - The order in which children should be added to it by default.
 //
 // It should be followed by an empty block (may eventually be removed).
 // Reading custom properties from resources can be done by overriding
-// Widget::OnInflate.
+// Element::OnInflate.
 //
 // Example:
-//   TB_WIDGET_FACTORY(MyWidget, Value::Type::kInt, WidgetZ::kTop) {}
-#define TB_WIDGET_FACTORY(classname, sync_type, add_child_z)            \
-  class classname##WidgetFactory : public WidgetFactory {               \
-   public:                                                              \
-    classname##WidgetFactory() : WidgetFactory(#classname, sync_type) { \
-      Register();                                                       \
-    }                                                                   \
-    Widget* Create(InflateInfo* info) override {                        \
-      classname* widget = new classname();                              \
-      widget->GetContentRoot()->SetZInflate(add_child_z);               \
-      ReadCustomProps(widget, info);                                    \
-      return widget;                                                    \
-    }                                                                   \
-    void ReadCustomProps(classname* widget, InflateInfo* info);         \
-  };                                                                    \
-  static classname##WidgetFactory classname##_wf;                       \
-  void classname##WidgetFactory::ReadCustomProps(classname* widget,     \
-                                                 InflateInfo* info)
+//   TB_WIDGET_FACTORY(MyElement, Value::Type::kInt, ElementZ::kTop) {}
+#define TB_WIDGET_FACTORY(classname, sync_type, add_child_z)              \
+  class classname##ElementFactory : public ElementFactory {               \
+   public:                                                                \
+    classname##ElementFactory() : ElementFactory(#classname, sync_type) { \
+      Register();                                                         \
+    }                                                                     \
+    Element* Create(InflateInfo* info) override {                         \
+      classname* element = new classname();                               \
+      element->GetContentRoot()->SetZInflate(add_child_z);                \
+      ReadCustomProps(element, info);                                     \
+      return element;                                                     \
+    }                                                                     \
+    void ReadCustomProps(classname* element, InflateInfo* info);          \
+  };                                                                      \
+  static classname##ElementFactory classname##_wf;                        \
+  void classname##ElementFactory::ReadCustomProps(classname* element,     \
+                                                  InflateInfo* info)
 
 // Parses a resource file (or buffer) into a Node tree and turn it into a
-// hierarchy of widgets.
-// It can create all types of widgets that have a registered factory
-// (WidgetFactory). All core widgets have a factory by default, and you can also
-// add your own.
+// hierarchy of elements.
+// It can create all types of elements that have a registered factory
+// (ElementFactory). All core elements have a factory by default, and you can
+// also add your own.
 //
 // Values may be looked up from any existing NodeRefTree using the syntax
 // "@treename>noderequest". If treename is left out, the request will be looked
@@ -103,9 +103,9 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 // Files can be included by using the syntax "@file filename".
 //
 // Each factory may have its own set of properties, but a set of generic
-// properties is always supported on all widgets. Those are:
+// properties is always supported on all elements. Those are:
 //
-// Resource name:   Widget property:    Values:
+// Resource name:   Element property:    Values:
 //
 // id					      m_id              TBID (string or
 // int)
@@ -136,37 +136,37 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 // lp>min-height		SetLayoutParams   dimension
 // lp>max-height		SetLayoutParams   dimension
 // lp>pref-height		SetLayoutParams   dimension
-// autofocus			  The Widget will be focused automatically the
+// autofocus			  The Element will be focused automatically the
 //                  first time its Window is activated.
 // font>name			  Font name
 // font>size			  Font size
-class WidgetReader {
+class ElementReader {
  public:
-  static WidgetReader* Create();
-  ~WidgetReader();
+  static ElementReader* Create();
+  ~ElementReader();
 
-  // Adds a widget factory. Does not take ownership of the factory.
-  // The easiest way to add factories for custom widget types, is using the
+  // Adds a element factory. Does not take ownership of the factory.
+  // The easiest way to add factories for custom element types, is using the
   // TB_WIDGET_FACTORY macro that automatically register it during startup.
-  bool AddFactory(WidgetFactory* wf) {
+  bool AddFactory(ElementFactory* wf) {
     factories.AddLast(wf);
     return true;
   }
-  void RemoveFactory(WidgetFactory* wf) { factories.Remove(wf); }
+  void RemoveFactory(ElementFactory* wf) { factories.Remove(wf); }
 
   // Sets the id from the given node.
   static void SetIDFromNode(TBID& id, Node* node);
 
-  bool LoadFile(Widget* target, const char* filename);
-  bool LoadData(Widget* target, const char* data);
-  bool LoadData(Widget* target, const char* data, size_t data_len);
-  void LoadNodeTree(Widget* target, Node* node);
+  bool LoadFile(Element* target, const char* filename);
+  bool LoadData(Element* target, const char* data);
+  bool LoadData(Element* target, const char* data, size_t data_len);
+  void LoadNodeTree(Element* target, Node* node);
 
  private:
   bool Init();
-  bool CreateWidget(Widget* target, Node* node);
+  bool CreateElement(Element* target, Node* node);
 
-  TBLinkListOf<WidgetFactory> factories;
+  TBLinkListOf<ElementFactory> factories;
 };
 
 }  // namespace tb

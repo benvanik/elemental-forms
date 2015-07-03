@@ -14,47 +14,48 @@
 
 namespace tb {
 
-// Specifies which height widgets in a Axis::kX layout should have, or which
-// width widgets in a Axis::kY layout should have.
-// No matter what, it will still prioritize minimum and maximum for each widget.
+// Specifies which height elements in a Axis::kX layout should have, or which
+// width elements in a Axis::kY layout should have.
+// No matter what, it will still prioritize minimum and maximum for each
+// element.
 enum class LayoutSize {
-  kGravity,    // Sizes depend on the gravity for each widget. (If the widget
+  kGravity,    // Sizes depend on the gravity for each element. (If the element
                // pulls towards both directions, it should grow to all available
                // space).
-  kPreferred,  // Size will be the preferred so each widget may be sized
+  kPreferred,  // Size will be the preferred so each element may be sized
                // differently.
   kAvailable   // Size should grow to all available space.
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutSize, "gravity", "preferred", "available");
 
-// Specifies which y position widgets in a Axis::kX layout should have, or which
-// x position widgets in a Axis::kY layout should have.
+// Specifies which y position elements in a Axis::kX layout should have, or
+// which x position elements in a Axis::kY layout should have.
 enum class LayoutPosition {
   kCenter,   // Position is centered.
   kLeftTop,  // Position is to the left for Axis::kY layout and top for Axis::kX
              // layout.
   kRightBottom,  // Position is to the right for Axis::kY layout and bottom for
                  // Axis::kX layout.
-  kGravity,  // Position depend on the gravity for each widget. (If the widget
+  kGravity,  // Position depend on the gravity for each element. (If the element
              // pulls towards both directions, it will be centered).
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutPosition, "center", "left top",
                                "right bottom", "gravity");
 
-// Specifies which width widgets in a Axis::kX layout should have, or which
-// height widgets in a Axis::kY layout should have.
+// Specifies which width elements in a Axis::kX layout should have, or which
+// height elements in a Axis::kY layout should have.
 enum class LayoutDistribution {
-  kPreferred,  // Size will be the preferred so each widget may be sized
+  kPreferred,  // Size will be the preferred so each element may be sized
                // differently.
   kAvailable,  // Size should grow to all available space.
-  kGravity,    // Sizes depend on the gravity for each widget. (If the widget
+  kGravity,    // Sizes depend on the gravity for each element. (If the element
                // pulls towards both directions, it should grow to all available
                // space).
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistribution, "preferred", "available",
                                "gravity");
 
-// Specifies how widgets should be moved horizontally in a Axis::kX layout (or
+// Specifies how elements should be moved horizontally in a Axis::kX layout (or
 // vertically in a Axis::kY layout) if there is extra space available.
 enum class LayoutDistributionPosition {
   kCenter,
@@ -66,8 +67,8 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistributionPosition, "center", "left top",
 
 // Layout order parameter for Layout::SetLayoutOrder.
 enum class LayoutOrder {
-  kBottomToTop,  // From bottom to top widget (default creation order).
-  kTopToBottom,  // From top to bottom widget.
+  kBottomToTop,  // From bottom to top element (default creation order).
+  kTopToBottom,  // From top to bottom element.
 };
 
 // Specifies what happens when there is not enough room for the layout, even
@@ -79,14 +80,14 @@ enum class LayoutOverflow {
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 
 // Layout lays out its children along the given axis.
-// Each widgets size depend on its preferred size (See
-// Widget::GetPreferredSize), gravity, and the specified layout settings (See
+// Each elements size depend on its preferred size (See
+// Element::GetPreferredSize), gravity, and the specified layout settings (See
 // SetLayoutSize, SetLayoutPosition SetLayoutOverflow, SetLayoutDistribution,
 // SetLayoutDistributionPosition), and the available size.
-// Each widget is also separated by the specified spacing (See SetSpacing).
-class Layout : public Widget {
+// Each element is also separated by the specified spacing (See SetSpacing).
+class Layout : public Element {
  public:
-  TBOBJECT_SUBCLASS(Layout, Widget);
+  TBOBJECT_SUBCLASS(Layout, Element);
 
   // This means the spacing should be the default, read from the skin.
   static const int kSpacingFromSkin = kInvalidDimension;
@@ -97,7 +98,7 @@ class Layout : public Widget {
   void SetAxis(Axis axis) override;
   Axis GetAxis() const override { return m_axis; }
 
-  // Sets the spacing between widgets in this layout. Setting the default
+  // Sets the spacing between elements in this layout. Setting the default
   // (kSpacingFromSkin) will make it use the spacing specified in the skin.
   void SetSpacing(int spacing);
   int GetSpacing() const { return m_spacing; }
@@ -131,14 +132,14 @@ class Layout : public Widget {
       const SizeConstraints& constraints) override;
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
-  void OnInflateChild(Widget* child) override;
+  void OnInflateChild(Element* child) override;
   void GetChildTranslation(int& x, int& y) const override;
   void ScrollTo(int x, int y) override;
-  Widget::ScrollInfo GetScrollInfo() override;
+  Element::ScrollInfo GetScrollInfo() override;
 
  protected:
   void ValidateLayout(const SizeConstraints& constraints,
@@ -146,11 +147,11 @@ class Layout : public Widget {
   bool QualifyForExpansion(Gravity gravity) const;
   int GetWantedHeight(Gravity gravity, const PreferredSize& ps,
                       int available_height) const;
-  Widget* GetNextNonCollapsedWidget(Widget* child) const;
-  int GetTrailingSpace(Widget* child, int spacing) const;
+  Element* GetNextNonCollapsedElement(Element* child) const;
+  int GetTrailingSpace(Element* child, int spacing) const;
   int CalculateSpacing();
-  Widget* GetFirstInLayoutOrder() const;
-  Widget* GetNextInLayoutOrder(Widget* child) const;
+  Element* GetFirstInLayoutOrder() const;
+  Element* GetNextInLayoutOrder(Element* child) const;
 
   Axis m_axis = Axis::kX;
   int m_spacing = kSpacingFromSkin;

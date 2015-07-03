@@ -1,5 +1,5 @@
 WindowInfo
-	title TBImageWidget
+	title TBImageElement
 	size 350 500
 ScrollContainer
 	adapt-content 1
@@ -7,11 +7,11 @@ ScrollContainer
 		axis y
 		spacing 20
 		TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1
-			text: "Some images shown by TBImageWidget. This test requires enabling TB_IMAGE (see tb_config.h).\n" \
+			text: "Some images shown by TBImageElement. This test requires enabling TB_IMAGE (see tb_config.h).\n" \
 					"Images are unloaded when all references are removed (this window is closed)."
-		ImageWidget: filename: "Demo/demo01/images/image_8.jpg", skin: ImageFrame
+		ImageElement: filename: "Demo/demo01/images/image_8.jpg", skin: ImageFrame
 			Button: skin: "Remove", id: "remove", gravity: right
 			Label: skin: "ImageCaption", text: "Örebro", gravity: bottom left right
-		ImageWidget: filename: "Demo/demo01/images/image_9.jpg", skin: ImageFrame
+		ImageElement: filename: "Demo/demo01/images/image_9.jpg", skin: ImageFrame
 			Button: skin: "Remove", id: "remove", gravity: right
 			Label: skin: "ImageCaption", text: "Stockholm", gravity: bottom left right

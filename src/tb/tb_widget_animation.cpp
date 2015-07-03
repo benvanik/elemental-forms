@@ -17,76 +17,77 @@
 
 namespace tb {
 
-TBLinkListOf<WidgetAnimation> widget_animations;
+TBLinkListOf<ElementAnimation> element_animations;
 
 inline float Lerp(float src, float dst, float progress) {
   return src + (dst - src) * progress;
 }
 
-WidgetAnimation::WidgetAnimation(Widget* widget) : m_widget(widget) {
-  widget_animations.AddLast(this);
+ElementAnimation::ElementAnimation(Element* element) : m_element(element) {
+  element_animations.AddLast(this);
 }
 
-WidgetAnimation::~WidgetAnimation() { widget_animations.Remove(this); }
+ElementAnimation::~ElementAnimation() { element_animations.Remove(this); }
 
-OpacityWidgetAnimation::OpacityWidgetAnimation(Widget* widget,
-                                               float src_opacity,
-                                               float dst_opacity, bool die)
-    : WidgetAnimation(widget),
+OpacityElementAnimation::OpacityElementAnimation(Element* element,
+                                                 float src_opacity,
+                                                 float dst_opacity, bool die)
+    : ElementAnimation(element),
       m_src_opacity(src_opacity),
       m_dst_opacity(dst_opacity),
       m_die(die) {}
 
-void OpacityWidgetAnimation::OnAnimationStart() {
+void OpacityElementAnimation::OnAnimationStart() {
   // Make sure we don't stay idle if nothing is scheduled (hack).
   // FIX: fix this properly
-  m_widget->Invalidate();
+  m_element->Invalidate();
 
-  m_widget->SetOpacity(m_src_opacity);
+  m_element->SetOpacity(m_src_opacity);
 }
 
-void OpacityWidgetAnimation::OnAnimationUpdate(float progress) {
-  m_widget->SetOpacity(Lerp(m_src_opacity, m_dst_opacity, progress));
+void OpacityElementAnimation::OnAnimationUpdate(float progress) {
+  m_element->SetOpacity(Lerp(m_src_opacity, m_dst_opacity, progress));
 }
 
-void OpacityWidgetAnimation::OnAnimationStop(bool aborted) {
-  // If we're aborted, it may be because the widget is being deleted
+void OpacityElementAnimation::OnAnimationStop(bool aborted) {
+  // If we're aborted, it may be because the element is being deleted
   if (m_die && !aborted) {
-    WeakWidgetPointer the_widget(m_widget);
-    if (m_widget->GetParent()) m_widget->GetParent()->RemoveChild(m_widget);
-    if (the_widget.Get()) delete the_widget.Get();
+    WeakElementPointer the_element(m_element);
+    if (m_element->GetParent()) m_element->GetParent()->RemoveChild(m_element);
+    if (the_element.Get()) delete the_element.Get();
   } else
-    m_widget->SetOpacity(m_dst_opacity);
+    m_element->SetOpacity(m_dst_opacity);
 }
 
-RectWidgetAnimation::RectWidgetAnimation(Widget* widget, const Rect& src_rect,
-                                         const Rect& dst_rect)
-    : WidgetAnimation(widget),
+RectElementAnimation::RectElementAnimation(Element* element,
+                                           const Rect& src_rect,
+                                           const Rect& dst_rect)
+    : ElementAnimation(element),
       m_src_rect(src_rect),
       m_dst_rect(dst_rect),
       m_mode(Mode::kSrcToDest) {}
 
-RectWidgetAnimation::RectWidgetAnimation(Widget* widget, const Rect& delta_rect,
-                                         Mode mode)
-    : WidgetAnimation(widget), m_delta_rect(delta_rect), m_mode(mode) {
+RectElementAnimation::RectElementAnimation(Element* element,
+                                           const Rect& delta_rect, Mode mode)
+    : ElementAnimation(element), m_delta_rect(delta_rect), m_mode(mode) {
   assert(mode == Mode::kDeltaIn || mode == Mode::kDeltaOut);
 }
 
-void RectWidgetAnimation::OnAnimationStart() {
+void RectElementAnimation::OnAnimationStart() {
   // Make sure we don't stay idle if nothing is scheduled (hack).
   // FIX: fix this properly
-  m_widget->Invalidate();
+  m_element->Invalidate();
 
   if (m_mode == Mode::kSrcToDest) {
-    m_widget->SetRect(m_src_rect);
+    m_element->SetRect(m_src_rect);
   }
 }
 
-void RectWidgetAnimation::OnAnimationUpdate(float progress) {
+void RectElementAnimation::OnAnimationUpdate(float progress) {
   if (m_mode == Mode::kDeltaIn || m_mode == Mode::kDeltaOut) {
-    m_dst_rect = m_src_rect = m_widget->GetRect();
+    m_dst_rect = m_src_rect = m_element->GetRect();
     if (m_dst_rect.Equals(Rect())) {
-      // Widget hasn't been laid out yet,
+      // Element hasn't been laid out yet,
       // the animation was started too soon.
       AnimationManager::AbortAnimation(this, true);
       return;
@@ -109,35 +110,35 @@ void RectWidgetAnimation::OnAnimationUpdate(float progress) {
   rect.y = int(Lerp(float(m_src_rect.y), float(m_dst_rect.y), progress));
   rect.w = int(Lerp(float(m_src_rect.w), float(m_dst_rect.w), progress));
   rect.h = int(Lerp(float(m_src_rect.h), float(m_dst_rect.h), progress));
-  m_widget->SetRect(rect);
+  m_element->SetRect(rect);
 }
 
-void RectWidgetAnimation::OnAnimationStop(bool aborted) {
+void RectElementAnimation::OnAnimationStop(bool aborted) {
   if (m_mode == Mode::kSrcToDest) {
     // m_dst_rect may still be unset if aborted.
-    m_widget->SetRect(m_dst_rect);
+    m_element->SetRect(m_dst_rect);
   }
 }
 
-WidgetAnimationManager widgets_animation_manager;
+ElementAnimationManager elements_animation_manager;
 
-void WidgetAnimationManager::Init() {
-  WidgetListener::AddGlobalListener(&widgets_animation_manager);
+void ElementAnimationManager::Init() {
+  ElementListener::AddGlobalListener(&elements_animation_manager);
 }
 
-void WidgetAnimationManager::Shutdown() {
-  WidgetListener::RemoveGlobalListener(&widgets_animation_manager);
+void ElementAnimationManager::Shutdown() {
+  ElementListener::RemoveGlobalListener(&elements_animation_manager);
 }
 
-void WidgetAnimationManager::AbortAnimations(Widget* widget) {
-  AbortAnimations(widget, nullptr);
+void ElementAnimationManager::AbortAnimations(Element* element) {
+  AbortAnimations(element, nullptr);
 }
 
-void WidgetAnimationManager::AbortAnimations(Widget* widget,
-                                             tb_type_id_t type_id) {
-  auto iter = widget_animations.IterateForward();
-  while (WidgetAnimation* wao = iter.GetAndStep()) {
-    if (wao->m_widget == widget) {
+void ElementAnimationManager::AbortAnimations(Element* element,
+                                              tb_type_id_t type_id) {
+  auto iter = element_animations.IterateForward();
+  while (ElementAnimation* wao = iter.GetAndStep()) {
+    if (wao->m_element == element) {
       // Skip this animation if we asked for a specific (and
       // different) animation type.
       if (type_id != nullptr && !wao->IsOfTypeId(type_id)) continue;
@@ -149,58 +150,60 @@ void WidgetAnimationManager::AbortAnimations(Widget* widget,
   }
 }
 
-void WidgetAnimationManager::OnWidgetDelete(Widget* widget) {
-  // Kill and delete all animations running for the widget being deleted.
-  AbortAnimations(widget);
+void ElementAnimationManager::OnElementDelete(Element* element) {
+  // Kill and delete all animations running for the element being deleted.
+  AbortAnimations(element);
 }
 
-bool WidgetAnimationManager::OnWidgetDying(Widget* widget) {
+bool ElementAnimationManager::OnElementDying(Element* element) {
   bool handled = false;
-  if (Window* window = TBSafeCast<Window>(widget)) {
+  if (Window* window = TBSafeCast<Window>(element)) {
     // Fade out dying windows.
     auto anim =
-        new OpacityWidgetAnimation(window, 1.f, kAlmostZeroOpacity, true);
+        new OpacityElementAnimation(window, 1.f, kAlmostZeroOpacity, true);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
-  if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
+  if (MessageWindow* window = TBSafeCast<MessageWindow>(element)) {
     // Move out dying message windows.
-    auto anim = new RectWidgetAnimation(window, Rect(0, 50, 0, 0),
-                                        RectWidgetAnimation::Mode::kDeltaIn);
+    auto anim = new RectElementAnimation(window, Rect(0, 50, 0, 0),
+                                         RectElementAnimation::Mode::kDeltaIn);
     AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
-  if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
+  if (Dimmer* dimmer = TBSafeCast<Dimmer>(element)) {
     // Fade out dying dim layers.
     auto anim =
-        new OpacityWidgetAnimation(dimmer, 1.f, kAlmostZeroOpacity, true);
+        new OpacityElementAnimation(dimmer, 1.f, kAlmostZeroOpacity, true);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
   return handled;
 }
 
-void WidgetAnimationManager::OnWidgetAdded(Widget* parent, Widget* widget) {
-  if (Window* window = TBSafeCast<Window>(widget)) {
+void ElementAnimationManager::OnElementAdded(Element* parent,
+                                             Element* element) {
+  if (Window* window = TBSafeCast<Window>(element)) {
     // Fade in new windows.
     auto anim =
-        new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false);
+        new OpacityElementAnimation(window, kAlmostZeroOpacity, 1.f, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
-  if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
+  if (MessageWindow* window = TBSafeCast<MessageWindow>(element)) {
     // Move in new message windows.
-    auto anim = new RectWidgetAnimation(window, Rect(0, -50, 0, 0),
-                                        RectWidgetAnimation::Mode::kDeltaOut);
+    auto anim = new RectElementAnimation(window, Rect(0, -50, 0, 0),
+                                         RectElementAnimation::Mode::kDeltaOut);
     AnimationManager::StartAnimation(anim);
   }
-  if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
+  if (Dimmer* dimmer = TBSafeCast<Dimmer>(element)) {
     // Fade in dim layer.
     auto anim =
-        new OpacityWidgetAnimation(dimmer, kAlmostZeroOpacity, 1.f, false);
+        new OpacityElementAnimation(dimmer, kAlmostZeroOpacity, 1.f, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
 }
 
-void WidgetAnimationManager::OnWidgetRemove(Widget* parent, Widget* widget) {}
+void ElementAnimationManager::OnElementRemove(Element* parent,
+                                              Element* element) {}
 
 }  // namespace tb

@@ -18,21 +18,21 @@ namespace tb {
 enum class WindowSettings {
   kNone = 0,         // Chrome less window without any other settings.
   kTitleBar = 1,     // Show a title bar that can also move the window.
-  kResizable = 2,    // Show a widget for resizing the window.
-  kCloseButton = 4,  // Show a widget for closing the window.
+  kResizable = 2,    // Show a element for resizing the window.
+  kCloseButton = 4,  // Show a element for closing the window.
   kCanActivate = 8,  // Can be activated and deactivate other windows.
 
   kDefault = kTitleBar | kResizable | kCloseButton | kCanActivate,
 };
 MAKE_ENUM_FLAG_COMBO(WindowSettings);
 
-// A Widget that provides some window-like features.
+// A Element that provides some window-like features.
 // It can have a titlebar, be movable, resizable etc.
 // It will activate and deactivate other windows on click (which will restore
-// focus to the last focused child widget).
-class Window : public Widget {
+// focus to the last focused child element).
+class Window : public Element {
  public:
-  TBOBJECT_SUBCLASS(Window, Widget);
+  TBOBJECT_SUBCLASS(Window, Element);
 
   Window();
   ~Window() override;
@@ -51,19 +51,19 @@ class Window : public Widget {
   void Activate();
 
   // Ensures that this window has focus by attempting to find a focusable child
-  // widget.
-  // It will first try to restore focus to the last focused widget in this
-  // window, or a widget that has received SetFocus while the window was
+  // element.
+  // It will first try to restore focus to the last focused element in this
+  // window, or a element that has received SetFocus while the window was
   // inactive. If that doesn't succeed, it will go through all children and try
   // to set focus.
   // Returns false if no focusable child was found.
   bool EnsureFocus();
 
-  // Sets the widget that should be focused when this window is activated next
+  // Sets the element that should be focused when this window is activated next
   // time.
-  // This should not be used to change focus. Call Widget::SetFocus to focus,
+  // This should not be used to change focus. Call Element::SetFocus to focus,
   // which will call this method if the window is inactive!
-  void SetLastFocus(Widget* last_focus) { m_last_focus.Set(last_focus); }
+  void SetLastFocus(Element* last_focus) { m_last_focus.Set(last_focus); }
 
   // Sets settings for how this window should look and behave.
   void SetSettings(WindowSettings settings);
@@ -88,7 +88,7 @@ class Window : public Widget {
 
   // Sets the window title.
   void SetText(const char* text) override { m_textfield.SetText(text); }
-  using Widget::SetText;
+  using Element::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
   // Gets the height of the title bar (or 0 if the WindowSettings say this
@@ -99,10 +99,10 @@ class Window : public Widget {
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnAdded() override;
   void OnRemove() override;
-  void OnChildAdded(Widget* child) override;
+  void OnChildAdded(Element* child) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
@@ -115,7 +115,7 @@ class Window : public Widget {
   Label m_textfield;
   Button m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;
-  WeakWidgetPointer m_last_focus;
+  WeakElementPointer m_last_focus;
 };
 
 }  // namespace tb

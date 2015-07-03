@@ -33,15 +33,15 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 // The default content factory for embedded content in TextBox with styling
 // enabled.
 // Creates all that TextFragmentContentFactory creates by default, and any type
-// of widget from a inline resource string.
+// of element from a inline resource string.
 //
-// Syntax: <widget xxx>
-// (where xxx is parsed by WidgetReader).
+// Syntax: <element xxx>
+// (where xxx is parsed by ElementReader).
 //
 // Example - Create a button with id "hello":
-//   <widget Button: text: "Hello world!" id: "hello">
+//   <element Button: text: "Hello world!" id: "hello">
 // Example - Create a image from skin element "Icon48":
-//   <widget SkinImage: skin: "Icon48">
+//   <element SkinImage: skin: "Icon48">
 class TextBoxContentFactory : public TextFragmentContentFactory {
  public:
   class TextBox* text_box = nullptr;
@@ -51,8 +51,8 @@ class TextBoxContentFactory : public TextFragmentContentFactory {
 };
 
 // Internal for TextBox.
-// Acts as a scrollable container for any widget created as embedded content.
-class TextBoxScrollRoot : public Widget {
+// Acts as a scrollable container for any element created as embedded content.
+class TextBoxScrollRoot : public Element {
  private:
   // May only be used by TextBox.
   friend class TextBox;
@@ -68,11 +68,11 @@ class TextBoxScrollRoot : public Widget {
 // It can also be a passwordfield by calling SetEditType(EditType::kPassword).
 // It may perform styling of text and contain custom embedded content, if
 // enabled by SetStyling(true). Disabled by default.
-class TextBox : public Widget,
+class TextBox : public Element,
                 private StyleEditListener,
                 public MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(TextBox, Widget);
+  TBOBJECT_SUBCLASS(TextBox, Element);
 
   TextBox();
   ~TextBox() override;
@@ -141,7 +141,7 @@ class TextBox : public Widget,
   void SetText(const char* text) override {
     m_style_edit.SetText(text, CaretPosition::kBeginning);
   }
-  using Widget::SetText;
+  using Element::SetText;
   std::string GetText() override { return m_style_edit.GetText(); }
 
   // Sets the text and also specify if the caret should be positioned at the
@@ -156,7 +156,7 @@ class TextBox : public Widget,
     m_style_edit.SetText(text, text_len, pos);
   }
 
-  using Widget::Invalidate;
+  using Element::Invalidate;
 
   // Set the placeholder text. It will be visible only when the textfield is
   // empty.
@@ -166,10 +166,10 @@ class TextBox : public Widget,
   virtual std::string GetPlaceholderText() { return m_placeholder.GetText(); }
 
   void ScrollTo(int x, int y) override;
-  Widget::ScrollInfo GetScrollInfo() override;
-  Widget* GetScrollRoot() override { return &m_root; }
+  Element::ScrollInfo GetScrollInfo() override;
+  Element* GetScrollRoot() override { return &m_root; }
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnPaint(const PaintProps& paint_props) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnInflate(const InflateInfo& info) override;
@@ -177,7 +177,7 @@ class TextBox : public Widget,
   void OnFontChanged() override;
   void OnFocusChanged(bool focused) override;
   void OnResized(int old_w, int old_h) override;
-  Widget* GetContentRoot() override { return &m_root; }
+  Element* GetContentRoot() override { return &m_root; }
 
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
@@ -204,7 +204,7 @@ class TextBox : public Widget,
 
   ScrollBar m_scrollbar_x;
   ScrollBar m_scrollbar_y;
-  WidgetString m_placeholder;
+  ElementString m_placeholder;
   EditType m_edit_type = EditType::kText;
   TextBoxScrollRoot m_root;
   TextBoxContentFactory m_content_factory;

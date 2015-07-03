@@ -24,16 +24,16 @@ enum class TextAlign {
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(TextAlign, "left", "right", "center");
 
-// WidgetString holds a string that can be painted as one line with the set
+// ElementString holds a string that can be painted as one line with the set
 // alignment.
-class WidgetString {
+class ElementString {
  public:
-  WidgetString();
+  ElementString();
 
-  void Paint(Widget* widget, const Rect& rect, const Color& color);
+  void Paint(Element* element, const Rect& rect, const Color& color);
 
-  int GetWidth(Widget* widget);
-  int GetHeight(Widget* widget);
+  int GetWidth(Element* element);
+  int GetHeight(Element* element);
 
   void SetText(const char* text) { m_text = text; }
   std::string GetText() const { return m_text; }
@@ -51,15 +51,15 @@ class WidgetString {
 };
 
 // A one line text field that is not editable.
-class Label : public Widget {
+class Label : public Element {
  public:
-  TBOBJECT_SUBCLASS(Label, Widget);
+  TBOBJECT_SUBCLASS(Label, Element);
 
   Label();
 
   // Sets the text of the text field.
   void SetText(const char* text) override;
-  using Widget::SetText;
+  using Element::SetText;
   std::string GetText() override { return m_text.GetText(); }
 
   bool empty() const { return m_text.empty(); }
@@ -84,17 +84,17 @@ class Label : public Widget {
   // This value on m_cached_text_width means it needs to be updated again.
   static const int kTextWidthCacheNeedsUpdate = -1;
 
-  WidgetString m_text;
+  ElementString m_text;
   int m_cached_text_width = kTextWidthCacheNeedsUpdate;
   bool m_squeezable = false;
 };
 
-// A regular button widget.
-// Has a text field in its internal layout by default. Other widgets can be
+// A regular button element.
+// Has a text field in its internal layout by default. Other elements can be
 // added under GetContentRoot().
-class Button : public Widget, protected MessageHandler {
+class Button : public Element, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(Button, Widget);
+  TBOBJECT_SUBCLASS(Button, Element);
 
   Button();
   ~Button() override;
@@ -122,7 +122,7 @@ class Button : public Widget, protected MessageHandler {
 
   // Sets the text of the button.
   void SetText(const char* text) override;
-  using Widget::SetText;
+  using Element::SetText;
   std::string GetText() override { return m_textfield.GetText(); }
 
   void SetValue(int value) override;
@@ -131,14 +131,14 @@ class Button : public Widget, protected MessageHandler {
   void OnInflate(const InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   HitStatus GetHitStatus(int x, int y) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override {
     return m_layout.GetPreferredSize();
   }
 
-  Widget* GetContentRoot() override { return &m_layout; }
+  Element* GetContentRoot() override { return &m_layout; }
 
   void OnMessageReceived(Message* msg) override;
 
@@ -150,8 +150,8 @@ class Button : public Widget, protected MessageHandler {
   bool CanToggle() { return m_toggle_mode || GetGroupID(); }
 
   class ButtonLayout : public Layout {
-    void OnChildAdded(Widget* child) override;
-    void OnChildRemove(Widget* child) override;
+    void OnChildAdded(Element* child) override;
+    void OnChildRemove(Element* child) override;
   };
 
   ButtonLayout m_layout;
@@ -161,11 +161,11 @@ class Button : public Widget, protected MessageHandler {
 };
 
 // Has a text field in its internal layout by default. Pointer input on the text
-// field will be redirected to another child widget (that you add) to it.
+// field will be redirected to another child element (that you add) to it.
 // Typically useful for creating check boxes, radio buttons with labels.
-class LabelContainer : public Widget {
+class LabelContainer : public Element {
  public:
-  TBOBJECT_SUBCLASS(LabelContainer, Widget);
+  TBOBJECT_SUBCLASS(LabelContainer, Element);
 
   LabelContainer();
   ~LabelContainer() override;
@@ -184,21 +184,21 @@ class LabelContainer : public Widget {
     return m_layout.GetPreferredSize();
   }
 
-  Widget* GetContentRoot() override { return &m_layout; }
+  Element* GetContentRoot() override { return &m_layout; }
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
  protected:
   Layout m_layout;
   Label m_textfield;
 };
 
-// A widget showing a skin element, constrained in size to its skin.
+// A element showing a skin element, constrained in size to its skin.
 // If you need to load and show images dynamically (i.e. not always loaded as
-// the skin), you can use ImageWidget.
-class SkinImage : public Widget {
+// the skin), you can use ImageElement.
+class SkinImage : public Element {
  public:
-  TBOBJECT_SUBCLASS(SkinImage, Widget);
+  TBOBJECT_SUBCLASS(SkinImage, Element);
 
   SkinImage() = default;
   SkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
@@ -207,20 +207,20 @@ class SkinImage : public Widget {
       const SizeConstraints& constraints) override;
 };
 
-// A widget only showing a skin.
+// A element only showing a skin.
 // It is disabled by default.
-class Separator : public Widget {
+class Separator : public Element {
  public:
-  TBOBJECT_SUBCLASS(Separator, Widget);
+  TBOBJECT_SUBCLASS(Separator, Element);
 
   Separator();
 };
 
 // An animation that is running while its value is 1.
 // Typically used to indicate that the application is working.
-class ProgressSpinner : public Widget, protected MessageHandler {
+class ProgressSpinner : public Element, protected MessageHandler {
  public:
-  TBOBJECT_SUBCLASS(ProgressSpinner, Widget);
+  TBOBJECT_SUBCLASS(ProgressSpinner, Element);
 
   ProgressSpinner();
 
@@ -255,9 +255,9 @@ class ProgressSpinner : public Widget, protected MessageHandler {
 };
 
 // Shared functionality for CheckBox and RadioButton.
-class BaseRadioCheckBox : public Widget {
+class BaseRadioCheckBox : public Element {
  public:
-  TBOBJECT_SUBCLASS(BaseRadioCheckBox, Widget);
+  TBOBJECT_SUBCLASS(BaseRadioCheckBox, Element);
 
   BaseRadioCheckBox();
 
@@ -266,11 +266,11 @@ class BaseRadioCheckBox : public Widget {
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 
-  // Makes sure all widgets sharing the same group as new_leader are set to
+  // Makes sure all elements sharing the same group as new_leader are set to
   // value 0.
-  static void UpdateGroupWidgets(Widget* new_leader);
+  static void UpdateGroupElements(Element* new_leader);
 
  protected:
   int m_value = 0;
@@ -296,9 +296,9 @@ class RadioButton : public BaseRadioCheckBox {
 };
 
 // A scroll bar in the given axis.
-class ScrollBar : public Widget {
+class ScrollBar : public Element {
  public:
-  TBOBJECT_SUBCLASS(ScrollBar, Widget);
+  TBOBJECT_SUBCLASS(ScrollBar, Element);
 
   ScrollBar();
   ~ScrollBar() override;
@@ -336,13 +336,13 @@ class ScrollBar : public Widget {
   int GetValue() override { return (int)GetValueDouble(); }
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
   void UpdateHandle();
 
-  Widget m_handle;
+  Element m_handle;
   Axis m_axis;
   double m_value = 0;
   double m_min = 0;
@@ -355,9 +355,9 @@ class ScrollBar : public Widget {
 // FIX: Add a "track value" showing as a line within the track (to be used for
 // buffering etc).
 // FIX: Also add a auto track that keeps it up to date with value (default).
-class Slider : public Widget {
+class Slider : public Element {
  public:
-  TBOBJECT_SUBCLASS(Slider, Widget);
+  TBOBJECT_SUBCLASS(Slider, Element);
 
   Slider();
   ~Slider() override;
@@ -384,11 +384,11 @@ class Slider : public Widget {
   int GetValue() override { return (int)GetValueDouble(); }
 
   void OnInflate(const InflateInfo& info) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:
-  Widget m_handle;
+  Element m_handle;
   Axis m_axis;
   double m_value = 0;
   double m_min = 0;
@@ -397,41 +397,41 @@ class Slider : public Widget {
   void UpdateHandle();
 };
 
-// Container is just a Widget with border and padding (using skin
+// Container is just a Element with border and padding (using skin
 // "Container").
-class Container : public Widget {
+class Container : public Element {
  public:
-  TBOBJECT_SUBCLASS(Container, Widget);
+  TBOBJECT_SUBCLASS(Container, Element);
 
   Container();
 };
 
-// Moves its parent widget when dragged.
-class Mover : public Widget {
+// Moves its parent element when dragged.
+class Mover : public Element {
  public:
-  TBOBJECT_SUBCLASS(Mover, Widget);
+  TBOBJECT_SUBCLASS(Mover, Element);
 
   Mover();
 
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 };
 
 // A lower right corner resize grip.
-// It will resize its parent widget.
-class Resizer : public Widget {
+// It will resize its parent element.
+class Resizer : public Element {
  public:
-  TBOBJECT_SUBCLASS(Resizer, Widget);
+  TBOBJECT_SUBCLASS(Resizer, Element);
 
   Resizer();
 
   HitStatus GetHitStatus(int x, int y) override;
-  bool OnEvent(const WidgetEvent& ev) override;
+  bool OnEvent(const ElementEvent& ev) override;
 };
 
-// Dims widgets in the background and blocks input.
-class Dimmer : public Widget {
+// Dims elements in the background and blocks input.
+class Dimmer : public Element {
  public:
-  TBOBJECT_SUBCLASS(Dimmer, Widget);
+  TBOBJECT_SUBCLASS(Dimmer, Element);
 
   Dimmer();
 

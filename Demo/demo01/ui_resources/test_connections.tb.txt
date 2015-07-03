@@ -1,9 +1,9 @@
 WindowInfo
-	title WidgetValue connections
+	title ElementValue connections
 Layout
 	axis y
 	Label
-		text Numeric widgets sharing a connection
+		text Numeric elements sharing a connection
 	Container
 		gravity all
 		Layout
@@ -24,7 +24,7 @@ Layout
 				text Reset
 				id reset-master-volume
 	Label
-		text Text widgets sharing a connection
+		text Text elements sharing a connection
 	Container
 		gravity all
 		Layout

@@ -14,12 +14,12 @@
 
 namespace tb {
 
-PreferredSize ImageWidget::OnCalculatePreferredContentSize(
+PreferredSize ImageElement::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   return PreferredSize(m_image.Width(), m_image.Height());
 }
 
-void ImageWidget::OnPaint(const PaintProps& paint_props) {
+void ImageElement::OnPaint(const PaintProps& paint_props) {
   if (BitmapFragment* fragment = m_image.GetBitmap()) {
     g_renderer->DrawBitmap(GetPaddingRect(),
                            Rect(0, 0, m_image.Width(), m_image.Height()),

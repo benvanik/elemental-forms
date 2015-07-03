@@ -59,12 +59,12 @@ class SelectItemObserver : public TBLinkOf<SelectItemObserver> {
   SelectItemSource* m_source = nullptr;
 };
 
-// An item provider interface for list widgets (SelectList and SelectDropdown).
-// Instead of feeding all list widgets with all items all the time, the list
-// widgets will ask SelectItemSource when it needs it. The list widgets may also
-// apply filtering so only a subset of all the items are shown.
+// An item provider interface for list elements (SelectList and SelectDropdown).
+// Instead of feeding all list elements with all items all the time, the list
+// elements will ask SelectItemSource when it needs it. The list elements may
+// also apply filtering so only a subset of all the items are shown.
 //
-// CreateItemWidget can be overridden to create any set of widget content for
+// CreateItemElement can be overridden to create any set of element content for
 // each item.
 //
 // This class has no storage of items. If you want an array storage of items,
@@ -95,10 +95,10 @@ class SelectItemSource {
   // Get the ID of the item.
   virtual TBID GetItemID(int index) { return TBID(); }
 
-  // Creates the item representation widget(s).
+  // Creates the item representation element(s).
   // By default, it will create a Label for string-only items, and other
   // types for items that also has image or submenu.
-  virtual Widget* CreateItemWidget(int index, SelectItemObserver* observer);
+  virtual Element* CreateItemElement(int index, SelectItemObserver* observer);
 
   // Gets the number of items.
   virtual int GetNumItems() = 0;
@@ -120,7 +120,7 @@ class SelectItemSource {
   Sort m_sort = Sort::kNone;
 };
 
-// An item provider for list widgets (SelectList and SelectDropdown).
+// An item provider for list elements (SelectList and SelectDropdown).
 // It stores items of the type specified by the template in an array.
 template <class T>
 class SelectItemSourceList : public SelectItemSource {
@@ -136,11 +136,12 @@ class SelectItemSourceList : public SelectItemSource {
   TBID GetItemImage(int index) override { return GetItem(index)->skin_image; }
   TBID GetItemID(int index) override { return GetItem(index)->id; }
   int GetNumItems() override { return m_items.GetNumItems(); }
-  Widget* CreateItemWidget(int index, SelectItemObserver* observer) override {
-    if (Widget* widget = SelectItemSource::CreateItemWidget(index, observer)) {
+  Element* CreateItemElement(int index, SelectItemObserver* observer) override {
+    if (Element* element =
+            SelectItemSource::CreateItemElement(index, observer)) {
       T* item = m_items[index];
-      widget->SetID(item->id);
-      return widget;
+      element->SetID(item->id);
+      return element;
     }
     return nullptr;
   }

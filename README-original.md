@@ -52,21 +52,21 @@ What features does it have
 
 Core:
 
-  * Widgets (many common standard widgets)
-  * Text editing widget (With clipboard, undo/redo, styling functionality,
+  * Elements (many common standard elements)
+  * Text editing element (With clipboard, undo/redo, styling functionality,
     embedded content (read only)...)
   * Extendable skin system with automatic runtime atlas creation,
     Expand (shadows & glow without nasty margin hacks),
     conditions (simple selectors), overrides, overlays, children, multiple
     pixel density support etc.
-  * Automatic widget layout (No need to specify widget dimensions by pixels)
+  * Automatic element layout (No need to specify element dimensions by pixels)
   * Text based UI resource format, supporting conditions etc.
   * Keyboard friendly (tab focus etc.)
   * Message handling, with delayed/timed messages.
   * All containers are scrollable/pannable (automatically from mouse/finger
     interaction, and following focus).
   * Very failproof event handling.
-  * Widget connections (synchronize multiple widgets with "widget-values")
+  * Element connections (synchronize multiple elements with "element-values")
   * Language string handling
   * No dependency on stl, exceptions, RTTI
   * Very portable & easy to implement new backends (Image loading, fonts,
@@ -105,18 +105,18 @@ pull requests accepted:
   * Features that may be optional should be optional and not tied to the core.
 
 
-Creating custom widgets
+Creating custom elements
 -----------------------------------------------------------------------------------
 
-Widgets are cheap to create and layout and using many widgets to get what you want
-is encouraged. A custom widget should typically not implement any layouting and
+Elements are cheap to create and layout and using many elements to get what you want
+is encouraged. A custom element should typically not implement any layouting and
 drawing of sub-elements if it can be solved by wrapping a Layout and other
-existing widgets.
+existing elements.
 
-Any widget may contain other widgets and may control into which sub-widget other
-widgets are inflated from resources (using `Widget::GetContentRoot`).
+Any element may contain other elements and may control into which sub-element other
+elements are inflated from resources (using `Element::GetContentRoot`).
 
-Custom widgets can be inflated from UI resources too. See the use of the
+Custom elements can be inflated from UI resources too. See the use of the
 `TB_WIDGET_FACTORY` macro in `tb_widgets_reader.cpp` for examples on how to do
 this.
 

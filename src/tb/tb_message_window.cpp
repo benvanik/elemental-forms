@@ -17,14 +17,14 @@
 
 namespace tb {
 
-MessageWindow::MessageWindow(Widget* target, TBID id) : m_target(target) {
-  WidgetListener::AddGlobalListener(this);
+MessageWindow::MessageWindow(Element* target, TBID id) : m_target(target) {
+  ElementListener::AddGlobalListener(this);
   SetID(id);
 }
 
 MessageWindow::~MessageWindow() {
-  WidgetListener::RemoveGlobalListener(this);
-  if (Widget* dimmer = m_dimmer.Get()) {
+  ElementListener::RemoveGlobalListener(this);
+  if (Element* dimmer = m_dimmer.Get()) {
     dimmer->GetParent()->RemoveChild(dimmer);
     delete dimmer;
   }
@@ -32,7 +32,7 @@ MessageWindow::~MessageWindow() {
 
 bool MessageWindow::Show(const std::string& title, const std::string& message,
                          MessageWindowSettings* settings) {
-  Widget* target = m_target.Get();
+  Element* target = m_target.Get();
   if (!target) return false;
 
   MessageWindowSettings default_settings;
@@ -40,7 +40,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
     settings = &default_settings;
   }
 
-  Widget* root = target->GetParentRoot();
+  Element* root = target->GetParentRoot();
 
   const char* source =
       "Layout: axis: y, distribution: available\n"
@@ -48,15 +48,15 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "		SkinImage: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	Layout: distribution-position: right bottom, id: 3\n";
-  if (!g_widgets_reader->LoadData(GetContentRoot(), source)) {
+  if (!g_elements_reader->LoadData(GetContentRoot(), source)) {
     return false;
   }
 
   SetText(title);
 
-  GetWidgetByIDAndType<SkinImage>(2)->SetSkinBg(settings->icon_skin);
+  GetElementByIDAndType<SkinImage>(2)->SetSkinBg(settings->icon_skin);
 
-  TextBox* text_box = GetWidgetByIDAndType<TextBox>(1);
+  TextBox* text_box = GetElementByIDAndType<TextBox>(1);
   text_box->SetStyling(settings->styling);
   text_box->SetText(message);
   text_box->SetSkinBg("");
@@ -98,7 +98,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 }
 
 void MessageWindow::AddButton(TBID id, bool focused) {
-  Layout* layout = GetWidgetByIDAndType<Layout>(3);
+  Layout* layout = GetElementByIDAndType<Layout>(3);
   if (!layout) return;
   Button* btn = new Button();
   btn->SetID(id);
@@ -109,23 +109,23 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   }
 }
 
-bool MessageWindow::OnEvent(const WidgetEvent& ev) {
+bool MessageWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<Button>()) {
-    WeakWidgetPointer this_widget(this);
+    WeakElementPointer this_element(this);
 
     // Invoke the click on the target.
-    WidgetEvent target_ev(EventType::kClick);
+    ElementEvent target_ev(EventType::kClick);
     target_ev.ref_id = ev.target->GetID();
     InvokeEvent(target_ev);
 
     // If target got deleted, close.
-    if (this_widget.Get()) {
+    if (this_element.Get()) {
       Close();
     }
     return true;
   } else if (ev.type == EventType::kKeyDown &&
              ev.special_key == SpecialKey::kEsc) {
-    WidgetEvent click_ev(EventType::kClick);
+    ElementEvent click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -133,21 +133,21 @@ bool MessageWindow::OnEvent(const WidgetEvent& ev) {
 }
 
 void MessageWindow::OnDie() {
-  if (Widget* dimmer = m_dimmer.Get()) {
+  if (Element* dimmer = m_dimmer.Get()) {
     dimmer->Die();
   }
 }
 
-void MessageWindow::OnWidgetDelete(Widget* widget) {
-  // If the target widget is deleted, close!
+void MessageWindow::OnElementDelete(Element* element) {
+  // If the target element is deleted, close!
   if (!m_target.Get()) {
     Close();
   }
 }
 
-bool MessageWindow::OnWidgetDying(Widget* widget) {
-  // If the target widget or an ancestor of it is dying, close!
-  if (widget == m_target.Get() || widget->IsAncestorOf(m_target.Get())) {
+bool MessageWindow::OnElementDying(Element* element) {
+  // If the target element or an ancestor of it is dying, close!
+  if (element == m_target.Get() || element->IsAncestorOf(m_target.Get())) {
     Close();
   }
   return false;

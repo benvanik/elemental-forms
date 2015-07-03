@@ -57,7 +57,7 @@ int ScrollerFunction::GetDistanceAtTimeInt(float start_speed,
   return int(distance < 0 ? distance - 0.5f : distance + 0.5f);
 }
 
-Scroller::Scroller(Widget* target) : m_target(target), m_func(kScrollDecay) {
+Scroller::Scroller(Element* target) : m_target(target), m_func(kScrollDecay) {
   Reset();
 }
 
@@ -85,7 +85,7 @@ void Scroller::OnScrollBy(int dx, int dy, bool accumulative) {
   float ppms_y = m_func.GetSpeedFromDistance((float)dy);
 
   if (accumulative && IsScrolling()) {
-    Widget::ScrollInfo info = m_target->GetScrollInfo();
+    Element::ScrollInfo info = m_target->GetScrollInfo();
     // If new direction is the same as the current direction,
     // calculate the speed needed for the remaining part and
     // add that to the new scroll speed.
@@ -221,7 +221,7 @@ void Scroller::AdjustToSnappingAndScroll(float ppms_x, float ppms_y) {
         ppms_y, m_func.GetDurationFromSpeed(ppms_y));
 
     // Let the snap listener modify the distance.
-    Widget::ScrollInfo info = m_target->GetScrollInfo();
+    Element::ScrollInfo info = m_target->GetScrollInfo();
     int target_x = distance_x + info.x;
     int target_y = distance_y + info.y;
     m_snap_listener->OnScrollSnap(m_target, target_x, target_y);
@@ -269,7 +269,7 @@ bool Scroller::IsScrolling() {
 void Scroller::GetTargetChildTranslation(int& x, int& y) const {
   int root_x = 0, root_y = 0;
   int child_translation_x = 0, child_translation_y = 0;
-  Widget* scroll_root = m_target->GetScrollRoot();
+  Element* scroll_root = m_target->GetScrollRoot();
   scroll_root->ConvertToRoot(root_x, root_y);
   scroll_root->GetChildTranslation(child_translation_x, child_translation_y);
   x = root_x + child_translation_x;
@@ -279,9 +279,9 @@ void Scroller::GetTargetChildTranslation(int& x, int& y) const {
 void Scroller::GetTargetScrollXY(int& x, int& y) const {
   x = 0;
   y = 0;
-  Widget* tmp = m_target->GetScrollRoot();
+  Element* tmp = m_target->GetScrollRoot();
   while (tmp) {
-    Widget::ScrollInfo info = tmp->GetScrollInfo();
+    Element::ScrollInfo info = tmp->GetScrollInfo();
     x += info.x;
     y += info.y;
     tmp = tmp->GetParent();

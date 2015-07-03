@@ -16,88 +16,89 @@
 
 namespace tb {
 
-class Widget;
+class Element;
 
-// Should never be created or subclassed anywhere except in WidgetListener. It's
-// only purpose is to add a extra typed link for WidgetListener, since it needs
-// to be added in multiple lists.
-class WidgetListenerGlobalLink : public TBLinkOf<WidgetListenerGlobalLink> {};
+// Should never be created or subclassed anywhere except in ElementListener.
+// It's only purpose is to add a extra typed link for ElementListener, since it
+// needs to be added in multiple lists.
+class ElementListenerGlobalLink : public TBLinkOf<ElementListenerGlobalLink> {};
 
-// Listens to some callbacks from Widget.
-// It may either listen to all widgets globally, or one specific widget.
-// Local listeners (added with Widget:AddListener) will be invoked before
-// global listeners (added with WidgetListener::AddGlobalListener).
-class WidgetListener : public TBLinkOf<WidgetListener>,
-                       public WidgetListenerGlobalLink {
+// Listens to some callbacks from Element.
+// It may either listen to all elements globally, or one specific element.
+// Local listeners (added with Element:AddListener) will be invoked before
+// global listeners (added with ElementListener::AddGlobalListener).
+class ElementListener : public TBLinkOf<ElementListener>,
+                        public ElementListenerGlobalLink {
  public:
-  // Adds a listener to all widgets.
-  static void AddGlobalListener(WidgetListener* listener);
-  static void RemoveGlobalListener(WidgetListener* listener);
+  // Adds a listener to all elements.
+  static void AddGlobalListener(ElementListener* listener);
+  static void RemoveGlobalListener(ElementListener* listener);
 
-  // Called when widget is being deleted (in its destructor, so virtual
+  // Called when element is being deleted (in its destructor, so virtual
   // functions are already gone).
-  virtual void OnWidgetDelete(Widget* widget) {}
+  virtual void OnElementDelete(Element* element) {}
 
-  // Called when the widget request to be deleted.
-  // Return true if you want the widget to not die immediately, f.ex. to fade
+  // Called when the element request to be deleted.
+  // Return true if you want the element to not die immediately, f.ex. to fade
   // it out before it is deleted. If you return true, it's up to you to
   // finally remove it from its parent delete it.
-  // Remember that the widget may still be deleted prematurely for many other
+  // Remember that the element may still be deleted prematurely for many other
   // reasons (f.ex if its parent is deleted or several listeners respond true
   // and take on the task to delete it at some point). You can use
-  // WeakWidgetPointer to safely handle that.
-  virtual bool OnWidgetDying(Widget* widget) { return false; }
+  // WeakElementPointer to safely handle that.
+  virtual bool OnElementDying(Element* element) { return false; }
 
   // Called when the child has been added to parent, after its parents
   // OnChildAdded.
-  // Local listeners are invoked on the parent widget.
-  virtual void OnWidgetAdded(Widget* parent, Widget* child) {}
+  // Local listeners are invoked on the parent element.
+  virtual void OnElementAdded(Element* parent, Element* child) {}
 
   // Called when the child is about to be removed from parent, after its parents
   // OnChildRemove.
-  // Local listeners are invoked on the parent widget.
-  virtual void OnWidgetRemove(Widget* parent, Widget* child) {}
+  // Local listeners are invoked on the parent element.
+  virtual void OnElementRemove(Element* parent, Element* child) {}
 
-  // Called when widget focus has changed on a widget.
-  virtual void OnWidgetFocusChanged(Widget* widget, bool focused) {}
+  // Called when element focus has changed on a element.
+  virtual void OnElementFocusChanged(Element* element, bool focused) {}
 
-  // Called when a event is about to be invoked on a widget. This make it
+  // Called when a event is about to be invoked on a element. This make it
   // possible to intercept events before they are handled, and block it (by
   // returning true).
   // Note, if returning true, other global listeners will still also be
   // notified.
-  virtual bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) {
+  virtual bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) {
     return false;
   }
 
  private:
-  friend class Widget;
-  static void InvokeWidgetDelete(Widget* widget);
-  static bool InvokeWidgetDying(Widget* widget);
-  static void InvokeWidgetAdded(Widget* parent, Widget* child);
-  static void InvokeWidgetRemove(Widget* parent, Widget* child);
-  static void InvokeWidgetFocusChanged(Widget* widget, bool focused);
-  static bool InvokeWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev);
+  friend class Element;
+  static void InvokeElementDelete(Element* element);
+  static bool InvokeElementDying(Element* element);
+  static void InvokeElementAdded(Element* parent, Element* child);
+  static void InvokeElementRemove(Element* parent, Element* child);
+  static void InvokeElementFocusChanged(Element* element, bool focused);
+  static bool InvokeElementInvokeEvent(Element* element,
+                                       const ElementEvent& ev);
 };
 
-// Keeps a pointer to a widget that will be set to nullptr if the widget is
+// Keeps a pointer to a element that will be set to nullptr if the element is
 // removed.
-class WeakWidgetPointer : private WidgetListener {
+class WeakElementPointer : private ElementListener {
  public:
-  WeakWidgetPointer() = default;
-  WeakWidgetPointer(Widget* widget) { Set(widget); }
-  ~WeakWidgetPointer() { Set(nullptr); }
+  WeakElementPointer() = default;
+  WeakElementPointer(Element* element) { Set(element); }
+  ~WeakElementPointer() { Set(nullptr); }
 
-  // Sets the widget pointer that should be nulled if deleted.
-  void Set(Widget* widget);
+  // Sets the element pointer that should be nulled if deleted.
+  void Set(Element* element);
 
-  // Returns the widget, or nullptr if it has been deleted.
-  Widget* Get() const { return m_widget; }
+  // Returns the element, or nullptr if it has been deleted.
+  Element* Get() const { return m_element; }
 
  private:
-  void OnWidgetDelete(Widget* widget) override;
+  void OnElementDelete(Element* element) override;
 
-  Widget* m_widget = nullptr;
+  Element* m_element = nullptr;
 };
 
 }  // namespace tb

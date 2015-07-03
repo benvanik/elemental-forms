@@ -25,7 +25,7 @@ FontManager* g_font_manager = nullptr;
 Language* g_tb_lng = nullptr;
 Renderer* g_renderer = nullptr;
 Skin* g_tb_skin = nullptr;
-WidgetReader* g_widgets_reader = nullptr;
+ElementReader* g_elements_reader = nullptr;
 
 bool tb_core_init(Renderer* renderer, const char* lng_file) {
   g_renderer = renderer;
@@ -33,7 +33,7 @@ bool tb_core_init(Renderer* renderer, const char* lng_file) {
   g_tb_lng->Load(lng_file);
   g_font_manager = new FontManager();
   g_tb_skin = new Skin();
-  g_widgets_reader = WidgetReader::Create();
+  g_elements_reader = ElementReader::Create();
   g_image_manager = new ImageManager();
 
 #ifdef TB_SYSTEM_LINUX
@@ -48,7 +48,7 @@ bool tb_core_init(Renderer* renderer, const char* lng_file) {
 void tb_core_shutdown() {
   AnimationManager::AbortAllAnimations();
   delete g_image_manager;
-  delete g_widgets_reader;
+  delete g_elements_reader;
   delete g_tb_skin;
   delete g_font_manager;
   delete g_tb_lng;
@@ -60,6 +60,6 @@ void tb_core_shutdown() {
   delete g_tooltip_mng;
 }
 
-bool tb_core_is_initialized() { return g_widgets_reader ? true : false; }
+bool tb_core_is_initialized() { return g_elements_reader ? true : false; }
 
 }  // namespace tb

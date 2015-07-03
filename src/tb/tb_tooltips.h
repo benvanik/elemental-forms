@@ -22,7 +22,7 @@ class TooltipWindow : public PopupWindow {
  public:
   TBOBJECT_SUBCLASS(TooltipWindow, PopupWindow);
 
-  TooltipWindow(Widget* target);
+  TooltipWindow(Element* target);
   ~TooltipWindow() override;
 
   bool Show(int mouse_x, int mouse_y);
@@ -38,7 +38,7 @@ class TooltipWindow : public PopupWindow {
 };
 
 // Implements logic for show/hide tooltips.
-class TooltipManager : private WidgetListener, public MessageHandler {
+class TooltipManager : private ElementListener, public MessageHandler {
  public:
   TooltipManager();
   ~TooltipManager() override;
@@ -53,15 +53,15 @@ class TooltipManager : private WidgetListener, public MessageHandler {
   uint32_t tooltip_hide_point_dist = 40;
 
  private:
-  bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) override;
+  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override;
   void OnMessageReceived(Message* msg) override;
   void KillToolTip();
 
   void DeleteShowMessages();
-  Widget* GetTippedWidget();
+  Element* GetTippedElement();
 
   TooltipWindow* m_tooltip = nullptr;
-  Widget* m_last_tipped_widget = nullptr;
+  Element* m_last_tipped_element = nullptr;
 };
 
 extern TooltipManager* g_tooltip_mng;

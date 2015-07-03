@@ -31,6 +31,6 @@ Layout: axis: y, distribution: available
 				" • Keyboard navigation using tab.\n" \
 				" • <u>Underline</u>, <color #f44>Red</color>, <color #6f6>Green</color>, <color #aaf>Blue</color>\n\n" \
 				"<color #0794f8>Good to know</color>\n" \
-				" • The text widget handles styling and embedded content (Example: <widget SkinImage: skin: 'Icon16'> <widget Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text widgets for now.\n" \
-				" • You can emulate touch input by holding down shift, ctrl or alt. Touch input behaves differently in some widgets (f.ex long click to open context menu in textfields), and only invoke movement when down.\n" \
+				" • The text element handles styling and embedded content (Example: <element SkinImage: skin: 'Icon16'> <element Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text elements for now.\n" \
+				" • You can emulate touch input by holding down shift, ctrl or alt. Touch input behaves differently in some elements (f.ex long click to open context menu in textfields), and only invoke movement when down.\n" \
 				" • All resources are UTF-8.\n"

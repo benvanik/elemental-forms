@@ -27,11 +27,11 @@ class DebugInfo {
   DebugInfo();
 
   enum class Setting {
-    // Show widgets bounds.
+    // Show elements bounds.
     kLayoutBounds,
-    // Show child widget clipping set by some widgets.
+    // Show child element clipping set by some elements.
     kLayoutClipping,
-    // Show highlights on widgets that recalculate their preferred size, and
+    // Show highlights on elements that recalculate their preferred size, and
     // those who recalculate their layout.
     kLayoutSizing,
     // Show render batch info and log batch info in the debug output. It depends
@@ -40,7 +40,7 @@ class DebugInfo {
     // Render the bitmap fragments of the skin.
     kDrawSkinBitmapFragments,
     // Render the bitmap fragments of the font that's set on the hovered or
-    // focused widget.
+    // focused element.
     kDrawFontBitmapFragments,
 
     kSettingCount,
@@ -51,7 +51,7 @@ class DebugInfo {
 extern DebugInfo g_tb_debug;
 
 // Shows a window containing runtime debugging settings.
-void ShowDebugInfoSettingsWindow(class Widget* root);
+void ShowDebugInfoSettingsWindow(class Element* root);
 
 #define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(DebugInfo::setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \

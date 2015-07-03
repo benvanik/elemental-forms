@@ -15,14 +15,14 @@
 
 namespace tb {
 
-// A widget showing a image loaded by ImageManager, constrained in size to its
+// A element showing a image loaded by ImageManager, constrained in size to its
 // skin.
 // If you need to show a image from the skin, you can use SkinImage.
-class ImageWidget : public Widget {
+class ImageElement : public Element {
  public:
-  TBOBJECT_SUBCLASS(ImageWidget, Widget);
+  TBOBJECT_SUBCLASS(ImageElement, Element);
 
-  ImageWidget() = default;
+  ImageElement() = default;
 
   void SetImage(const Image& image) { m_image = image; }
   void SetImage(const char* filename) {

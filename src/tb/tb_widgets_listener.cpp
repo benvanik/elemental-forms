@@ -11,103 +11,105 @@
 
 namespace tb {
 
-TBLinkListOf<WidgetListenerGlobalLink> g_listeners;
+TBLinkListOf<ElementListenerGlobalLink> g_listeners;
 
-void WidgetListener::AddGlobalListener(WidgetListener* listener) {
+void ElementListener::AddGlobalListener(ElementListener* listener) {
   g_listeners.AddLast(listener);
 }
 
-void WidgetListener::RemoveGlobalListener(WidgetListener* listener) {
+void ElementListener::RemoveGlobalListener(ElementListener* listener) {
   g_listeners.Remove(listener);
 }
 
-void WidgetListener::InvokeWidgetDelete(Widget* widget) {
+void ElementListener::InvokeElementDelete(Element* element) {
   auto global_i = g_listeners.IterateForward();
-  auto local_i = widget->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    listener->OnWidgetDelete(widget);
+  auto local_i = element->m_listeners.IterateForward();
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    listener->OnElementDelete(element);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
-    static_cast<WidgetListener*>(link)->OnWidgetDelete(widget);
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
+    static_cast<ElementListener*>(link)->OnElementDelete(element);
   }
 }
 
-bool WidgetListener::InvokeWidgetDying(Widget* widget) {
+bool ElementListener::InvokeElementDying(Element* element) {
   bool handled = false;
   auto global_i = g_listeners.IterateForward();
-  auto local_i = widget->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    handled |= listener->OnWidgetDying(widget);
+  auto local_i = element->m_listeners.IterateForward();
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    handled |= listener->OnElementDying(element);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
-    handled |= static_cast<WidgetListener*>(link)->OnWidgetDying(widget);
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
+    handled |= static_cast<ElementListener*>(link)->OnElementDying(element);
   }
   return handled;
 }
 
-void WidgetListener::InvokeWidgetAdded(Widget* parent, Widget* child) {
+void ElementListener::InvokeElementAdded(Element* parent, Element* child) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = parent->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    listener->OnWidgetAdded(parent, child);
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    listener->OnElementAdded(parent, child);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
-    static_cast<WidgetListener*>(link)->OnWidgetAdded(parent, child);
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
+    static_cast<ElementListener*>(link)->OnElementAdded(parent, child);
   }
 }
 
-void WidgetListener::InvokeWidgetRemove(Widget* parent, Widget* child) {
+void ElementListener::InvokeElementRemove(Element* parent, Element* child) {
   auto global_i = g_listeners.IterateForward();
   auto local_i = parent->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    listener->OnWidgetRemove(parent, child);
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    listener->OnElementRemove(parent, child);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
-    static_cast<WidgetListener*>(link)->OnWidgetRemove(parent, child);
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
+    static_cast<ElementListener*>(link)->OnElementRemove(parent, child);
   }
 }
 
-void WidgetListener::InvokeWidgetFocusChanged(Widget* widget, bool focused) {
+void ElementListener::InvokeElementFocusChanged(Element* element,
+                                                bool focused) {
   auto global_i = g_listeners.IterateForward();
-  auto local_i = widget->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    listener->OnWidgetFocusChanged(widget, focused);
+  auto local_i = element->m_listeners.IterateForward();
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    listener->OnElementFocusChanged(element, focused);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
-    static_cast<WidgetListener*>(link)->OnWidgetFocusChanged(widget, focused);
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
+    static_cast<ElementListener*>(link)
+        ->OnElementFocusChanged(element, focused);
   }
 }
 
-bool WidgetListener::InvokeWidgetInvokeEvent(Widget* widget,
-                                             const WidgetEvent& ev) {
+bool ElementListener::InvokeElementInvokeEvent(Element* element,
+                                               const ElementEvent& ev) {
   bool handled = false;
   auto global_i = g_listeners.IterateForward();
-  auto local_i = widget->m_listeners.IterateForward();
-  while (WidgetListener* listener = local_i.GetAndStep()) {
-    handled |= listener->OnWidgetInvokeEvent(widget, ev);
+  auto local_i = element->m_listeners.IterateForward();
+  while (ElementListener* listener = local_i.GetAndStep()) {
+    handled |= listener->OnElementInvokeEvent(element, ev);
   }
-  while (WidgetListenerGlobalLink* link = global_i.GetAndStep()) {
+  while (ElementListenerGlobalLink* link = global_i.GetAndStep()) {
     handled |=
-        static_cast<WidgetListener*>(link)->OnWidgetInvokeEvent(widget, ev);
+        static_cast<ElementListener*>(link)->OnElementInvokeEvent(element, ev);
   }
   return handled;
 }
 
-void WeakWidgetPointer::Set(Widget* widget) {
-  if (m_widget == widget) {
+void WeakElementPointer::Set(Element* element) {
+  if (m_element == element) {
     return;
   }
-  if (m_widget) {
-    m_widget->RemoveListener(this);
+  if (m_element) {
+    m_element->RemoveListener(this);
   }
-  m_widget = widget;
-  if (m_widget) {
-    m_widget->AddListener(this);
+  m_element = element;
+  if (m_element) {
+    m_element->AddListener(this);
   }
 }
 
-void WeakWidgetPointer::OnWidgetDelete(Widget* widget) {
-  if (widget == m_widget) {
+void WeakElementPointer::OnElementDelete(Element* element) {
+  if (element == m_element) {
     Set(nullptr);
   }
 }

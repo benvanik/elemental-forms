@@ -19,8 +19,8 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_widget_value_text) {
-  WidgetValue widget_val(TBIDC("test value text"));
-  Widget* a, *b, *c;
+  ElementValue element_val(TBIDC("test value text"));
+  Element* a, *b, *c;
 
   TB_TEST(Init) {
     TB_VERIFY(a = new TextBox);
@@ -29,13 +29,13 @@ TB_TEST_GROUP(tb_widget_value_text) {
   }
 
   TB_TEST(connect) {
-    // Set the initial value, no widgets connected yet.
-    widget_val.SetText("turbo badger");
+    // Set the initial value, no elements connected yet.
+    element_val.SetText("turbo badger");
 
-    // Connecting widgets should give them the current value.
-    a->Connect(&widget_val);
-    b->Connect(&widget_val);
-    c->Connect(&widget_val);
+    // Connecting elements should give them the current value.
+    a->Connect(&element_val);
+    b->Connect(&element_val);
+    c->Connect(&element_val);
 
     TB_VERIFY_STR(a->GetText(), "turbo badger");
     TB_VERIFY_STR(b->GetText(), "turbo badger");
@@ -43,16 +43,16 @@ TB_TEST_GROUP(tb_widget_value_text) {
   }
 
   TB_TEST(change_value) {
-    // Changing the value should change all widgets
-    widget_val.SetText("Emil");
+    // Changing the value should change all elements
+    element_val.SetText("Emil");
 
     TB_VERIFY_STR(a->GetText(), "Emil");
     TB_VERIFY_STR(b->GetText(), "Emil");
     TB_VERIFY_STR(c->GetText(), "Emil");
   }
 
-  TB_TEST(change_widget) {
-    // When a widget change, all the other widgets should also change.
+  TB_TEST(change_element) {
+    // When a element change, all the other elements should also change.
     a->SetText("A");
     TB_VERIFY_STR(b->GetText(), "A");
     TB_VERIFY_STR(c->GetText(), "A");
@@ -66,7 +66,7 @@ TB_TEST_GROUP(tb_widget_value_text) {
     TB_VERIFY_STR(b->GetText(), "C");
 
     // The value itself should also have changed.
-    TB_VERIFY_STR(widget_val.GetText(), "C");
+    TB_VERIFY_STR(element_val.GetText(), "C");
   }
 
   TB_TEST(Shutdown) {
@@ -77,7 +77,7 @@ TB_TEST_GROUP(tb_widget_value_text) {
 }
 
 TB_TEST_GROUP(tb_widget_value_int) {
-  WidgetValue widget_val(TBIDC("test value int"));
+  ElementValue element_val(TBIDC("test value int"));
   Slider* a;
   ScrollBar* b;
   SelectInline* c;
@@ -92,13 +92,13 @@ TB_TEST_GROUP(tb_widget_value_int) {
   }
 
   TB_TEST(connect) {
-    // Set the initial value, no widgets connected yet.
-    widget_val.SetInt(42);
+    // Set the initial value, no elements connected yet.
+    element_val.SetInt(42);
 
-    // Connecting widgets should give them the current value.
-    a->Connect(&widget_val);
-    b->Connect(&widget_val);
-    c->Connect(&widget_val);
+    // Connecting elements should give them the current value.
+    a->Connect(&element_val);
+    b->Connect(&element_val);
+    c->Connect(&element_val);
 
     TB_VERIFY(a->GetValue() == 42);
     TB_VERIFY(b->GetValue() == 42);
@@ -106,16 +106,16 @@ TB_TEST_GROUP(tb_widget_value_int) {
   }
 
   TB_TEST(change_value) {
-    // Changing the value should change all widgets
-    widget_val.SetInt(123);
+    // Changing the value should change all elements
+    element_val.SetInt(123);
 
     TB_VERIFY(a->GetValue() == 123);
     TB_VERIFY(b->GetValue() == 123);
     TB_VERIFY(c->GetValue() == 123);
   }
 
-  TB_TEST(change_widget) {
-    // When a widget change, all the other widgets should also change.
+  TB_TEST(change_element) {
+    // When a element change, all the other elements should also change.
     a->SetValue(1);
     TB_VERIFY(b->GetValue() == 1);
     TB_VERIFY(c->GetValue() == 1);
@@ -129,7 +129,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
     TB_VERIFY(b->GetValue() == 3);
 
     // The value itself should also have changed.
-    TB_VERIFY(widget_val.GetInt() == 3);
+    TB_VERIFY(element_val.GetInt() == 3);
   }
 
   TB_TEST(Shutdown) {
@@ -140,7 +140,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
 }
 
 TB_TEST_GROUP(tb_widget_value_listener) {
-  WidgetValue widget_val(TBIDC("test value check"));
+  ElementValue element_val(TBIDC("test value check"));
   CheckBox* a, *b;
 
   /** Listen to changes and update val to any changed value. */
@@ -150,7 +150,7 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     Value val;
     MyListener() : change_counter(0) {}
     virtual void OnValueChanged(const ValueGroup* group,
-                                const WidgetValue* value) {
+                                const ElementValue* value) {
       val = value->GetValue();
       change_counter++;
     }
@@ -171,29 +171,29 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     delete b;
   }
 
-  TB_TEST(change_with_no_widgets) {
-    // Set the initial value, no widgets connected yet.
-    widget_val.SetInt(1);
+  TB_TEST(change_with_no_elements) {
+    // Set the initial value, no elements connected yet.
+    element_val.SetInt(1);
 
     // The listener should have registered the change
     TB_VERIFY(listener.val.GetInt() == 1);
     TB_VERIFY(listener.change_counter == 1);
   }
 
-  TB_TEST(change_with_widgets) {
-    a->Connect(&widget_val);
-    b->Connect(&widget_val);
+  TB_TEST(change_with_elements) {
+    a->Connect(&element_val);
+    b->Connect(&element_val);
 
     // Change the value to 0
-    widget_val.SetInt(0);
+    element_val.SetInt(0);
 
     // The listener should have registered the change, once.
     TB_VERIFY(listener.val.GetInt() == 0);
     TB_VERIFY(listener.change_counter == 2);
   }
 
-  TB_TEST(change_widget) {
-    // Change one of the widgets
+  TB_TEST(change_element) {
+    // Change one of the elements
     a->SetValue(1);
 
     // The listener should have registered the change, once.

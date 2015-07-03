@@ -95,7 +95,7 @@ void Layout::SetLayoutOrder(LayoutOrder order) {
 void Layout::InvalidateLayout(InvalidationMode il) {
   m_packed.layout_is_invalid = 1;
   // Continue invalidating parents (depending on il).
-  Widget::InvalidateLayout(il);
+  Element::InvalidateLayout(il);
 }
 
 PreferredSize RotPreferredSize(const PreferredSize& ps, Axis axis) {
@@ -168,17 +168,17 @@ int Layout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
   return height;
 }
 
-Widget* Layout::GetNextNonCollapsedWidget(Widget* child) const {
-  Widget* next = GetNextInLayoutOrder(child);
+Element* Layout::GetNextNonCollapsedElement(Element* child) const {
+  Element* next = GetNextInLayoutOrder(child);
   while (next && next->GetVisibility() == Visibility::kGone) {
     next = GetNextInLayoutOrder(next);
   }
   return next;
 }
 
-int Layout::GetTrailingSpace(Widget* child, int spacing) const {
+int Layout::GetTrailingSpace(Element* child, int spacing) const {
   if (spacing == 0) return 0;
-  if (!GetNextNonCollapsedWidget(child)) return 0;
+  if (!GetNextNonCollapsedElement(child)) return 0;
   return spacing;
 }
 
@@ -197,21 +197,21 @@ int Layout::CalculateSpacing() {
   return spacing;
 }
 
-Widget* Layout::GetFirstInLayoutOrder() const {
+Element* Layout::GetFirstInLayoutOrder() const {
   return m_packed.mode_reverse_order ? GetLastChild() : GetFirstChild();
 }
 
-Widget* Layout::GetNextInLayoutOrder(Widget* child) const {
+Element* Layout::GetNextInLayoutOrder(Element* child) const {
   return m_packed.mode_reverse_order ? child->GetPrev() : child->GetNext();
 }
 
 void Layout::ValidateLayout(const SizeConstraints& constraints,
                             PreferredSize* calculate_ps) {
   // Layout notes:
-  // -All layout code is written for Axis::kX layout.
-  //  Instead of duplicating the layout code for both Axis::kX and Axis::kY, we
-  //  simply
-  //  rotate the in data (rect, gravity, preferred size) and the outdata (rect).
+  // - All layout code is written for Axis::kX layout.
+  //   Instead of duplicating the layout code for both Axis::kX and Axis::kY, we
+  //   simply rotate the in data (rect, gravity, preferred size) and the outdata
+  //   (rect).
 
   if (!calculate_ps) {
     if (!m_packed.layout_is_invalid) return;
@@ -232,7 +232,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
   int total_preferred_w = 0;
   int total_min_pref_diff_w = 0;
   int total_max_pref_diff_w = 0;
-  for (Widget* child = GetFirstInLayoutOrder(); child;
+  for (Element* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
     if (child->GetVisibility() == Visibility::kGone) {
       continue;
@@ -258,10 +258,10 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
       calculate_ps->pref_w += ps.pref_w + ending_space;
       calculate_ps->max_w += ps.max_w + ending_space;
 
-      // The widget height depends on layout and widget properties, so get what
-      // it would actually use if it was given max_h as available height.
+      // The element height depends on layout and element properties, so get
+      // what it would actually use if it was given max_h as available height.
       // If we just used its max_h, that could increase the whole layout size
-      // even if the widget wouldn't actually use it.
+      // even if the element wouldn't actually use it.
       int height = GetWantedHeight(gravity, ps, ps.max_h);
       calculate_ps->max_h = std::max(calculate_ps->max_h, height);
 
@@ -288,7 +288,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
           LayoutDistributionPosition::kLeftTop) {
     // To calculate the offset we need to predict the used space. We can do that
     // by checking the distribution mode and total_max_pref_diff_w. That's how
-    // much the widgets could possible expand in the layout below.
+    // much the elements could possible expand in the layout below.
 
     int used_space = total_preferred_w;
     if (LayoutDistribution(m_packed.layout_mode_dist) !=
@@ -305,7 +305,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
 
   // Layout
   int used_space = 0;
-  for (Widget* child = GetFirstInLayoutOrder(); child;
+  for (Element* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
     if (child->GetVisibility() == Visibility::kGone) {
       continue;
@@ -384,7 +384,7 @@ PreferredSize Layout::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool Layout::OnEvent(const WidgetEvent& ev) {
+bool Layout::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
@@ -423,7 +423,7 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
   }
 
   // Paint children.
-  Widget::OnPaintChildren(paint_props);
+  Element::OnPaintChildren(paint_props);
 
   // Paint fadeout image over the overflowed edges
   // to the indicate to used that it's overflowed.
@@ -457,7 +457,7 @@ void Layout::OnResized(int old_w, int old_h) {
   ValidateLayout(sc);
 }
 
-void Layout::OnInflateChild(Widget* child) {
+void Layout::OnInflateChild(Element* child) {
   // Do nothing since we're going to layout the child soon.
 }
 
@@ -475,7 +475,7 @@ void Layout::ScrollTo(int x, int y) {
   SetOverflowScroll(m_axis == Axis::kX ? x : y);
 }
 
-Widget::ScrollInfo Layout::GetScrollInfo() {
+Element::ScrollInfo Layout::GetScrollInfo() {
   ScrollInfo info;
   if (m_axis == Axis::kX) {
     info.max_x = m_overflow;

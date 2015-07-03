@@ -140,7 +140,7 @@ class SkinCondition : public TBLinkOf<SkinCondition> {
 // Checks if a condition is true.
 // It is passed to skin painting functions so different state elements can be
 // applied depending on the current situation of the context.
-// F.ex a widget may change appearance if it's under a parent with a certain
+// F.ex a element may change appearance if it's under a parent with a certain
 // skin.
 class SkinConditionContext {
  public:
@@ -201,7 +201,7 @@ class SkinElementStateList {
 // Skin element.
 // Contains a bitmap fragment (or nullptr) and info specifying how it should be
 // painted.
-// Also contains padding and other look-specific widget properties.
+// Also contains padding and other look-specific element properties.
 class SkinElement {
  public:
   SkinElement();
@@ -214,7 +214,7 @@ class SkinElement {
       nullptr;      // Bitmap fragment containing the graphics, or nullptr.
   uint8_t cut = 0;  // How the bitmap should be sliced using StretchBox.
   int16_t expand =
-      0;  // How much the skin should expand outside the widgets rect.
+      0;  // How much the skin should expand outside the elements rect.
   SkinElementType type = SkinElementType::kStretchBox;  // Skin element type.
   bool is_painting =
       false;  // If the skin is being painted (avoiding eternal recursing).
@@ -242,8 +242,8 @@ class SkinElement {
       kSkinValueNotSpecified;  // Maximum height or kSkinValueNotSpecified
   int16_t spacing = kSkinValueNotSpecified;  // Spacing used on layout or
                                              // kSkinValueNotSpecified.
-  int16_t content_ofs_x = 0;  // X offset of the content in the widget.
-  int16_t content_ofs_y = 0;  // Y offset of the content in the widget.
+  int16_t content_ofs_x = 0;  // X offset of the content in the element.
+  int16_t content_ofs_y = 0;  // Y offset of the content in the element.
   int16_t img_ofs_x = 0;  // X offset for type image. Relative to image position
                           // (img_position_x).
   int16_t img_ofs_y = 0;  // Y offset for type image. Relative to image position
@@ -256,10 +256,11 @@ class SkinElement {
   int8_t flip_x = 0;           // The skin is flipped horizontally.
   int8_t flip_y = 0;           // The skin is flipped vertically.
   float opacity =
-      1.0f;  // Opacity that should be used for the whole widget (0.f - 1.f).
-  Color text_color = Color(0, 0, 0, 0);  // Color of the text in the widget.
-  Color bg_color = Color(0, 0, 0, 0);  // Color of the background in the widget.
-  int16_t bitmap_dpi = 0;              // The DPI of the bitmap that was loaded.
+      1.0f;  // Opacity that should be used for the whole element (0.f - 1.f).
+  Color text_color = Color(0, 0, 0, 0);  // Color of the text in the element.
+  Color bg_color =
+      Color(0, 0, 0, 0);   // Color of the background in the element.
+  int16_t bitmap_dpi = 0;  // The DPI of the bitmap that was loaded.
   Value
       tag;  // This value is free to use for anything. It's not used internally.
 
@@ -395,7 +396,7 @@ class Skin : private RendererListener {
   // Strong override elements:
   //   - Strong override elements are like override elements, but they don't
   //     only apply when painting. They also override padding and other things
-  //     that might affect the layout of the widget having the skin set.
+  //     that might affect the layout of the element having the skin set.
   //
   // Override elements:
   //   - If there is a override element with the exact matching state, it will
@@ -409,12 +410,12 @@ class Skin : private RendererListener {
   //     are painted in the order they are specified in the skin.
   //
   // Special elements:
-  //   - There's some special generic skin elements used by Widget (see
-  //     Widget::SetSkinBg).
+  //   - There's some special generic skin elements used by Element (see
+  //     Element::SetSkinBg).
   //
   // Overlay elements:
   //   - Overlay elements are painted separately, from PaintSkinOverlay (when
-  //     all sibling widgets has been painted). As with child elements, all
+  //     all sibling elements has been painted). As with child elements, all
   //     overlay elements that match the current state will be painted in the
   //     order they are specified in the skin.
   //

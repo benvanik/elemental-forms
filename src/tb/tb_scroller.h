@@ -15,7 +15,7 @@
 
 namespace tb {
 
-class Widget;
+class Element;
 
 // Does the calculations of time, speed and distance that decides how the slow
 // down of a scroll will happen.
@@ -49,13 +49,13 @@ class ScrollerSnapListener {
   virtual ~ScrollerSnapListener() = default;
 
   // Called when the target scroll position is calculated.
-  // target_widget is the widget being scroller.
+  // target_element is the element being scroller.
   // target_x, target_y is the suggested target scroll position which may be
   // changed to something else in this call.
-  // NOTE: The scroll positions are relative to the target widget (inner
-  // scrolled Widget). If there's nested scrollable widgets, only the
-  // inner scrolled widget applies snapping.
-  virtual void OnScrollSnap(Widget* target_widget, int& target_x,
+  // NOTE: The scroll positions are relative to the target element (inner
+  // scrolled Element). If there's nested scrollable elements, only the
+  // inner scrolled element applies snapping.
+  virtual void OnScrollSnap(Element* target_element, int& target_x,
                             int& target_y) = 0;
 };
 
@@ -64,7 +64,7 @@ class ScrollerSnapListener {
 // released with a flick.
 class Scroller : private MessageHandler {
  public:
-  Scroller(Widget* target);
+  Scroller(Element* target);
   ~Scroller() override;
 
   // Sets the listener that may override the target scroll position.
@@ -82,11 +82,11 @@ class Scroller : private MessageHandler {
   // Returns true if the pan tracking is started or.
   bool IsStarted() const { return m_is_started; }
 
-  // Gets the widget that will be panned/scrolled. Any parent of this widget may
-  // also be panned/scrolled.
-  Widget* GetTarget() const { return m_target; }
+  // Gets the element that will be panned/scrolled. Any parent of this element
+  // may also be panned/scrolled.
+  Element* GetTarget() const { return m_target; }
 
-  // Pans the target widget (or any parent) with the given deltas.
+  // Pans the target element (or any parent) with the given deltas.
   // Should be called while the pointer is down. This will track the pan speed
   // over time.
   bool OnPan(int dx, int dy);
@@ -112,7 +112,7 @@ class Scroller : private MessageHandler {
   void GetTargetChildTranslation(int& x, int& y) const;
   void GetTargetScrollXY(int& x, int& y) const;
 
-  Widget* m_target = nullptr;
+  Element* m_target = nullptr;
   ScrollerSnapListener* m_snap_listener = nullptr;
   ScrollerFunction m_func;
   bool m_is_started = false;

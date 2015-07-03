@@ -13,38 +13,38 @@
 
 namespace tb {
 
-void WidgetValueConnection::Connect(WidgetValue* value, Widget* widget) {
+void ElementValueConnection::Connect(ElementValue* value, Element* element) {
   Disconnect();
-  m_widget = widget;
+  m_element = element;
   m_value = value;
   m_value->m_connections.AddLast(this);
-  m_value->SyncToWidget(m_widget);
+  m_value->SyncToElement(m_element);
 }
 
-void WidgetValueConnection::Disconnect() {
+void ElementValueConnection::Disconnect() {
   if (m_value) {
     m_value->m_connections.Remove(this);
   }
   m_value = nullptr;
-  m_widget = nullptr;
+  m_element = nullptr;
 }
 
-void WidgetValueConnection::SyncFromWidget(Widget* source_widget) {
+void ElementValueConnection::SyncFromElement(Element* source_element) {
   if (m_value) {
-    m_value->SetFromWidget(source_widget);
+    m_value->SetFromElement(source_element);
   }
 }
 
-WidgetValue::WidgetValue(const TBID& name, Value::Type type)
+ElementValue::ElementValue(const TBID& name, Value::Type type)
     : m_name(name), m_value(type) {}
 
-WidgetValue::~WidgetValue() {
+ElementValue::~ElementValue() {
   while (m_connections.GetFirst()) {
     m_connections.GetFirst()->Disconnect();
   }
 }
 
-void WidgetValue::SetFromWidget(Widget* source_widget) {
+void ElementValue::SetFromElement(Element* source_element) {
   if (m_syncing) {
     // We ended up here because syncing is in progress.
     return;
@@ -53,37 +53,37 @@ void WidgetValue::SetFromWidget(Widget* source_widget) {
   // Get the value in the format.
   switch (m_value.GetType()) {
     case Value::Type::kString:
-      m_value.SetString(source_widget->GetText());
+      m_value.SetString(source_element->GetText());
       break;
     case Value::Type::kNull:
     case Value::Type::kInt:
-      m_value.SetInt(source_widget->GetValue());
+      m_value.SetInt(source_element->GetValue());
       break;
     case Value::Type::kFloat:
       // FIX: Value should use double instead of float?
-      m_value.SetFloat(float(source_widget->GetValueDouble()));
+      m_value.SetFloat(float(source_element->GetValueDouble()));
       break;
     default:
       assert(!"Unsupported value type!");
       break;
   }
 
-  SyncToWidgets(source_widget);
+  SyncToElements(source_element);
 }
 
-void WidgetValue::SyncToWidgets(Widget* exclude_widget) {
+void ElementValue::SyncToElements(Element* exclude_element) {
   // FIX: Assign group to each value. Currently we only have one global group.
   g_value_group.InvokeOnValueChanged(this);
 
   auto iter = m_connections.IterateForward();
-  while (WidgetValueConnection* connection = iter.GetAndStep()) {
-    if (connection->m_widget != exclude_widget) {
-      SyncToWidget(connection->m_widget);
+  while (ElementValueConnection* connection = iter.GetAndStep()) {
+    if (connection->m_element != exclude_element) {
+      SyncToElement(connection->m_element);
     }
   }
 }
 
-void WidgetValue::SyncToWidget(Widget* dst_widget) {
+void ElementValue::SyncToElement(Element* dst_element) {
   if (m_syncing) {
     // We ended up here because syncing is in progress.
     return;
@@ -92,15 +92,15 @@ void WidgetValue::SyncToWidget(Widget* dst_widget) {
   m_syncing = true;
   switch (m_value.GetType()) {
     case Value::Type::kString:
-      dst_widget->SetText(m_value.GetString());
+      dst_element->SetText(m_value.GetString());
       break;
     case Value::Type::kNull:
     case Value::Type::kInt:
-      dst_widget->SetValue(m_value.GetInt());
+      dst_element->SetValue(m_value.GetInt());
       break;
     case Value::Type::kFloat:
       // FIX: Value should use double instead of float?
-      dst_widget->SetValueDouble(m_value.GetFloat());
+      dst_element->SetValueDouble(m_value.GetFloat());
       break;
     default:
       assert(!"Unsupported value type!");
@@ -109,35 +109,35 @@ void WidgetValue::SyncToWidget(Widget* dst_widget) {
   m_syncing = false;
 }
 
-void WidgetValue::SetInt(int value) {
+void ElementValue::SetInt(int value) {
   m_value.SetInt(value);
-  SyncToWidgets(nullptr);
+  SyncToElements(nullptr);
 }
 
-void WidgetValue::SetText(const char* text) {
+void ElementValue::SetText(const char* text) {
   m_value.SetString(text, Value::Set::kNewCopy);
-  SyncToWidgets(nullptr);
+  SyncToElements(nullptr);
 }
 
-void WidgetValue::SetDouble(double value) {
+void ElementValue::SetDouble(double value) {
   // FIX: Value should use double instead of float?
   m_value.SetFloat(float(value));
-  SyncToWidgets(nullptr);
+  SyncToElements(nullptr);
 }
 
 /*extern*/ ValueGroup g_value_group;
 
-WidgetValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
-                                             Value::Type type) {
-  if (WidgetValue* val = GetValue(name)) {
+ElementValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
+                                              Value::Type type) {
+  if (ElementValue* val = GetValue(name)) {
     return val;
   }
-  WidgetValue* val = new WidgetValue(name, type);
+  ElementValue* val = new ElementValue(name, type);
   m_values.Add(name, val);
   return val;
 }
 
-void ValueGroup::InvokeOnValueChanged(const WidgetValue* value) {
+void ValueGroup::InvokeOnValueChanged(const ElementValue* value) {
   auto iter = m_listeners.IterateForward();
   while (ValueGroupListener* listener = iter.GetAndStep()) {
     listener->OnValueChanged(this, value);

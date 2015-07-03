@@ -46,31 +46,31 @@ void SelectList::OnSourceChanged() { InvalidateList(); }
 
 void SelectList::OnItemChanged(int index) {
   if (m_list_is_invalid) {
-    // We're updating all widgets soon.
+    // We're updating all elements soon.
     return;
   }
 
-  Widget* old_widget = GetItemWidget(index);
-  if (!old_widget) {
-    // We don't have this widget so we have nothing to update.
+  Element* old_element = GetItemElement(index);
+  if (!old_element) {
+    // We don't have this element so we have nothing to update.
     return;
   }
 
-  // Replace the old widget representing the item, with a new one. Preserve its
+  // Replace the old element representing the item, with a new one. Preserve its
   // state.
-  SkinState old_state = old_widget->GetStateRaw();
+  SkinState old_state = old_element->GetStateRaw();
 
-  if (Widget* widget = CreateAndAddItemAfter(index, old_widget)) {
-    widget->SetStateRaw(old_state);
+  if (Element* element = CreateAndAddItemAfter(index, old_element)) {
+    element->SetStateRaw(old_state);
   }
 
-  old_widget->GetParent()->RemoveChild(old_widget);
-  delete old_widget;
+  old_element->GetParent()->RemoveChild(old_element);
+  delete old_element;
 }
 
 void SelectList::OnItemAdded(int index) {
   if (m_list_is_invalid) {
-    // We're updating all widgets soon.
+    // We're updating all elements soon.
     return;
   }
 
@@ -81,7 +81,7 @@ void SelectList::OnItemAdded(int index) {
 
 void SelectList::OnItemRemoved(int index) {
   if (m_list_is_invalid) {
-    // We're updating all widgets soon.
+    // We're updating all elements soon.
     return;
   }
 
@@ -125,7 +125,7 @@ void SelectList::ValidateList() {
   // FIX: Could delete and create only the changed items (faster filter change).
 
   // Remove old items.
-  while (Widget* child = m_layout.GetContentRoot()->GetFirstChild()) {
+  while (Element* child = m_layout.GetContentRoot()->GetFirstChild()) {
     child->GetParent()->RemoveChild(child);
     delete child;
   }
@@ -159,15 +159,15 @@ void SelectList::ValidateList() {
 
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
-    Widget* widget = new Label();
+    Element* element = new Label();
     auto fmt = g_tb_lng->GetString(m_header_lng_string_id);
-    widget->SetText(tb::format_string(fmt.c_str(), num_sorted_items,
-                                      m_source->GetNumItems()));
-    widget->SetSkinBg(TBIDC("TBList.header"));
-    widget->SetState(SkinState::kDisabled, true);
-    widget->SetGravity(Gravity::kAll);
-    widget->data.SetInt(-1);
-    m_layout.GetContentRoot()->AddChild(widget);
+    element->SetText(tb::format_string(fmt.c_str(), num_sorted_items,
+                                       m_source->GetNumItems()));
+    element->SetSkinBg(TBIDC("TBList.header"));
+    element->SetState(SkinState::kDisabled, true);
+    element->SetGravity(Gravity::kAll);
+    element->data.SetInt(-1);
+    m_layout.GetContentRoot()->AddChild(element);
   }
 
   // Create new items.
@@ -182,13 +182,13 @@ void SelectList::ValidateList() {
   m_scroll_to_current = true;
 }
 
-Widget* SelectList::CreateAndAddItemAfter(int index, Widget* reference) {
-  if (Widget* widget = m_source->CreateItemWidget(index, this)) {
-    // Use item data as widget to index lookup.
-    widget->data.SetInt(index);
-    m_layout.GetContentRoot()->AddChildRelative(widget, WidgetZRel::kAfter,
+Element* SelectList::CreateAndAddItemAfter(int index, Element* reference) {
+  if (Element* element = m_source->CreateItemElement(index, this)) {
+    // Use item data as element to index lookup.
+    element->data.SetInt(index);
+    m_layout.GetContentRoot()->AddChildRelative(element, ElementZRel::kAfter,
                                                 reference);
-    return widget;
+    return element;
   }
   return nullptr;
 }
@@ -201,9 +201,9 @@ void SelectList::SetValue(int value) {
   SelectItem(m_value, true);
   ScrollToSelectedItem();
 
-  WidgetEvent ev(EventType::kChanged);
-  if (Widget* widget = GetItemWidget(m_value)) {
-    ev.ref_id = widget->GetID();
+  ElementEvent ev(EventType::kChanged);
+  if (Element* element = GetItemElement(m_value)) {
+    ev.ref_id = element->GetID();
   }
   InvokeEvent(ev);
 }
@@ -216,14 +216,14 @@ TBID SelectList::GetSelectedItemID() {
 }
 
 void SelectList::SelectItem(int index, bool selected) {
-  if (Widget* widget = GetItemWidget(index)) {
-    widget->SetState(SkinState::kSelected, selected);
+  if (Element* element = GetItemElement(index)) {
+    element->SetState(SkinState::kSelected, selected);
   }
 }
 
-Widget* SelectList::GetItemWidget(int index) {
+Element* SelectList::GetItemElement(int index) {
   if (index == -1) return nullptr;
-  for (Widget* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
+  for (Element* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
        tmp = tmp->GetNext()) {
     if (tmp->data.GetInt() == index) return tmp;
   }
@@ -236,8 +236,8 @@ void SelectList::ScrollToSelectedItem() {
     return;
   }
   m_scroll_to_current = false;
-  if (Widget* widget = GetItemWidget(m_value)) {
-    m_container.ScrollIntoView(widget->GetRect());
+  if (Element* element = GetItemElement(m_value)) {
+    m_container.ScrollIntoView(element->GetRect());
   } else {
     m_container.ScrollTo(0, 0);
   }
@@ -253,19 +253,19 @@ void SelectList::OnProcessAfterChildren() {
   }
 }
 
-bool SelectList::OnEvent(const WidgetEvent& ev) {
+bool SelectList::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetParent() == m_layout.GetContentRoot()) {
     // SetValue (EventType::kChanged) might cause something to delete this (f.ex
     // closing the dropdown menu. We want to sent another event, so ensure we're
     // still around.
-    WeakWidgetPointer this_widget(this);
+    WeakElementPointer this_element(this);
 
     int index = ev.target->data.GetInt();
     SetValue(index);
 
     // If we're still around, invoke the click event too.
-    if (this_widget.Get()) {
+    if (this_element.Get()) {
       SelectList* target_list = this;
       // If the parent window is a MenuWindow, we will iterate up the event
       // destination chain to find the top MenuWindow and invoke the event
@@ -279,9 +279,9 @@ bool SelectList::OnEvent(const WidgetEvent& ev) {
       }
 
       // Invoke the click event on the target list.
-      WidgetEvent ev(EventType::kClick);
-      if (Widget* widget = GetItemWidget(m_value)) {
-        ev.ref_id = widget->GetID();
+      ElementEvent ev(EventType::kClick);
+      if (Element* element = GetItemElement(m_value)) {
+        ev.ref_id = element->GetID();
       }
       target_list->InvokeEvent(ev);
     }
@@ -316,9 +316,9 @@ bool SelectList::ChangeValue(SpecialKey key) {
     return false;
   }
 
-  Widget* item_root = m_layout.GetContentRoot();
-  Widget* current = GetItemWidget(m_value);
-  Widget* origin = nullptr;
+  Element* item_root = m_layout.GetContentRoot();
+  Element* current = GetItemElement(m_value);
+  Element* origin = nullptr;
   if (key == SpecialKey::kHome || (!current && key == SpecialKey::kDown)) {
     current = item_root->GetFirstChild();
   } else if (key == SpecialKey::kEnd || (!current && key == SpecialKey::kUp)) {
@@ -373,7 +373,7 @@ void SelectDropdown::SetValue(int value) {
     SetText(m_source->GetItemString(m_value));
   }
 
-  WidgetEvent ev(EventType::kChanged);
+  ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
@@ -405,13 +405,13 @@ MenuWindow* SelectDropdown::GetMenuIfOpen() const {
   return TBSafeCast<MenuWindow>(m_window_pointer.Get());
 }
 
-bool SelectDropdown::OnEvent(const WidgetEvent& ev) {
+bool SelectDropdown::OnEvent(const ElementEvent& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
     // button).
     if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      WeakWidgetPointer tmp(this);
+      WeakElementPointer tmp(this);
       int value = menu_window->GetList()->GetValue();
       menu_window->Die();
       if (tmp.Get()) {
@@ -431,7 +431,7 @@ bool SelectDropdown::OnEvent(const WidgetEvent& ev) {
   } else if (ev.target == this && m_source && ev.IsKeyEvent()) {
     if (MenuWindow* menu_window = GetMenuIfOpen()) {
       // Redirect the key strokes to the list.
-      WidgetEvent redirected_ev(ev);
+      ElementEvent redirected_ev(ev);
       return menu_window->GetList()->InvokeEvent(redirected_ev);
     }
   }

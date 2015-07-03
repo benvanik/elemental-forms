@@ -53,7 +53,7 @@ elements
 		bitmap button_flat_pressed.png
 		cut 8
 
-	# == ButtonInGroup is not a widget. It's only used as override for Button under a "button_group" ====
+	# == ButtonInGroup is not a element. It's only used as override for Button under a "button_group" ====
 	ButtonInGroup
 		bitmap button_grouped_x_middle_up.png
 		cut 17
@@ -93,7 +93,7 @@ elements
 		bitmap button_grouped_x_last_down.png
 		overrides
 
-	# == button_group is not a widget. It's specified on widgets that should group Button =======
+	# == button_group is not a element. It's specified on elements that should group Button =======
 	button_group
 		spacing -1px
 

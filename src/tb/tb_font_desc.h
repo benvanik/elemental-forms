@@ -19,7 +19,7 @@ namespace tb {
 
 // Describes a font.
 // By default when nothing is set, the font is unspecified and means it should
-// be inherited from a parent widget that specifies a font, or use the default
+// be inherited from a parent element that specifies a font, or use the default
 // font if no parent does.
 class FontDescription {
  public:
@@ -37,8 +37,8 @@ class FontDescription {
   // Gets the TBID for the FontFace that matches this font description.
   // This is a ID combining both the font file, and variation (such as size and
   // style), and should be used to identify a certain font face.
-  // If this is 0, the font description is unspecified. For a widget, that means
-  // that the font should be inherited from the parent widget.
+  // If this is 0, the font description is unspecified. For a element, that
+  // means that the font should be inherited from the parent element.
   TBID GetFontFaceID() const { return m_id + m_packed_init; }
 
   void SetSize(uint32_t size) { m_packed.size = std::min(size, 0x8000u); }
