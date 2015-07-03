@@ -720,8 +720,7 @@ void SkinElementStateList::Load(Node* n) {
   // For each node, create a new state element.
   Node* element_node = n->GetFirstChild();
   while (element_node) {
-    SkinElementState* state = new SkinElementState;
-    if (!state) return;
+    SkinElementState* state = new SkinElementState();
 
     // By default, a state element applies to all combinations of states.
     state->state = SkinState::kAll;
@@ -764,10 +763,9 @@ void SkinElementStateList::Load(Node* n) {
           }
         }
 
-        if (SkinCondition* condition =
-                new SkinCondition(target, prop, custom_prop, value, test)) {
-          state->conditions.AddLast(condition);
-        }
+        SkinCondition* condition =
+            new SkinCondition(target, prop, custom_prop, value, test);
+        state->conditions.AddLast(condition);
       }
     }
 

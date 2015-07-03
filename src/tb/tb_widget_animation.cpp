@@ -158,23 +158,23 @@ bool WidgetAnimationManager::OnWidgetDying(Widget* widget) {
   bool handled = false;
   if (Window* window = TBSafeCast<Window>(widget)) {
     // Fade out dying windows.
-    if (auto anim =
-            new OpacityWidgetAnimation(window, 1.f, kAlmostZeroOpacity, true))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    auto anim =
+        new OpacityWidgetAnimation(window, 1.f, kAlmostZeroOpacity, true);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
   if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
     // Move out dying message windows.
-    if (auto anim = new RectWidgetAnimation(
-            window, Rect(0, 50, 0, 0), RectWidgetAnimation::Mode::kDeltaIn))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
+    auto anim = new RectWidgetAnimation(window, Rect(0, 50, 0, 0),
+                                        RectWidgetAnimation::Mode::kDeltaIn);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
   if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
     // Fade out dying dim layers.
-    if (auto anim =
-            new OpacityWidgetAnimation(dimmer, 1.f, kAlmostZeroOpacity, true))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    auto anim =
+        new OpacityWidgetAnimation(dimmer, 1.f, kAlmostZeroOpacity, true);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
   return handled;
@@ -182,22 +182,22 @@ bool WidgetAnimationManager::OnWidgetDying(Widget* widget) {
 
 void WidgetAnimationManager::OnWidgetAdded(Widget* parent, Widget* widget) {
   if (Window* window = TBSafeCast<Window>(widget)) {
-    // Fade in new windows
-    if (auto anim =
-            new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    // Fade in new windows.
+    auto anim =
+        new OpacityWidgetAnimation(window, kAlmostZeroOpacity, 1.f, false);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
   if (MessageWindow* window = TBSafeCast<MessageWindow>(widget)) {
-    // Move in new message windows
-    if (auto anim = new RectWidgetAnimation(
-            window, Rect(0, -50, 0, 0), RectWidgetAnimation::Mode::kDeltaOut))
-      AnimationManager::StartAnimation(anim);
+    // Move in new message windows.
+    auto anim = new RectWidgetAnimation(window, Rect(0, -50, 0, 0),
+                                        RectWidgetAnimation::Mode::kDeltaOut);
+    AnimationManager::StartAnimation(anim);
   }
   if (Dimmer* dimmer = TBSafeCast<Dimmer>(widget)) {
-    // Fade in dim layer
-    if (auto anim =
-            new OpacityWidgetAnimation(dimmer, kAlmostZeroOpacity, 1.f, false))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
+    // Fade in dim layer.
+    auto anim =
+        new OpacityWidgetAnimation(dimmer, kAlmostZeroOpacity, 1.f, false);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
 }
 

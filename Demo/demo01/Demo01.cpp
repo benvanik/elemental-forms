@@ -452,9 +452,9 @@ void AnimationsWindow::Animate() {
     fade = fade_check->GetValue() ? true : false;
 
   // Start move animation
-  if (Animation* anim = new RectWidgetAnimation(
-          this, GetRect().Offset(-GetRect().x - GetRect().w, 0), GetRect()))
-    AnimationManager::StartAnimation(anim, curve, duration);
+  Animation* anim = new RectWidgetAnimation(
+      this, GetRect().Offset(-GetRect().x - GetRect().w, 0), GetRect());
+  AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {
     if (Animation* anim =

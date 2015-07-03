@@ -207,10 +207,7 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   if (!m_rows.GetNumItems()) {
     // Create a row covering the entire bitmap.
     m_rows.GrowIfNeeded();
-    BitmapFragmentSpaceAllocator* row;
-    if (!(row = new BitmapFragmentSpaceAllocator(0, m_bitmap_w, m_bitmap_h))) {
-      return nullptr;
-    }
+    auto row = new BitmapFragmentSpaceAllocator(0, m_bitmap_w, m_bitmap_h);
     m_rows.Add(row);
   }
   // Get the smallest row where we fit.
@@ -236,14 +233,10 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   // If the row is unused, create a smaller row to only consume needed height
   // for fragment.
   if (best_row->IsAllAvailable() && needed_h < best_row->height) {
-    BitmapFragmentSpaceAllocator* row;
     m_rows.GrowIfNeeded();
-    if (!(row = new BitmapFragmentSpaceAllocator(
-              best_row->y + needed_h, m_bitmap_w,
-              best_row->height - needed_h))) {
-      return nullptr;
-    }
-    // Keep the rows sorted from top to bottom
+    auto row = new BitmapFragmentSpaceAllocator(
+        best_row->y + needed_h, m_bitmap_w, best_row->height - needed_h);
+    // Keep the rows sorted from top to bottom.
     m_rows.Add(row, best_row_index + 1);
     best_row->height = needed_h;
   }
@@ -429,8 +422,9 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
       m_fragment_maps.Add(fm);
       frag = fm->CreateNewFragment(data_w, data_h, data_stride, data,
                                    m_add_border);
-    } else
+    } else {
       delete fm;
+    }
   }
   // Finally, add the new fragment to the hash.
   if (frag) {

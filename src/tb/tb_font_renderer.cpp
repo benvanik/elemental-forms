@@ -61,10 +61,6 @@ void FontEffect::SetBlurRadius(int blur_radius) {
   if (m_blur_radius > 0) {
     delete[] m_kernel;
     m_kernel = new float[m_blur_radius * 2 + 1];
-    if (!m_kernel) {
-      m_blur_radius = 0;
-      return;
-    }
     float stdDevSq2 = (float)m_blur_radius / 2.f;
     stdDevSq2 = 2.f * stdDevSq2 * stdDevSq2;
     float scale = 1.f / sqrt(3.1415f * stdDevSq2);

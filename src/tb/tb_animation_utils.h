@@ -19,7 +19,7 @@ class FloatAnimation : public Animation {
  public:
   float src_val;
   float dst_val;
-  float current_progress;
+  float current_progress = 0;
 
  public:
   TBOBJECT_SUBCLASS(FloatAnimation, Animation);
@@ -27,7 +27,7 @@ class FloatAnimation : public Animation {
   FloatAnimation(float initial_value,
                  AnimationCurve animation_curve = Animation::kDefaultCurve,
                  double animation_duration = Animation::kDefaultDuration)
-      : src_val(initial_value), dst_val(initial_value), current_progress(0) {
+      : src_val(initial_value), dst_val(initial_value) {
     Animation::animation_curve = animation_curve;
     Animation::animation_duration = animation_duration;
   }

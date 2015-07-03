@@ -118,7 +118,7 @@ void RendererGL::EndPaint() {
 
 Bitmap* RendererGL::CreateBitmap(int width, int height, uint32_t* data) {
   BitmapGL* bitmap = new BitmapGL(this);
-  if (!bitmap || !bitmap->Init(width, height, data)) {
+  if (!bitmap->Init(width, height, data)) {
     delete bitmap;
     return nullptr;
   }

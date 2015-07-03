@@ -132,18 +132,14 @@ bool FreetypeFontRenderer::Load(const std::string& filename, int size) {
   if (!ft_initialized) return false;
 
   m_face = new FreetypeFace();
-  if (!m_face) return false;
 
   TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
   if (!f) return false;
 
   size_t ttf_buf_size = f->Size();
   m_face->ttf_buffer = new unsigned char[ttf_buf_size];
-  if (m_face->ttf_buffer)
-    ttf_buf_size = f->Read(m_face->ttf_buffer, 1, ttf_buf_size);
+  ttf_buf_size = f->Read(m_face->ttf_buffer, 1, ttf_buf_size);
   delete f;
-
-  if (!m_face->ttf_buffer) return false;
 
   if (FT_New_Memory_Face(g_freetype, m_face->ttf_buffer, ttf_buf_size, 0,
                          &m_face->m_face))
@@ -177,8 +173,8 @@ FontFace* FreetypeFontRenderer::Create(FontManager* font_manager,
 }
 
 void register_freetype_font_renderer() {
-  if (FreetypeFontRenderer* fr = new FreetypeFontRenderer)
-    g_font_manager->AddRenderer(fr);
+  FreetypeFontRenderer* fr = new FreetypeFontRenderer();
+  g_font_manager->AddRenderer(fr);
 }
 
 #endif  // TB_FONT_RENDERER_FREETYPE

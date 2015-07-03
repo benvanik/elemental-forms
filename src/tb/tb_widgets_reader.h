@@ -40,7 +40,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
  public:
   WidgetFactory(const char* name, Value::Type sync_type);
 
-  // Creates and returns the new widget or nullptr on out of memory.
+  // Creates and returns the new widget.
   virtual Widget* Create(InflateInfo* info) = 0;
 
   void Register();
@@ -72,10 +72,8 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
     }                                                                   \
     Widget* Create(InflateInfo* info) override {                        \
       classname* widget = new classname();                              \
-      if (widget) {                                                     \
-        widget->GetContentRoot()->SetZInflate(add_child_z);             \
-        ReadCustomProps(widget, info);                                  \
-      }                                                                 \
+      widget->GetContentRoot()->SetZInflate(add_child_z);               \
+      ReadCustomProps(widget, info);                                    \
       return widget;                                                    \
     }                                                                   \
     void ReadCustomProps(classname* widget, InflateInfo* info);         \

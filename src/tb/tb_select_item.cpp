@@ -148,17 +148,16 @@ Widget* SelectItemSource::CreateItemWidget(int index,
   SelectItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);
   if (sub_source || image) {
-    if (SimpleLayoutItemWidget* itemwidget =
-            new SimpleLayoutItemWidget(image, sub_source, string)) {
-      return itemwidget;
-    }
+    SimpleLayoutItemWidget* itemwidget =
+        new SimpleLayoutItemWidget(image, sub_source, string);
+    return itemwidget;
   } else if (string && *string == '-') {
-    if (Separator* separator = new Separator) {
-      separator->SetGravity(Gravity::kAll);
-      separator->SetSkinBg(TBIDC("SelectItem.separator"));
-      return separator;
-    }
-  } else if (Label* textfield = new Label) {
+    Separator* separator = new Separator();
+    separator->SetGravity(Gravity::kAll);
+    separator->SetSkinBg(TBIDC("SelectItem.separator"));
+    return separator;
+  } else {
+    Label* textfield = new Label();
     textfield->SetSkinBg("SelectItem");
     textfield->SetText(string);
     textfield->SetTextAlign(TextAlign::kLeft);

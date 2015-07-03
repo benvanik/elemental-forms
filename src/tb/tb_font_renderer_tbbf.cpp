@@ -209,7 +209,7 @@ bool TBBFRenderer::FindGlyphs() {
   int x = 0;
   while (UCS4 uc = utf8::decode_next(glyph_str, &i, glyph_str_len)) {
     if (GLYPH* glyph = FindNext(uc, x)) {
-      m_glyph_table.Add(uc, glyph);  // OOM!
+      m_glyph_table.Add(uc, glyph);
       x = glyph->x + glyph->w + 1;
     } else
       break;
@@ -224,8 +224,7 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
 
   if (x >= width) return nullptr;
 
-  GLYPH* glyph = new GLYPH;
-  if (!glyph) return nullptr;
+  GLYPH* glyph = new GLYPH();
 
   glyph->x = -1;
   glyph->w = -1;

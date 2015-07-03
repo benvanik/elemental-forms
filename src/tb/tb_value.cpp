@@ -77,14 +77,9 @@ Value* ValueArray::GetValue(int index) {
 }
 
 ValueArray* ValueArray::Clone(ValueArray* source) {
-  ValueArray* new_arr = new ValueArray;
-  if (!new_arr) return nullptr;
+  ValueArray* new_arr = new ValueArray();
   for (int i = 0; i < source->m_list.GetNumItems(); i++) {
     Value* new_val = new_arr->AddValue();
-    if (!new_val) {
-      delete new_arr;
-      return nullptr;
-    }
     new_val->Copy(*source->GetValue(i));
   }
   return new_arr;
@@ -155,7 +150,7 @@ void Value::Copy(const Value& source_value) {
     SetObject(nullptr);
   } else {
     SetNull();
-    memcpy(this, &source_value, sizeof(Value));
+    std::memcpy(this, &source_value, sizeof(Value));
   }
 }
 
@@ -189,7 +184,7 @@ void Value::SetFloat(float val) {
 
 void Value::SetString(const char* val, Set set) {
   SetNull();
-  m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
+  m_packed.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
   if (set != Set::kNewCopy) {
     val_str = const_cast<char*>(val);
     SetType(Type::kString);
@@ -207,7 +202,7 @@ void Value::SetObject(TypedObject* object) {
 
 void Value::SetArray(ValueArray* arr, Set set) {
   SetNull();
-  m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
+  m_packed.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
   if (set != Set::kNewCopy) {
     val_arr = arr;
     SetType(Type::kArray);
@@ -229,22 +224,19 @@ void Value::SetFromStringAuto(const char* str, Set set) {
     // If the number has nontrailing space, we'll assume a list of numbers.
     // (example: "10 -4 3.5")
     SetNull();
-    if (ValueArray* arr = new ValueArray) {
-      std::string tmpstr = str;
-      char* str_next = (char*)tmpstr.data();
-      while (char* token = next_token(str_next, ", ")) {
-        if (Value* new_val = arr->AddValue()) {
-          new_val->SetFromStringAuto(token, Set::kNewCopy);
-        }
-      }
-      SetArray(arr, Set::kTakeOwnership);
+    ValueArray* arr = new ValueArray();
+    std::string tmpstr = str;
+    char* str_next = (char*)tmpstr.data();
+    while (char* token = next_token(str_next, ", ")) {
+      Value* new_val = arr->AddValue();
+      new_val->SetFromStringAuto(token, Set::kNewCopy);
     }
+    SetArray(arr, Set::kTakeOwnership);
   } else if (*str == '[') {
     SetNull();
-    if (ValueArray* arr = new ValueArray) {
-      assert(!"not implemented! Split out the tokenizer code above!");
-      SetArray(arr, Set::kTakeOwnership);
-    }
+    ValueArray* arr = new ValueArray();
+    assert(!"not implemented! Split out the tokenizer code above!");
+    SetArray(arr, Set::kTakeOwnership);
   } else {
     SetString(str, set);
     return;

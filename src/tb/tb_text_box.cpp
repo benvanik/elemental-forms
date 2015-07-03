@@ -226,42 +226,42 @@ bool TextBox::OnEvent(const WidgetEvent& ev) {
   } else if ((ev.type == EventType::kClick &&
               ev.target->GetID() == TBIDC("popupmenu")) ||
              (ev.type == EventType::kShortcut)) {
-    if (ev.ref_id == TBIDC("cut") && !m_style_edit.packed.read_only)
+    if (ev.ref_id == TBIDC("cut") && !m_style_edit.packed.read_only) {
       m_style_edit.Cut();
-    else if (ev.ref_id == TBIDC("copy"))
+    } else if (ev.ref_id == TBIDC("copy")) {
       m_style_edit.Copy();
-    else if (ev.ref_id == TBIDC("paste") && !m_style_edit.packed.read_only)
+    } else if (ev.ref_id == TBIDC("paste") && !m_style_edit.packed.read_only) {
       m_style_edit.Paste();
-    else if (ev.ref_id == TBIDC("delete") && !m_style_edit.packed.read_only)
+    } else if (ev.ref_id == TBIDC("delete") && !m_style_edit.packed.read_only) {
       m_style_edit.Delete();
-    else if (ev.ref_id == TBIDC("undo") && !m_style_edit.packed.read_only)
+    } else if (ev.ref_id == TBIDC("undo") && !m_style_edit.packed.read_only) {
       m_style_edit.Undo();
-    else if (ev.ref_id == TBIDC("redo") && !m_style_edit.packed.read_only)
+    } else if (ev.ref_id == TBIDC("redo") && !m_style_edit.packed.read_only) {
       m_style_edit.Redo();
-    else if (ev.ref_id == TBIDC("selectall"))
+    } else if (ev.ref_id == TBIDC("selectall")) {
       m_style_edit.selection.SelectAll();
-    else
+    } else {
       return false;
+    }
     return true;
   } else if (ev.type == EventType::kContextMenu && ev.target == this) {
     Point pos_in_root(ev.target_x, ev.target_y);
     ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
 
-    if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"))) {
-      GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
-      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("cut")),
-                                            TBIDC("cut")));
-      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("copy")),
-                                            TBIDC("copy")));
-      source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("paste")),
-                                            TBIDC("paste")));
-      source->AddItem(new GenericStringItem(
-          g_tb_lng->GetString(TBIDC("delete")), TBIDC("delete")));
-      source->AddItem(new GenericStringItem("-"));
-      source->AddItem(new GenericStringItem(
-          g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
-      menu->Show(source, PopupAlignment(pos_in_root), -1);
-    }
+    MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
+    GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
+    source->AddItem(
+        new GenericStringItem(g_tb_lng->GetString(TBIDC("cut")), TBIDC("cut")));
+    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("copy")),
+                                          TBIDC("copy")));
+    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("paste")),
+                                          TBIDC("paste")));
+    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("delete")),
+                                          TBIDC("delete")));
+    source->AddItem(new GenericStringItem("-"));
+    source->AddItem(new GenericStringItem(
+        g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
+    menu->Show(source, PopupAlignment(pos_in_root), -1);
     return true;
   }
   return false;

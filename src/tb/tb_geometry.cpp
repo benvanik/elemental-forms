@@ -91,9 +91,7 @@ void RectRegion::GrowIfNeeded() {
   if (m_num_rects == m_capacity) {
     int new_m_capacity = Clamp(4, m_capacity * 2, 1024);
     Rect* new_rects = new Rect[new_m_capacity];
-    if (m_rects) {
-      std::memmove(new_rects, m_rects, sizeof(Rect) * m_capacity);
-    }
+    std::memmove(new_rects, m_rects, sizeof(Rect) * m_capacity);
     delete[] m_rects;
     m_rects = new_rects;
     m_capacity = new_m_capacity;

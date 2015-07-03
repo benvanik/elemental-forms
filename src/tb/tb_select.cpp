@@ -287,13 +287,17 @@ bool SelectList::OnEvent(const WidgetEvent& ev) {
     }
     return true;
   } else if (ev.type == EventType::kKeyDown) {
-    if (ChangeValue(ev.special_key)) return true;
+    if (ChangeValue(ev.special_key)) {
+      return true;
+    }
 
     // Give the scroll container a chance to handle the key so it may
     // scroll. This matters if the list itself is focused instead of
     // some child view of any select item (since that would have passed
     // the container already)
-    if (GetScrollContainer()->OnEvent(ev)) return true;
+    if (GetScrollContainer()->OnEvent(ev)) {
+      return true;
+    }
   }
   return false;
 }

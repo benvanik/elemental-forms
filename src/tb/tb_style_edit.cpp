@@ -585,7 +585,9 @@ TextProps::Data* TextProps::Push() {
 }
 
 void TextProps::Pop() {
-  if (!data_list.GetLast()) return;  // Unbalanced or we previosly got OOM.
+  if (!data_list.GetLast()) {
+    return;  // Unbalanced.
+  }
   data_list.Delete(data_list.GetLast());
   data = data_list.GetLast() ? data_list.GetLast() : &base_data;
 }
@@ -680,7 +682,6 @@ void TextBlock::Split() {
   for (size_t i = 0; i < len; i++) {
     if (is_linebreak(str[i])) {
       TextBlock* block = new TextBlock(style_edit);
-      if (!block) return;
       style_edit->blocks.AddAfter(block, this);
 
       if (i < len - 1 && str[i] == '\r' && str[i + 1] == '\n') {
@@ -778,10 +779,6 @@ void TextBlock::Layout(bool update_fragments, bool propagate_height) {
           &frag_len, &is_embed);
 
       TextFragment* fragment = new TextFragment();
-      if (!fragment) {
-        break;
-      }
-
       fragment->Init(this, uint16_t(ofs), uint16_t(frag_len));
 
       if (is_embed) {

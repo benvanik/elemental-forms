@@ -151,16 +151,15 @@ bool ResourceEditWindow::OnEvent(const WidgetEvent& ev) {
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
-    if (Window* win = new Window()) {
-      win->SetText("Test window");
-      g_widgets_reader->LoadData(win->GetContentRoot(),
-                                 m_source_text_box->GetText().c_str());
-      Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
-      win->SetRect(
-          win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
-              bounds));
-      GetParent()->AddChild(win);
-    }
+    Window* win = new Window();
+    win->SetText("Test window");
+    g_widgets_reader->LoadData(win->GetContentRoot(),
+                               m_source_text_box->GetText().c_str());
+    Rect bounds(0, 0, GetParent()->GetRect().w, GetParent()->GetRect().h);
+    win->SetRect(
+        win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
+            bounds));
+    GetParent()->AddChild(win);
     return true;
   } else if (ev.target->GetID() == TBIDC("constrained")) {
     m_scroll_container->SetAdaptContentSize(ev.target->GetValue() ? true

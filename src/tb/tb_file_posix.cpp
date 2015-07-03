@@ -45,10 +45,10 @@ TBFile* TBFile::Open(const std::string& filename, Mode mode) {
     default:
       break;
   }
-  if (!f) return nullptr;
-  TBPosixFile* tbf = new TBPosixFile(f);
-  if (!tbf) fclose(f);
-  return tbf;
+  if (!f) {
+    return nullptr;
+  }
+  return new TBPosixFile(f);
 }
 
 }  // namespace tb

@@ -126,7 +126,9 @@ void TooltipManager::KillToolTip() {
 
 void TooltipManager::DeleteShowMessages() {
   Message* msg;
-  while ((msg = GetMessageByID(messageShow)) != nullptr) DeleteMessage(msg);
+  while ((msg = GetMessageByID(messageShow)) != nullptr) {
+    DeleteMessage(msg);
+  }
 }
 
 Widget* TooltipManager::GetTippedWidget() {
@@ -159,7 +161,9 @@ void TooltipManager::OnMessageReceived(Message* msg) {
     }
   } else if (msg->message == messageHide) {
     TTMsgParam* param = static_cast<TTMsgParam*>(msg->data->v1.GetObject());
-    if (m_tooltip == param->m_hovered) KillToolTip();
+    if (m_tooltip == param->m_hovered) {
+      KillToolTip();
+    }
   }
 }
 

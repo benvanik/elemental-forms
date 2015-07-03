@@ -119,7 +119,6 @@ class ValueGroupListener : public TBLinkOf<ValueGroupListener> {
 class ValueGroup {
  public:
   // Creates a WidgetValue with the given name if it does not already exist.
-  // Returns nullptr if out of memory.
   WidgetValue* CreateValueIfNeeded(const TBID& name,
                                    Value::Type type = Value::Type::kInt);
 

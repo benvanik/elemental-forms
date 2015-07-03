@@ -88,10 +88,8 @@ bool SFontRenderer::Load(const char* filename, int size) {
 
   size_t ttf_buf_size = f->Size();
   ttf_buffer = new unsigned char[ttf_buf_size];
-  if (ttf_buffer) ttf_buf_size = f->Read(ttf_buffer, 1, ttf_buf_size);
+  ttf_buf_size = f->Read(ttf_buffer, 1, ttf_buf_size);
   delete f;
-
-  if (!ttf_buffer) return false;
 
   stbtt_InitFont(&font, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer, 0));
 
@@ -103,18 +101,18 @@ bool SFontRenderer::Load(const char* filename, int size) {
 
 FontFace* SFontRenderer::Create(FontManager* font_manager, const char* filename,
                                 const FontDescription& font_desc) {
-  if (SFontRenderer* fr = new SFontRenderer()) {
-    if (fr->Load(filename, (int)font_desc.GetSize()))
-      if (FontFace* font =
-              new FontFace(font_manager->GetGlyphCache(), fr, font_desc))
-        return font;
-    delete fr;
+  SFontRenderer* fr = new SFontRenderer();
+  if (fr->Load(filename, (int)font_desc.GetSize())) {
+    FontFace* font = new FontFace(font_manager->GetGlyphCache(), fr, font_desc);
+    return font;
   }
+  delete fr;
   return nullptr;
 }
 
 void register_stb_font_renderer() {
-  if (SFontRenderer* fr = new SFontRenderer) g_font_manager->AddRenderer(fr);
+  SFontRenderer* fr = new SFontRenderer();
+  g_font_manager->AddRenderer(fr);
 }
 
 #endif  // TB_FONT_RENDERER_STB

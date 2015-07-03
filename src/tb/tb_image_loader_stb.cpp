@@ -32,58 +32,46 @@ namespace tb {
 // support all formats fully)
 #include "thirdparty/stb_image.h"
 
-class STBI_Loader : public ImageLoader {
+class StbiImageLoader : public ImageLoader {
  public:
-  int width, height;
-  unsigned char* data;
+  int width = 0, height = 0;
+  unsigned char* data = nullptr;
 
-  STBI_Loader() : width(0), height(0), data(nullptr) {}
-  ~STBI_Loader() { stbi_image_free(data); }
+  StbiImageLoader() = default;
+  ~StbiImageLoader() { stbi_image_free(data); }
 
-  virtual int Width() { return width; }
-  virtual int Height() { return height; }
-  virtual uint32_t* Data() { return (uint32_t*)data; }
+  int Width() override { return width; }
+  int Height() override { return height; }
+  uint32_t* Data() override { return (uint32_t*)data; }
 };
 
 ImageLoader* ImageLoader::CreateFromFile(const std::string& filename) {
-  // Load directly from file
-  /*int w, h, comp;
-  if (unsigned char *data = stbi_load(filename, &w, &h, &comp, 4))
-  {
-          if (STBI_Loader *img = new STBI_Loader())
-          {
-                  img->width = w;
-                  img->height = h;
-                  img->data = data;
-                  return img;
-          }
-          else
-                  stbi_image_free(data);
+  // Load directly from file.
+  TBFile* file = TBFile::Open(filename, TBFile::Mode::kRead);
+  if (!file) {
+    return nullptr;
   }
-  return nullptr;*/
-  if (TBFile* file = TBFile::Open(filename, TBFile::Mode::kRead)) {
-    size_t size = file->Size();
-    if (unsigned char* data = new unsigned char[size]) {
-      size = file->Read(data, 1, size);
+  size_t size = file->Size();
+  unsigned char* data = new unsigned char[size];
+  size = file->Read(data, 1, size);
 
-      int w, h, comp;
-      if (unsigned char* img_data =
-              stbi_load_from_memory(data, int(size), &w, &h, &comp, 4)) {
-        if (STBI_Loader* img = new STBI_Loader()) {
-          img->width = w;
-          img->height = h;
-          img->data = img_data;
-          delete[] data;
-          delete file;
-          return img;
-        } else
-          stbi_image_free(img_data);
-      }
-
-      delete data;
+  int w, h, comp;
+  if (unsigned char* img_data =
+          stbi_load_from_memory(data, int(size), &w, &h, &comp, 4)) {
+    if (StbiImageLoader* img = new StbiImageLoader()) {
+      img->width = w;
+      img->height = h;
+      img->data = img_data;
+      delete[] data;
+      delete file;
+      return img;
+    } else {
+      stbi_image_free(img_data);
     }
-    delete file;
   }
+
+  delete data;
+  delete file;
   return nullptr;
 }
 

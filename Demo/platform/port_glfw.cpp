@@ -446,7 +446,9 @@ static void drop_callback(GLFWwindow* window, int count,
 ApplicationBackend* ApplicationBackend::Create(Application* app, int width,
                                                int height, const char* title) {
   ApplicationBackendGLFW* backend = new ApplicationBackendGLFW();
-  if (backend && backend->Init(app, width, height, title)) return backend;
+  if (backend->Init(app, width, height, title)) {
+    return backend;
+  }
   delete backend;
   return nullptr;
 }

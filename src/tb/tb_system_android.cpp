@@ -88,9 +88,7 @@ TBFile* TBFile::Open(const std::string& filename, Mode mode) {
       break;
   }
   if (!f) return nullptr;
-  TBAndroidFile* tbf = new TBAndroidFile(f);
-  if (!tbf) AAsset_close(f);
-  return tbf;
+  return new TBAndroidFile(f);
 }
 
 };  // namespace tb

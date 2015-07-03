@@ -64,11 +64,10 @@ std::string TBClipboard::GetText() {
       wchar_t* pchData = (wchar_t*)GlobalLock(hClipboardData);
       int len =
           WideCharToMultiByte(CP_UTF8, 0, pchData, -1, NULL, 0, NULL, NULL);
-      if (char* utf8 = new char[len]) {
-        WideCharToMultiByte(CP_UTF8, 0, pchData, -1, utf8, len, NULL, NULL);
-        result = utf8;
-        delete[] utf8;
-      }
+      char* utf8 = new char[len];
+      WideCharToMultiByte(CP_UTF8, 0, pchData, -1, utf8, len, NULL, NULL);
+      result = utf8;
+      delete[] utf8;
       GlobalUnlock(hClipboardData);
     }
     CloseClipboard();
