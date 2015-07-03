@@ -18,7 +18,7 @@ Layout: axis: y, distribution: available
 				SkinImage: skin: arrow.down
 				Label: text: Menu
 				skin Button.flat
-	TextBox: multiline: 1, styling: 1, gravity: all, id: editfield, autofocus: 1
+	TextBox: multiline: 1, styling: 1, gravity: all, id: text_box, autofocus: 1
 		text: "Turbo Badger - Fast UI toolkit\n\n" \
 				"<color #0794f8>Test zone</color>\n" \
 				"The menu to the left spawns some examples of features in turbo badger.\n\n" \

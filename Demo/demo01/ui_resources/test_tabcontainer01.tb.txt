@@ -9,6 +9,7 @@ TabContainer
 		Button: text: "Skin"
 		Button: text: "Spinner"
 			SkinImage: skin: Icon16
+		Button: text: code
 	Layout: axis: y
 		Label: text: "Tab alignment:"
 		Layout
@@ -36,3 +37,11 @@ TabContainer
 		Button: id: start_spinner, text: Start spinner
 		Button: id: stop_spinner, text: Stop spinner
 		ProgressSpinner: id: spinner
+	Layout
+		gravity all
+		distribution available
+		CodeTextBox
+			distribution available
+			multiline 1
+			styling 1
+			gravity all
