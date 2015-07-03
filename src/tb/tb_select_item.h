@@ -59,28 +59,18 @@ class SelectItemObserver : public TBLinkOf<SelectItemObserver> {
   SelectItemSource* m_source = nullptr;
 };
 
-/** SelectItemSource is a item provider interface for list widgets
-   (SelectList and
-        SelectDropdown).
-
-        Instead of feeding all list widgets with all items all the time, the
-   list widgets
-        will ask SelectItemSource when it needs it. The list widgets may also
-   apply
-        filtering so only a subset of all the items are shown.
-
-        CreateItemWidget can be overridden to create any set of widget content
-   for each item.
-
-        This class has no storage of items. If you want an array storage of
-   items,
-        use the subclass SelectItemSourceList. If you implement your own
-   storage,
-        remember to call InvokeItem[Added/...] to notify observers that they
-   need
-   to update.
-*/
-
+// An item provider interface for list widgets (SelectList and SelectDropdown).
+// Instead of feeding all list widgets with all items all the time, the list
+// widgets will ask SelectItemSource when it needs it. The list widgets may also
+// apply filtering so only a subset of all the items are shown.
+//
+// CreateItemWidget can be overridden to create any set of widget content for
+// each item.
+//
+// This class has no storage of items. If you want an array storage of items,
+// use the subclass SelectItemSourceList. If you implement your own storage,
+// remember to call InvokeItem[Added/...] to notify observers that they need
+// to update.
 class SelectItemSource {
  public:
   SelectItemSource() = default;
