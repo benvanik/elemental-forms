@@ -17,13 +17,13 @@ Language::~Language() { Clear(); }
 
 bool Language::Load(const char* filename) {
   // Read the file into a node tree (even though it's only a flat list).
-  TBNode node;
+  Node node;
   if (!node.ReadFile(filename)) {
     return false;
   }
 
   // Go through all nodes and add to the strings hash table.
-  TBNode* n = node.GetFirstChild();
+  Node* n = node.GetFirstChild();
   while (n) {
     const char* str = n->GetValue().GetString();
     std::string* new_str = new std::string(str);

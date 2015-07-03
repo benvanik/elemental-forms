@@ -35,7 +35,7 @@ uint32_t parse_hex(char*& src, int max_count) {
 }
 
 void UnescapeString(char* str) {
-  // fast forward to any escape sequence
+  // Fast forward to any escape sequence.
   while (*str && *str != '\\') str++;
 
   char* dst = str, * src = str;
@@ -82,8 +82,9 @@ void UnescapeString(char* str) {
           // This should be safe. A utf-8 character can be at most 4 bytes,
           // and we have 4 bytes to use for \xXX and 6 for \uXXXX.
           src += 2;
-          if (UCS4 hex = parse_hex(src, src[1] == 'x' ? 2 : 4))
+          if (UCS4 hex = parse_hex(src, src[1] == 'x' ? 2 : 4)) {
             dst += utf8::encode(hex, dst);
+          }
           continue;
         }
         default:
@@ -112,8 +113,8 @@ bool is_white_space(const char* str) {
   }
 }
 
-/** Return true if the given string starts with a color.
-        Ex: #ffdd00, #fd0 */
+// Returns true if the given string starts with a color.
+// Ex: #ffdd00, #fd0
 bool is_start_of_color(const char* str) {
   if (*str++ != '#') return false;
   int digit_count = 0;
@@ -125,23 +126,29 @@ bool is_start_of_color(const char* str) {
          digit_count == 3;
 }
 
-/** Return true if the given string may be a node reference, such
-        as language strings or TBNodeRefTree references. */
+// Returns true if the given string may be a node reference, such as language
+// strings or NodeRefTree references.
 bool is_start_of_reference(const char* str) {
-  if (*str++ != '@') return false;
+  if (*str++ != '@') {
+    return false;
+  }
   while (*str && *str != ' ') {
     // If the token ends with colon, it's not a value but a key.
-    if (*str == ':') return false;
+    if (*str == ':') {
+      return false;
+    }
     str++;
   }
   return true;
 }
 
-/** Check if the line is a comment or empty space. If it is, consume the leading
-        whitespace from line. */
+// Checks if the line is a comment or empty space. If it is, consume the leading
+// whitespace from line.
 bool is_space_or_comment(char*& line) {
   char* tmp = line;
-  while (is_white_space(tmp)) tmp++;
+  while (is_white_space(tmp)) {
+    tmp++;
+  }
   if (*tmp == '#' || *tmp == 0) {
     line = tmp;
     return true;
@@ -150,21 +157,28 @@ bool is_space_or_comment(char*& line) {
 }
 
 bool is_pending_multiline(const char* str) {
-  while (is_white_space(str)) str++;
+  while (is_white_space(str)) {
+    str++;
+  }
   return str[0] == '\\' && str[1] == 0;
 }
 
 bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
-  if (*buf != quote_type) return false;
+  if (*buf != quote_type) {
+    return false;
+  }
   int num_backslashes = 0;
-  while (buf_start < buf && *(buf-- - 1) == '\\') num_backslashes++;
+  while (buf_start < buf && *(buf-- - 1) == '\\') {
+    num_backslashes++;
+  }
   return !(num_backslashes & 1);
 }
 
-TBParser::Status TBParser::Read(TBParserStream* stream,
-                                TBParserTarget* target) {
+Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
   TBTempBuffer line, work;
-  if (!line.Reserve(1024) || !work.Reserve(1024)) return Status::kOutOfMemory;
+  if (!line.Reserve(1024) || !work.Reserve(1024)) {
+    return Status::kOutOfMemory;
+  }
 
   current_indent = 0;
   current_line_nr = 1;
@@ -185,52 +199,63 @@ TBParser::Status TBParser::Read(TBParserStream* stream,
 
     size_t line_pos = 0;
     while (true) {
-      // Find line end
+      // Find line end.
       size_t line_start = line_pos;
-      while (line_pos < read_len && buf[line_pos] != '\n') line_pos++;
+      while (line_pos < read_len && buf[line_pos] != '\n') {
+        line_pos++;
+      }
 
       if (line_pos < read_len) {
-        // We have a line
-        // Skip preceding \r (if we have one)
+        // We have a line.
+        // Skip preceding \r (if we have one).
         size_t line_len = line_pos - line_start;
-        if (!line.Append(buf + line_start, line_len))
+        if (!line.Append(buf + line_start, line_len)) {
           return Status::kOutOfMemory;
+        }
 
-        // Strip away trailing '\r' if the line has it
+        // Strip away trailing '\r' if the line has it.
         char* linebuf = line.GetData();
         size_t linebuf_len = line.GetAppendPos();
-        if (linebuf_len > 0 && linebuf[linebuf_len - 1] == '\r')
+        if (linebuf_len > 0 && linebuf[linebuf_len - 1] == '\r') {
           linebuf[linebuf_len - 1] = 0;
+        }
 
-        // Terminate the line string
-        if (!line.Append("", 1)) return Status::kOutOfMemory;
+        // Terminate the line string.
+        if (!line.Append("", 1)) {
+          return Status::kOutOfMemory;
+        }
 
-        // Handle line
+        // Handle line.
         OnLine(line.GetData(), target);
         current_line_nr++;
 
         line.ResetAppendPos();
         line_pos++;  // Skip this \n
-        // Find next line
+        // Find next line.
         continue;
       }
-      // No more lines here so push the rest and break for more data
-      if (!line.Append(buf + line_start, read_len - line_start))
+      // No more lines here so push the rest and break for more data.
+      if (!line.Append(buf + line_start, read_len - line_start)) {
         return Status::kOutOfMemory;
+      }
       break;
     }
   }
   if (line.GetAppendPos()) {
-    if (!line.Append("", 1)) return Status::kOutOfMemory;
+    if (!line.Append("", 1)) {
+      return Status::kOutOfMemory;
+    }
     OnLine(line.GetData(), target);
     current_line_nr++;
   }
   return Status::kOk;
 }
 
-void TBParser::OnLine(char* line, TBParserTarget* target) {
+void Parser::OnLine(char* line, ParserTarget* target) {
   if (is_space_or_comment(line)) {
-    if (*line == '#') target->OnComment(current_line_nr, line + 1);
+    if (*line == '#') {
+      target->OnComment(current_line_nr, line + 1);
+    }
     return;
   }
   if (pending_multiline) {
@@ -238,9 +263,11 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
     return;
   }
 
-  // Check indent
+  // Check indent.
   int indent = 0;
-  while (line[indent] == '\t' && line[indent] != 0) indent++;
+  while (line[indent] == '\t' && line[indent] != 0) {
+    indent++;
+  }
   line += indent;
 
   if (indent - current_indent > 1) {
@@ -260,15 +287,19 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
     }
   }
 
-  if (*line == 0)
+  if (line[0] == 0) {
     return;
-  else {
+  } else {
     char* token = line;
-    // Read line while consuming it and copy over to token buf
-    while (!is_white_space(line) && *line != 0) line++;
+    // Read line while consuming it and copy over to token buf.
+    while (!is_white_space(line) && line[0] != 0) {
+      line++;
+    }
     size_t token_len = line - token;
-    // Consume any white space after the token
-    while (is_white_space(line)) line++;
+    // Consume any white space after the token.
+    while (is_white_space(line)) {
+      line++;
+    }
 
     bool is_compact_line = token_len && token[token_len - 1] == ':';
 
@@ -277,7 +308,8 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
       token_len--;
       token[token_len] = 0;
 
-      // Check if the first argument is not a child but the value for this token
+      // Check if the first argument is not a child but the value for this
+      // token.
       if (*line == '[' || *line == '\"' || *line == '\'' ||
           is_start_of_number(line) || is_start_of_color(line) ||
           is_start_of_reference(line)) {
@@ -297,24 +329,35 @@ void TBParser::OnLine(char* line, TBParserTarget* target) {
     }
     target->OnToken(current_line_nr, token, value);
 
-    if (is_compact_line) OnCompactLine(line, target);
+    if (is_compact_line) {
+      OnCompactLine(line, target);
+    }
   }
 }
 
-void TBParser::OnCompactLine(char* line, TBParserTarget* target) {
+void Parser::OnCompactLine(char* line, ParserTarget* target) {
   target->Enter();
   while (*line) {
-    // consume any whitespace
-    while (is_white_space(line)) line++;
+    // Consume any whitespace.
+    while (is_white_space(line)) {
+      line++;
+    }
 
-    // Find token
+    // Find token.
     char* token = line;
-    while (*line != ':' && *line != 0) line++;
-    if (!*line) break;  // Syntax error, expected token
+    while (*line != ':' && *line != 0) {
+      line++;
+    }
+    if (!*line) {
+      // Syntax error, expected token.
+      break;
+    }
     *line++ = 0;
 
-    // consume any whitespace
-    while (is_white_space(line)) line++;
+    // Consume any whitespace.
+    while (is_white_space(line)) {
+      line++;
+    }
 
     TBValue v;
     ConsumeValue(v, line);
@@ -329,58 +372,74 @@ void TBParser::OnCompactLine(char* line, TBParserTarget* target) {
       return;
     }
 
-    // Ready
+    // Ready.
     target->OnToken(current_line_nr, token, v);
   }
 
   target->Leave();
 }
 
-void TBParser::OnMultiline(char* line, TBParserTarget* target) {
-  // consume any whitespace
-  while (is_white_space(line)) line++;
+void Parser::OnMultiline(char* line, ParserTarget* target) {
+  // Consume any whitespace.
+  while (is_white_space(line)) {
+    line++;
+  }
 
   TBValue value;
   ConsumeValue(value, line);
 
   if (!pending_multiline) {
-    // Ready with all lines
+    // Ready with all lines.
     value.SetString(multi_line_value.GetData(), TBValue::Set::kAsStatic);
     target->OnToken(current_line_nr, multi_line_token.c_str(), value);
 
-    if (multi_line_sub_level) target->Leave();
+    if (multi_line_sub_level) {
+      target->Leave();
+    }
 
-    // Reset
+    // Reset.
     multi_line_value.SetAppendPos(0);
     multi_line_sub_level = 0;
   }
 }
 
-void TBParser::ConsumeValue(TBValue& dst_value, char*& line) {
-  // Find value (As quoted string, or as auto)
+void Parser::ConsumeValue(TBValue& dst_value, char*& line) {
+  // Find value (As quoted string, or as auto).
   char* value = line;
   if (*line == '\"' || *line == '\'') {
     const char quote_type = *line;
-    // Consume starting quote
+    // Consume starting quote.
     line++;
     value++;
-    // Find ending quote or end
-    while (!IsEndQuote(value, line, quote_type) && *line != 0) line++;
-    // Terminate away the quote
-    if (*line == quote_type) *line++ = 0;
+    // Find ending quote or end.
+    while (!IsEndQuote(value, line, quote_type) && *line != 0) {
+      line++;
+    }
+    // Terminate away the quote.
+    if (*line == quote_type) {
+      *line++ = 0;
+    }
 
-    // consume any whitespace
-    while (is_white_space(line)) line++;
-    // consume any comma
-    if (*line == ',') line++;
+    // Consume any whitespace.
+    while (is_white_space(line)) {
+      line++;
+    }
+    // Consume any comma.
+    if (*line == ',') {
+      line++;
+    }
 
     UnescapeString(value);
     dst_value.SetString(value, TBValue::Set::kAsStatic);
   } else {
-    // Find next comma or end
-    while (*line != ',' && *line != 0) line++;
-    // Terminate away the comma
-    if (*line == ',') *line++ = 0;
+    // Find next comma or end.
+    while (*line != ',' && *line != 0) {
+      line++;
+    }
+    // Terminate away the comma.
+    if (*line == ',') {
+      *line++ = 0;
+    }
 
     UnescapeString(value);
     dst_value.SetFromStringAuto(value, TBValue::Set::kAsStatic);
@@ -392,8 +451,9 @@ void TBParser::ConsumeValue(TBValue& dst_value, char*& line) {
   pending_multiline = is_pending_multiline(line);
 
   // Append the multi line value to the buffer.
-  if (continuing_multiline || pending_multiline)
+  if (continuing_multiline || pending_multiline) {
     multi_line_value.AppendString(dst_value.GetString());
+  }
 }
 
 }  // namespace tb

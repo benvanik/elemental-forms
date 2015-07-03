@@ -23,74 +23,73 @@ enum class ReadFlags {
 };
 MAKE_ENUM_FLAG_COMBO(ReadFlags);
 
-/** TBNode is a tree node with a string name and a value (TBValue).
-        It may have a parent TBNode and child TBNodes.
-
-        Getting the value of this node or any child, may optionally follow
-        references to nodes in any existing TBNodeRefTree (by name).
-
-        During ReadFile/ReadData, it may also select which branches to include
-        or exclude conditionally by lookup up values in TBNodeRefTree. */
-class TBNode : public TBLinkOf<TBNode> {
+// A tree node with a string name and a value (TBValue).
+// It may have a parent Node and child Nodes.
+//
+// Getting the value of this node or any child, may optionally follow references
+// to nodes in any existing NodeRefTree (by name).
+//
+// During ReadFile/ReadData, it may also select which branches to include or
+// exclude conditionally by lookup up values in NodeRefTree.
+class Node : public TBLinkOf<Node> {
  public:
-  TBNode() : m_name(nullptr), m_parent(nullptr), m_cycle_id(0) {}
-  ~TBNode();
+  Node() = default;
+  ~Node();
 
-  /** Create a new node with the given name. */
-  static TBNode* Create(const char* name);
+  // Creates a new node with the given name.
+  static Node* Create(const char* name);
 
   void TakeValue(TBValue& value);
 
-  /** Read a tree of nodes from file into this node. Returns true on success. */
+  // Reads a tree of nodes from file into this node.
+  // Returns true on success.
   bool ReadFile(const std::string& filename,
                 ReadFlags flags = ReadFlags::kNone);
 
-  /** Read a tree of nodes from a null terminated string buffer. */
+  // Reads a tree of nodes from a null terminated string buffer.
   void ReadData(const char* data, ReadFlags flags = ReadFlags::kNone);
 
-  /** Read a tree of nodes from a buffer with a known length. */
+  // Reads a tree of nodes from a buffer with a known length.
   void ReadData(const char* data, size_t data_len,
                 ReadFlags flags = ReadFlags::kNone);
 
-  /** Clear the contens of this node. */
+  // Clears the contents of this node.
   void Clear();
 
   // FIX: Add write support!
   // bool WriteFile(const char *filename);
 
-  /** Add node as child to this node. */
-  void Add(TBNode* n) {
+  // Adds node as child to this node.
+  void Add(Node* n) {
     m_children.AddLast(n);
     n->m_parent = this;
   }
 
-  /** Add node before the reference node (which must be a child to this node).
-   */
-  void AddBefore(TBNode* n, TBNode* reference) {
+  // Adds node before the reference node (which must be a child to this node).
+  void AddBefore(Node* n, Node* reference) {
     m_children.AddBefore(n, reference);
     n->m_parent = this;
   }
 
-  /** Add node after the reference node (which must be a child to this node). */
-  void AddAfter(TBNode* n, TBNode* reference) {
+  // Adds node after the reference node (which must be a child to this node).
+  void AddAfter(Node* n, Node* reference) {
     m_children.AddAfter(n, reference);
     n->m_parent = this;
   }
 
-  /** Remove child node n from this node. */
-  void Remove(TBNode* n) {
+  // Removes child node n from this node.
+  void Remove(Node* n) {
     m_children.Remove(n);
     n->m_parent = nullptr;
   }
 
-  /** Remove and delete child node n from this node. */
-  void Delete(TBNode* n) { m_children.Delete(n); }
+  // Removes and deletes child node n from this node.
+  void Delete(Node* n) { m_children.Delete(n); }
 
-  /** Create duplicates of all items in source and add them to this node.
-          Note: Nodes does not replace existing nodes with the same name. Cloned
-     nodes
-          are added after any existing nodes. */
-  bool CloneChildren(TBNode* source);
+  // Creates duplicates of all items in source and add them to this node.
+  // NOTE: nodes do not replace existing nodes with the same name. Cloned nodes
+  // are added after any existing nodes.
+  bool CloneChildren(Node* source);
 
   enum class MissingPolicy {
     // GetNode will return nullptr if the node doesn't exist.
@@ -99,63 +98,62 @@ class TBNode : public TBLinkOf<TBNode> {
     kCreate,
   };
 
-  /** Get a node from the given request.
-          If the node doesn't exist, it will either return nullptr or create
-          missing nodes, depending on the miss policy.
-          It can find nodes in children as well. Names are separated by a ">".
+  // Gets a node from the given request.
+  // If the node doesn't exist, it will either return nullptr or create missing
+  // nodes, depending on the miss policy. It can find nodes in children as well.
+  // Names are separated by a ">".
+  // Ex: GetNode("dishes>pizza>special>batman")
+  Node* GetNode(const char* request, MissingPolicy mp = MissingPolicy::kNull);
 
-          Ex: GetNode("dishes>pizza>special>batman") */
-  TBNode* GetNode(const char* request, MissingPolicy mp = MissingPolicy::kNull);
-
-  /** Returns the name of this node. */
   const char* GetName() const { return m_name; }
 
-  /** Returns the value of this node. */
   TBValue& GetValue() { return m_value; }
 
-  /** Returns the value of this node.
-          Will follow eventual references to TBNodeRefTree. */
+  // Returns the value of this node.
+  // Will follow eventual references to NodeRefTree.
   TBValue& GetValueFollowRef();
 
-  /** Get a value from the given request as an integer.
-          Will follow eventual references to TBNodeRefTree.
-          If the value is not specified, it returns the default value (def). */
+  // Gets a value from the given request as an integer.
+  // Will follow eventual references to NodeRefTree.
+  // If the value is not specified, it returns the default value (def).
   int GetValueInt(const char* request, int def);
 
-  /** Get a value from the given request as an float.
-          Will follow eventual references to TBNodeRefTree.
-          If the value is not specified, it returns the default value (def). */
+  // Gets a value from the given request as an float.
+  // Will follow eventual references to NodeRefTree.
+  // If the value is not specified, it returns the default value (def).
   float GetValueFloat(const char* request, float def);
 
-  /** Get a value from the given request as an string.
-          Will follow eventual references to TBNodeRefTree.
-          Will also return any referenced language string.
-          If the value is not specified, it returns the default value (def). */
+  // Gets a value from the given request as an string.
+  // Will follow eventual references to NodeRefTree.
+  // Will also return any referenced language string.
+  // If the value is not specified, it returns the default value (def).
   const char* GetValueString(const char* request, const char* def);
 
-  /** Same as GetValueString, but won't look up language string references. */
+  // Same as GetValueString, but won't look up language string references.
   const char* GetValueStringRaw(const char* request, const char* def);
 
-  /** Get the next position in request that is a sub node separator,
-          or the end of the string. */
+  // Gets the next position in request that is a sub node separator, or the end
+  // of the string.
   static const char* GetNextNodeSeparator(const char* request);
 
-  inline TBNode* GetParent() const { return m_parent; }
-  inline TBNode* GetFirstChild() const { return m_children.GetFirst(); }
-  inline TBNode* GetLastChild() const { return m_children.GetLast(); }
+  inline Node* GetParent() const { return m_parent; }
+  inline Node* GetFirstChild() const { return m_children.GetFirst(); }
+  inline Node* GetLastChild() const { return m_children.GetLast(); }
 
  private:
-  friend class TBNodeTarget;
-  friend class TBNodeRefTree;
-  TBNode* GetNodeFollowRef(const char* request,
-                           MissingPolicy mp = MissingPolicy::kNull);
-  TBNode* GetNodeInternal(const char* name, size_t name_len) const;
-  static TBNode* Create(const char* name, size_t name_len);
+  friend class NodeTarget;
+  friend class NodeRefTree;
+
+  Node* GetNodeFollowRef(const char* request,
+                         MissingPolicy mp = MissingPolicy::kNull);
+  Node* GetNodeInternal(const char* name, size_t name_len) const;
+  static Node* Create(const char* name, size_t name_len);
+
   char* m_name = nullptr;
   TBValue m_value;
-  TBLinkListOf<TBNode> m_children;
-  TBNode* m_parent = nullptr;
-  uint32_t m_cycle_id;  ///< Used to detect circular references.
+  TBLinkListOf<Node> m_children;
+  Node* m_parent = nullptr;
+  uint32_t m_cycle_id = 0;  // Used to detect circular references.
 };
 
 }  // namespace tb

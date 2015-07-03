@@ -52,7 +52,7 @@ DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 bool DemoWindow::LoadResourceFile(const std::string& filename) {
   // We could do g_widgets_reader->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
-  TBNode node;
+  Node node;
   if (!node.ReadFile(filename)) return false;
   LoadResource(node);
   return true;
@@ -61,12 +61,12 @@ bool DemoWindow::LoadResourceFile(const std::string& filename) {
 void DemoWindow::LoadResourceData(const char* data) {
   // We could do g_widgets_reader->LoadData(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
-  TBNode node;
+  Node node;
   node.ReadData(data);
   LoadResource(node);
 }
 
-void DemoWindow::LoadResource(TBNode& node) {
+void DemoWindow::LoadResource(Node& node) {
   g_widgets_reader->LoadNodeTree(this, &node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
@@ -78,7 +78,7 @@ void DemoWindow::LoadResource(TBNode& node) {
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
-  TBNode* tmp = node.GetNode("WindowInfo>size");
+  Node* tmp = node.GetNode("WindowInfo>size");
   if (tmp && tmp->GetValue().GetArrayLength() == 2) {
     window_rect.w = dc->GetPxFromString(
         tmp->GetValue().GetArray()->GetValue(0)->GetString(), window_rect.w);

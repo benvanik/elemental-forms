@@ -18,19 +18,19 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_node_ref_tree) {
-  class DataListener : public TBNodeRefTreeListener {
+  class DataListener : public NodeRefTreeListener {
    public:
     std::string changed_request;
     int changed_counter;
     DataListener() : changed_counter(0) {}
-    virtual void OnDataChanged(TBNodeRefTree* dt, const char* request) {
+    virtual void OnDataChanged(NodeRefTree* dt, const char* request) {
       changed_request.Set(request);
       changed_counter++;
     }
   };
 
   TB_TEST(change_on_set) {
-    TBNodeRefTree dt("r");
+    NodeRefTree dt("r");
     DataListener dl;
     dt.AddListener(&dl);
 
@@ -53,7 +53,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_value) {
-    TBNodeRefTree dt("test_styles");
+    NodeRefTree dt("test_styles");
     dt.ReadData(
         "FireButton\n"
         "	skin: 'FireButtonSkin'\n");
@@ -67,11 +67,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_value_recurse) {
-    TBNodeRefTree dt1("test_foo");
+    NodeRefTree dt1("test_foo");
     dt1.ReadData(
         "foo_value: 42\n"
         "foo_circular: '@test_bar>bar_circular'\n");
-    TBNodeRefTree dt2("test_bar");
+    NodeRefTree dt2("test_bar");
     dt2.ReadData(
         "bar_value: '@test_foo>foo_value'\n"
         "bar_circular: '@test_foo>foo_circular'\n"
@@ -97,11 +97,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
-    TB_VERIFY(TBNodeRefTree::GetValueFromTree("@test_bar>bar_circular2")
+    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bar>bar_circular2")
                   .GetType() == TBValue::Type::kNull);
 
     // References tree is wrong
-    TB_VERIFY(TBNodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
+    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
                   .GetType() == TBValue::Type::kNull);
 
     // Reference that is broken (has no matching node).
@@ -114,7 +114,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_include) {
-    TBNodeRefTree dt("test_styles");
+    NodeRefTree dt("test_styles");
     dt.ReadData(
         "VeryNice\n"
         "	skin: 'SpecialSkin'\n"
@@ -143,7 +143,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_condition) {
-    TBNodeRefTree dt("test_settings");
+    NodeRefTree dt("test_settings");
     dt.ReadData(
         "layout\n"
         "	landscape: 1\n");
@@ -179,8 +179,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);
   }
 
-  TBNode* GetChildNodeFromIndex(TBNode * parent, int index) {
-    TBNode* child = parent->GetFirstChild();
+  Node* GetChildNodeFromIndex(Node * parent, int index) {
+    Node* child = parent->GetFirstChild();
     while (child && index-- > 0) child = child->GetNext();
     return child;
   }
@@ -196,10 +196,10 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "		B3\n"
         "		B4\n"
         "	B5\n";
-    TBNode node;
+    Node node;
     node.ReadData(str);
 
-    TBNode* a = GetChildNodeFromIndex(&node, 0);
+    Node* a = GetChildNodeFromIndex(&node, 0);
     TB_VERIFY_STR(a->GetName(), "A");
     TB_VERIFY_STR(GetChildNodeFromIndex(a, 0)->GetName(), "B1");
     TB_VERIFY_STR(

@@ -105,7 +105,7 @@ class TBBFRenderer : public FontRenderer {
   virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
 
  private:
-  TBNode m_node;
+  Node m_node;
   FontMetrics m_metrics;
   ImageLoader* m_img;
   int m_size;
@@ -158,8 +158,8 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   if (!m_node.ReadFile(filename)) return false;
 
   // Check for size nodes and get the one closest to the size we want.
-  TBNode* size_node = nullptr;
-  for (TBNode* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
+  Node* size_node = nullptr;
+  for (Node* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
     if (strcmp(n->GetName(), "size") == 0) {
       if (!size_node ||
           std::abs(m_size - n->GetValue().GetInt()) <

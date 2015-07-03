@@ -25,7 +25,7 @@ class DemoWindow : public Window {
   DemoWindow();
   bool LoadResourceFile(const std::string& filename);
   void LoadResourceData(const char* data);
-  void LoadResource(TBNode& node);
+  void LoadResource(Node& node);
 
   virtual bool OnEvent(const WidgetEvent& ev);
 };

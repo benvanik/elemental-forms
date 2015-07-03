@@ -33,7 +33,7 @@ void Widget::OnInflate(const InflateInfo& info) {
     SetValue(info.node->GetValueInt("value", 0));
   }
 
-  if (TBNode* data_node = info.node->GetNode("data")) {
+  if (Node* data_node = info.node->GetNode("data")) {
     data.Copy(data_node->GetValue());
   }
 
@@ -95,7 +95,7 @@ void Widget::OnInflate(const InflateInfo& info) {
   if (const char* skin = info.node->GetValueString("skin", nullptr)) {
     SetSkinBg(skin);
   }
-  if (TBNode* lp = info.node->GetNode("lp")) {
+  if (Node* lp = info.node->GetNode("lp")) {
     LayoutParams layout_params;
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
@@ -142,7 +142,7 @@ void Widget::OnInflate(const InflateInfo& info) {
   if (!GetParent()) info.target->AddChild(this, info.target->GetZInflate());
 
   // Read the font now when the widget is in the hiearchy so inheritance works.
-  if (TBNode* font = info.node->GetNode("font")) {
+  if (Node* font = info.node->GetNode("font")) {
     FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
       int new_size = g_tb_skin->GetDimensionConverter()->GetPxFromString(
@@ -157,7 +157,7 @@ void Widget::OnInflate(const InflateInfo& info) {
 
   info.target->OnInflateChild(this);
 
-  if (TBNode* rect_node = info.node->GetNode("rect")) {
+  if (Node* rect_node = info.node->GetNode("rect")) {
     const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
     TBValue& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
@@ -275,7 +275,7 @@ void TabContainer::OnInflate(const InflateInfo& info) {
   }
   // Allow additional attributes to be specified for the "tabs", "content" and
   // "root" layouts by calling OnInflate.
-  if (TBNode* tabs = info.node->GetNode("tabs")) {
+  if (Node* tabs = info.node->GetNode("tabs")) {
     // Inflate the tabs widgets into the tab layout.
     Layout* tab_layout = GetTabLayout();
     info.reader->LoadNodeTree(tab_layout, tabs);
@@ -284,12 +284,12 @@ void TabContainer::OnInflate(const InflateInfo& info) {
                              TBValue::Type::kNull);
     tab_layout->OnInflate(inflate_info);
   }
-  if (TBNode* tabs = info.node->GetNode("content")) {
+  if (Node* tabs = info.node->GetNode("content")) {
     InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
                              TBValue::Type::kNull);
     GetContentRoot()->OnInflate(inflate_info);
   }
-  if (TBNode* tabs = info.node->GetNode("root")) {
+  if (Node* tabs = info.node->GetNode("root")) {
     InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
                              TBValue::Type::kNull);
     m_root_layout.OnInflate(inflate_info);
@@ -315,17 +315,17 @@ void Slider::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-void ReadItems(TBNode* node, GenericStringItemSource* target_source) {
+void ReadItems(Node* node, GenericStringItemSource* target_source) {
   // If there is a items node, loop through all its children and add
   // items to the target item source.
-  if (TBNode* items = node->GetNode("items")) {
-    for (TBNode* n = items->GetFirstChild(); n; n = n->GetNext()) {
+  if (Node* items = node->GetNode("items")) {
+    for (Node* n = items->GetFirstChild(); n; n = n->GetNext()) {
       if (strcmp(n->GetName(), "item") != 0) {
         continue;
       }
       const char* item_str = n->GetValueString("text", "");
       TBID item_id;
-      if (TBNode* n_id = n->GetNode("id")) {
+      if (Node* n_id = n->GetNode("id")) {
         WidgetReader::SetIDFromNode(item_id, n_id);
       }
 
@@ -420,7 +420,7 @@ bool WidgetReader::Init() {
 WidgetReader::~WidgetReader() {}
 
 bool WidgetReader::LoadFile(Widget* target, const char* filename) {
-  TBNode node;
+  Node node;
   if (!node.ReadFile(filename)) {
     return false;
   }
@@ -429,27 +429,27 @@ bool WidgetReader::LoadFile(Widget* target, const char* filename) {
 }
 
 bool WidgetReader::LoadData(Widget* target, const char* data) {
-  TBNode node;
+  Node node;
   node.ReadData(data);
   LoadNodeTree(target, &node);
   return true;
 }
 
 bool WidgetReader::LoadData(Widget* target, const char* data, size_t data_len) {
-  TBNode node;
+  Node node;
   node.ReadData(data, data_len);
   LoadNodeTree(target, &node);
   return true;
 }
 
-void WidgetReader::LoadNodeTree(Widget* target, TBNode* node) {
+void WidgetReader::LoadNodeTree(Widget* target, Node* node) {
   // Iterate through all nodes and create widgets
-  for (TBNode* child = node->GetFirstChild(); child; child = child->GetNext()) {
+  for (Node* child = node->GetFirstChild(); child; child = child->GetNext()) {
     CreateWidget(target, child);
   }
 }
 
-void WidgetReader::SetIDFromNode(TBID& id, TBNode* node) {
+void WidgetReader::SetIDFromNode(TBID& id, Node* node) {
   if (!node) return;
   if (node->GetValue().IsString()) {
     id.Set(node->GetValue().GetString());
@@ -458,7 +458,7 @@ void WidgetReader::SetIDFromNode(TBID& id, TBNode* node) {
   }
 }
 
-bool WidgetReader::CreateWidget(Widget* target, TBNode* node) {
+bool WidgetReader::CreateWidget(Widget* target, Node* node) {
   // Find a widget creator from the node name.
   WidgetFactory* wc = nullptr;
   for (wc = factories.GetFirst(); wc; wc = wc->GetNext()) {
@@ -485,7 +485,7 @@ bool WidgetReader::CreateWidget(Widget* target, TBNode* node) {
   assert(new_widget->GetParent());
 
   // Iterate through all nodes and create widgets.
-  for (TBNode* n = node->GetFirstChild(); n; n = n->GetNext()) {
+  for (Node* n = node->GetFirstChild(); n; n = n->GetNext()) {
     CreateWidget(new_widget, n);
   }
 

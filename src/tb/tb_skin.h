@@ -20,7 +20,7 @@
 
 namespace tb {
 
-class TBNode;
+class Node;
 class SkinConditionContext;
 
 // Used for some values in SkinElement if they has not been specified in the
@@ -168,7 +168,7 @@ class SkinElementStateList {
     return m_state_elements.GetFirst();
   }
 
-  void Load(TBNode* n);
+  void Load(Node* n);
 
  private:
   TBLinkListOf<SkinElementState> m_state_elements;
@@ -301,17 +301,17 @@ class SkinElement {
     return m_overlay_elements.HasStateElements();
   }
 
-  void Load(TBNode* n, Skin* skin, const char* skin_path);
+  void Load(Node* n, Skin* skin, const char* skin_path);
 };
 
 class SkinListener {
  public:
-  // Called when a skin element has been loaded from the given TBNode.
+  // Called when a skin element has been loaded from the given Node.
   // NOTE: this may be called multiple times on elements that occur multiple
   // times in the skin or is overridden in an override skin.
   // This method can be used to f.ex feed custom properties into element->tag.
   virtual void OnSkinElementLoaded(Skin* skin, SkinElement* element,
-                                   TBNode* node) = 0;
+                                   Node* node) = 0;
 };
 
 // Skin contains a list of SkinElement.
@@ -431,7 +431,7 @@ class Skin : private RendererListener {
   void PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
                               bool fill_center);
   Rect GetFlippedRect(const Rect& src_rect, SkinElement* element) const;
-  int GetPxFromNode(TBNode* node, int def_value) const;
+  int GetPxFromNode(Node* node, int def_value) const;
 
   SkinListener* m_listener = nullptr;
   TBHashTableAutoDeleteOf<SkinElement> m_elements;

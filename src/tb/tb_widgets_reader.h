@@ -15,14 +15,14 @@
 
 namespace tb {
 
-class TBNode;
+class Node;
 class Widget;
 class WidgetFactory;
 class WidgetReader;
 
 // Contains info passed to Widget::OnInflate during resource loading.
 struct InflateInfo {
-  InflateInfo(WidgetReader* reader, Widget* target, TBNode* node,
+  InflateInfo(WidgetReader* reader, Widget* target, Node* node,
               TBValue::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
@@ -30,12 +30,12 @@ struct InflateInfo {
   // The widget that that will be parent to the inflated widget.
   Widget* target;
   // The node containing properties.
-  TBNode* node;
+  Node* node;
   // The data type that should be synchronized through WidgetValue.
   TBValue::Type sync_type;
 };
 
-// Creates a widget from a TBNode.
+// Creates a widget from a Node.
 class WidgetFactory : public TBLinkOf<WidgetFactory> {
  public:
   WidgetFactory(const char* name, TBValue::Type sync_type);
@@ -84,21 +84,21 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
   void classname##WidgetFactory::ReadCustomProps(classname* widget,     \
                                                  InflateInfo* info)
 
-// Parses a resource file (or buffer) into a TBNode tree and turn it into a
+// Parses a resource file (or buffer) into a Node tree and turn it into a
 // hierarchy of widgets.
 // It can create all types of widgets that have a registered factory
 // (WidgetFactory). All core widgets have a factory by default, and you can also
 // add your own.
 //
-// Values may be looked up from any existing TBNodeRefTree using the syntax
+// Values may be looked up from any existing NodeRefTree using the syntax
 // "@treename>noderequest". If treename is left out, the request will be looked
 // up in the same node tree. In addition to this, strings will be looked up from
 // the global Language by using the syntax "@stringid"
 //
-// Branches may be included or not depending on the value of a TBNodeRefTree
+// Branches may be included or not depending on the value of a NodeRefTree
 // node, using "@if @treename>noderequest" and optionally a following "@else".
 //
-// Branches may be included from TBNodeRefTree using "@include
+// Branches may be included from NodeRefTree using "@include
 // @treename>noderequest", or included from nodes specified previosly in the
 // same tree using "@include noderequest".
 //
@@ -157,16 +157,16 @@ class WidgetReader {
   void RemoveFactory(WidgetFactory* wf) { factories.Remove(wf); }
 
   // Sets the id from the given node.
-  static void SetIDFromNode(TBID& id, TBNode* node);
+  static void SetIDFromNode(TBID& id, Node* node);
 
   bool LoadFile(Widget* target, const char* filename);
   bool LoadData(Widget* target, const char* data);
   bool LoadData(Widget* target, const char* data, size_t data_len);
-  void LoadNodeTree(Widget* target, TBNode* node);
+  void LoadNodeTree(Widget* target, Node* node);
 
  private:
   bool Init();
-  bool CreateWidget(Widget* target, TBNode* node);
+  bool CreateWidget(Widget* target, Node* node);
 
   TBLinkListOf<WidgetFactory> factories;
 };

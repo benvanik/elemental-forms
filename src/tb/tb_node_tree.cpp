@@ -21,46 +21,42 @@
 
 namespace tb {
 
-TBNode::~TBNode() { Clear(); }
+Node::~Node() { Clear(); }
 
 // static
-TBNode* TBNode::Create(const char* name) {
-  TBNode* n = new TBNode;
-  if (!n || !(n->m_name = strdup(name))) {
-    delete n;
-    return nullptr;
-  }
+Node* Node::Create(const char* name) {
+  Node* n = new Node();
+  n->m_name = strdup(name);
   return n;
 }
 
 // static
-TBNode* TBNode::Create(const char* name, size_t name_len) {
-  TBNode* n = new TBNode;
-  if (!n || !(n->m_name = (char*)malloc(name_len + 1))) {
-    delete n;
-    return nullptr;
-  }
-  memcpy(n->m_name, name, name_len);
+Node* Node::Create(const char* name, size_t name_len) {
+  Node* n = new Node();
+  n->m_name = (char*)malloc(name_len + 1);
+  std::memcpy(n->m_name, name, name_len);
   n->m_name[name_len] = 0;
   return n;
 }
 
 // static
-const char* TBNode::GetNextNodeSeparator(const char* request) {
-  while (*request != 0 && *request != '>') request++;
+const char* Node::GetNextNodeSeparator(const char* request) {
+  while (*request != 0 && *request != '>') {
+    request++;
+  }
   return request;
 }
 
-TBNode* TBNode::GetNode(const char* request, MissingPolicy mp) {
-  // Iterate one node deeper for each sub request (non recursive)
-  TBNode* n = this;
+Node* Node::GetNode(const char* request, MissingPolicy mp) {
+  // Iterate one node deeper for each sub request (non recursive).
+  Node* n = this;
   while (*request && n) {
     const char* nextend = GetNextNodeSeparator(request);
     size_t name_len = nextend - request;
-    TBNode* n_child = n->GetNodeInternal(request, name_len);
+    Node* n_child = n->GetNodeInternal(request, name_len);
     if (!n_child && mp == MissingPolicy::kCreate) {
       n_child = n->Create(request, name_len);
-      if (n_child) n->Add(n_child);
+      n->Add(n_child);
     }
     n = n_child;
     request = *nextend == 0 ? nextend : nextend + 1;
@@ -68,56 +64,59 @@ TBNode* TBNode::GetNode(const char* request, MissingPolicy mp) {
   return n;
 }
 
-TBNode* TBNode::GetNodeFollowRef(const char* request, MissingPolicy mp) {
-  TBNode* node = GetNode(request, mp);
-  if (node) node = TBNodeRefTree::FollowNodeRef(node);
+Node* Node::GetNodeFollowRef(const char* request, MissingPolicy mp) {
+  Node* node = GetNode(request, mp);
+  if (node) {
+    node = NodeRefTree::FollowNodeRef(node);
+  }
   return node;
 }
 
-TBNode* TBNode::GetNodeInternal(const char* name, size_t name_len) const {
-  for (TBNode* n = GetFirstChild(); n; n = n->GetNext()) {
-    if (strncmp(n->m_name, name, name_len) == 0 && n->m_name[name_len] == 0)
+Node* Node::GetNodeInternal(const char* name, size_t name_len) const {
+  for (Node* n = GetFirstChild(); n; n = n->GetNext()) {
+    if (strncmp(n->m_name, name, name_len) == 0 && n->m_name[name_len] == 0) {
       return n;
+    }
   }
   return nullptr;
 }
 
-bool TBNode::CloneChildren(TBNode* source) {
-  TBNode* item = source->GetFirstChild();
+bool Node::CloneChildren(Node* source) {
+  Node* item = source->GetFirstChild();
   while (item) {
-    TBNode* new_child = Create(item->m_name);
-    if (!new_child) return false;
-
+    Node* new_child = Create(item->m_name);
     new_child->m_value.Copy(item->m_value);
     Add(new_child);
 
-    if (!new_child->CloneChildren(item)) return false;
+    if (!new_child->CloneChildren(item)) {
+      return false;
+    }
     item = item->GetNext();
   }
   return true;
 }
 
-TBValue& TBNode::GetValueFollowRef() {
-  return TBNodeRefTree::FollowNodeRef(this)->GetValue();
+TBValue& Node::GetValueFollowRef() {
+  return NodeRefTree::FollowNodeRef(this)->GetValue();
 }
 
-int TBNode::GetValueInt(const char* request, int def) {
-  TBNode* n = GetNodeFollowRef(request);
+int Node::GetValueInt(const char* request, int def) {
+  Node* n = GetNodeFollowRef(request);
   return n ? n->m_value.GetInt() : def;
 }
 
-float TBNode::GetValueFloat(const char* request, float def) {
-  TBNode* n = GetNodeFollowRef(request);
+float Node::GetValueFloat(const char* request, float def) {
+  Node* n = GetNodeFollowRef(request);
   return n ? n->m_value.GetFloat() : def;
 }
 
-const char* TBNode::GetValueString(const char* request, const char* def) {
-  if (TBNode* node = GetNodeFollowRef(request)) {
+const char* Node::GetValueString(const char* request, const char* def) {
+  if (Node* node = GetNodeFollowRef(request)) {
     // We might have a language string. Those are not
     // looked up in GetNode/ResolveNode.
     if (node->GetValue().IsString()) {
       const char* string = node->GetValue().GetString();
-      if (*string == '@' && *TBNode::GetNextNodeSeparator(string) == 0) {
+      if (*string == '@' && *Node::GetNextNodeSeparator(string) == 0) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
         static std::string temp;
@@ -131,39 +130,42 @@ const char* TBNode::GetValueString(const char* request, const char* def) {
   return def;
 }
 
-const char* TBNode::GetValueStringRaw(const char* request, const char* def) {
-  TBNode* n = GetNodeFollowRef(request);
+const char* Node::GetValueStringRaw(const char* request, const char* def) {
+  Node* n = GetNodeFollowRef(request);
   return n ? n->m_value.GetString() : def;
 }
 
-class FileParser : public TBParserStream {
+class FileParserStream : public ParserStream {
  public:
-  bool Read(const std::string& filename, TBParserTarget* target) {
+  bool Read(const std::string& filename, ParserTarget* target) {
     f = TBFile::Open(filename, TBFile::Mode::kRead);
-    if (!f) return false;
-    TBParser p;
+    if (!f) {
+      return false;
+    }
+    Parser p;
     auto status = p.Read(this, target);
     delete f;
-    return status == TBParser::Status::kOk ? true : false;
+    return status == Parser::Status::kOk ? true : false;
   }
-  virtual size_t GetMoreData(char* buf, size_t buf_len) {
+
+  size_t GetMoreData(char* buf, size_t buf_len) override {
     return f->Read(buf, 1, buf_len);
   }
 
  private:
-  TBFile* f;
+  TBFile* f = nullptr;
 };
 
-class DataParser : public TBParserStream {
+class DataParserStream : public ParserStream {
  public:
-  bool Read(const char* data, size_t data_len, TBParserTarget* target) {
+  bool Read(const char* data, size_t data_len, ParserTarget* target) {
     m_data = data;
     m_data_len = data_len;
-    TBParser p;
+    Parser p;
     auto status = p.Read(this, target);
-    return status == TBParser::Status::kOk ? true : false;
+    return status == Parser::Status::kOk ? true : false;
   }
-  virtual size_t GetMoreData(char* buf, size_t buf_len) {
+  size_t GetMoreData(char* buf, size_t buf_len) override {
     size_t consume = std::min(buf_len, m_data_len);
     memcpy(buf, m_data, consume);
     m_data += consume;
@@ -172,16 +174,14 @@ class DataParser : public TBParserStream {
   }
 
  private:
-  const char* m_data;
-  size_t m_data_len;
+  const char* m_data = nullptr;
+  size_t m_data_len = 0;
 };
 
-class TBNodeTarget : public TBParserTarget {
+class NodeTarget : public ParserTarget {
  public:
-  TBNodeTarget(TBNode* root, const std::string& filename) {
-    m_root_node = m_target_node = root;
-    m_filename = filename;
-  }
+  NodeTarget(Node* root, const std::string& filename)
+      : m_root_node(root), m_target_node(root), m_filename(filename) {}
   void OnError(int line_nr, const std::string& error) override {
 #ifdef TB_RUNTIME_DEBUG_INFO
     TBDebugOut(tb::format_string("%s(%d):Parse error: %s\n", m_filename,
@@ -195,27 +195,32 @@ class TBNodeTarget : public TBParserTarget {
       IncludeFile(line_nr, value.GetString());
     } else if (strcmp(name, "@include") == 0) {
       IncludeRef(line_nr, value.GetString());
-    } else if (TBNode* n = TBNode::Create(name)) {
+    } else {
+      Node* n = Node::Create(name);
       n->TakeValue(value);
       m_target_node->Add(n);
     }
   }
   void Enter() override {
-    if (m_target_node) m_target_node = m_target_node->GetLastChild();
+    if (m_target_node) {
+      m_target_node = m_target_node->GetLastChild();
+    }
   }
   void Leave() override {
     assert(m_target_node != m_root_node);
-    if (m_target_node) m_target_node = m_target_node->m_parent;
+    if (m_target_node) {
+      m_target_node = m_target_node->m_parent;
+    }
   }
   void IncludeFile(int line_nr, const char* filename) {
-    // Read the included file into a new TBNode and then
-    // move all the children to m_target_node.
+    // Read the included file into a new Node and then move all the children to
+    // m_target_node.
     TBTempBuffer include_filename;
     include_filename.AppendPath(m_filename);
     include_filename.AppendString(filename);
-    TBNode content;
+    Node content;
     if (content.ReadFile(include_filename.GetData())) {
-      while (TBNode* content_n = content.GetFirstChild()) {
+      while (Node* content_n = content.GetFirstChild()) {
         content.Remove(content_n);
         m_target_node->Add(content_n);
       }
@@ -226,23 +231,24 @@ class TBNodeTarget : public TBParserTarget {
     }
   }
   void IncludeRef(int line_nr, const char* refstr) {
-    TBNode* refnode = nullptr;
+    Node* refnode = nullptr;
     if (*refstr == '@') {
-      TBNode tmp;
+      Node tmp;
       tmp.GetValue().SetString(refstr, TBValue::Set::kAsStatic);
-      refnode = TBNodeRefTree::FollowNodeRef(&tmp);
-    } else  // Local look-up
-    {
-      // Note: If we read to a target node that already contains
+      refnode = NodeRefTree::FollowNodeRef(&tmp);
+    } else {
+      // Local look-up.
+      // NOTE: If we read to a target node that already contains
       //       nodes, we might look up nodes that's already there
       //       instead of new nodes.
-      refnode = m_root_node->GetNode(refstr, TBNode::MissingPolicy::kNull);
+      refnode = m_root_node->GetNode(refstr, Node::MissingPolicy::kNull);
 
-      // Detect cycles
-      TBNode* cycle_detection = m_target_node;
+      // Detect cycles.
+      Node* cycle_detection = m_target_node;
       while (cycle_detection && refnode) {
-        if (cycle_detection == refnode)
+        if (cycle_detection == refnode) {
           refnode = nullptr;  // We have a cycle, so just fail the inclusion.
+        }
         cycle_detection = cycle_detection->GetParent();
       }
     }
@@ -255,37 +261,41 @@ class TBNodeTarget : public TBParserTarget {
   }
 
  private:
-  TBNode* m_root_node;
-  TBNode* m_target_node;
+  Node* m_root_node;
+  Node* m_target_node;
   std::string m_filename;
 };
 
-void TBNode::TakeValue(TBValue& value) { m_value.TakeOver(value); }
+void Node::TakeValue(TBValue& value) { m_value.TakeOver(value); }
 
-bool TBNode::ReadFile(const std::string& filename, ReadFlags flags) {
-  if (!any(flags & ReadFlags::kAppend)) Clear();
-  FileParser p;
-  TBNodeTarget t(this, filename);
+bool Node::ReadFile(const std::string& filename, ReadFlags flags) {
+  if (!any(flags & ReadFlags::kAppend)) {
+    Clear();
+  }
+  FileParserStream p;
+  NodeTarget t(this, filename);
   if (p.Read(filename, &t)) {
-    TBNodeRefTree::ResolveConditions(this);
+    NodeRefTree::ResolveConditions(this);
     return true;
   }
   return false;
 }
 
-void TBNode::ReadData(const char* data, ReadFlags flags) {
+void Node::ReadData(const char* data, ReadFlags flags) {
   ReadData(data, strlen(data), flags);
 }
 
-void TBNode::ReadData(const char* data, size_t data_len, ReadFlags flags) {
-  if (!any(flags & ReadFlags::kAppend)) Clear();
-  DataParser p;
-  TBNodeTarget t(this, "{data}");
+void Node::ReadData(const char* data, size_t data_len, ReadFlags flags) {
+  if (!any(flags & ReadFlags::kAppend)) {
+    Clear();
+  }
+  DataParserStream p;
+  NodeTarget t(this, "{data}");
   p.Read(data, data_len, &t);
-  TBNodeRefTree::ResolveConditions(this);
+  NodeRefTree::ResolveConditions(this);
 }
 
-void TBNode::Clear() {
+void Node::Clear() {
   free(m_name);
   m_name = nullptr;
   m_children.DeleteAll();

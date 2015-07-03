@@ -15,7 +15,7 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_parser) {
-  TBNode node;
+  Node node;
   TB_TEST(Init) {
     TB_VERIFY(node.ReadFile(TB_TEST_FILE("test_tb_parser.tb.txt")));
   }
@@ -129,7 +129,7 @@ TB_TEST_GROUP(tb_parser) {
   }
 
   TB_TEST(arrays_numbers) {
-    TBNode* arr_n = node.GetNode("arrays>numbers");
+    Node* arr_n = node.GetNode("arrays>numbers");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().GetArrayLength() == 5);
     TBValueArray* arr = arr_n->GetValue().GetArray();
@@ -141,7 +141,7 @@ TB_TEST_GROUP(tb_parser) {
   }
 
   TB_TEST(arrays_dimensions) {
-    TBNode* arr_n = node.GetNode("arrays>dimensions");
+    Node* arr_n = node.GetNode("arrays>dimensions");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().GetArrayLength() == 2);
     TBValueArray* arr = arr_n->GetValue().GetArray();
@@ -152,7 +152,7 @@ TB_TEST_GROUP(tb_parser) {
   // FIX: Not supported yet
   //	TB_TEST(arrays_strings)
   //	{
-  //		TBNode *arr_n = node.GetNode("arrays>strings");
+  //		Node *arr_n = node.GetNode("arrays>strings");
   //		TB_VERIFY(arr_n);
   //		TB_VERIFY(arr_n->GetValue().GetArrayLength() == 5);
   //		TBValueArray *arr = arr_n->GetValue().GetArray();
@@ -165,7 +165,7 @@ TB_TEST_GROUP(tb_parser) {
   //
   //	TB_TEST(arrays_mixed)
   //	{
-  //		TBNode *arr_n = node.GetNode("arrays>mixed");
+  //		Node *arr_n = node.GetNode("arrays>mixed");
   //		TB_VERIFY(arr_n);
   //		TB_VERIFY(arr_n->GetValue().GetArrayLength() == 4);
   //		TBValueArray *arr = arr_n->GetValue().GetArray();

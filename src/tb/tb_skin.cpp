@@ -63,7 +63,7 @@ bool Skin::Load(const char* skin_file, const char* override_skin_file) {
 }
 
 bool Skin::LoadInternal(const char* skin_file) {
-  TBNode node;
+  Node node;
   if (!node.ReadFile(skin_file)) {
     return false;
   }
@@ -80,8 +80,7 @@ bool Skin::LoadInternal(const char* skin_file) {
     // closer to the screen DPI, all such dimensions will be scaled.
     int base_dpi = node.GetValueInt("description>base-dpi", 96);
     int supported_dpi = base_dpi;
-    if (TBNode* supported_dpi_node =
-            node.GetNode("description>supported-dpi")) {
+    if (Node* supported_dpi_node = node.GetNode("description>supported-dpi")) {
       assert(supported_dpi_node->GetValue().IsArray() ||
              supported_dpi_node->GetValue().GetInt() == base_dpi);
       if (TBValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
@@ -114,16 +113,16 @@ bool Skin::LoadInternal(const char* skin_file) {
 
   // Iterate through all elements nodes and add skin elements or patch already
   // existing elements.
-  TBNode* elements = node.GetNode("elements");
+  Node* elements = node.GetNode("elements");
   if (elements) {
-    TBNode* n = elements->GetFirstChild();
+    Node* n = elements->GetFirstChild();
     while (n) {
       // If we have a "clone" node, clone all children from that node
       // into this node.
-      while (TBNode* clone = n->GetNode("clone")) {
+      while (Node* clone = n->GetNode("clone")) {
         n->Remove(clone);
 
-        TBNode* clone_source = elements->GetNode(clone->GetValue().GetString());
+        Node* clone_source = elements->GetNode(clone->GetValue().GetString());
         if (clone_source) {
           n->CloneChildren(clone_source);
         }
@@ -490,7 +489,7 @@ void Skin::OnContextRestored() {
   ReloadBitmaps();
 }
 
-int Skin::GetPxFromNode(TBNode* node, int def_value) const {
+int Skin::GetPxFromNode(Node* node, int def_value) const {
   return node ? m_dim_conv.GetPxFromValue(&node->GetValue(), def_value)
               : def_value;
 }
@@ -569,7 +568,7 @@ bool SkinElement::HasState(SkinState state, SkinConditionContext& context) {
              state, context, SkinElementState::MatchRule::kOnlySpecificState);
 }
 
-void SkinElement::Load(TBNode* n, Skin* skin, const char* skin_path) {
+void SkinElement::Load(Node* n, Skin* skin, const char* skin_path) {
   if (const char* bitmap = n->GetValueString("bitmap", nullptr)) {
     bitmap_file.clear();
     bitmap_file.append(skin_path);
@@ -586,7 +585,7 @@ void SkinElement::Load(TBNode* n, Skin* skin, const char* skin_path) {
 
   const DimensionConverter* dim_conv = skin->GetDimensionConverter();
 
-  if (TBNode* padding_node = n->GetNode("padding")) {
+  if (Node* padding_node = n->GetNode("padding")) {
     TBValue& val = padding_node->GetValue();
     if (val.GetArrayLength() == 4) {
       padding_top = dim_conv->GetPxFromValue(val.GetArray()->GetValue(0), 0);
@@ -717,11 +716,11 @@ SkinElementState* SkinElementStateList::GetStateElementExactMatch(
   return nullptr;
 }
 
-void SkinElementStateList::Load(TBNode* n) {
+void SkinElementStateList::Load(Node* n) {
   if (!n) return;
 
   // For each node, create a new state element.
-  TBNode* element_node = n->GetFirstChild();
+  Node* element_node = n->GetFirstChild();
   while (element_node) {
     SkinElementState* state = new SkinElementState;
     if (!state) return;
@@ -731,7 +730,7 @@ void SkinElementStateList::Load(TBNode* n) {
     state->element_id.Set(element_node->GetValue().GetString());
 
     // Loop through all nodes, read state and create all found conditions.
-    for (TBNode* condition_node = element_node->GetFirstChild(); condition_node;
+    for (Node* condition_node = element_node->GetFirstChild(); condition_node;
          condition_node = condition_node->GetNext()) {
       if (strcmp(condition_node->GetName(), "state") == 0) {
         state->state = StringToState(condition_node->GetValue().GetString());
@@ -747,7 +746,7 @@ void SkinElementStateList::Load(TBNode* n) {
         }
 
         TBID value;
-        if (TBNode* value_n = condition_node->GetNode("value")) {
+        if (Node* value_n = condition_node->GetNode("value")) {
           // Set the it to number or string. If it's a state, we must first
           // convert the state string to the SkinState state combo.
           if (prop == SkinProperty::kState) {
