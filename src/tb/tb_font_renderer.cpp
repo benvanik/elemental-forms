@@ -311,7 +311,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
 // std::string info;
 // info.SetFormatted("Created glyph %d (\"%s\"). Cache contains %d glyphs (%d%%
 // full) using %d bitmaps.\n", cp, glyph_str, m_all_glyphs.CountLinks(),
-// m_frag_manager.GetUseRatio(), m_frag_manager.GetNumMaps());
+// m_frag_manager.GetUseRatio(), m_frag_manager.map_count());
 // TBDebugOut(info);
 #endif  // TB_RUNTIME_DEBUG_INFO
 }

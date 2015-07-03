@@ -168,7 +168,7 @@ bool Skin::ReloadBitmaps() {
   }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  TBDebugOut("Skin loaded using %d bitmaps.\n", m_frag_manager.GetNumMaps());
+  TBDebugOut("Skin loaded using %dll bitmaps.\n", m_frag_manager.map_count());
 #endif  // TB_RUNTIME_DEBUG_INFO
   return success;
 }

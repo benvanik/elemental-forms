@@ -10,10 +10,12 @@
 #ifndef TB_BITMAP_FRAGMENT_H
 #define TB_BITMAP_FRAGMENT_H
 
+#include <memory>
+#include <vector>
+
 #include "tb_core.h"
 #include "tb_id.h"
 #include "tb_linklist.h"
-#include "tb_list.h"
 
 #include "tb/rect.h"
 #include "tb/util/hash_table.h"
@@ -128,7 +130,7 @@ class BitmapFragmentMap {
   void CopyData(BitmapFragment* frag, int data_stride, uint32_t* frag_data,
                 int border);
 
-  TBListAutoDeleteOf<BitmapFragmentSpaceAllocator> m_rows;
+  std::vector<std::unique_ptr<BitmapFragmentSpaceAllocator>> m_rows;
   int m_bitmap_w = 0;
   int m_bitmap_h = 0;
   uint32_t* m_bitmap_data = nullptr;
@@ -223,7 +225,7 @@ class BitmapFragmentManager {
   void DeleteBitmaps();
 
   // Gets number of fragment maps that is currently used.
-  int GetNumMaps() const { return m_fragment_maps.GetNumItems(); }
+  size_t map_count() const { return m_fragment_maps.size(); }
 
   // Sets the number of maps (Bitmaps) this manager should be allowed to
   // create.
@@ -244,7 +246,7 @@ class BitmapFragmentManager {
 #endif  // TB_RUNTIME_DEBUG_INFO
 
  private:
-  TBListOf<BitmapFragmentMap> m_fragment_maps;
+  std::vector<std::unique_ptr<BitmapFragmentMap>> m_fragment_maps;
   util::HashTableOf<BitmapFragment> m_fragments;
   int m_num_maps_limit = 0;
   bool m_add_border = false;

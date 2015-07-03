@@ -204,17 +204,17 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   // const int granularity = 8;
   // needed_w = (needed_w + granularity - 1) / granularity * granularity;
   // needed_h = (needed_h + granularity - 1) / granularity * granularity;
-  if (!m_rows.GetNumItems()) {
+  if (m_rows.empty()) {
     // Create a row covering the entire bitmap.
-    m_rows.GrowIfNeeded();
-    auto row = new BitmapFragmentSpaceAllocator(0, m_bitmap_w, m_bitmap_h);
-    m_rows.Add(row);
+    auto row = std::make_unique<BitmapFragmentSpaceAllocator>(0, m_bitmap_w,
+                                                              m_bitmap_h);
+    m_rows.push_back(std::move(row));
   }
   // Get the smallest row where we fit.
   int best_row_index = -1;
   BitmapFragmentSpaceAllocator* best_row = nullptr;
-  for (int i = 0; i < m_rows.GetNumItems(); i++) {
-    BitmapFragmentSpaceAllocator* row = m_rows[i];
+  for (int i = 0; i < m_rows.size(); i++) {
+    auto row = m_rows[i].get();
     if (!best_row || row->height < best_row->height) {
       // This is the best row so far, if we fit.
       if (needed_h <= row->height && row->HasSpace(needed_w)) {
@@ -233,11 +233,10 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   // If the row is unused, create a smaller row to only consume needed height
   // for fragment.
   if (best_row->IsAllAvailable() && needed_h < best_row->height) {
-    m_rows.GrowIfNeeded();
-    auto row = new BitmapFragmentSpaceAllocator(
+    auto row = std::make_unique<BitmapFragmentSpaceAllocator>(
         best_row->y + needed_h, m_bitmap_w, best_row->height - needed_h);
     // Keep the rows sorted from top to bottom.
-    m_rows.Add(row, best_row_index + 1);
+    m_rows.insert(m_rows.begin() + best_row_index + 1, std::move(row));
     best_row->height = needed_h;
   }
   // Allocate the fragment and copy the fragment data into the map data.
@@ -282,14 +281,14 @@ void BitmapFragmentMap::FreeFragmentSpace(BitmapFragment* frag) {
   // If the row is now empty, merge empty rows so larger fragments
   // have a chance of allocating the space.
   if (frag->m_row->IsAllAvailable()) {
-    for (int i = 0; i < m_rows.GetNumItems() - 1; i++) {
+    for (size_t i = 0; i < m_rows.size() - 1; i++) {
       assert(i >= 0);
-      assert(i < m_rows.GetNumItems() - 1);
-      BitmapFragmentSpaceAllocator* row = m_rows.Get(i);
-      BitmapFragmentSpaceAllocator* next_row = m_rows.Get(i + 1);
+      assert(i < m_rows.size() - 1);
+      BitmapFragmentSpaceAllocator* row = m_rows[i].get();
+      BitmapFragmentSpaceAllocator* next_row = m_rows[i].get();
       if (row->IsAllAvailable() && next_row->IsAllAvailable()) {
         row->height += next_row->height;
-        m_rows.Delete(i + 1);
+        m_rows.erase(m_rows.begin() + i + 1);
         i--;
       }
     }
@@ -398,9 +397,9 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
   // order would be faster since it's most likely to succeed, but we want to
   // maximize the amount of fragments per map, so do it in the creation order.
   if (!dedicated_map) {
-    for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
-      if ((frag = m_fragment_maps[i]->CreateNewFragment(
-               data_w, data_h, data_stride, data, m_add_border))) {
+    for (auto& fragment_map : m_fragment_maps) {
+      if ((frag = fragment_map->CreateNewFragment(data_w, data_h, data_stride,
+                                                  data, m_add_border))) {
         break;
       }
     }
@@ -408,22 +407,19 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
   // If we couldn't create the fragment in any map, create a new map where we
   // know it will fit.
   bool allow_another_map =
-      m_num_maps_limit == 0 || m_fragment_maps.GetNumItems() < m_num_maps_limit;
+      m_num_maps_limit == 0 || m_fragment_maps.size() < m_num_maps_limit;
   if (!frag && allow_another_map) {
-    m_fragment_maps.GrowIfNeeded();
     int po2w = GetNearestPowerOfTwo(std::max(data_w, m_default_map_w));
     int po2h = GetNearestPowerOfTwo(std::max(data_h, m_default_map_h));
     if (dedicated_map) {
       po2w = GetNearestPowerOfTwo(data_w);
       po2h = GetNearestPowerOfTwo(data_h);
     }
-    BitmapFragmentMap* fm = new BitmapFragmentMap();
+    auto fm = std::make_unique<BitmapFragmentMap>();
     if (fm->Init(po2w, po2h)) {
-      m_fragment_maps.Add(fm);
       frag = fm->CreateNewFragment(data_w, data_h, data_stride, data,
                                    m_add_border);
-    } else {
-      delete fm;
+      m_fragment_maps.push_back(std::move(fm));
     }
   }
   // Finally, add the new fragment to the hash.
@@ -445,7 +441,13 @@ void BitmapFragmentManager::FreeFragment(BitmapFragment* frag) {
 
     // If the map is now empty, delete it.
     if (map->m_allocated_pixels == 0) {
-      m_fragment_maps.Delete(m_fragment_maps.Find(map));
+      for (auto it = m_fragment_maps.begin(); it != m_fragment_maps.end();
+           ++it) {
+        if (it->get() == map) {
+          m_fragment_maps.erase(it);
+          break;
+        }
+      }
     }
   }
 }
@@ -455,14 +457,14 @@ BitmapFragment* BitmapFragmentManager::GetFragment(const TBID& id) const {
 }
 
 void BitmapFragmentManager::Clear() {
-  m_fragment_maps.DeleteAll();
+  m_fragment_maps.clear();
   m_fragments.DeleteAll();
 }
 
 bool BitmapFragmentManager::ValidateBitmaps() {
   bool success = true;
-  for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
-    if (!m_fragment_maps[i]->ValidateBitmap()) {
+  for (auto& it : m_fragment_maps) {
+    if (!it->ValidateBitmap()) {
       success = false;
     }
   }
@@ -470,8 +472,8 @@ bool BitmapFragmentManager::ValidateBitmaps() {
 }
 
 void BitmapFragmentManager::DeleteBitmaps() {
-  for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
-    m_fragment_maps[i]->DeleteBitmap();
+  for (auto& it : m_fragment_maps) {
+    it->DeleteBitmap();
   }
 }
 
@@ -489,9 +491,9 @@ void BitmapFragmentManager::SetDefaultMapSize(int w, int h) {
 int BitmapFragmentManager::GetUseRatio() const {
   int used = 0;
   int total = 0;
-  for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
-    used += m_fragment_maps[i]->m_allocated_pixels;
-    total += m_fragment_maps[i]->m_bitmap_w * m_fragment_maps[i]->m_bitmap_h;
+  for (auto& fragment_map : m_fragment_maps) {
+    used += fragment_map->m_allocated_pixels;
+    total += fragment_map->m_bitmap_w * fragment_map->m_bitmap_h;
   }
   return total ? (used * 100) / total : 0;
 }
@@ -499,14 +501,14 @@ int BitmapFragmentManager::GetUseRatio() const {
 #ifdef TB_RUNTIME_DEBUG_INFO
 void BitmapFragmentManager::Debug() {
   int x = 0;
-  for (int i = 0; i < m_fragment_maps.GetNumItems(); i++) {
-    BitmapFragmentMap* fm = m_fragment_maps[i];
-    if (Bitmap* bitmap = fm->GetBitmap()) {
-      g_renderer->DrawBitmap(Rect(x, 0, fm->m_bitmap_w, fm->m_bitmap_h),
-                             Rect(0, 0, fm->m_bitmap_w, fm->m_bitmap_h),
-                             bitmap);
+  for (auto& fragment_map : m_fragment_maps) {
+    if (Bitmap* bitmap = fragment_map->GetBitmap()) {
+      g_renderer->DrawBitmap(
+          Rect(x, 0, fragment_map->m_bitmap_w, fragment_map->m_bitmap_h),
+          Rect(0, 0, fragment_map->m_bitmap_w, fragment_map->m_bitmap_h),
+          bitmap);
     }
-    x += fm->m_bitmap_w + 5;
+    x += fragment_map->m_bitmap_w + 5;
   }
 }
 #endif  // TB_RUNTIME_DEBUG_INFO
