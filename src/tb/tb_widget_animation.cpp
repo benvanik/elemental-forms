@@ -9,7 +9,6 @@
 
 #include "tb_widget_animation.h"
 
-#include "tb_list.h"
 #include "tb_message_window.h"
 #include "tb_window.h"
 #include "tb_widgets.h"

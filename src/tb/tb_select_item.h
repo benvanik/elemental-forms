@@ -10,8 +10,10 @@
 #ifndef TB_SELECT_ITEM_H
 #define TB_SELECT_ITEM_H
 
+#include <memory>
+#include <vector>
+
 #include "tb_linklist.h"
-#include "tb_list.h"
 #include "tb_id.h"
 #include "tb_value.h"
 
@@ -44,13 +46,13 @@ class SelectItemObserver : public TBLinkOf<SelectItemObserver> {
 
   // Called when the item at the given index has changed in a way that should
   // update the observer.
-  virtual void OnItemChanged(int index) = 0;
+  virtual void OnItemChanged(size_t index) = 0;
 
   // Called when the item at the given index has been added.
-  virtual void OnItemAdded(int index) = 0;
+  virtual void OnItemAdded(size_t index) = 0;
 
   // Called when the item at the given index has been removed.
-  virtual void OnItemRemoved(int index) = 0;
+  virtual void OnItemRemoved(size_t index) = 0;
 
   // Called when all items have been removed.
   virtual void OnAllItemsRemoved() = 0;
@@ -78,40 +80,41 @@ class SelectItemSource {
 
   // Returns true if a item matches the given filter text.
   // By default, it returns true if GetItemString contains filter.
-  virtual bool Filter(int index, const std::string& filter);
+  virtual bool Filter(size_t index, const std::string& filter);
 
   // Gets the string of a item.
   // If a item has more than one string, return the one that should be used for
   // inline-find (pressing keys in the list will scroll to the item starting
   // with the same letters), and for sorting the list.
-  virtual const char* GetItemString(int index) = 0;
+  virtual const char* GetItemString(size_t index) = 0;
 
   // Gets the source to be used if this item should open a sub menu.
-  virtual SelectItemSource* GetItemSubSource(int index) { return nullptr; }
+  virtual SelectItemSource* GetItemSubSource(size_t index) { return nullptr; }
 
   // Gets the skin image to be painted before the text for this item.
-  virtual TBID GetItemImage(int index) { return TBID(); }
+  virtual TBID GetItemImage(size_t index) { return TBID(); }
 
   // Get the ID of the item.
-  virtual TBID GetItemID(int index) { return TBID(); }
+  virtual TBID GetItemID(size_t index) { return TBID(); }
 
   // Creates the item representation element(s).
   // By default, it will create a Label for string-only items, and other
   // types for items that also has image or submenu.
-  virtual Element* CreateItemElement(int index, SelectItemObserver* observer);
+  virtual Element* CreateItemElement(size_t index,
+                                     SelectItemObserver* observer);
 
   // Gets the number of items.
-  virtual int GetNumItems() = 0;
+  virtual size_t GetNumItems() = 0;
 
   // Sets sort type. Default is Sort::kNone.
   void SetSort(Sort sort) { m_sort = sort; }
   Sort GetSort() const { return m_sort; }
 
   // Invokes OnItemChanged on all open observers for this source.
-  void InvokeItemChanged(int index,
+  void InvokeItemChanged(size_t index,
                          SelectItemObserver* exclude_observer = nullptr);
-  void InvokeItemAdded(int index);
-  void InvokeItemRemoved(int index);
+  void InvokeItemAdded(size_t index);
+  void InvokeItemRemoved(size_t index);
   void InvokeAllItemsRemoved();
 
  private:
@@ -127,19 +130,24 @@ class SelectItemSourceList : public SelectItemSource {
  public:
   SelectItemSourceList() = default;
   ~SelectItemSourceList() override { DeleteAllItems(); }
-  const char* GetItemString(int index) override {
+
+  const char* GetItemString(size_t index) override {
     return GetItem(index)->str.c_str();
   }
-  SelectItemSource* GetItemSubSource(int index) override {
+  SelectItemSource* GetItemSubSource(size_t index) override {
     return GetItem(index)->sub_source;
   }
-  TBID GetItemImage(int index) override { return GetItem(index)->skin_image; }
-  TBID GetItemID(int index) override { return GetItem(index)->id; }
-  int GetNumItems() override { return m_items.GetNumItems(); }
-  Element* CreateItemElement(int index, SelectItemObserver* observer) override {
+  TBID GetItemImage(size_t index) override {
+    return GetItem(index)->skin_image;
+  }
+  TBID GetItemID(size_t index) override { return GetItem(index)->id; }
+  size_t GetNumItems() override { return items_.size(); }
+
+  Element* CreateItemElement(size_t index,
+                             SelectItemObserver* observer) override {
     if (Element* element =
             SelectItemSource::CreateItemElement(index, observer)) {
-      T* item = m_items[index];
+      auto& item = items_[index];
       element->SetID(item->id);
       return element;
     }
@@ -147,33 +155,40 @@ class SelectItemSourceList : public SelectItemSource {
   }
 
   // Adds a new item at the given index.
-  void AddItem(T* item, int index) {
-    m_items.Add(item, index);
+  void InsertItem(size_t index, std::unique_ptr<T> item) {
+    items_.insert(index, std::move(item));
     InvokeItemAdded(index);
   }
 
   // Adds a new item list.
-  void AddItem(T* item) { AddItem(item, m_items.GetNumItems()); }
+  void AddItem(std::unique_ptr<T> item) {
+    items_.push_back(std::move(item));
+    InvokeItemAdded(items_.size() - 1);
+  }
 
   // Gets the item at the given index.
-  T* GetItem(int index) { return m_items[index]; }
+  T* GetItem(size_t index) { return items_[index].get(); }
 
   // Deletes the item at the given index.
-  void DeleteItem(int index) {
-    if (!m_items.GetNumItems()) return;
-    m_items.Delete(index);
+  void DeleteItem(size_t index) {
+    if (items_.empty()) {
+      return;
+    }
+    items_.erase(items_.begin() + index);
     InvokeItemRemoved(index);
   }
 
   // Deletes all items.
   void DeleteAllItems() {
-    if (!m_items.GetNumItems()) return;
-    m_items.DeleteAll();
+    if (items_.empty()) {
+      return;
+    }
+    items_.clear();
     InvokeAllItemsRemoved();
   }
 
  private:
-  TBListOf<T> m_items;
+  std::vector<std::unique_ptr<T>> items_;
 };
 
 // An item for GenericStringItemSource.

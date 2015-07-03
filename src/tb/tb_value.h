@@ -11,10 +11,11 @@
 #define TB_VALUE_H
 
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <vector>
 
 #include "tb_core.h"
-#include "tb_list.h"
 
 namespace tb {
 
@@ -46,12 +47,12 @@ class ValueArray {
   ~ValueArray();
 
   Value* AddValue();
-  Value* GetValue(int index);
+  Value* GetValue(size_t index);
   static ValueArray* Clone(ValueArray* source);
-  int GetLength() const { return m_list.GetNumItems(); }
+  size_t GetLength() const { return list_.size(); }
 
  private:
-  TBListAutoDeleteOf<Value> m_list;
+  std::vector<std::unique_ptr<Value>> list_;
 };
 
 // Value holds value of a specific type.
@@ -135,7 +136,7 @@ class Value {
   bool IsInt() const { return Type(m_packed.type) == Type::kInt; }
   bool IsObject() const { return Type(m_packed.type) == Type::kObject; }
   bool IsArray() const { return Type(m_packed.type) == Type::kArray; }
-  int GetArrayLength() const { return IsArray() ? val_arr->GetLength() : 0; }
+  size_t GetArrayLength() const { return IsArray() ? val_arr->GetLength() : 0; }
 
   const Value& operator=(const Value& val) {
     Copy(val);

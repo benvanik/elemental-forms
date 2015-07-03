@@ -63,23 +63,22 @@ ValueArray::ValueArray() = default;
 ValueArray::~ValueArray() = default;
 
 Value* ValueArray::AddValue() {
-  Value* v = new Value();
-  m_list.Add(v);
-  return v;
+  list_.push_back(std::make_unique<Value>());
+  return list_.back().get();
 }
 
-Value* ValueArray::GetValue(int index) {
-  if (index >= 0 && index < m_list.GetNumItems()) {
-    return m_list[index];
+Value* ValueArray::GetValue(size_t index) {
+  if (index >= 0 && index < list_.size()) {
+    return list_[index].get();
   }
   return nullptr;
 }
 
 ValueArray* ValueArray::Clone(ValueArray* source) {
   ValueArray* new_arr = new ValueArray();
-  for (int i = 0; i < source->m_list.GetNumItems(); i++) {
+  for (auto& it : source->list_) {
     Value* new_val = new_arr->AddValue();
-    new_val->Copy(*source->GetValue(i));
+    new_val->Copy(*it.get());
   }
   return new_arr;
 }

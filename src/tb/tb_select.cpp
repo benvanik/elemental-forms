@@ -46,7 +46,7 @@ SelectList::~SelectList() {
 
 void SelectList::OnSourceChanged() { InvalidateList(); }
 
-void SelectList::OnItemChanged(int index) {
+void SelectList::OnItemChanged(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -70,7 +70,7 @@ void SelectList::OnItemChanged(int index) {
   delete old_element;
 }
 
-void SelectList::OnItemAdded(int index) {
+void SelectList::OnItemAdded(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -81,7 +81,7 @@ void SelectList::OnItemAdded(int index) {
   InvalidateList();
 }
 
-void SelectList::OnItemRemoved(int index) {
+void SelectList::OnItemRemoved(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -184,10 +184,10 @@ void SelectList::ValidateList() {
   m_scroll_to_current = true;
 }
 
-Element* SelectList::CreateAndAddItemAfter(int index, Element* reference) {
+Element* SelectList::CreateAndAddItemAfter(size_t index, Element* reference) {
   if (Element* element = m_source->CreateItemElement(index, this)) {
     // Use item data as element to index lookup.
-    element->data.SetInt(index);
+    element->data.SetInt(int(index));
     m_layout.GetContentRoot()->AddChildRelative(element, ElementZRel::kAfter,
                                                 reference);
     return element;
@@ -217,13 +217,13 @@ TBID SelectList::GetSelectedItemID() {
   return TBID();
 }
 
-void SelectList::SelectItem(int index, bool selected) {
+void SelectList::SelectItem(size_t index, bool selected) {
   if (Element* element = GetItemElement(index)) {
     element->SetState(SkinState::kSelected, selected);
   }
 }
 
-Element* SelectList::GetItemElement(int index) {
+Element* SelectList::GetItemElement(size_t index) {
   if (index == -1) return nullptr;
   for (Element* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
        tmp = tmp->GetNext()) {
@@ -263,8 +263,8 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
     // still around.
     WeakElementPointer this_element(this);
 
-    int index = ev.target->data.GetInt();
-    SetValue(index);
+    size_t index = ev.target->data.GetInt();
+    SetValue(int(index));
 
     // If we're still around, invoke the click event too.
     if (this_element.Get()) {
@@ -363,7 +363,7 @@ void SelectDropdown::OnSourceChanged() {
   }
 }
 
-void SelectDropdown::OnItemChanged(int index) {}
+void SelectDropdown::OnItemChanged(size_t index) {}
 
 void SelectDropdown::SetValue(int value) {
   if (value == m_value || !m_source) return;

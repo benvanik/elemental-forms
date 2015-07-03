@@ -137,7 +137,7 @@ SelectItemSource::~SelectItemSource() {
   assert(!m_observers.HasLinks());
 }
 
-bool SelectItemSource::Filter(int index, const std::string& filter) {
+bool SelectItemSource::Filter(size_t index, const std::string& filter) {
   const char* str = GetItemString(index);
   if (str && util::stristr(str, filter.c_str())) {
     return true;
@@ -145,7 +145,7 @@ bool SelectItemSource::Filter(int index, const std::string& filter) {
   return false;
 }
 
-Element* SelectItemSource::CreateItemElement(int index,
+Element* SelectItemSource::CreateItemElement(size_t index,
                                              SelectItemObserver* observer) {
   const char* string = GetItemString(index);
   SelectItemSource* sub_source = GetItemSubSource(index);
@@ -169,7 +169,7 @@ Element* SelectItemSource::CreateItemElement(int index,
   return nullptr;
 }
 
-void SelectItemSource::InvokeItemChanged(int index,
+void SelectItemSource::InvokeItemChanged(size_t index,
                                          SelectItemObserver* exclude_observer) {
   auto iter = m_observers.IterateForward();
   while (SelectItemObserver* observer = iter.GetAndStep()) {
@@ -179,14 +179,14 @@ void SelectItemSource::InvokeItemChanged(int index,
   }
 }
 
-void SelectItemSource::InvokeItemAdded(int index) {
+void SelectItemSource::InvokeItemAdded(size_t index) {
   auto iter = m_observers.IterateForward();
   while (SelectItemObserver* observer = iter.GetAndStep()) {
     observer->OnItemAdded(index);
   }
 }
 
-void SelectItemSource::InvokeItemRemoved(int index) {
+void SelectItemSource::InvokeItemRemoved(size_t index) {
   auto iter = m_observers.IterateForward();
   while (SelectItemObserver* observer = iter.GetAndStep()) {
     observer->OnItemRemoved(index);

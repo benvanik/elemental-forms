@@ -11,10 +11,11 @@
 #define TB_STYLE_EDIT_H
 
 #include <algorithm>
+#include <memory>
+#include <vector>
 
 #include "tb_core.h"
 #include "tb_linklist.h"
-#include "tb_list.h"
 #include "tb_widgets_common.h"
 
 namespace tb {
@@ -260,7 +261,7 @@ class UndoEvent {
 class UndoRedoStack {
  public:
   UndoRedoStack() = default;
-  ~UndoRedoStack();
+  ~UndoRedoStack() = default;
 
   void Undo(StyleEdit* style_edit);
   void Redo(StyleEdit* style_edit);
@@ -270,8 +271,8 @@ class UndoRedoStack {
                     const char* text, bool insert);
 
  public:
-  TBListOf<UndoEvent> undos;
-  TBListOf<UndoEvent> redos;
+  std::vector<std::unique_ptr<UndoEvent>> undos;
+  std::vector<std::unique_ptr<UndoEvent>> redos;
   bool applying = false;
 
  private:
@@ -384,8 +385,8 @@ class StyleEdit {
 
   void Undo();
   void Redo();
-  bool CanUndo() const { return undoredo.undos.GetNumItems() ? true : false; }
-  bool CanRedo() const { return undoredo.redos.GetNumItems() ? true : false; }
+  bool CanUndo() const { return !undoredo.undos.empty(); }
+  bool CanRedo() const { return !undoredo.redos.empty(); }
 
   void InsertText(const char* text, size_t len = std::string::npos,
                   bool after_last = false, bool clear_undo_redo = false);

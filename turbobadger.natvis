@@ -18,10 +18,6 @@
 	<Type Name="tb::ValueArray">
 		<DisplayString>{m_list}</DisplayString>
 	</Type>
-	<Type Name="tb::TBListBackend">
-		<DisplayString Condition="m_data != 0">length = {m_data->num}</DisplayString>
-		<DisplayString>length = 0</DisplayString>
-	</Type>
 	<Type Name="tb::ElementEvent">
 		<DisplayString>type={type}</DisplayString>
 	</Type>

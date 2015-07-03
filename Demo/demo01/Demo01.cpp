@@ -163,29 +163,29 @@ class EditWindow : public DemoWindow {
       } else if (ev.target->GetID() == TBIDC("menu")) {
         static GenericStringItemSource source;
         if (!source.GetNumItems()) {
-          source.AddItem(
-              new GenericStringItem("Default font", TBIDC("default font")));
-          source.AddItem(new GenericStringItem("Default font (larger)",
-                                               TBIDC("large font")));
-          source.AddItem(
-              new GenericStringItem("RGB font (Neon)", TBIDC("rgb font Neon")));
-          source.AddItem(new GenericStringItem("RGB font (Orangutang)",
-                                               TBIDC("rgb font Orangutang")));
-          source.AddItem(new GenericStringItem("RGB font (Orange)",
-                                               TBIDC("rgb font Orange")));
-          source.AddItem(new GenericStringItem("-"));
-          source.AddItem(new GenericStringItem("Glyph cache stresstest (CJK)",
-                                               TBIDC("CJK")));
-          source.AddItem(new GenericStringItem("-"));
-          source.AddItem(new GenericStringItem("Toggle wrapping",
-                                               TBIDC("toggle wrapping")));
-          source.AddItem(new GenericStringItem("-"));
-          source.AddItem(
-              new GenericStringItem("Align left", TBIDC("align left")));
-          source.AddItem(
-              new GenericStringItem("Align center", TBIDC("align center")));
-          source.AddItem(
-              new GenericStringItem("Align right", TBIDC("align right")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Default font", TBIDC("default font")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Default font (larger)", TBIDC("large font")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "RGB font (Neon)", TBIDC("rgb font Neon")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "RGB font (Orangutang)", TBIDC("rgb font Orangutang")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "RGB font (Orange)", TBIDC("rgb font Orange")));
+          source.AddItem(std::make_unique<GenericStringItem>("-"));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Glyph cache stresstest (CJK)", TBIDC("CJK")));
+          source.AddItem(std::make_unique<GenericStringItem>("-"));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Toggle wrapping", TBIDC("toggle wrapping")));
+          source.AddItem(std::make_unique<GenericStringItem>("-"));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Align left", TBIDC("align left")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Align center", TBIDC("align center")));
+          source.AddItem(std::make_unique<GenericStringItem>(
+              "Align right", TBIDC("align right")));
         }
 
         if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popup_menu")))
@@ -682,29 +682,31 @@ bool DemoApplication::Init() {
   // for elements that occur many times in a UI, always with the same items.
   // Here we prepare the name source, that is used in a few places.
   for (int i = 0; boy_names[i]; i++)
-    advanced_source.AddItem(
-        new AdvancedItem(boy_names[i++], TBIDC("boy_item"), true));
+    advanced_source.AddItem(std::make_unique<AdvancedItem>(
+        boy_names[i++], TBIDC("boy_item"), true));
   for (int i = 0; girl_names[i]; i++)
-    advanced_source.AddItem(
-        new AdvancedItem(girl_names[i++], TBIDC("girl_item"), false));
+    advanced_source.AddItem(std::make_unique<AdvancedItem>(
+        girl_names[i++], TBIDC("girl_item"), false));
   for (int i = 0; girl_names[i]; i++)
-    name_source.AddItem(
-        new GenericStringItem(girl_names[i++], TBIDC("girl_item")));
+    name_source.AddItem(std::make_unique<GenericStringItem>(
+        girl_names[i++], TBIDC("girl_item")));
   for (int i = 0; boy_names[i]; i++)
     name_source.AddItem(
-        new GenericStringItem(boy_names[i++], TBIDC("boy_item")));
+        std::make_unique<GenericStringItem>(boy_names[i++], TBIDC("boy_item")));
   advanced_source.SetSort(Sort::kAscending);
   name_source.SetSort(Sort::kAscending);
 
   // Prepare a source with submenus (with eternal recursion) so we can test sub
   // menu support.
-  popup_menu_source.AddItem(new GenericStringItem("Option 1", TBIDC("opt 1")));
-  popup_menu_source.AddItem(new GenericStringItem("Option 2", TBIDC("opt 2")));
-  popup_menu_source.AddItem(new GenericStringItem("-"));
   popup_menu_source.AddItem(
-      new GenericStringItem("Same submenu", &popup_menu_source));
+      std::make_unique<GenericStringItem>("Option 1", TBIDC("opt 1")));
   popup_menu_source.AddItem(
-      new GenericStringItem("Long submenu", &name_source));
+      std::make_unique<GenericStringItem>("Option 2", TBIDC("opt 2")));
+  popup_menu_source.AddItem(std::make_unique<GenericStringItem>("-"));
+  popup_menu_source.AddItem(
+      std::make_unique<GenericStringItem>("Same submenu", &popup_menu_source));
+  popup_menu_source.AddItem(
+      std::make_unique<GenericStringItem>("Long submenu", &name_source));
   // Give the first item a skin image
   popup_menu_source.GetItem(0)->SetSkinImage(TBIDC("Icon16"));
 

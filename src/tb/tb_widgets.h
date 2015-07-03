@@ -11,6 +11,8 @@
 #define TB_WIDGETS_H
 
 #include <algorithm>
+#include <string>
+#include <vector>
 
 #include "tb_core.h"
 #include "tb_font_desc.h"
@@ -187,7 +189,7 @@ class ElementEventFileDrop : public ElementEvent {
  public:
   TBOBJECT_SUBCLASS(ElementEventFileDrop, ElementEvent);
 
-  TBListAutoDeleteOf<std::string> files;
+  std::vector<std::string> files;
 
   ElementEventFileDrop() : ElementEvent(EventType::kFileDrop) {}
 };

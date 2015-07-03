@@ -109,8 +109,8 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
       classname = "<Unknown element type>";
     }
     auto str = tb::util::format_string("% *s%s", depth - 1, "", classname);
-    ResourceItem* item = new ResourceItem(element, str.c_str());
-    m_element_list_source.AddItem(item);
+    auto item = std::make_unique<ResourceItem>(element, str.c_str());
+    m_element_list_source.AddItem(std::move(item));
   }
 
   for (Element* child = element->GetFirstChild(); child;
@@ -220,9 +220,8 @@ void ResourceEditWindow::OnElementRemove(Element* parent, Element* child) {
 
 bool ResourceEditWindow::OnDropFileEvent(const ElementEvent& ev) {
   const ElementEventFileDrop* fd_event = TBSafeCast<ElementEventFileDrop>(&ev);
-  if (fd_event->files.GetNumItems() > 0) {
-    auto data = *fd_event->files.Get(0);
-    Load(data.c_str());
+  if (fd_event->files.size() > 0) {
+    Load(fd_event->files[0].c_str());
   }
   return true;
 }

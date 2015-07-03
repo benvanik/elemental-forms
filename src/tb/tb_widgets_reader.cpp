@@ -329,8 +329,8 @@ void ReadItems(Node* node, GenericStringItemSource* target_source) {
         ElementReader::SetIDFromNode(item_id, n_id);
       }
 
-      auto item = new GenericStringItem(item_str, item_id);
-      target_source->AddItem(item);
+      auto item = std::make_unique<GenericStringItem>(item_str, item_id);
+      target_source->AddItem(std::move(item));
     }
   }
 }

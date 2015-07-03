@@ -74,8 +74,8 @@ class SelectList : public Element, public SelectItemObserver {
 
   // Sets the selected state of the item at the given index. If you want to
   // unselect the previously selected item, use SetValue.
-  void SelectItem(int index, bool selected);
-  Element* GetItemElement(int index);
+  void SelectItem(size_t index, bool selected);
+  Element* GetItemElement(size_t index);
 
   // Scrolls to the current selected item. The scroll may be delayed until
   // the items has been layouted if the layout is currently invalid.
@@ -91,9 +91,9 @@ class SelectList : public Element, public SelectItemObserver {
   bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;
-  void OnItemChanged(int index) override;
-  void OnItemAdded(int index) override;
-  void OnItemRemoved(int index) override;
+  void OnItemChanged(size_t index) override;
+  void OnItemAdded(size_t index) override;
+  void OnItemRemoved(size_t index) override;
   void OnAllItemsRemoved() override;
 
  protected:
@@ -107,7 +107,7 @@ class SelectList : public Element, public SelectItemObserver {
   TBID m_header_lng_string_id;
 
  private:
-  Element* CreateAndAddItemAfter(int index, Element* reference);
+  Element* CreateAndAddItemAfter(size_t index, Element* reference);
 };
 
 // Shows a button that opens a popup with a SelectList with items provided by a
@@ -148,9 +148,9 @@ class SelectDropdown : public Button, public SelectItemObserver {
   bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;
-  void OnItemChanged(int index) override;
-  void OnItemAdded(int index) override {}
-  void OnItemRemoved(int index) override {}
+  void OnItemChanged(size_t index) override;
+  void OnItemAdded(size_t index) override {}
+  void OnItemRemoved(size_t index) override {}
   void OnAllItemsRemoved() override {}
 
  protected:

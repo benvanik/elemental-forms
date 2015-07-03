@@ -250,16 +250,16 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
 
     MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
-    source->AddItem(
-        new GenericStringItem(g_tb_lng->GetString(TBIDC("cut")), TBIDC("cut")));
-    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("copy")),
-                                          TBIDC("copy")));
-    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("paste")),
-                                          TBIDC("paste")));
-    source->AddItem(new GenericStringItem(g_tb_lng->GetString(TBIDC("delete")),
-                                          TBIDC("delete")));
-    source->AddItem(new GenericStringItem("-"));
-    source->AddItem(new GenericStringItem(
+    source->AddItem(std::make_unique<GenericStringItem>(
+        g_tb_lng->GetString(TBIDC("cut")), TBIDC("cut")));
+    source->AddItem(std::make_unique<GenericStringItem>(
+        g_tb_lng->GetString(TBIDC("copy")), TBIDC("copy")));
+    source->AddItem(std::make_unique<GenericStringItem>(
+        g_tb_lng->GetString(TBIDC("paste")), TBIDC("paste")));
+    source->AddItem(std::make_unique<GenericStringItem>(
+        g_tb_lng->GetString(TBIDC("delete")), TBIDC("delete")));
+    source->AddItem(std::make_unique<GenericStringItem>("-"));
+    source->AddItem(std::make_unique<GenericStringItem>(
         g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
     menu->Show(source, PopupAlignment(pos_in_root), -1);
     return true;

@@ -1862,20 +1862,22 @@ void StyleEdit::SetWrapping(bool wrapping) {
   Reformat(false);
 }
 
-UndoRedoStack::~UndoRedoStack() { Clear(true, true); }
-
 void UndoRedoStack::Undo(StyleEdit* style_edit) {
-  if (!undos.GetNumItems()) return;
-  UndoEvent* e = undos.Remove(undos.GetNumItems() - 1);
-  redos.Add(e);
-  Apply(style_edit, e, true);
+  if (undos.empty()) return;
+  auto e = std::move(undos.back());
+  undos.pop_back();
+  auto e_ptr = e.get();
+  redos.push_back(std::move(e));
+  Apply(style_edit, e_ptr, true);
 }
 
 void UndoRedoStack::Redo(StyleEdit* style_edit) {
-  if (!redos.GetNumItems()) return;
-  UndoEvent* e = redos.Remove(redos.GetNumItems() - 1);
-  undos.Add(e);
-  Apply(style_edit, e, false);
+  if (redos.empty()) return;
+  auto e = std::move(redos.back());
+  redos.pop_back();
+  auto e_ptr = e.get();
+  undos.push_back(std::move(e));
+  Apply(style_edit, e_ptr, false);
 }
 
 void UndoRedoStack::Apply(StyleEdit* style_edit, UndoEvent* e, bool reverse) {
@@ -1908,8 +1910,12 @@ void UndoRedoStack::Apply(StyleEdit* style_edit, UndoEvent* e, bool reverse) {
 
 void UndoRedoStack::Clear(bool clear_undo, bool clear_redo) {
   assert(!applying);
-  if (clear_undo) undos.DeleteAll();
-  if (clear_redo) redos.DeleteAll();
+  if (clear_undo) {
+    undos.clear();
+  }
+  if (clear_redo) {
+    redos.clear();
+  }
 }
 
 UndoEvent* UndoRedoStack::Commit(StyleEdit* style_edit, size_t gofs, size_t len,
@@ -1921,9 +1927,9 @@ UndoEvent* UndoRedoStack::Commit(StyleEdit* style_edit, size_t gofs, size_t len,
 
   // If we're inserting a single character, check if we want to append it to the
   // previous event.
-  if (insert && undos.GetNumItems()) {
+  if (insert && !undos.empty()) {
     size_t num_char = utf8::count_characters(text, len);
-    UndoEvent* e = undos[undos.GetNumItems() - 1];
+    auto e = undos.back().get();
     if (num_char == 1 && e->insert && e->gofs + e->text.size() == gofs) {
       // Appending a space to other space(s) should append.
       if ((text[0] == ' ' && !strpbrk(e->text.c_str(), "\r\n")) ||
@@ -1936,12 +1942,12 @@ UndoEvent* UndoRedoStack::Commit(StyleEdit* style_edit, size_t gofs, size_t len,
   }
 
   // Create a new event.
-  UndoEvent* e = new UndoEvent();
+  auto e = std::make_unique<UndoEvent>();
   e->gofs = gofs;
   e->text.assign(text, len);
   e->insert = insert;
-  undos.Add(e);
-  return e;
+  undos.push_back(std::move(e));
+  return undos.back().get();
 }
 
 }  // namespace tb
