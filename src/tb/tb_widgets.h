@@ -14,7 +14,7 @@
 
 #include "tb_core.h"
 #include "tb_font_desc.h"
-#include "tb_geometry.h"
+#include "tb/rect.h"
 #include "tb_linklist.h"
 #include "tb_object.h"
 #include "tb_skin.h"

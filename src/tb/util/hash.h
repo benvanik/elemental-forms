@@ -2,19 +2,20 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#ifndef TB_HASH_H
-#define TB_HASH_H
+#ifndef TB_UTIL_HASH_H_
+#define TB_UTIL_HASH_H_
 
 #include <cstdint>
 
 #include "tb_types.h"
 
 namespace tb {
+namespace util {
 
 // On C++ compilers that support it, use const expr for hash so that
 // TBID comparisions turn into simple uint32_t comparisions compiletime.
@@ -27,7 +28,7 @@ namespace tb {
 #if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
 #define TB_SUPPORT_CONSTEXPR
 #endif
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 
 #ifdef TB_SUPPORT_CONSTEXPR
 
@@ -42,18 +43,18 @@ constexpr uint32_t TBGetHash_one(char c, const char* remain, uint32_t value) {
 }
 
 // compile-time hash
-constexpr uint32_t TBGetHash(const char* str) {
+constexpr uint32_t hash(const char* str) {
   return (str && *str) ? TBGetHash_one(str[0], str + 1, basis) : 0;
 }
 
-#define TBIDC(str) TBGetHash(str)
+#define TBIDC(str) tb::util::hash(str)
 
 #else  // TB_SUPPORT_CONSTEXPR
 
 #define TBIDC(str) tb::TBID(str)
 
-/** Get hash value from string */
-inline uint32_t TBGetHash(const char* str) {
+// Gets a hash value from string.
+inline uint32_t hash(const char* str) {
   if (!str || !*str) return 0;
   // FNV hash
   uint32_t hash = 2166136261U;
@@ -67,6 +68,7 @@ inline uint32_t TBGetHash(const char* str) {
 
 #endif  // !TB_SUPPORT_CONSTEXPR
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_HASH_H
+#endif  // TB_UTIL_HASH_H_

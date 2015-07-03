@@ -13,10 +13,11 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_core.h"
 #include "tb_dimension.h"
-#include "tb_hashtable.h"
 #include "tb_linklist.h"
 #include "tb_renderer.h"
 #include "tb_value.h"
+
+#include "tb/util/hash_table.h"
 
 namespace tb {
 
@@ -459,7 +460,7 @@ class Skin : private RendererListener {
   int GetPxFromNode(Node* node, int def_value) const;
 
   SkinListener* m_listener = nullptr;
-  TBHashTableAutoDeleteOf<SkinElement> m_elements;
+  util::HashTableAutoDeleteOf<SkinElement> m_elements;
   BitmapFragmentManager m_frag_manager;
   DimensionConverter m_dim_conv;
   Color m_default_text_color;

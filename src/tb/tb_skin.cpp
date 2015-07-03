@@ -150,7 +150,7 @@ bool Skin::LoadInternal(const char* skin_file) {
 
 void Skin::UnloadBitmaps() {
   // Unset all bitmap pointers.
-  TBHashTableIteratorOf<SkinElement> it(&m_elements);
+  util::HashTableIteratorOf<SkinElement> it(&m_elements);
   while (SkinElement* element = it.GetNextContent()) {
     element->bitmap = nullptr;
   }
@@ -168,8 +168,7 @@ bool Skin::ReloadBitmaps() {
   }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  TBDebugOut(tb::format_string("Skin loaded using %d bitmaps.\n",
-                               m_frag_manager.GetNumMaps()));
+  TBDebugOut("Skin loaded using %d bitmaps.\n", m_frag_manager.GetNumMaps());
 #endif  // TB_RUNTIME_DEBUG_INFO
   return success;
 }
@@ -178,7 +177,7 @@ bool Skin::ReloadBitmapsInternal() {
   // Load all bitmap files into new bitmap fragments.
   StringBuilder filename_dst_DPI;
   bool success = true;
-  TBHashTableIteratorOf<SkinElement> it(&m_elements);
+  util::HashTableIteratorOf<SkinElement> it(&m_elements);
   while (SkinElement* element = it.GetNextContent()) {
     if (!element->bitmap_file.empty()) {
       assert(!element->bitmap);

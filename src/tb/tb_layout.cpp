@@ -117,7 +117,8 @@ PreferredSize GetRotatedPreferredSize(const PreferredSize& ps, Axis axis) {
   return psr;
 }
 
-SizeConstraints GetRotatedSizeConstraints(const SizeConstraints& sc, Axis axis) {
+SizeConstraints GetRotatedSizeConstraints(const SizeConstraints& sc,
+                                          Axis axis) {
   return axis == Axis::kX ? sc
                           : SizeConstraints(sc.available_h, sc.available_w);
 }

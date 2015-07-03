@@ -28,7 +28,7 @@ using namespace tb;
  * size */
 
 class FreetypeFace;
-static TBHashTableOf<FreetypeFace> ft_face_cache;
+static util::HashTableOf<FreetypeFace> ft_face_cache;
 
 class FreetypeFace {
  public:

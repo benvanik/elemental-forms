@@ -1,5 +1,7 @@
 #include "ListWindow.h"
 
+#include "tb/util/string.h"
+
 // == AdvancedItemElement ======================================================
 
 AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
@@ -45,7 +47,8 @@ bool AdvancedItemSource::Filter(int index, const char* filter) {
   if (SelectItemSource::Filter(index, filter)) return true;
 
   AdvancedItem* item = GetItem(index);
-  return stristr(item->GetMale() ? "Male" : "Female", filter) ? true : false;
+  return tb::util::stristr(item->GetMale() ? "Male" : "Female", filter) ? true
+                                                                        : false;
 }
 
 Element* AdvancedItemSource::CreateItemElement(int index,

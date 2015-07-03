@@ -29,7 +29,6 @@ freely, subject to the following restrictions:
 #define TB_CORE_H
 
 #include "tb_debug.h"
-#include "tb_hash.h"
 #include "tb_types.h"
 
 namespace tb {

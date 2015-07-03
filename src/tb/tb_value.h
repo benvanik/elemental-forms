@@ -11,10 +11,10 @@
 #define TB_VALUE_H
 
 #include <cstdint>
+#include <string>
 
 #include "tb_core.h"
 #include "tb_list.h"
-#include "tb_str.h"
 
 namespace tb {
 

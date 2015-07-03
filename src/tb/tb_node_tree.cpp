@@ -19,6 +19,8 @@
 #include "tb_string_builder.h"
 #include "tb_language.h"
 
+#include "tb/util/string.h"
+
 namespace tb {
 
 Node::~Node() { Clear(); }
@@ -187,8 +189,7 @@ class NodeTarget : public ParserTarget {
       : m_root_node(root), m_target_node(root), m_filename(filename) {}
   void OnError(int line_nr, const std::string& error) override {
 #ifdef TB_RUNTIME_DEBUG_INFO
-    TBDebugOut(tb::format_string("%s(%d):Parse error: %s\n", m_filename,
-                                 line_nr, error.c_str()));
+    TBDebugOut("%s(%d):Parse error: %s\n", m_filename, line_nr, error.c_str());
 #endif  // TB_RUNTIME_DEBUG_INFO
   }
   void OnComment(int line_nr, const char* comment) override {}
@@ -229,8 +230,8 @@ class NodeTarget : public ParserTarget {
       }
     } else {
       OnError(line_nr,
-              tb::format_string("Referenced file \"%s\" was not found!",
-                                include_filename.GetData()));
+              tb::util::format_string("Referenced file \"%s\" was not found!",
+                                      include_filename.GetData()));
     }
   }
   void IncludeRef(int line_nr, const char* refstr) {
@@ -259,7 +260,7 @@ class NodeTarget : public ParserTarget {
       m_target_node->CloneChildren(refnode);
     } else {
       OnError(line_nr,
-              tb::format_string("Include \"%s\" was not found!", refstr));
+              tb::util::format_string("Include \"%s\" was not found!", refstr));
     }
   }
 

@@ -690,7 +690,7 @@ Dimmer::Dimmer() {
 }
 
 void Dimmer::OnAdded() {
-  set_rect({ 0, 0, GetParent()->rect().w, GetParent()->rect().h });
+  set_rect({0, 0, GetParent()->rect().w, GetParent()->rect().h});
 }
 
 }  // namespace tb

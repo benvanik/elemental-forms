@@ -2,18 +2,18 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#ifndef TB_GEOMETRY_H
-#define TB_GEOMETRY_H
+#ifndef TB_RECT_H_
+#define TB_RECT_H_
 
 #include <string>
+#include <vector>
 
 #include "tb_core.h"
-#include "tb_str.h"
 
 namespace tb {
 
@@ -24,6 +24,7 @@ class Point {
   Point() : x(0), y(0) {}
   Point(int x, int y) : x(x), y(y) {}
 };
+std::string to_string(const Point& value);
 
 class Rect {
  public:
@@ -74,61 +75,8 @@ class Rect {
   Rect Union(const Rect& rect) const;
   Rect Clip(const Rect& clip_rect) const;
 };
-inline std::string to_string(const Rect& value) {
-  return format_string("%d %d %d %d", value.x, value.y, value.w, value.h);
-}
-
-// Performs calculations on regions represented by a list of rectangles.
-class RectRegion {
- public:
-  RectRegion();
-  ~RectRegion();
-
-  // Removes the rect at the given index.
-  void RemoveRect(int index);
-
-  // Remove the rect at the given index.
-  // This method will change the order of rectangles after index.
-  void RemoveRectFast(int index);
-
-  // Removes all rectangles so the region becomes empty.
-  // If free_memory is false, the internal buffers will be reused if more
-  // rectangles are added again under its life time.
-  void RemoveAll(bool free_memory = true);
-
-  // Sets the region to the given rect.
-  bool Set(const Rect& rect);
-
-  // Adds the rect without doing any overlap check.
-  // If coalesce is true, it will coalesce the rectangle with existing
-  // rectangles if possible (until there's nothing more to coalesce it with).
-  bool AddRect(const Rect& rect, bool coalesce);
-
-  // Includes the rect in the region.
-  // This will add only the parts that's not already in the region so the
-  // result doesn't contain overlap parts. This assumes there's no overlap in
-  // the region already!
-  bool IncludeRect(const Rect& include_rect);
-
-  // Excludes the rect from the region.
-  bool ExcludeRect(const Rect& exclude_rect);
-
-  // Adds the rectangles that's left of rect after excluding exclude_rect.
-  bool AddExcludingRects(const Rect& rect, const Rect& exclude_rect,
-                         bool coalesce);
-
-  bool empty() const { return m_num_rects == 0; }
-  int size() const { return m_num_rects; }
-  const Rect& operator[](int index) const;
-
- private:
-  void GrowIfNeeded();
-
-  Rect* m_rects = nullptr;
-  int m_num_rects = 0;
-  int m_capacity = 0;
-};
+std::string to_string(const Rect& value);
 
 };  // namespace tb
 
-#endif  // TB_GEOMETRY_H
+#endif  // TB_RECT_H_

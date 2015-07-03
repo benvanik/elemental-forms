@@ -10,8 +10,9 @@
 #ifndef TB_LANGUAGE_H
 #define TB_LANGUAGE_H
 
+#include <unordered_map>
+
 #include "tb_core.h"
-#include "tb_hashtable.h"
 #include "tb_id.h"
 
 namespace tb {
@@ -30,8 +31,6 @@ namespace tb {
 //                                "close")
 class Language {
  public:
-  ~Language();
-
   // Loads a file into this language manager.
   // NOTE: This *adds* strings read from the file, without clearing any existing
   // strings first.
@@ -47,7 +46,7 @@ class Language {
   std::string GetString(const TBID& id);
 
  private:
-  TBHashTableOf<std::string> strings;
+  std::unordered_map<uint32_t, std::string> table_;
 };
 
 }  // namespace tb

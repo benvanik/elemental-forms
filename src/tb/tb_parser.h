@@ -10,7 +10,8 @@
 #ifndef TB_PARSER_H
 #define TB_PARSER_H
 
-#include "tb_str.h"
+#include <string>
+
 #include "tb_string_builder.h"
 #include "tb_value.h"
 

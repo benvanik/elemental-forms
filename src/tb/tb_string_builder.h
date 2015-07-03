@@ -10,7 +10,7 @@
 #ifndef TB_STRING_BUILDER_H
 #define TB_STRING_BUILDER_H
 
-#include "tb_str.h"
+#include <string>
 
 namespace tb {
 

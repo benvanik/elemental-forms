@@ -9,7 +9,7 @@
 
 #include <cstdio>
 
-#include "tb_color.h"
+#include "tb/color.h"
 
 namespace tb {
 

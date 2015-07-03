@@ -11,11 +11,12 @@
 #define TB_BITMAP_FRAGMENT_H
 
 #include "tb_core.h"
-#include "tb_geometry.h"
-#include "tb_hashtable.h"
 #include "tb_id.h"
 #include "tb_linklist.h"
 #include "tb_list.h"
+
+#include "tb/rect.h"
+#include "tb/util/hash_table.h"
 
 namespace tb {
 
@@ -244,7 +245,7 @@ class BitmapFragmentManager {
 
  private:
   TBListOf<BitmapFragmentMap> m_fragment_maps;
-  TBHashTableOf<BitmapFragment> m_fragments;
+  util::HashTableOf<BitmapFragment> m_fragments;
   int m_num_maps_limit = 0;
   bool m_add_border = false;
   int m_default_map_w = 512;

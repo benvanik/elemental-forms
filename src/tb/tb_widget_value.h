@@ -13,8 +13,9 @@
 #include "tb_core.h"
 #include "tb_id.h"
 #include "tb_linklist.h"
-#include "tb_hashtable.h"
 #include "tb_value.h"
+
+#include "tb/util/hash_table.h"
 
 namespace tb {
 
@@ -141,7 +142,7 @@ class ValueGroup {
   friend class ElementValue;
   void InvokeOnValueChanged(const ElementValue* value);
 
-  TBHashTableAutoDeleteOf<ElementValue> m_values;
+  util::HashTableAutoDeleteOf<ElementValue> m_values;
   TBLinkListOf<ValueGroupListener> m_listeners;
 };
 

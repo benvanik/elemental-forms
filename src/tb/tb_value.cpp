@@ -15,7 +15,6 @@
 #include <cstring>
 
 #include "tb_object.h"
-#include "tb_str.h"
 
 namespace tb {
 

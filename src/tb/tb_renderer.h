@@ -12,9 +12,9 @@
 
 #include <cstdint>
 
-#include "tb_color.h"
+#include "tb/color.h"
 #include "tb_core.h"
-#include "tb_geometry.h"
+#include "tb/rect.h"
 #include "tb_linklist.h"
 
 namespace tb {

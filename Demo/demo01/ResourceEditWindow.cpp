@@ -8,6 +8,8 @@
 #include "tb_scroll_container.h"
 #include <stdio.h>
 
+#include "tb/util/string.h"
+
 // == ResourceItem
 // ====================================================================================
 
@@ -61,8 +63,9 @@ void ResourceEditWindow::Load(const char* resource_file) {
   } else {
     // Error, show message.
     MessageWindow* msg_win = new MessageWindow(GetParentRoot(), TBIDC(""));
-    msg_win->Show("Error loading resource",
-                  tb::format_string("Could not load file %s", resource_file));
+    msg_win->Show(
+        "Error loading resource",
+        tb::util::format_string("Could not load file %s", resource_file));
   }
 
   RefreshFromSource();
@@ -105,7 +108,7 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
     if (!*classname) {
       classname = "<Unknown element type>";
     }
-    auto str = tb::format_string("% *s%s", depth - 1, "", classname);
+    auto str = tb::util::format_string("% *s%s", depth - 1, "", classname);
     ResourceItem* item = new ResourceItem(element, str.c_str());
     m_element_list_source.AddItem(item);
   }

@@ -8,7 +8,7 @@
  */
 
 #include "tb_test.h"
-#include "tb_color.h"
+#include "tb/color.h"
 #include "tb_core.h"
 
 #ifdef TB_UNIT_TESTING

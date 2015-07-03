@@ -9,7 +9,8 @@
 
 #include "tb_image_manager.h"
 
-#include "tb_hash.h"
+#include "tb/util/hash.h"
+
 #include "tb_skin.h"
 #include "tb_system.h"
 #include "tb_string_builder.h"
@@ -86,7 +87,7 @@ ImageManager::~ImageManager() {
 
   // If there is ImageRep objects live, we must unset the fragment pointer
   // since the m_frag_manager is going to be destroyed very soon.
-  TBHashTableIteratorOf<ImageRep> it(&m_image_rep_hash);
+  util::HashTableIteratorOf<ImageRep> it(&m_image_rep_hash);
   while (ImageRep* image_rep = it.GetNextContent()) {
     image_rep->fragment = nullptr;
     image_rep->image_manager = nullptr;
@@ -94,7 +95,7 @@ ImageManager::~ImageManager() {
 }
 
 Image ImageManager::GetImage(const char* filename) {
-  uint32_t hash_key = TBGetHash(filename);
+  uint32_t hash_key = util::hash(filename);
   ImageRep* image_rep = m_image_rep_hash.Get(hash_key);
   if (!image_rep) {
     // Load a fragment. Load a destination DPI bitmap if available.

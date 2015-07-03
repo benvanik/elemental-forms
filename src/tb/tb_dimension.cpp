@@ -18,6 +18,8 @@
 #include "tb_types.h"
 #include "tb_value.h"
 
+#include "tb/util/string.h"
+
 namespace tb {
 
 void DimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
@@ -25,7 +27,7 @@ void DimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
   m_dst_dpi = dst_dpi;
   m_dst_dpi_str.clear();
   if (NeedConversion()) {
-    m_dst_dpi_str = tb::format_string("@%d", m_dst_dpi);
+    m_dst_dpi_str = tb::util::format_string("@%d", m_dst_dpi);
   }
 }
 

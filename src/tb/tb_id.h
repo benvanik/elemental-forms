@@ -10,17 +10,19 @@
 #ifndef TB_ID_H
 #define TB_ID_H
 
+#include <cassert>
 #include <cstdint>
+#include <string>
 
-#include "tb_hash.h"
-#include "tb_str.h"
+#include "tb/util/hash.h"
+
 #include "tb_types.h"
 
 namespace tb {
 
-/** TBID is a wrapper for a uint32 to be used as ID.
-        The uint32 can be set directly to any uint32, or it can be
-        set from a string which will be hashed into the uint32. */
+// TBID is a wrapper for a uint32_t to be used as ID.
+// The uint32_t can be set directly to any uint32_t, or it can be set from a
+// string which will be hashed into the uint32_t.
 class TBID {
  public:
   TBID(uint32_t id = 0) { Set(id); }
@@ -33,28 +35,31 @@ class TBID {
   void Set(const TBID& newid);
   void Set(const char* string);
 #else
-  void Set(uint32_t newid) { id = newid; }
-  void Set(const TBID& newid) { id = newid; }
-  void Set(const char* string) { id = TBGetHash(string); }
-#endif
+  void Set(uint32_t newid) { id_ = newid; }
+  void Set(const TBID& newid) { id_ = newid; }
+  void Set(const char* string);
+#endif  // TB_RUNTIME_DEBUG_INFO
 
-  operator uint32_t() const { return id; }
+  operator uint32_t() const { return id_; }
   const TBID& operator=(const TBID& id) {
     Set(id);
     return *this;
   }
 
  private:
-  uint32_t id;
+  uint32_t id_;
 
  public:
-/** This string is here to aid debugging (Only in debug builds!)
-        It should not to be used in your code! */
 #ifdef TB_RUNTIME_DEBUG_INFO
+  // This string is here to aid debugging (Only in debug builds!)
+  // It should not to be used in your code!
   friend class Language;
   std::string debug_string;
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 };
+#ifndef TB_RUNTIME_DEBUG_INFO
+static_assert(sizeof(TBID) == sizeof(uint32_t), "Treated as uint32_t");
+#endif  // !TB_RUNTIME_DEBUG_INFO
 
 }  // namespace tb
 

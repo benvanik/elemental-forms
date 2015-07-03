@@ -2,28 +2,29 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#include "tb_hashtable.h"
-
-#include "tb_hash.h"
 #include "tb_system.h"
 #include "tb_string_builder.h"
 
+#include "tb/util/hash_table.h"
+#include "tb/util/string.h"
+
 namespace tb {
+namespace util {
 
 // FIX: reduce memory (block allocation of ITEM)
 // FIX: should shrink when deleting single items (but not when adding items!)
 // FIX: should grow when about 70% full instead of 100%
 
-TBHashTable::TBHashTable() : m_buckets(0), m_num_buckets(0), m_num_items(0) {}
+HashTable::HashTable() = default;
 
-TBHashTable::~TBHashTable() { RemoveAll(); }
+HashTable::~HashTable() { RemoveAll(); }
 
-void TBHashTable::RemoveAll(bool delete_content) {
+void HashTable::RemoveAll(bool delete_content) {
 #ifdef TB_RUNTIME_DEBUG_INFO
 // Debug();
 #endif
@@ -41,7 +42,7 @@ void TBHashTable::RemoveAll(bool delete_content) {
   m_num_buckets = m_num_items = 0;
 }
 
-void TBHashTable::Rehash(uint32_t new_num_buckets) {
+void HashTable::Rehash(uint32_t new_num_buckets) {
   if (new_num_buckets == m_num_buckets) {
     return;
   }
@@ -65,19 +66,19 @@ void TBHashTable::Rehash(uint32_t new_num_buckets) {
   m_num_buckets = new_num_buckets;
 }
 
-bool TBHashTable::NeedRehash() const {
+bool HashTable::NeedRehash() const {
   // Grow if more items than buckets
   return !m_num_buckets || m_num_items >= m_num_buckets;
 }
 
-uint32_t TBHashTable::GetSuitableBucketsCount() const {
+uint32_t HashTable::GetSuitableBucketsCount() const {
   // As long as we use FNV for TBID (in TBGetHash), power of two hash sizes are
   // the best.
   if (!m_num_items) return 16;
   return m_num_items * 2;
 }
 
-void* TBHashTable::Get(uint32_t key) const {
+void* HashTable::Get(uint32_t key) const {
   if (!m_num_buckets) return nullptr;
   uint32_t bucket = key & (m_num_buckets - 1);
   ITEM* item = m_buckets[bucket];
@@ -88,7 +89,7 @@ void* TBHashTable::Get(uint32_t key) const {
   return nullptr;
 }
 
-void TBHashTable::Add(uint32_t key, void* content) {
+void HashTable::Add(uint32_t key, void* content) {
   if (NeedRehash()) {
     Rehash(GetSuitableBucketsCount());
   }
@@ -102,7 +103,7 @@ void TBHashTable::Add(uint32_t key, void* content) {
   m_num_items++;
 }
 
-void* TBHashTable::Remove(uint32_t key) {
+void* HashTable::Remove(uint32_t key) {
   if (!m_num_buckets) return nullptr;
   uint32_t bucket = key & (m_num_buckets - 1);
   ITEM* item = m_buckets[bucket];
@@ -124,10 +125,10 @@ void* TBHashTable::Remove(uint32_t key) {
   return nullptr;
 }
 
-void TBHashTable::Delete(uint32_t key) { DeleteContent(Remove(key)); }
+void HashTable::Delete(uint32_t key) { DeleteContent(Remove(key)); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-void TBHashTable::Debug() {
+void HashTable::Debug() {
   StringBuilder line;
   line.AppendString("Hash table: ");
   int total_count = 0;
@@ -141,16 +142,16 @@ void TBHashTable::Debug() {
     line.AppendString(std::to_string(count) + " ");
     total_count += count;
   }
-  line.AppendString(tb::format_string(" (total: %d of %d buckets)\n",
-                                      total_count, m_num_buckets));
+  line.AppendString(tb::util::format_string(" (total: %d of %d buckets)\n",
+                                            total_count, m_num_buckets));
   TBDebugOut(line.GetData());
 }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-TBHashTableIterator::TBHashTableIterator(TBHashTable* hash_table)
+HashTableIterator::HashTableIterator(HashTable* hash_table)
     : m_hash_table(hash_table), m_current_bucket(0), m_current_item(nullptr) {}
 
-void* TBHashTableIterator::GetNextContent() {
+void* HashTableIterator::GetNextContent() {
   if (m_current_bucket == m_hash_table->m_num_buckets) return nullptr;
   if (m_current_item && m_current_item->next) {
     m_current_item = m_current_item->next;
@@ -166,4 +167,5 @@ void* TBHashTableIterator::GetNextContent() {
   return m_current_item ? m_current_item->content : nullptr;
 }
 
+}  // namespace util
 }  // namespace tb

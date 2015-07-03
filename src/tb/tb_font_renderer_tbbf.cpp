@@ -11,7 +11,6 @@
 
 #include <algorithm>
 
-#include "tb_hashtable.h"
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
 #include "tb_system.h"
@@ -113,7 +112,7 @@ class TBBFRenderer : public FontRenderer {
   int m_advance_delta;
   int m_space_advance;
   int m_rgb;
-  TBHashTableAutoDeleteOf<GLYPH> m_glyph_table;
+  util::HashTableAutoDeleteOf<GLYPH> m_glyph_table;
 };
 
 TBBFRenderer::TBBFRenderer()

@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_COLOR_H
-#define TB_COLOR_H
+#ifndef TB_COLOR_H_
+#define TB_COLOR_H_
 
 #include <cassert>
 #include <cstdint>
@@ -54,4 +54,4 @@ static_assert(sizeof(Color) == sizeof(uint32_t), "Treated as uint32_t");
 
 }  // namespace tb
 
-#endif  // TB_COLOR_H
+#endif  // TB_COLOR_H_

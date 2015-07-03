@@ -9,18 +9,25 @@
 
 #include "tb_system.h"
 
+#include <cstdarg>
+#include <cstdio>
+
+#include "tb/util/string.h"
+
 #ifdef TB_SYSTEM_WINDOWS
 
 #define NOMINMAX
-#include <Windows.h>
+#include <windows.h>
 #include <mmsystem.h>
 
-#include <cstdio>
-
 #ifdef TB_RUNTIME_DEBUG_INFO
-
-void TBDebugOut(const char* str) { OutputDebugStringA(str); }
-
+void TBDebugOut(const char* format, ...) {
+  va_list va;
+  va_start(va, format);
+  auto result = tb::util::format_string(format, va);
+  va_end(va);
+  OutputDebugStringA(result.c_str());
+}
 #endif  // TB_RUNTIME_DEBUG_INFO
 
 namespace tb {

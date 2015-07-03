@@ -25,6 +25,10 @@ class TextFragment;
 class TextFragmentContent;
 class TextFragmentContentFactory;
 
+namespace util {
+class RectRegion;
+}  // namespace util
+
 // Listener for StyleEdit. Implement in the environment the StyleEdit should
 // render its content.
 class StyleEditListener {
@@ -223,8 +227,8 @@ class TextBlock : public TBLinkOf<TextBlock> {
 
   void Invalidate();
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                            TextProps* props, RectRegion& bg_region,
-                            RectRegion& fg_region);
+                            TextProps* props, util::RectRegion* bg_region,
+                            util::RectRegion* fg_region);
   void Paint(int32_t translate_x, int32_t translate_y, TextProps* props);
 
  public:
@@ -289,8 +293,8 @@ class TextFragment : public TBLinkOf<TextFragment> {
   void UpdateContentPos();
 
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                            TextProps* props, RectRegion& bg_region,
-                            RectRegion& fg_region);
+                            TextProps* props, util::RectRegion* bg_region,
+                            util::RectRegion* fg_region);
   void Paint(int32_t translate_x, int32_t translate_y, TextProps* props);
   void Click(int button, ModifierKeys modifierkeys);
 

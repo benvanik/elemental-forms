@@ -2,13 +2,13 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#ifndef TB_HASHTABLE_H
-#define TB_HASHTABLE_H
+#ifndef TB_UTIL_HASH_TABLE_H_
+#define TB_UTIL_HASH_TABLE_H_
 
 #include <cassert>
 #include <cstdint>
@@ -16,30 +16,30 @@
 #include "tb_core.h"
 
 namespace tb {
+namespace util {
 
-/** TBHashTable is a minimal hash table, for hashing anything using a uint32
- * key. */
-
-class TBHashTable {
+/** HashTable is a minimal hash table, for hashing anything using a uint32
+* key. */
+class HashTable {
  public:
-  TBHashTable();
-  virtual ~TBHashTable();
+  HashTable();
+  virtual ~HashTable();
 
   /** Remove all items without deleting the content. */
   void RemoveAll() { RemoveAll(false); }
 
   /** Remove all items and delete the content.
-          This requires TBHashTable to be subclassed and implementing
-     DeleteContent.
-          You would typically do this by using TBHashTableOf or
-     TBHashTableAutoDeleteOf. */
+  This requires HashTable to be subclassed and implementing
+  DeleteContent.
+  You would typically do this by using HashTableOf or
+  HashTableAutoDeleteOf. */
   void DeleteAll() { RemoveAll(true); }
 
   /** Get the content for the given key, or nullptr if not found. */
   void* Get(uint32_t key) const;
 
   /** Add content with the given key.
-          Returns false if out of memory. */
+  Returns false if out of memory. */
   void Add(uint32_t key, void* content);
 
   /** Remove the content with the given key. */
@@ -49,14 +49,14 @@ class TBHashTable {
   void Delete(uint32_t key);
 
   /** Rehash the table so use the given number of buckets.
-          Returns false if out of memory. */
+  Returns false if out of memory. */
   void Rehash(uint32_t num_buckets);
 
   /** Return true if the hashtable itself think it's time to rehash. */
   bool NeedRehash() const;
 
   /** Get the number of buckets the hashtable itself thinks is suitable for
-          the current number of items. */
+  the current number of items. */
   uint32_t GetSuitableBucketsCount() const;
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -66,73 +66,75 @@ class TBHashTable {
 
  protected:
   /** Delete the content of a item. This is called if calling DeleteAll, and
-     must be
-          implemented in a subclass that knows about the content type. */
+  must be
+  implemented in a subclass that knows about the content type. */
   virtual void DeleteContent(void* content) {
     assert(!"You need to subclass and implement!");
   }
 
  private:
-  friend class TBHashTableIterator;
+  friend class HashTableIterator;
+
   void RemoveAll(bool delete_content);
+
   struct ITEM {
     uint32_t key;
     ITEM* next;
     void* content;
-  } * *m_buckets;
-  uint32_t m_num_buckets;
-  uint32_t m_num_items;
+  }** m_buckets = nullptr;
+  uint32_t m_num_buckets = 0;
+  uint32_t m_num_items = 0;
 };
 
-/** TBHashTableIterator is a iterator for stepping through all content stored in
- * a TBHashTable. */
+/** HashTableIterator is a iterator for stepping through all content stored in
+* a HashTable. */
 // FIX: make it safe in case the current item is removed from the hashtable
-class TBHashTableIterator {
+class HashTableIterator {
  public:
-  TBHashTableIterator(TBHashTable* hash_table);
+  HashTableIterator(HashTable* hash_table);
   void* GetNextContent();
 
  private:
-  TBHashTable* m_hash_table;
+  HashTable* m_hash_table;
   uint32_t m_current_bucket;
-  TBHashTable::ITEM* m_current_item;
+  HashTable::ITEM* m_current_item;
 };
 
-/** TBHashTableIteratorOf is a TBHashTableIterator which auto cast to the class
- * type. */
+/** HashTableIteratorOf is a HashTableIterator which auto cast to the class
+* type. */
 template <class T>
-class TBHashTableIteratorOf : private TBHashTableIterator {
+class HashTableIteratorOf : private HashTableIterator {
  public:
-  TBHashTableIteratorOf(TBHashTable* hash_table)
-      : TBHashTableIterator(hash_table) {}
-  T* GetNextContent() { return (T*)TBHashTableIterator::GetNextContent(); }
+  HashTableIteratorOf(HashTable* hash_table) : HashTableIterator(hash_table) {}
+  T* GetNextContent() { return (T*)HashTableIterator::GetNextContent(); }
 };
 
-/** TBHashTableOf is a TBHashTable with the given class type as content. */
+/** HashTableOf is a HashTable with the given class type as content. */
 template <class T>
-class TBHashTableOf : public TBHashTable {
+class HashTableOf : public HashTable {
   // FIX: Don't do public inheritance! Either inherit privately and forward, or
   // use a private member backend!
  public:
-  T* Get(uint32_t key) const { return (T*)TBHashTable::Get(key); }
+  T* Get(uint32_t key) const { return (T*)HashTable::Get(key); }
 
  protected:
   virtual void DeleteContent(void* content) { delete (T*)content; }
 };
 
-/** TBHashTableOf is a TBHashTable with the given class type as content.
-        It will delete all content automaticallt on destruction. */
+/** HashTableOf is a HashTable with the given class type as content.
+It will delete all content automaticallt on destruction. */
 template <class T>
-class TBHashTableAutoDeleteOf : public TBHashTable {
+class HashTableAutoDeleteOf : public HashTable {
  public:
-  ~TBHashTableAutoDeleteOf() { DeleteAll(); }
+  ~HashTableAutoDeleteOf() { DeleteAll(); }
 
-  T* Get(uint32_t key) const { return (T*)TBHashTable::Get(key); }
+  T* Get(uint32_t key) const { return (T*)HashTable::Get(key); }
 
  protected:
   virtual void DeleteContent(void* content) { delete (T*)content; }
 };
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_HASHTABLE_H
+#endif  // TB_UTIL_HASH_TABLE_H_

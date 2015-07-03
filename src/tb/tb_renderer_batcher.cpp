@@ -99,9 +99,9 @@ void RendererBatcher::EndPaint() {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches)) {
-    TBDebugPrint(
-        "Frame rendered using %d batches and a total of %d triangles.\n",
-        batch.batch_id - dbg_begin_paint_batch_id, dbg_frame_triangle_count);
+    TBDebugOut("Frame rendered using %d batches and a total of %d triangles.\n",
+               batch.batch_id - dbg_begin_paint_batch_id,
+               dbg_frame_triangle_count);
   }
 #endif  // TB_RUNTIME_DEBUG_INFO
 }

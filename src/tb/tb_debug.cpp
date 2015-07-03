@@ -11,6 +11,8 @@
 
 #include <cstdio>
 
+#include "tb/util/string.h"
+
 #include "tb_core.h"
 #include "tb_font_renderer.h"
 #include "tb_string_builder.h"
@@ -155,8 +157,8 @@ class DebugSettingsWindow : public Window, public ElementListener {
         text.erase(20);
         text.append("...");
       }
-      auto extra = tb::format_string(", value: %.2f (\"%s\")",
-                                     ev.target->GetValueDouble(), text.c_str());
+      auto extra = util::format_string(
+          ", value: %.2f (\"%s\")", ev.target->GetValueDouble(), text.c_str());
       buf.AppendString(extra);
     }
     buf.AppendString("\n");

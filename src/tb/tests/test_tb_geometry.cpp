@@ -8,7 +8,7 @@
  */
 
 #include "tb_test.h"
-#include "tb_geometry.h"
+#include "tb/rect.h"
 
 #ifdef TB_UNIT_TESTING
 

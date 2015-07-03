@@ -11,12 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\tb\rect.cc" />
     <ClCompile Include="src\tb\tb_animation.cpp" />
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
     <ClCompile Include="src\tb\tb_clipboard_dummy.cpp" />
     <ClCompile Include="src\tb\tb_clipboard_glfw.cpp" />
     <ClCompile Include="src\tb\tb_clipboard_win.cpp" />
-    <ClCompile Include="src\tb\tb_color.cpp" />
+    <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\tb_core.cpp" />
     <ClCompile Include="src\tb\tb_debug.cpp" />
     <ClCompile Include="src\tb\tb_dimension.cpp" />
@@ -26,8 +27,6 @@
     <ClCompile Include="src\tb\tb_font_renderer_freetype.cpp" />
     <ClCompile Include="src\tb\tb_font_renderer_stb.cpp" />
     <ClCompile Include="src\tb\tb_font_renderer_tbbf.cpp" />
-    <ClCompile Include="src\tb\tb_geometry.cpp" />
-    <ClCompile Include="src\tb\tb_hashtable.cpp" />
     <ClCompile Include="src\tb\tb_id.cpp" />
     <ClCompile Include="src\tb\tb_image_loader_stb.cpp" />
     <ClCompile Include="src\tb\tb_image_manager.cpp" />
@@ -54,7 +53,6 @@
     <ClCompile Include="src\tb\tb_select_item.cpp" />
     <ClCompile Include="src\tb\tb_skin.cpp" />
     <ClCompile Include="src\tb\tb_skin_util.cpp" />
-    <ClCompile Include="src\tb\tb_str.cpp" />
     <ClCompile Include="src\tb\tb_style_edit.cpp" />
     <ClCompile Include="src\tb\tb_style_edit_content.cpp" />
     <ClCompile Include="src\tb\tb_system_android.cpp" />
@@ -88,11 +86,14 @@
     <ClCompile Include="src\tb\tests\test_tb_test.cpp" />
     <ClCompile Include="src\tb\tests\test_tb_widget_value.cpp" />
     <ClCompile Include="src\tb\utf8.cpp" />
+    <ClCompile Include="src\tb\util\hash_table.cc" />
+    <ClCompile Include="src\tb\util\rect_region.cc" />
+    <ClCompile Include="src\tb\util\string.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\tb_animation.h" />
     <ClInclude Include="src\tb\tb_animation_utils.h" />
-    <ClInclude Include="src\tb\tb_geometry.h" />
     <ClInclude Include="src\tb\tb_image_manager.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
     <ClInclude Include="src\tb\tb_parser.h" />
@@ -102,7 +103,7 @@
     <ClInclude Include="src\tb\tb_widget_animation.h" />
     <ClInclude Include="src\tb\utf8.h" />
     <ClInclude Include="src\tb\tb_bitmap_fragment.h" />
-    <ClInclude Include="src\tb\tb_color.h" />
+    <ClInclude Include="src\tb\color.h" />
     <ClInclude Include="src\tb\tb_config.h" />
     <ClInclude Include="src\tb\tb_core.h" />
     <ClInclude Include="src\tb\tb_debug.h" />
@@ -110,8 +111,6 @@
     <ClInclude Include="src\tb\tb_text_box.h" />
     <ClInclude Include="src\tb\tb_font_desc.h" />
     <ClInclude Include="src\tb\tb_font_renderer.h" />
-    <ClInclude Include="src\tb\tb_hash.h" />
-    <ClInclude Include="src\tb\tb_hashtable.h" />
     <ClInclude Include="src\tb\tb_id.h" />
     <ClInclude Include="src\tb\tb_inline_select.h" />
     <ClInclude Include="src\tb\tb_language.h" />
@@ -132,7 +131,6 @@
     <ClInclude Include="src\tb\tb_select_item.h" />
     <ClInclude Include="src\tb\tb_skin.h" />
     <ClInclude Include="src\tb\tb_skin_util.h" />
-    <ClInclude Include="src\tb\tb_str.h" />
     <ClInclude Include="src\tb\tb_style_edit.h" />
     <ClInclude Include="src\tb\tb_style_edit_content.h" />
     <ClInclude Include="src\tb\tb_system.h" />
@@ -149,6 +147,10 @@
     <ClInclude Include="src\tb\tb_widget_value.h" />
     <ClInclude Include="src\tb\tb_window.h" />
     <ClInclude Include="src\tb\tests\tb_test.h" />
+    <ClInclude Include="src\tb\util\hash.h" />
+    <ClInclude Include="src\tb\util\hash_table.h" />
+    <ClInclude Include="src\tb\util\rect_region.h" />
+    <ClInclude Include="src\tb\util\string.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="integration.txt" />
@@ -199,7 +201,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/;src/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -212,7 +214,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Demos/third_party/glfw/include/;src/tb/;src/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

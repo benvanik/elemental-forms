@@ -13,16 +13,13 @@
 #include <string>
 
 #include "tb_core.h"
-#include "tb_str.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-void TBDebugOut(const char* str);
+void TBDebugOut(const char* str, ...);
 inline void TBDebugOut(const std::string& str) { TBDebugOut(str.c_str()); }
-#define TBDebugPrint(str, ...) \
-  { TBDebugOut(tb::format_string(str, __VA_ARGS__)); }
 #else
 #define TBDebugOut(str) ((void)0)
-#define TBDebugPrint(str, ...) ((void)0)
+#define TBDebugOut(str, ...) ((void)0)
 #endif
 
 namespace tb {

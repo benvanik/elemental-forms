@@ -415,8 +415,7 @@ static void window_refresh_callback(GLFWwindow* window) {
   // This may happen when minimizing windows (GLFW 3.0.4, Windows 8.1).
   if (backend->width() == 0 || backend->height() == 0) return;
 
-  backend->m_application->RenderFrame(backend->width(),
-                                      backend->height());
+  backend->m_application->RenderFrame(backend->width(), backend->height());
 
   glfwSwapBuffers(window);
 }

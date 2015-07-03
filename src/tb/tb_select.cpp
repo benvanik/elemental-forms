@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+#include "tb/util/string.h"
+
 #include "tb_language.h"
 #include "tb_menu_window.h"
 #include "tb_string_builder.h"
@@ -161,8 +163,8 @@ void SelectList::ValidateList() {
   if (!m_filter.empty()) {
     Element* element = new Label();
     auto fmt = g_tb_lng->GetString(m_header_lng_string_id);
-    element->SetText(tb::format_string(fmt.c_str(), num_sorted_items,
-                                       m_source->GetNumItems()));
+    element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
+                                             m_source->GetNumItems()));
     element->SetSkinBg(TBIDC("TBList.header"));
     element->SetState(SkinState::kDisabled, true);
     element->SetGravity(Gravity::kAll);

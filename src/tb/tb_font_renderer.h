@@ -113,7 +113,7 @@ class FontGlyphCache : private RendererListener {
   void DropGlyphFragment(FontGlyph* glyph);
 
   BitmapFragmentManager m_frag_manager;
-  TBHashTableAutoDeleteOf<FontGlyph> m_glyphs;
+  util::HashTableAutoDeleteOf<FontGlyph> m_glyphs;
   TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };
 
@@ -290,8 +290,8 @@ class FontManager {
   FontGlyphCache* GetGlyphCache() { return &m_glyph_cache; }
 
  private:
-  TBHashTableAutoDeleteOf<FontInfo> m_font_info;
-  TBHashTableAutoDeleteOf<FontFace> m_fonts;
+  util::HashTableAutoDeleteOf<FontInfo> m_font_info;
+  util::HashTableAutoDeleteOf<FontFace> m_fonts;
   TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
   FontGlyphCache m_glyph_cache;
   FontDescription m_default_font_desc;

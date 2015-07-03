@@ -11,9 +11,9 @@
 #include "tb_language.h"
 #include "tb_system.h"
 
-namespace tb {
+#include "tb/util/string.h"
 
-Language::~Language() { Clear(); }
+namespace tb {
 
 bool Language::Load(const char* filename) {
   // Read the file into a node tree (even though it's only a flat list).
@@ -26,24 +26,24 @@ bool Language::Load(const char* filename) {
   Node* n = node.GetFirstChild();
   while (n) {
     const char* str = n->GetValue().GetString();
-    std::string* new_str = new std::string(str);
-    strings.Add(TBID(n->GetName()), new_str);
+    table_.emplace(TBID(n->GetName()), str);
     n = n->GetNext();
   }
   return true;
 }
 
-void Language::Clear() { strings.DeleteAll(); }
+void Language::Clear() { table_.clear(); }
 
 std::string Language::GetString(const TBID& id) {
-  if (std::string* str = strings.Get(id)) {
-    return *str;
+  auto& it = table_.find(id);
+  if (it != table_.end()) {
+    return it->second;
   }
 #ifdef TB_RUNTIME_DEBUG_INFO
-  return tb::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
+  return tb::util::format_string("<TRANSLATE:%s>", id.debug_string.c_str());
 #else
   return "<TRANSLATE!>";
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 }
 
 }  // namespace tb

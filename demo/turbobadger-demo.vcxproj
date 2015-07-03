@@ -51,7 +51,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_GLFW_USE_OPENGL;_GLFW_WGL;GLFW_EXPOSE_NATIVE_WIN32;GLFW_EXPOSE_NATIVE_WGL;_GLFW_WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);../Demo/thirdparty/glfw/include/;Demo/thirdparty/glfw/lib/win32;..Demo/thirdparty/glfw/lib/;../Demo/;../src/tb/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);../Demo/thirdparty/glfw/include/;Demo/thirdparty/glfw/lib/win32;..Demo/thirdparty/glfw/lib/;../Demo/;../src/tb/;../src/;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -64,7 +64,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <PreprocessorDefinitions>_GLFW_USE_OPENGL;_GLFW_WGL;GLFW_EXPOSE_NATIVE_WIN32;GLFW_EXPOSE_NATIVE_WGL;_GLFW_WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);../Demo/thirdparty/glfw/include/;Demo/thirdparty/glfw/lib/win32;..Demo/thirdparty/glfw/lib/;../Demo/;../src/tb/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);../Demo/thirdparty/glfw/include/;Demo/thirdparty/glfw/lib/win32;..Demo/thirdparty/glfw/lib/;../Demo/;../src/tb/;../src/;.</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

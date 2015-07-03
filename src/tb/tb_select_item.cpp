@@ -17,6 +17,8 @@
 #include "tb_select.h"
 #include "tb_widgets_listener.h"
 
+#include "tb/util/string.h"
+
 namespace tb {
 
 // SimpleLayoutItemElement is a item containing a layout with the following:
@@ -137,7 +139,7 @@ SelectItemSource::~SelectItemSource() {
 
 bool SelectItemSource::Filter(int index, const std::string& filter) {
   const char* str = GetItemString(index);
-  if (str && stristr(str, filter.c_str())) {
+  if (str && util::stristr(str, filter.c_str())) {
     return true;
   }
   return false;

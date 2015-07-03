@@ -51,8 +51,8 @@ TextBox::TextBox() {
   m_scrollbar_y.SetAxis(Axis::kY);
   int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
   int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
-  m_scrollbar_x.set_rect({ 0, -scrollbar_x_h, -scrollbar_y_w, scrollbar_x_h });
-  m_scrollbar_y.set_rect({ -scrollbar_y_w, 0, scrollbar_y_w, 0 });
+  m_scrollbar_x.set_rect({0, -scrollbar_x_h, -scrollbar_y_w, scrollbar_x_h});
+  m_scrollbar_y.set_rect({-scrollbar_y_w, 0, scrollbar_y_w, 0});
   m_scrollbar_x.SetOpacity(0);
   m_scrollbar_y.SetOpacity(0);
 
@@ -547,13 +547,13 @@ void TextFragmentContentElement::UpdatePos(int x, int y) {
 int32_t TextFragmentContentElement::GetWidth(FontFace* font,
                                              TextFragment* fragment) {
   return m_element->rect().w ? m_element->rect().w
-                                : m_element->GetPreferredSize().pref_w;
+                             : m_element->GetPreferredSize().pref_w;
 }
 
 int32_t TextFragmentContentElement::GetHeight(FontFace* font,
                                               TextFragment* fragment) {
   return m_element->rect().h ? m_element->rect().h
-                                : m_element->GetPreferredSize().pref_h;
+                             : m_element->GetPreferredSize().pref_h;
 }
 
 int32_t TextFragmentContentElement::GetBaseline(FontFace* font,

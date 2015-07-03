@@ -111,8 +111,7 @@ void RendererGL::EndPaint() {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches))
-    TBDebugPrint("Frame caused %d bitmap validations.\n",
-                 dbg_bitmap_validations);
+    TBDebugOut("Frame caused %d bitmap validations.\n", dbg_bitmap_validations);
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 

@@ -19,6 +19,8 @@
 #include "utf8.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/util/string.h"
+
 static Application* application;
 
 AdvancedItemSource advanced_source;
@@ -72,8 +74,7 @@ void DemoWindow::LoadResource(Node& node) {
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
 
-  const Rect parent_rect(0, 0, GetParent()->rect().w,
-                         GetParent()->rect().h);
+  const Rect parent_rect(0, 0, GetParent()->rect().w, GetParent()->rect().h);
   auto dc = g_tb_skin->GetDimensionConverter();
   Rect window_rect = GetResizeToFitContentRect();
 
@@ -140,7 +141,7 @@ class EditWindow : public DemoWindow {
       if (Element* redo = GetElementByID("redo"))
         redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
       if (Label* info = GetElementByIDAndType<Label>(TBIDC("info"))) {
-        info->SetText(tb::format_string(
+        info->SetText(tb::util::format_string(
             "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOffset()));
       }
     }
@@ -350,7 +351,7 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
       for (int i = 0; i < ev.target->data.GetInt(); i++) {
         Button* button = new Button;
         button->SetID(TBIDC("remove button"));
-        button->SetText(tb::format_string("Remove %d", i));
+        button->SetText(tb::util::format_string("Remove %d", i));
         ev.target->GetParent()->AddChild(button);
       }
       return true;
@@ -373,8 +374,8 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("popupmenu1")) {
       MessageWindow* msg_win = new MessageWindow(this, TBIDC("popup_dialog"));
       msg_win->Show("Info",
-                    tb::format_string("Menu event received!\nref_id: %d",
-                                      (int)ev.ref_id));
+                    tb::util::format_string("Menu event received!\nref_id: %d",
+                                            (int)ev.ref_id));
       return true;
     }
   }
@@ -386,7 +387,8 @@ void ScrollContainerWindow::OnMessageReceived(Message* msg) {
     if (Element* target = GetElementByID(msg->data->id1)) {
       Button* button = new Button;
       button->SetID(TBIDC("remove button"));
-      button->SetText(tb::format_string("Remove %d", msg->data->v1.GetInt()));
+      button->SetText(
+          tb::util::format_string("Remove %d", msg->data->v1.GetInt()));
       target->AddChild(button);
     }
   }
@@ -489,7 +491,7 @@ void MainWindow::OnMessageReceived(Message* msg) {
   } else if (msg->message == TBIDC("delayedmsg")) {
     MessageWindow* msg_win = new MessageWindow(this, TBIDC(""));
     msg_win->Show("Message window",
-                  tb::format_string(
+                  tb::util::format_string(
                       "Delayed message received!\n\n"
                       "It was received %d ms after its intended fire time.",
                       (int)(TBSystem::GetTimeMS() - msg->GetFireTime())));
@@ -552,10 +554,10 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
       uint64_t t2 = TBSystem::GetTimeMS();
 
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
-      msg_win->Show(
-          "GFX load performance",
-          tb::format_string("Reloading the skin graphics %d times took %dms",
-                            reload_count, (int)(t2 - t1)));
+      msg_win->Show("GFX load performance",
+                    tb::util::format_string(
+                        "Reloading the skin graphics %d times took %dms",
+                        reload_count, (int)(t2 - t1)));
       return true;
     } else if (ev.target->GetID() == TBIDC("test context lost")) {
       g_renderer->InvokeContextLost();
@@ -720,7 +722,7 @@ bool DemoApplication::Init() {
     MessageWindow* msg_win = new MessageWindow(GetRoot(), TBIDC(""));
     msg_win->Show(
         "Testing results",
-        tb::format_string(
+        tb::util::format_string(
             "There is %d failed tests!\nCheck the output for details.",
             num_failed_tests));
   }
@@ -761,9 +763,9 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   std::string str;
   if (continuous_repaint) {
-    str = tb::format_string("FPS: %d Frame %d", fps, frame_counter_total);
+    str = tb::util::format_string("FPS: %d Frame %d", fps, frame_counter_total);
   } else {
-    str = tb::format_string("Frame %d", frame_counter_total);
+    str = tb::util::format_string("Frame %d", frame_counter_total);
   }
   GetRoot()->GetFont()->DrawString(5, 5, Color(255, 255, 255), str);
 

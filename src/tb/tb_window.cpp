@@ -236,14 +236,14 @@ void Window::OnResized(int old_w, int old_h) {
   // Manually move our own decoration children.
   // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = GetTitleHeight();
-  m_mover.set_rect({ 0, 0, rect().w, title_height });
+  m_mover.set_rect({0, 0, rect().w, title_height});
   PreferredSize ps = m_resizer.GetPreferredSize();
-  m_resizer.set_rect({ rect().w - ps.pref_w, rect().h - ps.pref_h,
-                         ps.pref_w, ps.pref_h });
+  m_resizer.set_rect(
+      {rect().w - ps.pref_w, rect().h - ps.pref_h, ps.pref_w, ps.pref_h});
   Rect mover_rect = m_mover.GetPaddingRect();
   int button_size = mover_rect.h;
-  m_close_button.set_rect({ mover_rect.x + mover_rect.w - button_size,
-                              mover_rect.y, button_size, button_size });
+  m_close_button.set_rect({mover_rect.x + mover_rect.w - button_size,
+                           mover_rect.y, button_size, button_size});
   if (any(m_settings & WindowSettings::kCloseButton)) {
     mover_rect.w -= button_size;
   }

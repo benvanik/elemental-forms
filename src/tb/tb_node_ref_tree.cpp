@@ -27,7 +27,7 @@ Value& NodeRefTree::GetValue(const char* request) {
   if (Node* node = m_node.GetNodeFollowRef(request)) {
     return node->GetValue();
   }
-  TBDebugPrint("NodeRefTree::GetValue - request not found: %s\n", request);
+  TBDebugOut("NodeRefTree::GetValue - request not found: %s\n", request);
   static Value nullval;
   return nullval;
 }
@@ -114,7 +114,7 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
                  NodeRefTree::GetRefTree(name_start, name_end - name_start)) {
       next_node = rt->m_node.GetNode(name_end + 1, Node::MissingPolicy::kNull);
     } else {
-      TBDebugPrint(
+      TBDebugOut(
           "NodeRefTree::ResolveNode - No tree found for request \"%s\" from "
           "node \"%s\"\n",
           node_str, node->GetValue().GetString());
@@ -122,7 +122,7 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
     }
 
     if (!next_node) {
-      TBDebugPrint(
+      TBDebugOut(
           "NodeRefTree::ResolveNode - Node not found on request \"%s\"\n",
           node_str);
       break;
@@ -133,7 +133,7 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
     if (node->m_cycle_id != cycle_id) {
       node->m_cycle_id = cycle_id;
     } else {
-      TBDebugPrint(
+      TBDebugOut(
           "NodeRefTree::ResolveNode - Reference loop detected on request "
           "\"%s\" from node \"%s\"\n",
           node_str, node->GetValue().GetString());

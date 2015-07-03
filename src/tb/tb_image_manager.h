@@ -12,9 +12,10 @@
 
 #include "tb_bitmap_fragment.h"
 #include "tb_core.h"
-#include "tb_hashtable.h"
 #include "tb_linklist.h"
 #include "tb_renderer.h"
+
+#include "tb/util/hash_table.h"
 
 namespace tb {
 
@@ -107,7 +108,7 @@ class ImageManager : private RendererListener {
   void RemoveImageRep(ImageRep* image_rep);
 
   BitmapFragmentManager m_frag_manager;
-  TBHashTableOf<ImageRep> m_image_rep_hash;
+  util::HashTableOf<ImageRep> m_image_rep_hash;
 };
 
 // The global ImageManager.

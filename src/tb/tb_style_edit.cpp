@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include "tb/util/rect_region.h"
+
 #include "tb_font_renderer.h"
 #include "tb_style_edit_content.h"
 #include "tb_system.h"
@@ -1017,8 +1019,9 @@ void TextBlock::Invalidate() {
 }
 
 void TextBlock::BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
-                                     TextProps* props, RectRegion& bg_region,
-                                     RectRegion& fg_region) {
+                                     TextProps* props,
+                                     util::RectRegion* bg_region,
+                                     util::RectRegion* fg_region) {
   if (!style_edit->selection.IsBlockSelected(this)) return;
 
   TextFragment* fragment = fragments.GetFirst();
@@ -1058,8 +1061,8 @@ void TextFragment::UpdateContentPos() {
 
 void TextFragment::BuildSelectionRegion(int32_t translate_x,
                                         int32_t translate_y, TextProps* props,
-                                        RectRegion& bg_region,
-                                        RectRegion& fg_region) {
+                                        util::RectRegion* bg_region,
+                                        util::RectRegion* fg_region) {
   if (!block->style_edit->selection.IsFragmentSelected(this)) return;
 
   int x = translate_x + xpos;
@@ -1068,7 +1071,7 @@ void TextFragment::BuildSelectionRegion(int32_t translate_x,
 
   if (content) {
     // Selected embedded content should add to the foreground region.
-    fg_region.IncludeRect(Rect(x, y, GetWidth(font), GetHeight(font)));
+    fg_region->IncludeRect(Rect(x, y, GetWidth(font), GetHeight(font)));
     return;
   }
 
@@ -1083,7 +1086,7 @@ void TextFragment::BuildSelectionRegion(int32_t translate_x,
   int s1x = GetStringWidth(font, block->str.c_str() + ofs, sofs1 - ofs);
   int s2x = GetStringWidth(font, block->str.c_str() + sofs1, sofs2 - sofs1);
 
-  bg_region.IncludeRect(Rect(x + s1x, y, s2x, GetHeight(font)));
+  bg_region->IncludeRect(Rect(x + s1x, y, s2x, GetHeight(font)));
 }
 
 void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
@@ -1423,15 +1426,16 @@ void StyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
   }
 
   // Get the selection region for all visible blocks.
-  RectRegion bg_region, fg_region;
+  util::RectRegion bg_region;
+  util::RectRegion fg_region;
   if (selection.IsSelected()) {
     TextBlock* block = first_visible_block;
     while (block) {
       if (block->ypos - scroll_y > rect.y + rect.h) {
         break;
       }
-      block->BuildSelectionRegion(-scroll_x, -scroll_y, &props, bg_region,
-                                  fg_region);
+      block->BuildSelectionRegion(-scroll_x, -scroll_y, &props, &bg_region,
+                                  &fg_region);
       block = block->GetNext();
     }
 

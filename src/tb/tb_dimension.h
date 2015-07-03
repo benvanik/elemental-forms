@@ -10,8 +10,9 @@
 #ifndef TB_DIMENSION_H
 #define TB_DIMENSION_H
 
+#include <string>
+
 #include "tb_debug.h"
-#include "tb_str.h"
 #include "tb_types.h"
 
 namespace tb {

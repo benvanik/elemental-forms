@@ -114,7 +114,7 @@ int TBSystem::PollEvents() {
         ;
 
       else {
-        TBDebugPrint("Failed to read from timer file!:%s", strerror(errno));
+        TBDebugOut("Failed to read from timer file!:%s", strerror(errno));
         return errno;
       }
     }
