@@ -13,7 +13,7 @@
 
 #include "tb_language.h"
 #include "tb_menu_window.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {
@@ -135,10 +135,7 @@ void SelectList::ValidateList() {
 
   // Create a sorted list of the items we should include using the current
   // filter.
-  TBTempBuffer sort_buf;
-  if (!sort_buf.Reserve(m_source->GetNumItems() * sizeof(int))) {
-    return;  // Out of memory
-  }
+  StringBuilder sort_buf(m_source->GetNumItems() * sizeof(int));
   int* sorted_index = (int*)sort_buf.GetData();
 
   // Populate the sorted index list

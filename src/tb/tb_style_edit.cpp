@@ -15,7 +15,7 @@
 #include "tb_font_renderer.h"
 #include "tb_style_edit_content.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_widgets_common.h"
 #include "utf8.h"
 
@@ -304,7 +304,7 @@ void TextSelection::RemoveContent() {
     start.block->RemoveContent(start.ofs, stop.ofs - start.ofs);
   } else {
     // Remove text in first block.
-    TBTempBuffer commit_string;
+    StringBuilder commit_string;
     size_t start_gofs = 0;
     if (!style_edit->undoredo.applying) {
       start_gofs = start.GetGlobalOffset(style_edit);
@@ -350,7 +350,7 @@ std::string TextSelection::GetText() const {
     return std::string(start.block->str.c_str() + start.ofs,
                        stop.ofs - start.ofs);
   } else {
-    TBTempBuffer buf;
+    StringBuilder buf;
     buf.Append(start.block->str.c_str() + start.ofs,
                start.block->str_len - start.ofs);
     TextBlock* block = start.block->GetNext();

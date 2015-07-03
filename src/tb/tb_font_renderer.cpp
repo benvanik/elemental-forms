@@ -85,7 +85,7 @@ FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
                                   const FontGlyphData* src) {
   FontGlyphData* effect_glyph_data = nullptr;
   if (m_blur_radius > 0 && src->data8) {
-    // Create a new FontGlyphData for the blurred glyph
+    // Create a new FontGlyphData for the blurred glyph.
     effect_glyph_data = new FontGlyphData;
     if (!effect_glyph_data) {
       return nullptr;
@@ -97,11 +97,8 @@ FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
         new unsigned char[effect_glyph_data->w * effect_glyph_data->h];
 
     // Reserve memory needed for blurring.
-    if (!m_blur_temp.Reserve(effect_glyph_data->w * effect_glyph_data->h *
-                             sizeof(float))) {
-      delete effect_glyph_data;
-      return nullptr;
-    }
+    m_blur_temp.Reserve(effect_glyph_data->w * effect_glyph_data->h *
+                        sizeof(float));
 
     // Blur!
     BlurGlyph(src->data8, src->w, src->h, src->stride, effect_glyph_data->data8,
@@ -159,7 +156,7 @@ BitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph, int w, int h,
   bool try_drop_largest = true;
   bool dropped_large_enough_glyph = false;
   do {
-    // Attempt creating a fragment for the rendered glyph data
+    // Attempt creating a fragment for the rendered glyph data.
     if (BitmapFragment* frag = m_frag_manager.CreateNewFragment(
             glyph->hash_id, false, w, h, stride, data)) {
       glyph->frag = frag;
@@ -220,7 +217,7 @@ FontFace::FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,
   if (m_font_renderer) {
     m_metrics = m_font_renderer->GetMetrics();
   } else {
-    // Invent some metrics for the test font
+    // Invent some metrics for the test font.
     int size = m_font_desc.GetSize();
     m_metrics.ascent = size - size / 4;
     m_metrics.descent = size / 4;
@@ -270,7 +267,7 @@ FontGlyph* FontFace::CreateAndCacheGlyph(UCS4 cp) {
     return nullptr;
   }
 
-  // Create the new glyph
+  // Create the new glyph.
   FontGlyph* glyph = m_glyph_cache->CreateAndCacheGlyph(GetHashId(cp), cp);
   if (glyph) m_font_renderer->GetGlyphMetrics(&glyph->metrics, cp);
   return glyph;
@@ -289,15 +286,15 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
     // we always create fragments (and Bitmap) in 32bit format.
     uint32_t* glyph_dsta_src = result_glyph_data->data32;
     if (!glyph_dsta_src && result_glyph_data->data8) {
-      if (m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
-                                sizeof(uint32_t))) {
-        glyph_dsta_src = (uint32_t*)m_temp_buffer.GetData();
-        for (int y = 0; y < result_glyph_data->h; y++)
-          for (int x = 0; x < result_glyph_data->w; x++) {
-            glyph_dsta_src[x + y * result_glyph_data->w] = Color(
-                255, 255, 255,
-                result_glyph_data->data8[x + y * result_glyph_data->stride]);
-          }
+      m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
+                            sizeof(uint32_t));
+      glyph_dsta_src = (uint32_t*)m_temp_buffer.GetData();
+      for (int y = 0; y < result_glyph_data->h; y++) {
+        for (int x = 0; x < result_glyph_data->w; x++) {
+          glyph_dsta_src[x + y * result_glyph_data->w] = Color(
+              255, 255, 255,
+              result_glyph_data->data8[x + y * result_glyph_data->stride]);
+        }
       }
     }
 
@@ -442,7 +439,9 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
           font_desc));  // There is already a font added with this description!
 
   FontInfo* fi = GetFontInfo(font_desc.GetID());
-  if (!fi) return nullptr;
+  if (!fi) {
+    return nullptr;
+  }
 
   if (fi->GetID() == 0) {
     // Is this the test dummy font.

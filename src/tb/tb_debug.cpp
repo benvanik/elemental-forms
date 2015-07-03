@@ -13,7 +13,7 @@
 
 #include "tb_core.h"
 #include "tb_font_renderer.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_text_box.h"
 #include "tb_widgets_reader.h"
 #include "tb_window.h"
@@ -22,16 +22,16 @@ namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 
-TBDebugInfo g_tb_debug;
+DebugInfo g_tb_debug;
 
-TBDebugInfo::TBDebugInfo() = default;
+DebugInfo::DebugInfo() = default;
 
-/** Window showing runtime debug settings. */
+// Window showing runtime debug settings.
 class DebugSettingsWindow : public Window, public WidgetListener {
  public:
-  TextBox* output;
-
   TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
+
+  TextBox* output;
 
   DebugSettingsWindow(Widget* root) {
     SetText("Debug settings");
@@ -44,13 +44,13 @@ class DebugSettingsWindow : public Window, public WidgetListener {
         "0\n"
         "		lp: pref-height: 100dp");
 
-    AddCheckbox(TBDebugInfo::Setting::kLayoutBounds, "Layout bounds");
-    AddCheckbox(TBDebugInfo::Setting::kLayoutClipping, "Layout clipping");
-    AddCheckbox(TBDebugInfo::Setting::kLayoutSizing, "Layout size calculation");
-    AddCheckbox(TBDebugInfo::Setting::kDrawRenderBatches, "Render batches");
-    AddCheckbox(TBDebugInfo::Setting::kDrawSkinBitmapFragments,
+    AddCheckbox(DebugInfo::Setting::kLayoutBounds, "Layout bounds");
+    AddCheckbox(DebugInfo::Setting::kLayoutClipping, "Layout clipping");
+    AddCheckbox(DebugInfo::Setting::kLayoutSizing, "Layout size calculation");
+    AddCheckbox(DebugInfo::Setting::kDrawRenderBatches, "Render batches");
+    AddCheckbox(DebugInfo::Setting::kDrawSkinBitmapFragments,
                 "Render skin bitmap fragments");
-    AddCheckbox(TBDebugInfo::Setting::kDrawFontBitmapFragments,
+    AddCheckbox(DebugInfo::Setting::kDrawFontBitmapFragments,
                 "Render font bitmap fragments");
 
     output = GetWidgetByIDAndType<TextBox>(TBIDC("output"));
@@ -66,7 +66,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
 
   ~DebugSettingsWindow() { WidgetListener::RemoveGlobalListener(this); }
 
-  void AddCheckbox(TBDebugInfo::Setting setting, const char* str) {
+  void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     CheckBox* check = new CheckBox();
     check->SetValue(g_tb_debug.settings[int(setting)]);
     check->data.SetInt(int(setting));
@@ -79,7 +79,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     GetWidgetByID(TBIDC("container"))->AddChild(label);
   }
 
-  virtual bool OnEvent(const WidgetEvent& ev) {
+  bool OnEvent(const WidgetEvent& ev) override {
     if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
       // Update setting and invalidate
       g_tb_debug.settings[ev.target->data.GetInt()] = ev.target->GetValue();
@@ -89,21 +89,23 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     return Window::OnEvent(ev);
   }
 
-  virtual void OnPaint(const PaintProps& paint_props) {
-    // Draw stuff to the right of the debug window
+  void OnPaint(const PaintProps& paint_props) override {
+    // Draw stuff to the right of the debug window.
     g_renderer->Translate(GetRect().w, 0);
 
-    // Draw skin bitmap fragments
-    if (TB_DEBUG_SETTING(Setting::kDrawSkinBitmapFragments)) g_tb_skin->Debug();
+    // Draw skin bitmap fragments.
+    if (TB_DEBUG_SETTING(Setting::kDrawSkinBitmapFragments)) {
+      g_tb_skin->Debug();
+    }
 
-    // Draw font glyph fragments (the font of the hovered widget)
+    // Draw font glyph fragments (the font of the hovered widget).
     if (TB_DEBUG_SETTING(Setting::kDrawFontBitmapFragments)) {
       Widget* widget = Widget::hovered_widget ? Widget::hovered_widget
                                               : Widget::focused_widget;
-      g_font_manager->GetFontFace(
-                          widget ? widget->GetCalculatedFontDescription()
-                                 : g_font_manager->GetDefaultFontDescription())
-          ->Debug();
+      auto font_face = g_font_manager->GetFontFace(
+          widget ? widget->GetCalculatedFontDescription()
+                 : g_font_manager->GetDefaultFontDescription());
+      font_face->Debug();
     }
 
     g_renderer->Translate(-GetRect().w, 0);
@@ -112,26 +114,29 @@ class DebugSettingsWindow : public Window, public WidgetListener {
   std::string GetIDString(const TBID& id) {
     std::string str;
 #ifdef TB_RUNTIME_DEBUG_INFO
-    str.append("\"");
-    str.append(id.debug_string);
-    str.append("\"");
+    str = "\"" + id.debug_string + "\"";
 #else
-    str.SetFormatted("%u", (uint32_t)id);
-#endif
+    str = format_string("%u", uint32_t(id));
+#endif  // TB_RUNTIME_DEBUG_INFO
     return str;
   }
 
-  // WidgetListener
-  virtual bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) {
-    // Skip these events for now
-    if (ev.IsPointerEvent()) return false;
+  bool OnWidgetInvokeEvent(Widget* widget, const WidgetEvent& ev) override {
+    // Skip these events for now.
+    if (ev.IsPointerEvent()) {
+      return false;
+    }
 
-    // Always ignore activity in this window (or we might get endless recursion)
-    if (Window* window = widget->GetParentWindow())
-      if (TBSafeCast<DebugSettingsWindow>(window)) return false;
+    // Always ignore activity in this window (or we might get endless
+    // recursion).
+    if (Window* window = widget->GetParentWindow()) {
+      if (TBSafeCast<DebugSettingsWindow>(window)) {
+        return false;
+      }
+    }
 
-    TBTempBuffer buf;
-    buf.AppendString(GetEventTypeStr(ev.type));
+    StringBuilder buf;
+    buf.AppendString(to_string(ev.type));
     buf.AppendString(" (");
     buf.AppendString(widget->GetClassName());
     buf.AppendString(")");
@@ -156,7 +161,7 @@ class DebugSettingsWindow : public Window, public WidgetListener {
     }
     buf.AppendString("\n");
 
-    // Append the line to the output textfield
+    // Append the line to the output textfield.
     StyleEdit* se = output->GetStyleEdit();
     se->selection.SelectNothing();
     se->AppendText(buf.GetData(), std::string::npos, true);
@@ -171,35 +176,6 @@ class DebugSettingsWindow : public Window, public WidgetListener {
       se->Delete();
     }
     return false;
-  }
-
-  const char* GetEventTypeStr(EventType type) const {
-    switch (type) {
-      case EventType::kClick:
-        return "CLICK";
-      case EventType::kLongClick:
-        return "LONG_CLICK";
-      case EventType::kPointerDown:
-        return "POINTER_DOWN";
-      case EventType::kPointerUp:
-        return "POINTER_UP";
-      case EventType::kPointerMove:
-        return "POINTER_MOVE";
-      case EventType::kWheel:
-        return "WHEEL";
-      case EventType::kChanged:
-        return "CHANGED";
-      case EventType::kKeyDown:
-        return "KEY_DOWN";
-      case EventType::kKeyUp:
-        return "KEY_UP";
-      case EventType::kShortcut:
-        return "SHORT_CUT";
-      case EventType::kContextMenu:
-        return "CONTEXT_MENU";
-      default:
-        return "[UNKNOWN]";
-    };
   }
 };
 

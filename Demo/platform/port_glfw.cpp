@@ -497,7 +497,7 @@ bool ApplicationBackendGLFW::Init(Application* app, int width, int height,
   char exec_path[2048];
   uint32_t exec_path_size = sizeof(exec_path);
   if (_NSGetExecutablePath(exec_path, &exec_path_size) == 0) {
-    TBTempBuffer path;
+    StringBuilder path;
     path.AppendPath(exec_path);
     chdir(path.GetData());
   }
@@ -543,7 +543,7 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   // when visual studio start it.
   char modname[MAX_PATH];
   GetModuleFileName(NULL, modname, MAX_PATH);
-  TBTempBuffer buf;
+  StringBuilder buf;
   buf.AppendPath(modname);
   SetCurrentDirectory(buf.GetData());
 #endif

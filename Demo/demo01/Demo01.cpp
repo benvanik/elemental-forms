@@ -13,7 +13,7 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_widget_animation.h"
 #include "tb_node_tree.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
 #include "utf8.h"
@@ -209,7 +209,7 @@ class EditWindow : public DemoWindow {
           fd.SetID(TBIDC("Orange"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("CJK")) {
-          TBTempBuffer buf;
+          StringBuilder buf;
           for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; cp++, i++) {
             char utf8[8];
             int len = utf8::encode(cp, utf8);

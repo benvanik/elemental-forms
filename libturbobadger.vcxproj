@@ -61,7 +61,7 @@
     <ClCompile Include="src\tb\tb_system_linux.cpp" />
     <ClCompile Include="src\tb\tb_system_win.cpp" />
     <ClCompile Include="src\tb\tb_tab_container.cpp" />
-    <ClCompile Include="src\tb\tb_tempbuffer.cpp" />
+    <ClCompile Include="src\tb\tb_string_builder.cpp" />
     <ClCompile Include="src\tb\tb_toggle_container.cpp" />
     <ClCompile Include="src\tb\tb_tooltips.cpp" />
     <ClCompile Include="src\tb\tb_value.cpp" />
@@ -137,7 +137,7 @@
     <ClInclude Include="src\tb\tb_style_edit_content.h" />
     <ClInclude Include="src\tb\tb_system.h" />
     <ClInclude Include="src\tb\tb_tab_container.h" />
-    <ClInclude Include="src\tb\tb_tempbuffer.h" />
+    <ClInclude Include="src\tb\tb_string_builder.h" />
     <ClInclude Include="src\tb\tb_toggle_container.h" />
     <ClInclude Include="src\tb\tb_types.h" />
     <ClInclude Include="src\tb\tb_value.h" />

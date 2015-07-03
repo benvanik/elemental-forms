@@ -14,7 +14,7 @@
 #include <cstdlib>
 
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_types.h"
 #include "tb_value.h"
 
@@ -30,7 +30,7 @@ void DimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
 }
 
 void DimensionConverter::GetDstDPIFilename(const std::string& filename,
-                                           TBTempBuffer* tempbuf) const {
+                                           StringBuilder* tempbuf) const {
   size_t dot_pos = 0;
   for (dot_pos = filename.size() - 1; dot_pos > 0; dot_pos--) {
     if (filename[dot_pos] == '.') break;

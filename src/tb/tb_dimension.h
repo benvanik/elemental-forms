@@ -16,7 +16,7 @@
 
 namespace tb {
 
-class TBTempBuffer;
+class StringBuilder;
 class Value;
 
 // Dimensions <= this value will be untouched by conversion in
@@ -51,7 +51,7 @@ class DimensionConverter {
   // The temp buffer will contain the resulting file name.
   // F.ex "foo.png" becomes "foo@192.png"
   void GetDstDPIFilename(const std::string& filename,
-                         TBTempBuffer* tempbuf) const;
+                         StringBuilder* tempbuf) const;
 
   // Returns true if the source and destinatin DPI are different.
   bool NeedConversion() const { return m_src_dpi != m_dst_dpi; }

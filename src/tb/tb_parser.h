@@ -11,7 +11,7 @@
 #define TB_PARSER_H
 
 #include "tb_str.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_value.h"
 
 namespace tb {
@@ -61,7 +61,7 @@ class Parser {
   int current_indent = 0;
   int current_line_nr = 0;
   std::string multi_line_token;
-  TBTempBuffer multi_line_value;
+  StringBuilder multi_line_value;
   int multi_line_sub_level = 0;
   bool pending_multiline = false;
 };

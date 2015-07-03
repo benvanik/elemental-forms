@@ -12,7 +12,7 @@
 #include "tb_hash.h"
 #include "tb_skin.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 
 namespace tb {
 
@@ -100,7 +100,7 @@ Image ImageManager::GetImage(const char* filename) {
     // Load a fragment. Load a destination DPI bitmap if available.
     BitmapFragment* fragment = nullptr;
     if (g_tb_skin->GetDimensionConverter()->NeedConversion()) {
-      TBTempBuffer filename_dst_DPI;
+      StringBuilder filename_dst_DPI;
       g_tb_skin->GetDimensionConverter()->GetDstDPIFilename(filename,
                                                             &filename_dst_DPI);
       fragment =

@@ -83,6 +83,11 @@ enum class EventType {
   // ref_id may be used for additional type info.
   kCustom,
 };
+MAKE_ORDERED_ENUM_STRING_UTILS(EventType, "kClick", "kLongClick",
+                               "kPointerDown", "kPointerUp", "kPointerMove",
+                               "kWheel", "kChanged", "kKeyDown", "kKeyUp",
+                               "kShortcut", "kContextMenu", "kFileDrop",
+                               "kCustom");
 
 enum class ModifierKeys {
   kNone = 0,

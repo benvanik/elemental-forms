@@ -11,7 +11,7 @@
 
 #include "tb_hash.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 
 namespace tb {
 
@@ -128,7 +128,7 @@ void TBHashTable::Delete(uint32_t key) { DeleteContent(Remove(key)); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 void TBHashTable::Debug() {
-  TBTempBuffer line;
+  StringBuilder line;
   line.AppendString("Hash table: ");
   int total_count = 0;
   for (uint32_t i = 0; i < m_num_buckets; i++) {

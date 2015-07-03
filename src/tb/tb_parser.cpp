@@ -12,7 +12,7 @@
 #include <cassert>
 #include <cctype>
 
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "utf8.h"
 
 namespace tb {
@@ -175,10 +175,8 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
 }
 
 Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
-  TBTempBuffer line, work;
-  if (!line.Reserve(1024) || !work.Reserve(1024)) {
-    return Status::kOutOfMemory;
-  }
+  StringBuilder line(1024);
+  StringBuilder work(1024);
 
   current_indent = 0;
   current_line_nr = 1;
@@ -209,9 +207,7 @@ Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
         // We have a line.
         // Skip preceding \r (if we have one).
         size_t line_len = line_pos - line_start;
-        if (!line.Append(buf + line_start, line_len)) {
-          return Status::kOutOfMemory;
-        }
+        line.Append(buf + line_start, line_len);
 
         // Strip away trailing '\r' if the line has it.
         char* linebuf = line.GetData();
@@ -221,9 +217,7 @@ Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
         }
 
         // Terminate the line string.
-        if (!line.Append("", 1)) {
-          return Status::kOutOfMemory;
-        }
+        line.Append("", 1);
 
         // Handle line.
         OnLine(line.GetData(), target);
@@ -235,16 +229,12 @@ Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
         continue;
       }
       // No more lines here so push the rest and break for more data.
-      if (!line.Append(buf + line_start, read_len - line_start)) {
-        return Status::kOutOfMemory;
-      }
+      line.Append(buf + line_start, read_len - line_start);
       break;
     }
   }
   if (line.GetAppendPos()) {
-    if (!line.Append("", 1)) {
-      return Status::kOutOfMemory;
-    }
+    line.Append("", 1);
     OnLine(line.GetData(), target);
     current_line_nr++;
   }

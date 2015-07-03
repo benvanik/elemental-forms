@@ -16,7 +16,7 @@
 
 #include "tb_node_ref_tree.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_language.h"
 
 namespace tb {
@@ -215,7 +215,7 @@ class NodeTarget : public ParserTarget {
   void IncludeFile(int line_nr, const char* filename) {
     // Read the included file into a new Node and then move all the children to
     // m_target_node.
-    TBTempBuffer include_filename;
+    StringBuilder include_filename;
     include_filename.AppendPath(m_filename);
     include_filename.AppendString(filename);
     Node content;

@@ -8,30 +8,30 @@
  */
 
 #include "tb_test.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
 
-TB_TEST_GROUP(tb_tempbuffer) {
+TB_TEST_GROUP(tb_string_builder) {
   TB_TEST(append_path_1) {
-    TBTempBuffer buf;
+    StringBuilder buf;
     buf.AppendPath("foo.txt");
     TB_VERIFY_STR(buf.GetData(), "./");
   }
   TB_TEST(append_path_2) {
-    TBTempBuffer buf;
+    StringBuilder buf;
     buf.AppendPath("Path/subpath/foo.txt");
     TB_VERIFY_STR(buf.GetData(), "Path/subpath/");
   }
   TB_TEST(append_path_3) {
-    TBTempBuffer buf;
+    StringBuilder buf;
     buf.AppendPath("C:\\test\\foo.txt");
     TB_VERIFY_STR(buf.GetData(), "C:\\test\\");
   }
   TB_TEST(append_string) {
-    TBTempBuffer buf;
+    StringBuilder buf;
     buf.AppendString("xxxxxxxxxx");
     TB_VERIFY(buf.GetAppendPos() == 10);
     TB_VERIFY_STR(buf.GetData(), "xxxxxxxxxx");

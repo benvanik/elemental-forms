@@ -22,9 +22,9 @@ namespace tb {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 
-class TBDebugInfo {
+class DebugInfo {
  public:
-  TBDebugInfo();
+  DebugInfo();
 
   enum class Setting {
     // Show widgets bounds.
@@ -48,12 +48,12 @@ class TBDebugInfo {
   int settings[int(Setting::kSettingCount)] = {0};
 };
 
-extern TBDebugInfo g_tb_debug;
+extern DebugInfo g_tb_debug;
 
-/** Show a window containing runtime debugging settings. */
+// Shows a window containing runtime debugging settings.
 void ShowDebugInfoSettingsWindow(class Widget* root);
 
-#define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(TBDebugInfo::setting)]
+#define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(DebugInfo::setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \
   if (TB_DEBUG_SETTING(setting)) {         \
     code;                                  \

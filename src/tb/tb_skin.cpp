@@ -16,7 +16,7 @@
 
 #include "tb_node_tree.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 
 namespace tb {
 
@@ -68,10 +68,8 @@ bool Skin::LoadInternal(const char* skin_file) {
     return false;
   }
 
-  TBTempBuffer skin_path;
-  if (!skin_path.AppendPath(skin_file)) {
-    return false;
-  }
+  StringBuilder skin_path;
+  skin_path.AppendPath(skin_file);
 
   if (node.GetNode("description")) {
     // Check which DPI mode the dimension converter should use.
@@ -178,7 +176,7 @@ bool Skin::ReloadBitmaps() {
 
 bool Skin::ReloadBitmapsInternal() {
   // Load all bitmap files into new bitmap fragments.
-  TBTempBuffer filename_dst_DPI;
+  StringBuilder filename_dst_DPI;
   bool success = true;
   TBHashTableIteratorOf<SkinElement> it(&m_elements);
   while (SkinElement* element = it.GetNextContent()) {

@@ -4,7 +4,7 @@
 #include "tb_system.h"
 #include "tb_select.h"
 #include "tb_text_box.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "tb_scroll_container.h"
 #include <stdio.h>
 
@@ -50,18 +50,16 @@ void ResourceEditWindow::Load(const char* resource_file) {
   m_resource_filename = resource_file;
   SetText(resource_file);
 
-  // Set the text of the source view
+  // Set the text of the source view.
   m_source_text_box->SetText("");
 
   if (TBFile* file = TBFile::Open(m_resource_filename, TBFile::Mode::kRead)) {
-    TBTempBuffer buffer;
-    if (buffer.Reserve(file->Size())) {
-      size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
-      m_source_text_box->SetText(buffer.GetData(), size_read);
-    }
+    StringBuilder buffer(file->Size());
+    size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
+    m_source_text_box->SetText(buffer.GetData(), size_read);
     delete file;
-  } else  // Error, show message
-  {
+  } else {
+    // Error, show message.
     MessageWindow* msg_win = new MessageWindow(GetParentRoot(), TBIDC(""));
     msg_win->Show("Error loading resource",
                   tb::format_string("Could not load file %s", resource_file));

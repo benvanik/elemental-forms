@@ -15,7 +15,7 @@
 #include "tb_font_desc.h"
 #include "tb_linklist.h"
 #include "tb_renderer.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 #include "utf8.h"
 
 namespace tb {
@@ -136,7 +136,7 @@ class FontEffect {
   int m_blur_radius = 0;
   float* m_tempBuffer = nullptr;
   float* m_kernel = nullptr;
-  TBTempBuffer m_blur_temp;
+  StringBuilder m_blur_temp;
 };
 
 // Represents a loaded font that can measure and render strings.
@@ -203,7 +203,7 @@ class FontFace {
   FontDescription m_font_desc;
   FontMetrics m_metrics;
   FontEffect m_effect;
-  TBTempBuffer m_temp_buffer;
+  StringBuilder m_temp_buffer;
 
   FontFace* m_bgFont = nullptr;
   int m_bgX = 0;

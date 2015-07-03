@@ -15,7 +15,7 @@
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
 #include "tb_system.h"
-#include "tb_tempbuffer.h"
+#include "tb_string_builder.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 
@@ -183,8 +183,8 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   m_rgb = m_node.GetValueInt("info>rgb", 0);
 
   // Get the path for the bitmap file.
-  TBTempBuffer bitmap_filename;
-  if (!bitmap_filename.AppendPath(filename)) return false;
+  StringBuilder bitmap_filename;
+  bitmap_filename.AppendPath(filename);
 
   // Append the bitmap filename for the given size.
   bitmap_filename.AppendString(size_node->GetValueString("bitmap", ""));
