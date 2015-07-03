@@ -15,14 +15,14 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_object) {
-  class Car : public TBTypedObject {
+  class Car : public TypedObject {
    public:
-    TBOBJECT_SUBCLASS(Car, TBTypedObject);
+    TBOBJECT_SUBCLASS(Car, TypedObject);
   };
 
-  class Fruit : public TBTypedObject {
+  class Fruit : public TypedObject {
    public:
-    TBOBJECT_SUBCLASS(Fruit, TBTypedObject);
+    TBOBJECT_SUBCLASS(Fruit, TypedObject);
   };
 
   class Apple : public Fruit {
@@ -35,9 +35,9 @@ TB_TEST_GROUP(tb_object) {
     Apple apple;
     Car car;
 
-    TB_VERIFY(TBSafeCast<TBTypedObject>(&fruit));
-    TB_VERIFY(TBSafeCast<TBTypedObject>(&apple));
-    TB_VERIFY(TBSafeCast<TBTypedObject>(&car));
+    TB_VERIFY(TBSafeCast<TypedObject>(&fruit));
+    TB_VERIFY(TBSafeCast<TypedObject>(&apple));
+    TB_VERIFY(TBSafeCast<TypedObject>(&car));
 
     TB_VERIFY(TBSafeCast<Fruit>(&fruit));
     TB_VERIFY(TBSafeCast<Fruit>(&apple));

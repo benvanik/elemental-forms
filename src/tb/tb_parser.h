@@ -31,7 +31,7 @@ class ParserTarget {
   virtual ~ParserTarget() = default;
   virtual void OnError(int line_nr, const std::string& error) = 0;
   virtual void OnComment(int line_nr, const char* comment) = 0;
-  virtual void OnToken(int line_nr, const char* name, TBValue& value) = 0;
+  virtual void OnToken(int line_nr, const char* name, Value& value) = 0;
   virtual void Enter() = 0;
   virtual void Leave() = 0;
 };
@@ -56,7 +56,7 @@ class Parser {
   void OnLine(char* line, ParserTarget* target);
   void OnCompactLine(char* line, ParserTarget* target);
   void OnMultiline(char* line, ParserTarget* target);
-  void ConsumeValue(TBValue& dst_value, char*& line);
+  void ConsumeValue(Value& dst_value, char*& line);
 
   int current_indent = 0;
   int current_line_nr = 0;

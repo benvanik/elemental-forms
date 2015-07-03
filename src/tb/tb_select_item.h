@@ -209,7 +209,7 @@ class GenericStringItem {
   SelectItemSource* sub_source = nullptr;
 
   // This value is free to use for anything. It's not used internally.
-  TBValue tag;
+  Value tag;
 };
 
 // An item source list providing items of type GenericStringItem.

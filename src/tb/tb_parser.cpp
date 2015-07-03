@@ -303,7 +303,7 @@ void Parser::OnLine(char* line, ParserTarget* target) {
 
     bool is_compact_line = token_len && token[token_len - 1] == ':';
 
-    TBValue value;
+    Value value;
     if (is_compact_line) {
       token_len--;
       token[token_len] = 0;
@@ -325,7 +325,7 @@ void Parser::OnLine(char* line, ParserTarget* target) {
     } else if (token[token_len]) {
       token[token_len] = 0;
       UnescapeString(line);
-      value.SetFromStringAuto(line, TBValue::Set::kAsStatic);
+      value.SetFromStringAuto(line, Value::Set::kAsStatic);
     }
     target->OnToken(current_line_nr, token, value);
 
@@ -359,7 +359,7 @@ void Parser::OnCompactLine(char* line, ParserTarget* target) {
       line++;
     }
 
-    TBValue v;
+    Value v;
     ConsumeValue(v, line);
 
     if (pending_multiline) {
@@ -385,12 +385,12 @@ void Parser::OnMultiline(char* line, ParserTarget* target) {
     line++;
   }
 
-  TBValue value;
+  Value value;
   ConsumeValue(value, line);
 
   if (!pending_multiline) {
     // Ready with all lines.
-    value.SetString(multi_line_value.GetData(), TBValue::Set::kAsStatic);
+    value.SetString(multi_line_value.GetData(), Value::Set::kAsStatic);
     target->OnToken(current_line_nr, multi_line_token.c_str(), value);
 
     if (multi_line_sub_level) {
@@ -403,7 +403,7 @@ void Parser::OnMultiline(char* line, ParserTarget* target) {
   }
 }
 
-void Parser::ConsumeValue(TBValue& dst_value, char*& line) {
+void Parser::ConsumeValue(Value& dst_value, char*& line) {
   // Find value (As quoted string, or as auto).
   char* value = line;
   if (*line == '\"' || *line == '\'') {
@@ -430,7 +430,7 @@ void Parser::ConsumeValue(TBValue& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.SetString(value, TBValue::Set::kAsStatic);
+    dst_value.SetString(value, Value::Set::kAsStatic);
   } else {
     // Find next comma or end.
     while (*line != ',' && *line != 0) {
@@ -442,7 +442,7 @@ void Parser::ConsumeValue(TBValue& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.SetFromStringAuto(value, TBValue::Set::kAsStatic);
+    dst_value.SetFromStringAuto(value, Value::Set::kAsStatic);
   }
 
   // Check if we still have pending value data on the following line and set

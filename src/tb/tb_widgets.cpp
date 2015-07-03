@@ -138,7 +138,7 @@ void Widget::Die() {
 }
 
 Widget* Widget::GetWidgetByIDInternal(const TBID& id,
-                                      const TB_TYPE_ID type_id) {
+                                      const tb_type_id_t type_id) {
   if (m_id == id && (!type_id || IsOfTypeId(type_id))) {
     return this;
   }

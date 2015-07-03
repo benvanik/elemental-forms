@@ -25,17 +25,18 @@ class MessageHandler;
 constexpr uint64_t kNotSoon = -1;
 
 // Holds custom data to send with a posted message.
-class MessageData : public TBTypedObject {
+class MessageData : public TypedObject {
  public:
   MessageData() = default;
   MessageData(int v1, int v2) : v1(v1), v2(v2) {}
-  virtual ~MessageData() {}
+  virtual ~MessageData() = default;
 
  public:
-  TBValue v1;  ///< Use for anything
-  TBValue v2;  ///< Use for anything
-  TBID id1;    ///< Use for anything
-  TBID id2;    ///< Use for anything
+  // Values can be used for anything.
+  Value v1;
+  Value v2;
+  TBID id1;
+  TBID id2;
 };
 
 // Should never be created or subclassed anywhere except in Message.

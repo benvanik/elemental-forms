@@ -78,13 +78,13 @@ int DimensionConverter::GetPxFromString(const char* str, int def_value) const {
   }
 }
 
-int DimensionConverter::GetPxFromValue(TBValue* value, int def_value) const {
+int DimensionConverter::GetPxFromValue(Value* value, int def_value) const {
   if (!value) {
     return def_value;
   }
-  if (value->GetType() == TBValue::Type::kInt) {
+  if (value->GetType() == Value::Type::kInt) {
     return DpToPx(value->GetInt());
-  } else if (value->GetType() == TBValue::Type::kFloat) {
+  } else if (value->GetType() == Value::Type::kFloat) {
     // FIX: We might want float versions of all dimension functions.
     return DpToPx((int)value->GetFloat());
   }

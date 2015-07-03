@@ -17,9 +17,7 @@
 
 namespace tb {
 
-std::string
-    clipboard;  ///< Obviosly not a full implementation since it ignores the
-/// OS :)
+std::string clipboard;
 
 void TBClipboard::Empty() { clipboard.clear(); }
 

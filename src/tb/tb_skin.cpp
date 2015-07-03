@@ -83,7 +83,7 @@ bool Skin::LoadInternal(const char* skin_file) {
     if (Node* supported_dpi_node = node.GetNode("description>supported-dpi")) {
       assert(supported_dpi_node->GetValue().IsArray() ||
              supported_dpi_node->GetValue().GetInt() == base_dpi);
-      if (TBValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
+      if (ValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
         int screen_dpi = TBSystem::GetDPI();
         int best_supported_dpi = 0;
         for (int i = 0; i < arr->GetLength(); i++) {
@@ -586,7 +586,7 @@ void SkinElement::Load(Node* n, Skin* skin, const char* skin_path) {
   const DimensionConverter* dim_conv = skin->GetDimensionConverter();
 
   if (Node* padding_node = n->GetNode("padding")) {
-    TBValue& val = padding_node->GetValue();
+    Value& val = padding_node->GetValue();
     if (val.GetArrayLength() == 4) {
       padding_top = dim_conv->GetPxFromValue(val.GetArray()->GetValue(0), 0);
       padding_right = dim_conv->GetPxFromValue(val.GetArray()->GetValue(1), 0);

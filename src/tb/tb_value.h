@@ -18,8 +18,8 @@
 
 namespace tb {
 
-class TBValue;
-class TBTypedObject;
+class Value;
+class TypedObject;
 
 // Return true if the given string starts with a number.
 // Ex: 100, -.2, 1.0E-8, 5px will all return true.
@@ -39,28 +39,29 @@ bool is_number_only(const char* str);
 // Should only be called when you've verified it's a number with is_number().
 bool is_number_float(const char* str);
 
-// TBValueArray is a array of TBValue.
-class TBValueArray {
+// ValueArray is an array of Value.
+class ValueArray {
  public:
-  TBValueArray();
-  ~TBValueArray();
-  TBValue* AddValue();
-  TBValue* GetValue(int index);
-  static TBValueArray* Clone(TBValueArray* source);
+  ValueArray();
+  ~ValueArray();
+
+  Value* AddValue();
+  Value* GetValue(int index);
+  static ValueArray* Clone(ValueArray* source);
   int GetLength() const { return m_list.GetNumItems(); }
 
  private:
-  TBListAutoDeleteOf<TBValue> m_list;
+  TBListAutoDeleteOf<Value> m_list;
 };
 
-// TBValue holds value of a specific type.
+// Value holds value of a specific type.
 // In addition to NULL, string, float, integer, it may also contain an array of
-// attributes (TBValueArray), or an object (derived from TBTypedObject).
+// attributes (ValueArray), or an object (derived from TypedObject).
 // When getting the value as a different type from what it is, it may convert
 // its internal representation to that type. Exceptions are for array and
 // object, which will return 0 when getting as numbers, or "" or object name
 // when getting as string.
-class TBValue {
+class Value {
  public:
   // The current type of the value.
   // It may change when using a getter of a different type.
@@ -80,27 +81,27 @@ class TBValue {
     kAsStatic        // The data passed in will be stored but never freed.
   };
 
-  TBValue();
-  TBValue(const TBValue& value);
-  TBValue(Type type);
+  Value();
+  Value(const Value& value);
+  Value(Type type);
 
-  TBValue(int value);
-  TBValue(float value);
-  TBValue(const char* value, Set set = Set::kNewCopy);
-  TBValue(TBTypedObject* object);
+  Value(int value);
+  Value(float value);
+  Value(const char* value, Set set = Set::kNewCopy);
+  Value(TypedObject* object);
 
-  ~TBValue();
+  ~Value();
 
   // Takes over ownership of content of source_value.
   // NOTE: If source_value has string or array that are set with Set::kAsStatic,
   // it will make new copies of those.
   // NOTE: value will be nulled on source_value after this call.
-  void TakeOver(TBValue& source_value);
+  void TakeOver(Value& source_value);
 
   // Copies the content of source_value to this value.
   // NOTE: This value will become Type::kNull if source_value holds an object.
   // We can't copy objects.
-  void Copy(const TBValue& source_value);
+  void Copy(const Value& source_value);
 
   void SetNull();
   void SetInt(int val);
@@ -113,10 +114,10 @@ class TBValue {
   }
 
   // Sets the passed in object. Takes the ownership of the object!
-  void SetObject(TBTypedObject* object);
+  void SetObject(TypedObject* object);
 
   // Sets the passed in array.
-  void SetArray(TBValueArray* arr, Set set);
+  void SetArray(ValueArray* arr, Set set);
 
   // Sets the value either as a string, number or array of numbers, depending of
   // the string syntax.
@@ -125,8 +126,8 @@ class TBValue {
   int GetInt() const;
   float GetFloat() const;
   const char* GetString();
-  TBTypedObject* GetObject() const { return IsObject() ? val_obj : nullptr; }
-  TBValueArray* GetArray() const { return IsArray() ? val_arr : nullptr; }
+  TypedObject* GetObject() const { return IsObject() ? val_obj : nullptr; }
+  ValueArray* GetArray() const { return IsArray() ? val_arr : nullptr; }
 
   Type GetType() const { return Type(m_packed.type); }
   bool IsString() const { return Type(m_packed.type) == Type::kString; }
@@ -136,7 +137,7 @@ class TBValue {
   bool IsArray() const { return Type(m_packed.type) == Type::kArray; }
   int GetArrayLength() const { return IsArray() ? val_arr->GetLength() : 0; }
 
-  const TBValue& operator=(const TBValue& val) {
+  const Value& operator=(const Value& val) {
     Copy(val);
     return *this;
   }
@@ -148,15 +149,15 @@ class TBValue {
     float val_float;
     int val_int;
     char* val_str;
-    TBTypedObject* val_obj;
-    TBValueArray* val_arr;
+    TypedObject* val_obj;
+    ValueArray* val_arr = nullptr;
   };
   union {
     struct {
       uint32_t type : 8;
       uint32_t allocated : 1;
     } m_packed;
-    uint32_t m_packed_init;
+    uint32_t m_packed_init = 0;
   };
 };
 

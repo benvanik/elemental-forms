@@ -48,15 +48,15 @@ class NodeRefTree : public TBLinkOf<NodeRefTree> {
 
   // Sets the value for the given request and invoke the change listener.
   // Creates the nodes that doesn't exist.
-  virtual void SetValue(const char* request, const TBValue& value);
+  virtual void SetValue(const char* request, const Value& value);
 
   // Gets the value of the given request. Follows references if any.
   // Returns a null value if the request doesn't exist.
-  virtual TBValue& GetValue(const char* request);
+  virtual Value& GetValue(const char* request);
 
   // Gets the value of the given tree name and request (@treename>noderequest).
   // Returns a null value if the given tree or request doesn't exist.
-  static TBValue& GetValueFromTree(const char* request);
+  static Value& GetValueFromTree(const char* request);
 
   // Returns the tree with the given name, or nullptr if no matching tree
   // exists.

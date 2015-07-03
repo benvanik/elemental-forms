@@ -24,7 +24,7 @@ namespace {
 const TBID messageShow = TBIDC("TooltipManager.show");
 const TBID messageHide = TBIDC("TooltipManager.hide");
 
-class TTMsgParam : public TBTypedObject {
+class TTMsgParam : public TypedObject {
  public:
   TTMsgParam(Widget* hovered) : m_hovered(hovered) {}
 

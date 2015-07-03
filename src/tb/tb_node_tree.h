@@ -23,7 +23,7 @@ enum class ReadFlags {
 };
 MAKE_ENUM_FLAG_COMBO(ReadFlags);
 
-// A tree node with a string name and a value (TBValue).
+// A tree node with a string name and a value (Value).
 // It may have a parent Node and child Nodes.
 //
 // Getting the value of this node or any child, may optionally follow references
@@ -39,7 +39,7 @@ class Node : public TBLinkOf<Node> {
   // Creates a new node with the given name.
   static Node* Create(const char* name);
 
-  void TakeValue(TBValue& value);
+  void TakeValue(Value& value);
 
   // Reads a tree of nodes from file into this node.
   // Returns true on success.
@@ -107,11 +107,11 @@ class Node : public TBLinkOf<Node> {
 
   const char* GetName() const { return m_name; }
 
-  TBValue& GetValue() { return m_value; }
+  Value& GetValue() { return m_value; }
 
   // Returns the value of this node.
   // Will follow eventual references to NodeRefTree.
-  TBValue& GetValueFollowRef();
+  Value& GetValueFollowRef();
 
   // Gets a value from the given request as an integer.
   // Will follow eventual references to NodeRefTree.
@@ -150,7 +150,7 @@ class Node : public TBLinkOf<Node> {
   static Node* Create(const char* name, size_t name_len);
 
   char* m_name = nullptr;
-  TBValue m_value;
+  Value m_value;
   TBLinkListOf<Node> m_children;
   Node* m_parent = nullptr;
   uint32_t m_cycle_id = 0;  // Used to detect circular references.

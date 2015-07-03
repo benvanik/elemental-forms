@@ -34,13 +34,13 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     DataListener dl;
     dt.AddListener(&dl);
 
-    dt.SetValue("mainbar>size", TBValue("10mm", TBValue::Set::kAsStatic));
+    dt.SetValue("mainbar>size", Value("10mm", Value::Set::kAsStatic));
     TB_VERIFY_STR(dl.changed_request, "mainbar>size");
 
-    dt.SetValue("mainbar>axis", TBValue("x", TBValue::Set::kAsStatic));
+    dt.SetValue("mainbar>axis", Value("x", Value::Set::kAsStatic));
     TB_VERIFY_STR(dl.changed_request, "mainbar>axis");
 
-    dt.SetValue("mainbar>visible", TBValue(42));
+    dt.SetValue("mainbar>visible", Value(42));
     TB_VERIFY_STR(dl.changed_request, "mainbar>visible");
 
     TB_VERIFY_STR(dt.GetValue("mainbar>size").GetString(), "10mm");
@@ -98,11 +98,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Reference in a circular loop. Should not freeze.
     TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bar>bar_circular2")
-                  .GetType() == TBValue::Type::kNull);
+                  .GetType() == Value::Type::kNull);
 
     // References tree is wrong
     TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
-                  .GetType() == TBValue::Type::kNull);
+                  .GetType() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
     Widget* button_broken1 = root.GetWidgetByID(TBIDC("button_broken_node"));
@@ -169,7 +169,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
 
     // Change data for condition
-    dt.SetValue("layout>landscape", TBValue(0));
+    dt.SetValue("layout>landscape", Value(0));
 
     // Inflate & check
     g_widgets_reader->LoadData(&root2, layout_str);

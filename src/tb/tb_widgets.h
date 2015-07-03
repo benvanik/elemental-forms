@@ -123,9 +123,9 @@ enum class SpecialKey {
   kF12,
 };
 
-class WidgetEvent : public TBTypedObject {
+class WidgetEvent : public TypedObject {
  public:
-  TBOBJECT_SUBCLASS(WidgetEvent, TBTypedObject);
+  TBOBJECT_SUBCLASS(WidgetEvent, TypedObject);
 
   EventType type;
   // The widget that invoked the event.
@@ -389,9 +389,9 @@ enum class HitStatus {
 //
 // NOTE: When you subclass a widget, use the TBOBJECT_SUBCLASS macro to define
 // the type casting functions instead of implementing those manually.
-class Widget : public TBTypedObject, public TBLinkOf<Widget> {
+class Widget : public TypedObject, public TBLinkOf<Widget> {
  public:
-  TBOBJECT_SUBCLASS(Widget, TBTypedObject);
+  TBOBJECT_SUBCLASS(Widget, TypedObject);
 
   Widget();
   virtual ~Widget();
@@ -951,8 +951,8 @@ class Widget : public TBTypedObject, public TBLinkOf<Widget> {
   // given WidgetValue.
   void Connect(WidgetValue* value) { m_connection.Connect(value, this); }
 
-  // Unconnects, if this widget is connected to a WidgetValue.
-  void Unconnect() { m_connection.Unconnect(); }
+  // Disconnects, if this widget is connected to a WidgetValue.
+  void Disconnect() { m_connection.Disconnect(); }
 
   // Gets the rectangle inside any padding, relative to this widget.
   // This is the rectangle in which the content should be rendered.
@@ -1149,7 +1149,7 @@ class Widget : public TBTypedObject, public TBLinkOf<Widget> {
  public:
   // This value is free to use for anything. It's not used by Widget itself.
   // Initially Type::kNull.
-  TBValue data;
+  Value data;
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   uint64_t last_measure_time = 0;
@@ -1190,7 +1190,7 @@ class Widget : public TBTypedObject, public TBLinkOf<Widget> {
   Scroller* FindStartedScroller();
   Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
   Widget* GetWidgetByIDInternal(const TBID& id,
-                                const TB_TYPE_ID type_id = nullptr);
+                                const tb_type_id_t type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);
   void InvokeProcessInternal();
   static void SetHoveredWidget(Widget* widget, bool touch);

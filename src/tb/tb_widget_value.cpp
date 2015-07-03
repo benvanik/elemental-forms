@@ -14,48 +14,58 @@
 namespace tb {
 
 void WidgetValueConnection::Connect(WidgetValue* value, Widget* widget) {
-  Unconnect();
+  Disconnect();
   m_widget = widget;
   m_value = value;
   m_value->m_connections.AddLast(this);
   m_value->SyncToWidget(m_widget);
 }
 
-void WidgetValueConnection::Unconnect() {
-  if (m_value) m_value->m_connections.Remove(this);
+void WidgetValueConnection::Disconnect() {
+  if (m_value) {
+    m_value->m_connections.Remove(this);
+  }
   m_value = nullptr;
   m_widget = nullptr;
 }
 
 void WidgetValueConnection::SyncFromWidget(Widget* source_widget) {
-  if (m_value) m_value->SetFromWidget(source_widget);
+  if (m_value) {
+    m_value->SetFromWidget(source_widget);
+  }
 }
 
-WidgetValue::WidgetValue(const TBID& name, TBValue::Type type)
-    : m_name(name), m_value(type), m_syncing(false) {}
+WidgetValue::WidgetValue(const TBID& name, Value::Type type)
+    : m_name(name), m_value(type) {}
 
 WidgetValue::~WidgetValue() {
-  while (m_connections.GetFirst()) m_connections.GetFirst()->Unconnect();
+  while (m_connections.GetFirst()) {
+    m_connections.GetFirst()->Disconnect();
+  }
 }
 
 void WidgetValue::SetFromWidget(Widget* source_widget) {
-  if (m_syncing) return;  // We ended up here because syncing is in progress.
+  if (m_syncing) {
+    // We ended up here because syncing is in progress.
+    return;
+  }
 
-  // Get the value in the format
+  // Get the value in the format.
   switch (m_value.GetType()) {
-    case TBValue::Type::kString:
+    case Value::Type::kString:
       m_value.SetString(source_widget->GetText());
       break;
-    case TBValue::Type::kNull:
-    case TBValue::Type::kInt:
+    case Value::Type::kNull:
+    case Value::Type::kInt:
       m_value.SetInt(source_widget->GetValue());
       break;
-    case TBValue::Type::kFloat:
-      // FIX: TBValue should use double instead of float?
-      m_value.SetFloat((float)source_widget->GetValueDouble());
+    case Value::Type::kFloat:
+      // FIX: Value should use double instead of float?
+      m_value.SetFloat(float(source_widget->GetValueDouble()));
       break;
     default:
       assert(!"Unsupported value type!");
+      break;
   }
 
   SyncToWidgets(source_widget);
@@ -65,8 +75,7 @@ void WidgetValue::SyncToWidgets(Widget* exclude_widget) {
   // FIX: Assign group to each value. Currently we only have one global group.
   g_value_group.InvokeOnValueChanged(this);
 
-  TBLinkListOf<WidgetValueConnection>::Iterator iter =
-      m_connections.IterateForward();
+  auto iter = m_connections.IterateForward();
   while (WidgetValueConnection* connection = iter.GetAndStep()) {
     if (connection->m_widget != exclude_widget) {
       SyncToWidget(connection->m_widget);
@@ -76,24 +85,26 @@ void WidgetValue::SyncToWidgets(Widget* exclude_widget) {
 
 void WidgetValue::SyncToWidget(Widget* dst_widget) {
   if (m_syncing) {
-    return;  // We ended up here because syncing is in progress.
+    // We ended up here because syncing is in progress.
+    return;
   }
 
   m_syncing = true;
   switch (m_value.GetType()) {
-    case TBValue::Type::kString:
+    case Value::Type::kString:
       dst_widget->SetText(m_value.GetString());
       break;
-    case TBValue::Type::kNull:
-    case TBValue::Type::kInt:
+    case Value::Type::kNull:
+    case Value::Type::kInt:
       dst_widget->SetValue(m_value.GetInt());
       break;
-    case TBValue::Type::kFloat:
-      // FIX: TBValue should use double instead of float?
+    case Value::Type::kFloat:
+      // FIX: Value should use double instead of float?
       dst_widget->SetValueDouble(m_value.GetFloat());
       break;
     default:
       assert(!"Unsupported value type!");
+      break;
   }
   m_syncing = false;
 }
@@ -104,20 +115,20 @@ void WidgetValue::SetInt(int value) {
 }
 
 void WidgetValue::SetText(const char* text) {
-  m_value.SetString(text, TBValue::Set::kNewCopy);
+  m_value.SetString(text, Value::Set::kNewCopy);
   SyncToWidgets(nullptr);
 }
 
 void WidgetValue::SetDouble(double value) {
-  // FIX: TBValue should use double instead of float?
-  m_value.SetFloat((float)value);
+  // FIX: Value should use double instead of float?
+  m_value.SetFloat(float(value));
   SyncToWidgets(nullptr);
 }
 
-/*extern*/ TBValueGroup g_value_group;
+/*extern*/ ValueGroup g_value_group;
 
-WidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
-                                               TBValue::Type type) {
+WidgetValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
+                                             Value::Type type) {
   if (WidgetValue* val = GetValue(name)) {
     return val;
   }
@@ -126,9 +137,9 @@ WidgetValue* TBValueGroup::CreateValueIfNeeded(const TBID& name,
   return val;
 }
 
-void TBValueGroup::InvokeOnValueChanged(const WidgetValue* value) {
+void ValueGroup::InvokeOnValueChanged(const WidgetValue* value) {
   auto iter = m_listeners.IterateForward();
-  while (TBValueGroupListener* listener = iter.GetAndStep()) {
+  while (ValueGroupListener* listener = iter.GetAndStep()) {
     listener->OnValueChanged(this, value);
   }
 }

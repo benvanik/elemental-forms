@@ -236,7 +236,7 @@ class SkinElement {
   Color text_color = Color(0, 0, 0, 0);  // Color of the text in the widget.
   Color bg_color = Color(0, 0, 0, 0);  // Color of the background in the widget.
   int16_t bitmap_dpi = 0;              // The DPI of the bitmap that was loaded.
-  TBValue
+  Value
       tag;  // This value is free to use for anything. It's not used internally.
 
   // Gets the minimum width, or kSkinValueNotSpecified if not specified.

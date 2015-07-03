@@ -132,7 +132,7 @@ TB_TEST_GROUP(tb_parser) {
     Node* arr_n = node.GetNode("arrays>numbers");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().GetArrayLength() == 5);
-    TBValueArray* arr = arr_n->GetValue().GetArray();
+    ValueArray* arr = arr_n->GetValue().GetArray();
     TB_VERIFY(arr->GetValue(0)->GetInt() == 1);
     TB_VERIFY(arr->GetValue(1)->GetInt() == 2);
     TB_VERIFY_FLOAT(arr->GetValue(2)->GetFloat(), 0.5);
@@ -144,7 +144,7 @@ TB_TEST_GROUP(tb_parser) {
     Node* arr_n = node.GetNode("arrays>dimensions");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().GetArrayLength() == 2);
-    TBValueArray* arr = arr_n->GetValue().GetArray();
+    ValueArray* arr = arr_n->GetValue().GetArray();
     TB_VERIFY(arr->GetValue(0)->GetInt() == 1);
     TB_VERIFY(arr->GetValue(1)->GetInt() == 2);
   }
@@ -155,7 +155,7 @@ TB_TEST_GROUP(tb_parser) {
   //		Node *arr_n = node.GetNode("arrays>strings");
   //		TB_VERIFY(arr_n);
   //		TB_VERIFY(arr_n->GetValue().GetArrayLength() == 5);
-  //		TBValueArray *arr = arr_n->GetValue().GetArray();
+  //		ValueArray *arr = arr_n->GetValue().GetArray();
   //		TB_VERIFY_STR(arr->GetValue(0)->GetString(), "Foo");
   //		TB_VERIFY_STR(arr->GetValue(1)->GetString(), "'Foo'");
   //		TB_VERIFY_STR(arr->GetValue(2)->GetString(), "Foo");
@@ -168,7 +168,7 @@ TB_TEST_GROUP(tb_parser) {
   //		Node *arr_n = node.GetNode("arrays>mixed");
   //		TB_VERIFY(arr_n);
   //		TB_VERIFY(arr_n->GetValue().GetArrayLength() == 4);
-  //		TBValueArray *arr = arr_n->GetValue().GetArray();
+  //		ValueArray *arr = arr_n->GetValue().GetArray();
   //		TB_VERIFY_STR(arr->GetValue(0)->GetString(), "Foo");
   //		TB_VERIFY(arr->GetValue(1)->GetInt() == 2);
   //		TB_VERIFY_STR(arr->GetValue(2)->GetString(), "bar");

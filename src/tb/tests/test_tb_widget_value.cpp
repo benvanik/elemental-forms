@@ -144,12 +144,12 @@ TB_TEST_GROUP(tb_widget_value_listener) {
   CheckBox* a, *b;
 
   /** Listen to changes and update val to any changed value. */
-  class MyListener : public TBValueGroupListener {
+  class MyListener : public ValueGroupListener {
    public:
     int change_counter;
-    TBValue val;
+    Value val;
     MyListener() : change_counter(0) {}
-    virtual void OnValueChanged(const TBValueGroup* group,
+    virtual void OnValueChanged(const ValueGroup* group,
                                 const WidgetValue* value) {
       val = value->GetValue();
       change_counter++;

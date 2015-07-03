@@ -53,12 +53,12 @@ class TBLinkListIterator {
   const TBLinkListIterator& operator=(const TBLinkListIterator& iter);
 
  private:
-  TBLinkList* m_linklist;  ///< The linklist we are iterating.
-  TBLink* m_current_link;  ///< The current link, or nullptr.
-  bool m_forward;          ///< true if we iterate from first to last item.
+  TBLinkList* m_linklist;  // The linklist we are iterating.
+  TBLink* m_current_link;  // The current link, or nullptr.
+  bool m_forward;          // true if we iterate from first to last item.
 
-  TBLinkListIterator* m_prev;  ///< Link in list of iterators for m_linklist
-  TBLinkListIterator* m_next;  ///< Link in list of iterators for m_linklist
+  TBLinkListIterator* m_prev;  // Link in list of iterators for m_linklist.
+  TBLinkListIterator* m_next;  // Link in list of iterators for m_linklist.
 
   /** RemoveLink is called when removing/deleting links in the target linklist.
           This will make sure iterators skip the deleted item. */

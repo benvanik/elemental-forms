@@ -23,29 +23,29 @@ NodeRefTree::NodeRefTree(const char* name) : m_name(name), m_name_id(name) {
 
 NodeRefTree::~NodeRefTree() { s_ref_trees.Remove(this); }
 
-TBValue& NodeRefTree::GetValue(const char* request) {
+Value& NodeRefTree::GetValue(const char* request) {
   if (Node* node = m_node.GetNodeFollowRef(request)) {
     return node->GetValue();
   }
   TBDebugPrint("NodeRefTree::GetValue - request not found: %s\n", request);
-  static TBValue nullval;
+  static Value nullval;
   return nullval;
 }
 
 // static
-TBValue& NodeRefTree::GetValueFromTree(const char* request) {
+Value& NodeRefTree::GetValueFromTree(const char* request) {
   assert(*request == '@');
   Node tmp;
-  tmp.GetValue().SetString(request, TBValue::Set::kAsStatic);
+  tmp.GetValue().SetString(request, Value::Set::kAsStatic);
   Node* node = NodeRefTree::FollowNodeRef(&tmp);
   if (node != &tmp) {
     return node->GetValue();
   }
-  static TBValue nullval;
+  static Value nullval;
   return nullval;
 }
 
-void NodeRefTree::SetValue(const char* request, const TBValue& value) {
+void NodeRefTree::SetValue(const char* request, const Value& value) {
   if (Node* node = m_node.GetNode(request, Node::MissingPolicy::kCreate)) {
     // FIX: Only invoke the listener if it really changed.
     node->GetValue().Copy(value);

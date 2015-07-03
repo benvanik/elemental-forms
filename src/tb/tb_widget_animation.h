@@ -94,8 +94,8 @@ class WidgetAnimationManager : public WidgetListener {
   // widget.
   // This example will abort all opacity animations:
   // AbortAnimations(widget,
-  //     TBTypedObject::GetTypeId<OpacityWidgetAnimation>())
-  static void AbortAnimations(Widget* widget, TB_TYPE_ID type_id);
+  //     TypedObject::GetTypeId<OpacityWidgetAnimation>())
+  static void AbortAnimations(Widget* widget, tb_type_id_t type_id);
 
  private:
   void OnWidgetDelete(Widget* widget) override;

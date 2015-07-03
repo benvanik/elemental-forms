@@ -22,12 +22,12 @@
 
 namespace tb {
 
-TB_WIDGET_FACTORY(Widget, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Widget, Value::Type::kNull, WidgetZ::kTop) {}
 void Widget::OnInflate(const InflateInfo& info) {
   WidgetReader::SetIDFromNode(GetID(), info.node->GetNode("id"));
   WidgetReader::SetIDFromNode(GetGroupID(), info.node->GetNode("group-id"));
 
-  if (info.sync_type == TBValue::Type::kFloat) {
+  if (info.sync_type == Value::Type::kFloat) {
     SetValueDouble(info.node->GetValueFloat("value", 0));
   } else {
     SetValue(info.node->GetValueInt("value", 0));
@@ -159,7 +159,7 @@ void Widget::OnInflate(const InflateInfo& info) {
 
   if (Node* rect_node = info.node->GetNode("rect")) {
     const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
-    TBValue& val = rect_node->GetValue();
+    Value& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
       SetRect(Rect(dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
                    dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
@@ -169,14 +169,14 @@ void Widget::OnInflate(const InflateInfo& info) {
   }
 }
 
-TB_WIDGET_FACTORY(Button, TBValue::Type::kNull, WidgetZ::kBottom) {}
+TB_WIDGET_FACTORY(Button, Value::Type::kNull, WidgetZ::kBottom) {}
 void Button::OnInflate(const InflateInfo& info) {
   SetToggleMode(info.node->GetValueInt("toggle-mode", GetToggleMode()) ? true
                                                                        : false);
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(SelectInline, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SelectInline, Value::Type::kInt, WidgetZ::kTop) {}
 void SelectInline::OnInflate(const InflateInfo& info) {
   int min = info.node->GetValueInt("min", GetMinValue());
   int max = info.node->GetValueInt("max", GetMaxValue());
@@ -184,9 +184,9 @@ void SelectInline::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(LabelContainer, TBValue::Type::kString, WidgetZ::kBottom) {}
+TB_WIDGET_FACTORY(LabelContainer, Value::Type::kString, WidgetZ::kBottom) {}
 
-TB_WIDGET_FACTORY(TextBox, TBValue::Type::kString, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(TextBox, Value::Type::kString, WidgetZ::kTop) {}
 void TextBox::OnInflate(const InflateInfo& info) {
   SetMultiline(info.node->GetValueInt("multiline", 0) ? true : false);
   SetStyling(info.node->GetValueInt("styling", 0) ? true : false);
@@ -210,7 +210,7 @@ void TextBox::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(Layout, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Layout, Value::Type::kNull, WidgetZ::kTop) {}
 void Layout::OnInflate(const InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
     SetSpacing(g_tb_skin->GetDimensionConverter()->GetPxFromString(
@@ -250,7 +250,7 @@ void Layout::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(ScrollContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ScrollContainer, Value::Type::kNull, WidgetZ::kTop) {}
 void ScrollContainer::OnInflate(const InflateInfo& info) {
   SetGravity(Gravity::kAll);
   SetAdaptContentSize(
@@ -266,7 +266,7 @@ void ScrollContainer::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(TabContainer, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(TabContainer, Value::Type::kNull, WidgetZ::kTop) {}
 void TabContainer::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 
@@ -281,22 +281,22 @@ void TabContainer::OnInflate(const InflateInfo& info) {
     info.reader->LoadNodeTree(tab_layout, tabs);
 
     InflateInfo inflate_info(info.reader, tab_layout->GetContentRoot(), tabs,
-                             TBValue::Type::kNull);
+                             Value::Type::kNull);
     tab_layout->OnInflate(inflate_info);
   }
   if (Node* tabs = info.node->GetNode("content")) {
     InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
-                             TBValue::Type::kNull);
+                             Value::Type::kNull);
     GetContentRoot()->OnInflate(inflate_info);
   }
   if (Node* tabs = info.node->GetNode("root")) {
     InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
-                             TBValue::Type::kNull);
+                             Value::Type::kNull);
     m_root_layout.OnInflate(inflate_info);
   }
 }
 
-TB_WIDGET_FACTORY(ScrollBar, TBValue::Type::kFloat, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ScrollBar, Value::Type::kFloat, WidgetZ::kTop) {}
 void ScrollBar::OnInflate(const InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
@@ -304,7 +304,7 @@ void ScrollBar::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(Slider, TBValue::Type::kFloat, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Slider, Value::Type::kFloat, WidgetZ::kTop) {}
 void Slider::OnInflate(const InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
@@ -335,24 +335,24 @@ void ReadItems(Node* node, GenericStringItemSource* target_source) {
   }
 }
 
-TB_WIDGET_FACTORY(SelectList, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SelectList, Value::Type::kInt, WidgetZ::kTop) {}
 void SelectList::OnInflate(const InflateInfo& info) {
   // Read items (if there is any) into the default source.
   ReadItems(info.node, GetDefaultSource());
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(SelectDropdown, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SelectDropdown, Value::Type::kInt, WidgetZ::kTop) {}
 void SelectDropdown::OnInflate(const InflateInfo& info) {
   // Read items (if there is any) into the default source.
   ReadItems(info.node, GetDefaultSource());
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(CheckBox, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(RadioButton, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(CheckBox, Value::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(RadioButton, Value::Type::kInt, WidgetZ::kTop) {}
 
-TB_WIDGET_FACTORY(Label, TBValue::Type::kString, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Label, Value::Type::kString, WidgetZ::kTop) {}
 void Label::OnInflate(const InflateInfo& info) {
   if (const char* text_align =
           info.node->GetValueString("text-align", nullptr)) {
@@ -361,14 +361,14 @@ void Label::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(SkinImage, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(Separator, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(ProgressSpinner, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(Container, TBValue::Type::kNull, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(SectionHeader, TBValue::Type::kInt, WidgetZ::kTop) {}
-TB_WIDGET_FACTORY(Section, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SkinImage, Value::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Separator, Value::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ProgressSpinner, Value::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Container, Value::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(SectionHeader, Value::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(Section, Value::Type::kInt, WidgetZ::kTop) {}
 
-TB_WIDGET_FACTORY(ToggleContainer, TBValue::Type::kInt, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ToggleContainer, Value::Type::kInt, WidgetZ::kTop) {}
 void ToggleContainer::OnInflate(const InflateInfo& info) {
   if (const char* toggle = info.node->GetValueString("toggle", nullptr)) {
     SetToggleAction(from_string(toggle, GetToggleAction()));
@@ -377,7 +377,7 @@ void ToggleContainer::OnInflate(const InflateInfo& info) {
   Widget::OnInflate(info);
 }
 
-TB_WIDGET_FACTORY(ImageWidget, TBValue::Type::kNull, WidgetZ::kTop) {}
+TB_WIDGET_FACTORY(ImageWidget, Value::Type::kNull, WidgetZ::kTop) {}
 void ImageWidget::OnInflate(const InflateInfo& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr)) {
     SetImage(filename);
@@ -390,7 +390,7 @@ void ImageWidget::OnInflate(const InflateInfo& info) {
 // to it. Using a manual one way link list is very simple.
 WidgetFactory* g_registered_factories = nullptr;
 
-WidgetFactory::WidgetFactory(const char* name, TBValue::Type sync_type)
+WidgetFactory::WidgetFactory(const char* name, Value::Type sync_type)
     : name(name), sync_type(sync_type) {}
 
 void WidgetFactory::Register() {

@@ -23,7 +23,7 @@ class WidgetReader;
 // Contains info passed to Widget::OnInflate during resource loading.
 struct InflateInfo {
   InflateInfo(WidgetReader* reader, Widget* target, Node* node,
-              TBValue::Type sync_type)
+              Value::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
   WidgetReader* reader;
@@ -32,13 +32,13 @@ struct InflateInfo {
   // The node containing properties.
   Node* node;
   // The data type that should be synchronized through WidgetValue.
-  TBValue::Type sync_type;
+  Value::Type sync_type;
 };
 
 // Creates a widget from a Node.
 class WidgetFactory : public TBLinkOf<WidgetFactory> {
  public:
-  WidgetFactory(const char* name, TBValue::Type sync_type);
+  WidgetFactory(const char* name, Value::Type sync_type);
 
   // Creates and returns the new widget or nullptr on out of memory.
   virtual Widget* Create(InflateInfo* info) = 0;
@@ -47,7 +47,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 
  public:
   const char* name;
-  TBValue::Type sync_type;
+  Value::Type sync_type;
   WidgetFactory* next_registered_wf = nullptr;
 };
 
@@ -63,7 +63,7 @@ class WidgetFactory : public TBLinkOf<WidgetFactory> {
 // Widget::OnInflate.
 //
 // Example:
-//   TB_WIDGET_FACTORY(MyWidget, TBValue::Type::kInt, WidgetZ::kTop) {}
+//   TB_WIDGET_FACTORY(MyWidget, Value::Type::kInt, WidgetZ::kTop) {}
 #define TB_WIDGET_FACTORY(classname, sync_type, add_child_z)            \
   class classname##WidgetFactory : public WidgetFactory {               \
    public:                                                              \

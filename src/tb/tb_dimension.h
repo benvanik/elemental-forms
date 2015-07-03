@@ -17,7 +17,7 @@
 namespace tb {
 
 class TBTempBuffer;
-class TBValue;
+class Value;
 
 // Dimensions <= this value will be untouched by conversion in
 // DimensionConverter.
@@ -68,11 +68,11 @@ class DimensionConverter {
   //     Pixel value:                 "1px"
   int GetPxFromString(const char* str, int def_value) const;
 
-  // Gets a pixel value from TBValue.
+  // Gets a pixel value from Value.
   // value may be nullptr. def_value is returned on fail.
   // Number formats are treated as dp.
   // String format is treated like for GetPxFromString.
-  int GetPxFromValue(TBValue* value, int def_value) const;
+  int GetPxFromValue(Value* value, int def_value) const;
 };
 
 }  // namespace tb

@@ -22,8 +22,6 @@ namespace tb {
 // FIX: ## Floating point string conversions might be locale dependant. Force
 // "." as decimal!
 
-// == Helper functions ============================
-
 char* next_token(char*& str, const char* delim) {
   str += strspn(str, delim);
   if (!*str) return nullptr;
@@ -61,28 +59,28 @@ bool is_number_float(const char* str) {
   return false;
 }
 
-TBValueArray::TBValueArray() {}
+ValueArray::ValueArray() = default;
 
-TBValueArray::~TBValueArray() {}
+ValueArray::~ValueArray() = default;
 
-TBValue* TBValueArray::AddValue() {
-  TBValue* v = new TBValue();
+Value* ValueArray::AddValue() {
+  Value* v = new Value();
   m_list.Add(v);
   return v;
 }
 
-TBValue* TBValueArray::GetValue(int index) {
+Value* ValueArray::GetValue(int index) {
   if (index >= 0 && index < m_list.GetNumItems()) {
     return m_list[index];
   }
   return nullptr;
 }
 
-TBValueArray* TBValueArray::Clone(TBValueArray* source) {
-  TBValueArray* new_arr = new TBValueArray;
+ValueArray* ValueArray::Clone(ValueArray* source) {
+  ValueArray* new_arr = new ValueArray;
   if (!new_arr) return nullptr;
   for (int i = 0; i < source->m_list.GetNumItems(); i++) {
-    TBValue* new_val = new_arr->AddValue();
+    Value* new_val = new_arr->AddValue();
     if (!new_val) {
       delete new_arr;
       return nullptr;
@@ -92,11 +90,11 @@ TBValueArray* TBValueArray::Clone(TBValueArray* source) {
   return new_arr;
 }
 
-TBValue::TBValue() : m_packed_init(0) {}
+Value::Value() = default;
 
-TBValue::TBValue(const TBValue& value) : m_packed_init(0) { Copy(value); }
+Value::Value(const Value& value) { Copy(value); }
 
-TBValue::TBValue(Type type) : m_packed_init(0) {
+Value::Value(Type type) {
   switch (type) {
     case Type::kNull:
       SetNull();
@@ -114,29 +112,25 @@ TBValue::TBValue(Type type) : m_packed_init(0) {
       SetObject(nullptr);
       break;
     case Type::kArray:
-      if (TBValueArray* arr = new TBValueArray())
-        SetArray(arr, Set::kTakeOwnership);
+      SetArray(new ValueArray(), Set::kTakeOwnership);
       break;
     default:
       assert(!"Not implemented!");
+      break;
   };
 }
 
-TBValue::TBValue(int value) : m_packed_init(0) { SetInt(value); }
+Value::Value(int value) { SetInt(value); }
 
-TBValue::TBValue(float value) : m_packed_init(0) { SetFloat(value); }
+Value::Value(float value) { SetFloat(value); }
 
-TBValue::TBValue(const char* value, Set set) : m_packed_init(0) {
-  SetString(value, set);
-}
+Value::Value(const char* value, Set set) { SetString(value, set); }
 
-TBValue::TBValue(TBTypedObject* object) : m_packed_init(0) {
-  SetObject(object);
-}
+Value::Value(TypedObject* object) { SetObject(object); }
 
-TBValue::~TBValue() { SetNull(); }
+Value::~Value() { SetNull(); }
 
-void TBValue::TakeOver(TBValue& source_value) {
+void Value::TakeOver(Value& source_value) {
   if (Type(source_value.m_packed.type) == Type::kString) {
     SetString(source_value.val_str, source_value.m_packed.allocated
                                         ? Set::kTakeOwnership
@@ -151,7 +145,7 @@ void TBValue::TakeOver(TBValue& source_value) {
   source_value.SetType(Type::kNull);
 }
 
-void TBValue::Copy(const TBValue& source_value) {
+void Value::Copy(const Value& source_value) {
   if (source_value.GetType() == Type::kString) {
     SetString(source_value.val_str, Set::kNewCopy);
   } else if (source_value.GetType() == Type::kArray) {
@@ -161,36 +155,39 @@ void TBValue::Copy(const TBValue& source_value) {
     SetObject(nullptr);
   } else {
     SetNull();
-    memcpy(this, &source_value, sizeof(TBValue));
+    memcpy(this, &source_value, sizeof(Value));
   }
 }
 
-void TBValue::SetNull() {
+void Value::SetNull() {
   if (m_packed.allocated) {
     if (GetType() == Type::kString) {
       free(val_str);
+      val_str = nullptr;
     } else if (GetType() == Type::kObject) {
       delete val_obj;
+      val_obj = nullptr;
     } else if (GetType() == Type::kArray) {
       delete val_arr;
+      val_arr = nullptr;
     }
   }
   SetType(Type::kNull);
 }
 
-void TBValue::SetInt(int val) {
+void Value::SetInt(int val) {
   SetNull();
   SetType(Type::kInt);
   val_int = val;
 }
 
-void TBValue::SetFloat(float val) {
+void Value::SetFloat(float val) {
   SetNull();
   SetType(Type::kFloat);
   val_float = val;
 }
 
-void TBValue::SetString(const char* val, Set set) {
+void Value::SetString(const char* val, Set set) {
   SetNull();
   m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
   if (set != Set::kNewCopy) {
@@ -201,25 +198,25 @@ void TBValue::SetString(const char* val, Set set) {
   }
 }
 
-void TBValue::SetObject(TBTypedObject* object) {
+void Value::SetObject(TypedObject* object) {
   SetNull();
   SetType(Type::kObject);
   m_packed.allocated = true;
   val_obj = object;
 }
 
-void TBValue::SetArray(TBValueArray* arr, Set set) {
+void Value::SetArray(ValueArray* arr, Set set) {
   SetNull();
   m_packed.allocated = (set == Set::kNewCopy || set == Set::kTakeOwnership);
   if (set != Set::kNewCopy) {
     val_arr = arr;
     SetType(Type::kArray);
-  } else if ((val_arr = TBValueArray::Clone(arr))) {
+  } else if ((val_arr = ValueArray::Clone(arr))) {
     SetType(Type::kArray);
   }
 }
 
-void TBValue::SetFromStringAuto(const char* str, Set set) {
+void Value::SetFromStringAuto(const char* str, Set set) {
   if (!str) {
     SetNull();
   } else if (is_number_only(str)) {
@@ -229,14 +226,14 @@ void TBValue::SetFromStringAuto(const char* str, Set set) {
       SetInt(atoi(str));
     }
   } else if (is_start_of_number(str) && contains_non_trailing_space(str)) {
-    // If the number has nontrailing space, we'll assume a list of numbers
+    // If the number has nontrailing space, we'll assume a list of numbers.
     // (example: "10 -4 3.5")
     SetNull();
-    if (TBValueArray* arr = new TBValueArray) {
+    if (ValueArray* arr = new ValueArray) {
       std::string tmpstr = str;
       char* str_next = (char*)tmpstr.data();
       while (char* token = next_token(str_next, ", ")) {
-        if (TBValue* new_val = arr->AddValue()) {
+        if (Value* new_val = arr->AddValue()) {
           new_val->SetFromStringAuto(token, Set::kNewCopy);
         }
       }
@@ -244,7 +241,7 @@ void TBValue::SetFromStringAuto(const char* str, Set set) {
     }
   } else if (*str == '[') {
     SetNull();
-    if (TBValueArray* arr = new TBValueArray) {
+    if (ValueArray* arr = new ValueArray) {
       assert(!"not implemented! Split out the tokenizer code above!");
       SetArray(arr, Set::kTakeOwnership);
     }
@@ -255,13 +252,13 @@ void TBValue::SetFromStringAuto(const char* str, Set set) {
   // We didn't set as string, so we might need to deal with the passed in string
   // data.
   if (set == Set::kTakeOwnership) {
-    // Delete the passed in data
-    TBValue tmp;
+    // Delete the passed in data.
+    Value tmp;
     tmp.SetString(str, Set::kTakeOwnership);
   }
 }
 
-int TBValue::GetInt() const {
+int Value::GetInt() const {
   if (GetType() == Type::kString) {
     return atoi(val_str);
   } else if (GetType() == Type::kFloat) {
@@ -270,7 +267,7 @@ int TBValue::GetInt() const {
   return GetType() == Type::kInt ? val_int : 0;
 }
 
-float TBValue::GetFloat() const {
+float Value::GetFloat() const {
   if (GetType() == Type::kString) {
     return (float)atof(val_str);
   } else if (GetType() == Type::kInt) {
@@ -279,7 +276,7 @@ float TBValue::GetFloat() const {
   return GetType() == Type::kFloat ? val_float : 0;
 }
 
-const char* TBValue::GetString() {
+const char* Value::GetString() {
   if (GetType() == Type::kInt) {
     char tmp[32];
     sprintf(tmp, "%d", val_int);

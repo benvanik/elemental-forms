@@ -96,7 +96,7 @@ bool Node::CloneChildren(Node* source) {
   return true;
 }
 
-TBValue& Node::GetValueFollowRef() {
+Value& Node::GetValueFollowRef() {
   return NodeRefTree::FollowNodeRef(this)->GetValue();
 }
 
@@ -189,7 +189,7 @@ class NodeTarget : public ParserTarget {
 #endif  // TB_RUNTIME_DEBUG_INFO
   }
   void OnComment(int line_nr, const char* comment) override {}
-  void OnToken(int line_nr, const char* name, TBValue& value) override {
+  void OnToken(int line_nr, const char* name, Value& value) override {
     if (!m_target_node) return;
     if (strcmp(name, "@file") == 0) {
       IncludeFile(line_nr, value.GetString());
@@ -234,7 +234,7 @@ class NodeTarget : public ParserTarget {
     Node* refnode = nullptr;
     if (*refstr == '@') {
       Node tmp;
-      tmp.GetValue().SetString(refstr, TBValue::Set::kAsStatic);
+      tmp.GetValue().SetString(refstr, Value::Set::kAsStatic);
       refnode = NodeRefTree::FollowNodeRef(&tmp);
     } else {
       // Local look-up.
@@ -266,7 +266,7 @@ class NodeTarget : public ParserTarget {
   std::string m_filename;
 };
 
-void Node::TakeValue(TBValue& value) { m_value.TakeOver(value); }
+void Node::TakeValue(Value& value) { m_value.TakeOver(value); }
 
 bool Node::ReadFile(const std::string& filename, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {

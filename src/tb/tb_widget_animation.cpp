@@ -134,7 +134,7 @@ void WidgetAnimationManager::AbortAnimations(Widget* widget) {
 }
 
 void WidgetAnimationManager::AbortAnimations(Widget* widget,
-                                             TB_TYPE_ID type_id) {
+                                             tb_type_id_t type_id) {
   auto iter = widget_animations.IterateForward();
   while (WidgetAnimation* wao = iter.GetAndStep()) {
     if (wao->m_widget == widget) {

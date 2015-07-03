@@ -67,7 +67,7 @@ class AnimationListener : public TBLinkOf<AnimationListener> {
 };
 
 // Base class for all animated objects.
-class Animation : public TBTypedObject, public TBLinkOf<Animation> {
+class Animation : public TypedObject, public TBLinkOf<Animation> {
  public:
   const static AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
   const static int kDefaultDuration = 200;
@@ -78,7 +78,7 @@ class Animation : public TBTypedObject, public TBLinkOf<Animation> {
   bool adjust_start_time;
 
  public:
-  TBOBJECT_SUBCLASS(Animation, TBTypedObject);
+  TBOBJECT_SUBCLASS(Animation, TypedObject);
 
   ~Animation() override = default;
 

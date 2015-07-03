@@ -159,12 +159,12 @@ class TBTestGroup {
   bool IsSpecialTest(TBCall* call) const { return !call->linklist; }
 
  public:
-  const char* name;            ///< Test group name.
-  TBCall* setup;               ///< Setup call, or nullptr.
-  TBCall* cleanup;             ///< Cleanup call, or nullptr.
-  TBCall* init;                ///< Init call, or nullptr.
-  TBCall* shutdown;            ///< Shutdown call, or nullptr.
-  TBLinkListOf<TBCall> calls;  ///< All test calls to call.
+  const char* name;            // Test group name.
+  TBCall* setup;               // Setup call, or nullptr.
+  TBCall* cleanup;             // Cleanup call, or nullptr.
+  TBCall* init;                // Init call, or nullptr.
+  TBCall* shutdown;            // Shutdown call, or nullptr.
+  TBLinkListOf<TBCall> calls;  // All test calls to call.
   TBTestGroup* next_test_group;
 };
 
@@ -214,11 +214,10 @@ class TBRegisterCall {
 
 std::string tb_get_test_file_name(const char* testpath, const char* filename);
 
-// Internal globals
-extern uint32_t test_settings;  ///< Settings, as sent to TBRunTests
-extern int fail_line_nr;        ///< Fail line number
-extern const char* fail_file;   ///< Fail file name
-extern const char* fail_text;   ///< Fail text description
+extern uint32_t test_settings;  // Settings, as sent to TBRunTests.
+extern int fail_line_nr;        // Fail line number.
+extern const char* fail_file;   // Fail file name.
+extern const char* fail_text;   // Fail text description.
 
 #else
 
