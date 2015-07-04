@@ -11,7 +11,6 @@
 #define TB_OBJECT_H
 
 #include "tb_core.h"
-#include "tb_linklist.h"
 
 namespace tb {
 

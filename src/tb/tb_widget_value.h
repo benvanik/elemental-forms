@@ -12,10 +12,10 @@
 
 #include "tb_core.h"
 #include "tb_id.h"
-#include "tb_linklist.h"
 #include "tb_value.h"
 
 #include "tb/util/hash_table.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -24,7 +24,7 @@ class Element;
 class ElementValue;
 
 // Maintains a connection between Element and ElementValue.
-class ElementValueConnection : public TBLinkOf<ElementValueConnection> {
+class ElementValueConnection : public util::TBLinkOf<ElementValueConnection> {
  public:
   ElementValueConnection() = default;
   ~ElementValueConnection() { Disconnect(); }
@@ -94,13 +94,13 @@ class ElementValue {
 
   TBID m_name;
   Value m_value;
-  TBLinkListOf<ElementValueConnection> m_connections;
+  util::TBLinkListOf<ElementValueConnection> m_connections;
   bool m_syncing = false;
 };
 
 // Listener that will be notified when any of the values in a ValueGroup is
 // changed.
-class ValueGroupListener : public TBLinkOf<ValueGroupListener> {
+class ValueGroupListener : public util::TBLinkOf<ValueGroupListener> {
  public:
   virtual ~ValueGroupListener() {
     if (linklist) {
@@ -143,7 +143,7 @@ class ValueGroup {
   void InvokeOnValueChanged(const ElementValue* value);
 
   util::HashTableAutoDeleteOf<ElementValue> m_values;
-  TBLinkListOf<ValueGroupListener> m_listeners;
+  util::TBLinkListOf<ValueGroupListener> m_listeners;
 };
 
 // The global value group.

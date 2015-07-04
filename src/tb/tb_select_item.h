@@ -13,9 +13,10 @@
 #include <memory>
 #include <vector>
 
-#include "tb_linklist.h"
 #include "tb_id.h"
 #include "tb_value.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -30,7 +31,7 @@ enum class Sort {
 // An observer for items provided by SelectItemSource.
 // There can be multiple observers for each source. The observer will recieve
 // callbacks when the source is changed, so it can update itself.
-class SelectItemObserver : public TBLinkOf<SelectItemObserver> {
+class SelectItemObserver : public util::TBLinkOf<SelectItemObserver> {
  public:
   SelectItemObserver() = default;
   virtual ~SelectItemObserver() = default;
@@ -119,7 +120,7 @@ class SelectItemSource {
 
  private:
   friend class SelectItemObserver;
-  TBLinkListOf<SelectItemObserver> m_observers;
+  util::TBLinkListOf<SelectItemObserver> m_observers;
   Sort m_sort = Sort::kNone;
 };
 

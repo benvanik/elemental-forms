@@ -2,14 +2,15 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#include "tb_linklist.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
+namespace util {
 
 TBLinkListIterator::TBLinkListIterator(TBLinkList* linklist,
                                        TBLink* current_link, bool forward)
@@ -177,4 +178,5 @@ int TBLinkList::CountLinks() const {
   return count;
 }
 
+}  // namespace util
 }  // namespace tb

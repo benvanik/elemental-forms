@@ -23,7 +23,7 @@ constexpr float kAlmostZeroOpacity = 0.001f;
 
 // Base class for element animations. This animation object will be deleted
 // automatically if the element is deleted.
-class ElementAnimation : public Animation, public TBLinkOf<ElementAnimation> {
+class ElementAnimation : public Animation, public util::TBLinkOf<ElementAnimation> {
  public:
   TBOBJECT_SUBCLASS(ElementAnimation, Animation);
 

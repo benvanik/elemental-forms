@@ -10,8 +10,9 @@
 #ifndef TB_ANIMATION_H
 #define TB_ANIMATION_H
 
-#include "tb_linklist.h"
 #include "tb_object.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -49,7 +50,7 @@ enum class AnimationTime {
 };
 
 // Listens to the progress of Animation.
-class AnimationListener : public TBLinkOf<AnimationListener> {
+class AnimationListener : public util::TBLinkOf<AnimationListener> {
  public:
   virtual ~AnimationListener() = default;
 
@@ -67,7 +68,7 @@ class AnimationListener : public TBLinkOf<AnimationListener> {
 };
 
 // Base class for all animated objects.
-class Animation : public TypedObject, public TBLinkOf<Animation> {
+class Animation : public TypedObject, public util::TBLinkOf<Animation> {
  public:
   const static AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
   const static int kDefaultDuration = 200;
@@ -112,7 +113,7 @@ class Animation : public TypedObject, public TBLinkOf<Animation> {
 
  private:
   friend class AnimationManager;
-  TBLinkListOf<AnimationListener> m_listeners;
+  util::TBLinkListOf<AnimationListener> m_listeners;
   void InvokeOnAnimationStart();
   void InvokeOnAnimationUpdate(float progress);
   void InvokeOnAnimationStop(bool aborted);
@@ -121,7 +122,7 @@ class Animation : public TypedObject, public TBLinkOf<Animation> {
 // System class that manages all animated object.
 class AnimationManager {
  private:
-  static TBLinkListOf<Animation> animating_objects;
+  static util::TBLinkListOf<Animation> animating_objects;
   static int block_animations_counter;
 
  public:

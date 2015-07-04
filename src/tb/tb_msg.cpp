@@ -16,9 +16,9 @@
 namespace tb {
 
 // List of all delayed messages.
-TBLinkListOf<MessageLink> g_all_delayed_messages;
+util::TBLinkListOf<MessageLink> g_all_delayed_messages;
 // List of all nondelayed messages.
-TBLinkListOf<MessageLink> g_all_normal_messages;
+util::TBLinkListOf<MessageLink> g_all_normal_messages;
 
 Message::Message(TBID message, MessageData* data, uint64_t fire_time_ms,
                  MessageHandler* mh)

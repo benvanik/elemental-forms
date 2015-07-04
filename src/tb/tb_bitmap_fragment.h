@@ -15,10 +15,10 @@
 
 #include "tb_core.h"
 #include "tb_id.h"
-#include "tb_linklist.h"
 
 #include "tb/rect.h"
 #include "tb/util/hash_table.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -50,7 +50,7 @@ class ImageLoader {
 class SpaceAllocator {
  public:
   // A chunk of space.
-  class Space : public TBLinkOf<Space> {
+  class Space : public util::TBLinkOf<Space> {
    public:
     int x;
     int width;
@@ -71,8 +71,8 @@ class SpaceAllocator {
   Space* GetSmallestAvailableSpace(int needed_w);
 
   int m_available_space;
-  TBLinkListAutoDeleteOf<Space> m_free_space_list;
-  TBLinkListAutoDeleteOf<Space> m_used_space_list;
+  util::TBLinkListAutoDeleteOf<Space> m_free_space_list;
+  util::TBLinkListAutoDeleteOf<Space> m_used_space_list;
 };
 
 // Allocates space for BitmapFragment in a row (used in BitmapFragmentMap).

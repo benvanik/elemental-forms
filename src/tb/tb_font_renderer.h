@@ -13,7 +13,6 @@
 #include "tb_core.h"
 #include "tb_bitmap_fragment.h"
 #include "tb_font_desc.h"
-#include "tb_linklist.h"
 #include "tb_renderer.h"
 #include "tb_string_builder.h"
 #include "utf8.h"
@@ -51,7 +50,7 @@ class FontMetrics {
 };
 
 // Renders glyphs from a font file.
-class FontRenderer : public TBLinkOf<FontRenderer> {
+class FontRenderer : public util::TBLinkOf<FontRenderer> {
  public:
   virtual ~FontRenderer() = default;
 
@@ -70,7 +69,7 @@ class FontRenderer : public TBLinkOf<FontRenderer> {
 // Holds glyph metrics and bitmap fragment.
 // There's one of these for all rendered (both successful and missing) glyphs in
 // FontFace.
-class FontGlyph : public TBLinkOf<FontGlyph> {
+class FontGlyph : public util::TBLinkOf<FontGlyph> {
  public:
   FontGlyph(const TBID& hash_id, UCS4 cp);
   TBID hash_id;
@@ -114,7 +113,7 @@ class FontGlyphCache : private RendererListener {
 
   BitmapFragmentManager m_frag_manager;
   util::HashTableAutoDeleteOf<FontGlyph> m_glyphs;
-  TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
+  util::TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };
 
 // Applies an effect on each glyph that is rendered in a FontFace.
@@ -292,7 +291,7 @@ class FontManager {
  private:
   util::HashTableAutoDeleteOf<FontInfo> m_font_info;
   util::HashTableAutoDeleteOf<FontFace> m_fonts;
-  TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
+  util::TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
   FontGlyphCache m_glyph_cache;
   FontDescription m_default_font_desc;
   FontDescription m_test_font_desc;

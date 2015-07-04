@@ -11,8 +11,9 @@
 #define TB_NODE_REF_TREE_H
 
 #include "tb_id.h"
-#include "tb_linklist.h"
 #include "tb_node_tree.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -24,7 +25,7 @@ class NodeRefTreeListener;
 // requesting a value (Node::GetValueFollowRef), or while parsing the node tree.
 // While parsing, the values can be used for branch conditions or branches of
 // nodes can be included.
-class NodeRefTree : public TBLinkOf<NodeRefTree> {
+class NodeRefTree : public util::TBLinkOf<NodeRefTree> {
  public:
   NodeRefTree(const char* name);
   virtual ~NodeRefTree();
@@ -79,13 +80,13 @@ class NodeRefTree : public TBLinkOf<NodeRefTree> {
   Node m_node;
   std::string m_name;
   TBID m_name_id;
-  TBLinkListOf<NodeRefTreeListener> m_listeners;
-  static TBLinkListOf<NodeRefTree> s_ref_trees;
+  util::TBLinkListOf<NodeRefTreeListener> m_listeners;
+  static util::TBLinkListOf<NodeRefTree> s_ref_trees;
 };
 
 // Receives OnDataChanged when the value of a node in a NodeRefTree is changed.
 // FIX: The listener can currently only listen to one tree.
-class NodeRefTreeListener : public TBLinkOf<NodeRefTreeListener> {
+class NodeRefTreeListener : public util::TBLinkOf<NodeRefTreeListener> {
  public:
   // Called when the value is changed for the given node in the given ref tree.
   // The request is without tree name.

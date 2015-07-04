@@ -15,7 +15,7 @@
 namespace tb {
 
 // static
-TBLinkListOf<NodeRefTree> NodeRefTree::s_ref_trees;
+util::TBLinkListOf<NodeRefTree> NodeRefTree::s_ref_trees;
 
 NodeRefTree::NodeRefTree(const char* name) : m_name(name), m_name_id(name) {
   s_ref_trees.AddLast(this);

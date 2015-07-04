@@ -16,7 +16,7 @@
 
 namespace tb {
 
-TBLinkListOf<ElementAnimation> element_animations;
+util::TBLinkListOf<ElementAnimation> element_animations;
 
 inline float Lerp(float src, float dst, float progress) {
   return src + (dst - src) * progress;

@@ -12,17 +12,18 @@
 
 #include <cstdint>
 
-#include "tb/color.h"
 #include "tb_core.h"
+
+#include "tb/color.h"
 #include "tb/rect.h"
-#include "tb_linklist.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
 
 class BitmapFragment;
 
 // RendererListener is a listener for Renderer.
-class RendererListener : public TBLinkOf<RendererListener> {
+class RendererListener : public util::TBLinkOf<RendererListener> {
  public:
   virtual ~RendererListener() = default;
 
@@ -166,7 +167,7 @@ class Renderer {
   virtual void EndBatchHint() {}
 
  private:
-  TBLinkListOf<RendererListener> m_listeners;
+  util::TBLinkListOf<RendererListener> m_listeners;
 };
 
 }  // namespace tb

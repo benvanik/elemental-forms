@@ -10,8 +10,6 @@
 #ifndef TB_TEST_H
 #define TB_TEST_H
 
-#include <cstdint>
-
 /**
         This file contains a very simple unit testing framework.
 
@@ -92,10 +90,13 @@
         }
 */
 
-#include "tb_types.h"
-#include "tb_linklist.h"
 #include <cmath>
+#include <cstdint>
 #include <string>
+
+#include "tb_types.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -143,7 +144,7 @@ int TBRunTests(uint32_t settings = TB_TEST_VERBOSE);
 #define TB_TEST_FILE(filename) tb_get_test_file_name(__FILE__, filename)
 
 /** TBCall is used to execute callbacks for tests in TBTestGroup. */
-class TBCall : public TBLinkOf<TBCall> {
+class TBCall : public util::TBLinkOf<TBCall> {
  public:
   /** return the name of the call */
   virtual const char* name() = 0;
@@ -164,7 +165,7 @@ class TBTestGroup {
   TBCall* cleanup;             // Cleanup call, or nullptr.
   TBCall* init;                // Init call, or nullptr.
   TBCall* shutdown;            // Shutdown call, or nullptr.
-  TBLinkListOf<TBCall> calls;  // All test calls to call.
+  util::TBLinkListOf<TBCall> calls;  // All test calls to call.
   TBTestGroup* next_test_group;
 };
 

@@ -15,8 +15,9 @@
 #include <vector>
 
 #include "tb_core.h"
-#include "tb_linklist.h"
 #include "tb_widgets_common.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -162,7 +163,7 @@ class Caret {
 // A stack of properties used during layout & paint of StyleEdit.
 class TextProps {
  public:
-  class Data : public TBLinkOf<Data> {
+  class Data : public util::TBLinkOf<Data> {
    public:
     FontDescription font_desc;
     Color text_color;
@@ -177,13 +178,13 @@ class TextProps {
   FontFace* GetFont();
 
  public:
-  TBLinkListOf<Data> data_list;
+  util::TBLinkListOf<Data> data_list;
   Data base_data;
   Data* data;
 };
 
 // A block of text (a line, that might be wrapped).
-class TextBlock : public TBLinkOf<TextBlock> {
+class TextBlock : public util::TBLinkOf<TextBlock> {
  public:
   TextBlock(StyleEdit* style_edit);
   ~TextBlock();
@@ -234,7 +235,7 @@ class TextBlock : public TBLinkOf<TextBlock> {
 
  public:
   StyleEdit* style_edit;
-  TBLinkListOf<TextFragment> fragments;
+  util::TBLinkListOf<TextFragment> fragments;
 
   int32_t ypos = 0;
   int16_t height = 0;
@@ -280,7 +281,7 @@ class UndoRedoStack {
 };
 
 // The text fragment base class for StyleEdit.
-class TextFragment : public TBLinkOf<TextFragment> {
+class TextFragment : public util::TBLinkOf<TextFragment> {
   // TODO: This object is allocated on vast amounts and need
   // to shrink in size.Remove all cached positioning
   // and implement a fragment traverser(for TextBlock).
@@ -426,7 +427,7 @@ class StyleEdit {
   int32_t content_width = 0;
   int32_t content_height = 0;
 
-  TBLinkListOf<TextBlock> blocks;
+  util::TBLinkListOf<TextBlock> blocks;
 
   Caret caret = Caret(nullptr);
   TextSelection selection = TextSelection(nullptr);

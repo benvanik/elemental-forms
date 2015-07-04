@@ -34,7 +34,6 @@
     <ClCompile Include="src\tb\tb_inline_select.cpp" />
     <ClCompile Include="src\tb\tb_language.cpp" />
     <ClCompile Include="src\tb\tb_layout.cpp" />
-    <ClCompile Include="src\tb\tb_linklist.cpp" />
     <ClCompile Include="src\tb\tb_menu_window.cpp" />
     <ClCompile Include="src\tb\tb_message_window.cpp" />
     <ClCompile Include="src\tb\tb_msg.cpp" />
@@ -86,6 +85,7 @@
     <ClCompile Include="src\tb\tests\test_tb_widget_value.cpp" />
     <ClCompile Include="src\tb\utf8.cpp" />
     <ClCompile Include="src\tb\util\hash_table.cc" />
+    <ClCompile Include="src\tb\util\link_list.cc" />
     <ClCompile Include="src\tb\util\rect_region.cc" />
     <ClCompile Include="src\tb\util\string.cc" />
   </ItemGroup>
@@ -114,7 +114,6 @@
     <ClInclude Include="src\tb\tb_inline_select.h" />
     <ClInclude Include="src\tb\tb_language.h" />
     <ClInclude Include="src\tb\tb_layout.h" />
-    <ClInclude Include="src\tb\tb_linklist.h" />
     <ClInclude Include="src\tb\tb_menu_window.h" />
     <ClInclude Include="src\tb\tb_message_window.h" />
     <ClInclude Include="src\tb\tb_msg.h" />
@@ -147,6 +146,7 @@
     <ClInclude Include="src\tb\tests\tb_test.h" />
     <ClInclude Include="src\tb\util\hash.h" />
     <ClInclude Include="src\tb\util\hash_table.h" />
+    <ClInclude Include="src\tb\util\link_list.h" />
     <ClInclude Include="src\tb\util\rect_region.h" />
     <ClInclude Include="src\tb\util\string.h" />
   </ItemGroup>

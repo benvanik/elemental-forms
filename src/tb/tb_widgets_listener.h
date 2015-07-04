@@ -11,8 +11,9 @@
 #define TB_WIDGETSLISTENER_H
 
 #include "tb_core.h"
-#include "tb_linklist.h"
 #include "tb_widgets.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -21,13 +22,13 @@ class Element;
 // Should never be created or subclassed anywhere except in ElementListener.
 // It's only purpose is to add a extra typed link for ElementListener, since it
 // needs to be added in multiple lists.
-class ElementListenerGlobalLink : public TBLinkOf<ElementListenerGlobalLink> {};
+class ElementListenerGlobalLink : public util::TBLinkOf<ElementListenerGlobalLink> {};
 
 // Listens to some callbacks from Element.
 // It may either listen to all elements globally, or one specific element.
 // Local listeners (added with Element:AddListener) will be invoked before
 // global listeners (added with ElementListener::AddGlobalListener).
-class ElementListener : public TBLinkOf<ElementListener>,
+class ElementListener : public util::TBLinkOf<ElementListener>,
                         public ElementListenerGlobalLink {
  public:
   // Adds a listener to all elements.

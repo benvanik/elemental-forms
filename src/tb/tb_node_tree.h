@@ -10,8 +10,9 @@
 #ifndef TB_NODE_TREE_H
 #define TB_NODE_TREE_H
 
-#include "tb_linklist.h"
 #include "tb_parser.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -31,7 +32,7 @@ MAKE_ENUM_FLAG_COMBO(ReadFlags);
 //
 // During ReadFile/ReadData, it may also select which branches to include or
 // exclude conditionally by lookup up values in NodeRefTree.
-class Node : public TBLinkOf<Node> {
+class Node : public util::TBLinkOf<Node> {
  public:
   Node() = default;
   ~Node();
@@ -156,7 +157,7 @@ class Node : public TBLinkOf<Node> {
 
   char* m_name = nullptr;
   Value m_value;
-  TBLinkListOf<Node> m_children;
+  util::TBLinkListOf<Node> m_children;
   Node* m_parent = nullptr;
   uint32_t m_cycle_id = 0;  // Used to detect circular references.
 };

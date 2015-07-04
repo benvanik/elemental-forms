@@ -12,9 +12,10 @@
 
 #include "tb_core.h"
 #include "tb_id.h"
-#include "tb_linklist.h"
 #include "tb_object.h"
 #include "tb_value.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -42,12 +43,12 @@ class MessageData : public TypedObject {
 // Should never be created or subclassed anywhere except in Message.
 // It's only purpose is to add a extra typed link for Message, since it needs
 // to be added in multiple lists.
-class MessageLink : public TBLinkOf<MessageLink> {};
+class MessageLink : public util::TBLinkOf<MessageLink> {};
 
 // A message created and owned by MessageHandler.
 // It carries a message id, and may also carry a MessageData with additional
 // parameters.
-class Message : public TBLinkOf<Message>, public MessageLink {
+class Message : public util::TBLinkOf<Message>, public MessageLink {
  private:
   Message(TBID message, MessageData* data, uint64_t fire_time_ms,
           MessageHandler* mh);
@@ -127,7 +128,7 @@ class MessageHandler {
   static uint64_t GetNextMessageFireTime();
 
  private:
-  TBLinkListOf<Message> m_messages;
+  util::TBLinkListOf<Message> m_messages;
 };
 
 }  // namespace tb

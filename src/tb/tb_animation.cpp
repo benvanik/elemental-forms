@@ -31,27 +31,27 @@ inline float SmoothCurve(float x, float a) {
 }
 
 void Animation::InvokeOnAnimationStart() {
-  TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
   OnAnimationStart();
   while (AnimationListener* listener = li.GetAndStep())
     listener->OnAnimationStart(this);
 }
 
 void Animation::InvokeOnAnimationUpdate(float progress) {
-  TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
   OnAnimationUpdate(progress);
   while (AnimationListener* listener = li.GetAndStep())
     listener->OnAnimationUpdate(this, progress);
 }
 
 void Animation::InvokeOnAnimationStop(bool aborted) {
-  TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
   OnAnimationStop(aborted);
   while (AnimationListener* listener = li.GetAndStep())
     listener->OnAnimationStop(this, aborted);
 }
 
-TBLinkListOf<Animation> AnimationManager::animating_objects;
+util::TBLinkListOf<Animation> AnimationManager::animating_objects;
 int AnimationManager::block_animations_counter = 0;
 
 // static
@@ -64,7 +64,7 @@ void AnimationManager::AbortAllAnimations() {
 void AnimationManager::Update() {
   uint64_t time_now = TBSystem::GetTimeMS();
 
-  TBLinkListOf<Animation>::Iterator iter = animating_objects.IterateForward();
+  util::TBLinkListOf<Animation>::Iterator iter = animating_objects.IterateForward();
   while (Animation* obj = iter.GetAndStep()) {
     // Adjust the start time if it's the first update time for this object.
     if (obj->adjust_start_time) {

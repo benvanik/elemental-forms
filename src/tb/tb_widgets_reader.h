@@ -10,8 +10,9 @@
 #ifndef TB_WIDGETS_READER_H
 #define TB_WIDGETS_READER_H
 
-#include "tb_linklist.h"
 #include "tb_widgets.h"
+
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -36,7 +37,7 @@ struct InflateInfo {
 };
 
 // Creates a element from a Node.
-class ElementFactory : public TBLinkOf<ElementFactory> {
+class ElementFactory : public util::TBLinkOf<ElementFactory> {
  public:
   ElementFactory(const char* name, Value::Type sync_type);
 
@@ -166,7 +167,7 @@ class ElementReader {
   bool Init();
   bool CreateElement(Element* target, Node* node);
 
-  TBLinkListOf<ElementFactory> factories;
+  util::TBLinkListOf<ElementFactory> factories;
 };
 
 }  // namespace tb

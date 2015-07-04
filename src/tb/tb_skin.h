@@ -13,11 +13,11 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_core.h"
 #include "tb_dimension.h"
-#include "tb_linklist.h"
 #include "tb_renderer.h"
 #include "tb_value.h"
 
 #include "tb/util/hash_table.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -110,7 +110,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(SkinProperty, "skin", "window active", "axis",
 // Checks if a condition is true for a given SkinConditionContext.
 // This is used to apply different state elements depending on what is currently
 // painting the skin.
-class SkinCondition : public TBLinkOf<SkinCondition> {
+class SkinCondition : public util::TBLinkOf<SkinCondition> {
  public:
   // Defines if the condition tested should be equal or not for the condition to
   // be true.
@@ -152,7 +152,7 @@ class SkinConditionContext {
 
 // SkinElementState has a skin element id that should be used if its state and
 // condition matches that which is being painted.
-class SkinElementState : public TBLinkOf<SkinElementState> {
+class SkinElementState : public util::TBLinkOf<SkinElementState> {
  public:
   // Defines how to match states.
   enum class MatchRule {
@@ -170,7 +170,7 @@ class SkinElementState : public TBLinkOf<SkinElementState> {
 
   TBID element_id;
   SkinState state;
-  TBLinkListAutoDeleteOf<SkinCondition> conditions;
+  util::TBLinkListAutoDeleteOf<SkinCondition> conditions;
 };
 
 // List of state elements in a SkinElement.
@@ -196,7 +196,7 @@ class SkinElementStateList {
   void Load(Node* n);
 
  private:
-  TBLinkListOf<SkinElementState> m_state_elements;
+  util::TBLinkListOf<SkinElementState> m_state_elements;
 };
 
 // Skin element.

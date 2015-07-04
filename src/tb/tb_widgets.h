@@ -16,12 +16,13 @@
 
 #include "tb_core.h"
 #include "tb_font_desc.h"
-#include "tb/rect.h"
-#include "tb_linklist.h"
 #include "tb_object.h"
 #include "tb_skin.h"
 #include "tb_types.h"
 #include "tb_widget_value.h"
+
+#include "tb/rect.h"
+#include "tb/util/link_list.h"
 
 namespace tb {
 
@@ -396,7 +397,7 @@ enum class HitStatus {
 //
 // NOTE: When you subclass a element, use the TBOBJECT_SUBCLASS macro to define
 // the type casting functions instead of implementing those manually.
-class Element : public TypedObject, public TBLinkOf<Element> {
+class Element : public TypedObject, public util::TBLinkOf<Element> {
  public:
   TBOBJECT_SUBCLASS(Element, TypedObject);
 
@@ -684,10 +685,10 @@ class Element : public TypedObject, public TBLinkOf<Element> {
   Element* GetLastLeaf() const;
   inline Element* GetFirstChild() const { return m_children.GetFirst(); }
   inline Element* GetLastChild() const { return m_children.GetLast(); }
-  TBLinkListOf<Element>::Iterator GetIteratorForward() {
+  util::TBLinkListOf<Element>::Iterator GetIteratorForward() {
     return m_children.IterateForward();
   }
-  TBLinkListOf<Element>::Iterator GetIteratorBackward() {
+  util::TBLinkListOf<Element>::Iterator GetIteratorBackward() {
     return m_children.IterateBackward();
   }
 
@@ -1127,9 +1128,9 @@ class Element : public TypedObject, public TBLinkOf<Element> {
                             // condition changes.
   // The rectangle of this element, relative to the parent. See set_rect.
   Rect m_rect;
-  TBLinkListOf<Element> m_children;
+  util::TBLinkListOf<Element> m_children;
   ElementValueConnection m_connection;
-  TBLinkListOf<ElementListener> m_listeners;
+  util::TBLinkListOf<ElementListener> m_listeners;
   // Opacity 0-1. See SetOpacity.
   float m_opacity = 1.0f;
   // The element state (excluding any auto states).

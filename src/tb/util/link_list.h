@@ -2,34 +2,33 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#ifndef TB_LINKLIST_H
-#define TB_LINKLIST_H
+#ifndef TB_UTIL_LINK_LIST_H_
+#define TB_UTIL_LINK_LIST_H_
 
 #include <cassert>
 
-#include "tb_core.h"
-
 namespace tb {
+namespace util {
 
-class TBLinkList;
 class TBLink;
+class TBLinkList;
 
 /** TBLinkListIterator - The backend class for a safe iteration of a TBLinkList.
 
-        You would normally recieve a typed iterator from a
-   TBLinkListOf::IterateForward
-        or TBLinkListOf::IterateBackward, instead of creating this object
-   directly.
+You would normally recieve a typed iterator from a
+TBLinkListOf::IterateForward
+or TBLinkListOf::IterateBackward, instead of creating this object
+directly.
 
-        Safe iteration means that if a link is removed from a linked list, _all_
-   iterators that currently
-        point to that link will automatically step to the next link in the
-   iterators direction. */
+Safe iteration means that if a link is removed from a linked list, _all_
+iterators that currently
+point to that link will automatically step to the next link in the
+iterators direction. */
 
 class TBLinkListIterator {
  public:
@@ -38,14 +37,14 @@ class TBLinkListIterator {
   ~TBLinkListIterator();
 
   /** Set the iterator to the first link in we iterate forward,
-          or set it to the last link if we iterate backward.  */
+  or set it to the last link if we iterate backward.  */
   void Reset();
 
   /** Get the current link or nullptr if out of bounds. */
   TBLink* Get() const { return m_current_link; }
 
   /** Get the current link and step the iterator to the next (forward or
-   * backward). */
+  * backward). */
   TBLink* GetAndStep();
 
   operator TBLink*() const { return m_current_link; }
@@ -61,7 +60,7 @@ class TBLinkListIterator {
   TBLinkListIterator* m_next;  // Link in list of iterators for m_linklist.
 
   /** RemoveLink is called when removing/deleting links in the target linklist.
-          This will make sure iterators skip the deleted item. */
+  This will make sure iterators skip the deleted item. */
   void RemoveLink(TBLink* link);
   friend class TBLinkList;
 
@@ -74,7 +73,7 @@ class TBLinkListIterator {
 };
 
 /** TBLink - The backend class to be inserted in TBLinkList.
-        Use the typed TBLinkOf for object storing! */
+Use the typed TBLinkOf for object storing! */
 
 class TBLink {
  public:
@@ -97,9 +96,9 @@ class TBLinkOf : public TBLink {
 };
 
 /** TBLinkList - This is the backend for TBLinkListOf and
-   TBLinkListAutoDeleteOf.
-        You should use the typed TBLinkListOf or TBLinkListAutoDeleteOf for
-   object storing! */
+TBLinkListAutoDeleteOf.
+You should use the typed TBLinkListOf or TBLinkListAutoDeleteOf for
+object storing! */
 
 class TBLinkList {
  public:
@@ -158,13 +157,13 @@ class TBLinkListOf {
   void AddLast(T* link) { m_linklist.AddLast(static_cast<TBLinkOf<T>*>(link)); }
 
   /** Add link before the reference link (which must be added to this linklist).
-   */
+  */
   void AddBefore(T* link, T* reference) {
     m_linklist.AddBefore(static_cast<TBLinkOf<T>*>(link), reference);
   }
 
   /** Add link after the reference link (which must be added to this linklist).
-   */
+  */
   void AddAfter(T* link, T* reference) {
     m_linklist.AddAfter(static_cast<TBLinkOf<T>*>(link), reference);
   }
@@ -189,7 +188,7 @@ class TBLinkListOf {
   int CountLinks() const { return m_linklist.CountLinks(); }
 
   /** Typed iterator for safe iteration. For more info, see TBLinkListIterator.
-   */
+  */
   class Iterator : public TBLinkListIterator {
    public:
     Iterator(TBLinkListOf<T>* linklistof, bool forward)
@@ -225,7 +224,7 @@ class TBLinkListOf {
 };
 
 /** TBLinkListAutoDeleteOf is a double linked linklist that deletes all links on
- * destruction. */
+* destruction. */
 
 template <class T>
 class TBLinkListAutoDeleteOf : public TBLinkListOf<T> {
@@ -233,6 +232,7 @@ class TBLinkListAutoDeleteOf : public TBLinkListOf<T> {
   ~TBLinkListAutoDeleteOf() { TBLinkListOf<T>::DeleteAll(); }
 };
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_LINKLIST_H
+#endif  // TB_UTIL_LINK_LIST_H_

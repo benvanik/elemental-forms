@@ -12,7 +12,6 @@
 
 #include "tb_bitmap_fragment.h"
 #include "tb_core.h"
-#include "tb_linklist.h"
 #include "tb_renderer.h"
 
 #include "tb/util/hash_table.h"
