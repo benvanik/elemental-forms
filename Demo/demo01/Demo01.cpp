@@ -745,11 +745,6 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   Renderer::get()->BeginPaint(window_w, window_h);
   GetRoot()->InvokePaint(Element::PaintProps());
 
-#if defined(TB_RUNTIME_DEBUG_INFO)
-// Enable to debug image manager fragments
-// ImageManager::get()->Debug();
-#endif
-
   frame_counter++;
   frame_counter_total++;
 

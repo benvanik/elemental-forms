@@ -54,6 +54,8 @@ class DebugInfo {
     // Render the bitmap fragments of the font that's set on the hovered or
     // focused element.
     kDrawFontBitmapFragments,
+    // Render the bitmap fragments of the image manager.
+    kDrawImageBitmapFragments,
 
     kSettingCount,
   };

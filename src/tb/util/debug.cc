@@ -13,6 +13,7 @@
 #include "tb/util/string.h"
 
 #include "tb_font_renderer.h"
+#include "tb_image_manager.h"
 #include "tb_text_box.h"
 #include "tb_window.h"
 
@@ -50,6 +51,8 @@ class DebugSettingsWindow : public Window, public ElementListener {
                 "Render skin bitmap fragments");
     AddCheckbox(DebugInfo::Setting::kDrawFontBitmapFragments,
                 "Render font bitmap fragments");
+    AddCheckbox(DebugInfo::Setting::kDrawImageBitmapFragments,
+                "Render image bitmap fragments");
 
     output = GetElementByIDAndType<TextBox>(TBIDC("output"));
 
@@ -105,6 +108,11 @@ class DebugSettingsWindow : public Window, public ElementListener {
           element ? element->GetCalculatedFontDescription()
                   : FontManager::get()->GetDefaultFontDescription());
       font_face->Debug();
+    }
+
+    // Draw image manager fragments.
+    if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawImageBitmapFragments)) {
+      ImageManager::get()->Debug();
     }
 
     Renderer::get()->Translate(-rect().w, 0);
