@@ -32,7 +32,7 @@ PreferredSize ImageElement::OnCalculatePreferredContentSize(
 }
 
 void ImageElement::OnPaint(const PaintProps& paint_props) {
-  if (BitmapFragment* fragment = m_image.GetBitmap()) {
+  if (auto fragment = m_image.GetBitmap()) {
     Renderer::get()->DrawBitmap(GetPaddingRect(),
                                 Rect(0, 0, m_image.Width(), m_image.Height()),
                                 fragment);

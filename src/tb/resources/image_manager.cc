@@ -7,8 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_image_manager.h"
-
+#include "tb/resources/image_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/hash.h"
 #include "tb/util/string_builder.h"
@@ -16,6 +15,7 @@
 #include "tb_skin.h"
 
 namespace tb {
+namespace resources {
 
 std::unique_ptr<ImageManager> ImageManager::image_manager_singleton_;
 
@@ -137,4 +137,5 @@ void ImageManager::OnContextRestored() {
   // No need to do anything. The bitmaps will be created when drawing.
 }
 
+}  // namespace resources
 }  // namespace tb

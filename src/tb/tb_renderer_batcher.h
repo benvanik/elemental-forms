@@ -14,6 +14,10 @@
 
 namespace tb {
 
+namespace resources {
+class BitmapFragment;
+}  // namespace resources
+
 #define VERTEX_BATCH_SIZE 6 * 2048
 
 // A helper class that implements batching of draw operations for a Renderer.
@@ -45,7 +49,7 @@ class RendererBatcher : public Renderer {
     int vertex_count = 0;
 
     Bitmap* bitmap = nullptr;
-    BitmapFragment* fragment = nullptr;
+    resources::BitmapFragment* fragment = nullptr;
 
     uint32_t batch_id = 0;
     bool is_flushing = false;
@@ -66,19 +70,19 @@ class RendererBatcher : public Renderer {
   Rect GetClipRect() override;
 
   void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                  BitmapFragment* bitmap_fragment) override;
+                  resources::BitmapFragment* bitmap_fragment) override;
   void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                   Bitmap* bitmap) override;
   void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                          const Color& color,
-                         BitmapFragment* bitmap_fragment) override;
+                         resources::BitmapFragment* bitmap_fragment) override;
   void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                          const Color& color, Bitmap* bitmap) override;
   void DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) override;
   void DrawRect(const Rect& dst_rect, const Color& color) override;
   void DrawRectFill(const Rect& dst_rect, const Color& color) override;
   void FlushBitmap(Bitmap* bitmap);
-  void FlushBitmapFragment(BitmapFragment* bitmap_fragment) override;
+  void FlushBitmapFragment(resources::BitmapFragment* bitmap_fragment) override;
 
   void BeginBatchHint(Renderer::BatchHint hint) override {}
   void EndBatchHint() override {}
@@ -90,7 +94,7 @@ class RendererBatcher : public Renderer {
  protected:
   void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
                        uint32_t color, Bitmap* bitmap,
-                       BitmapFragment* fragment);
+                       resources::BitmapFragment* fragment);
   void FlushAllInternal();
 
   uint8_t m_opacity = 255;

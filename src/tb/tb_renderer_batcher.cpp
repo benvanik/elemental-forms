@@ -7,9 +7,9 @@
  ******************************************************************************
  */
 
-#include "tb_bitmap_fragment.h"
 #include "tb_renderer_batcher.h"
 
+#include "tb/resources/bitmap_fragment.h"
 #include "tb/util/debug.h"
 
 namespace tb {
@@ -36,7 +36,7 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
     // Now it's time to ensure the bitmap data is up to date. A call to
     // GetBitmap with Validate::kAlways should guarantee that its data is
     // validated.
-    Bitmap* frag_bitmap = fragment->GetBitmap(Validate::kAlways);
+    Bitmap* frag_bitmap = fragment->GetBitmap(resources::Validate::kAlways);
     ((void)frag_bitmap);  // silence warning about unused variable
     assert(frag_bitmap == bitmap);
   }
@@ -145,8 +145,9 @@ Rect RendererBatcher::GetClipRect() {
 }
 
 void RendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                                 BitmapFragment* bitmap_fragment) {
-  if (Bitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
+                                 resources::BitmapFragment* bitmap_fragment) {
+  if (Bitmap* bitmap =
+          bitmap_fragment->GetBitmap(resources::Validate::kFirstTime)) {
     AddQuadInternal(
         dst_rect.Offset(m_translation_x, m_translation_y),
         src_rect.Offset(bitmap_fragment->m_rect.x, bitmap_fragment->m_rect.y),
@@ -160,11 +161,11 @@ void RendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                   VER_COL_OPACITY(m_opacity), bitmap, nullptr);
 }
 
-void RendererBatcher::DrawBitmapColored(const Rect& dst_rect,
-                                        const Rect& src_rect,
-                                        const Color& color,
-                                        BitmapFragment* bitmap_fragment) {
-  if (Bitmap* bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
+void RendererBatcher::DrawBitmapColored(
+    const Rect& dst_rect, const Rect& src_rect, const Color& color,
+    resources::BitmapFragment* bitmap_fragment) {
+  if (Bitmap* bitmap =
+          bitmap_fragment->GetBitmap(resources::Validate::kFirstTime)) {
     uint32_t a = (color.a * m_opacity) / 255;
     AddQuadInternal(
         dst_rect.Offset(m_translation_x, m_translation_y),
@@ -212,7 +213,7 @@ void RendererBatcher::DrawRectFill(const Rect& dst_rect, const Color& color) {
 void RendererBatcher::AddQuadInternal(const Rect& dst_rect,
                                       const Rect& src_rect, uint32_t color,
                                       Bitmap* bitmap,
-                                      BitmapFragment* fragment) {
+                                      resources::BitmapFragment* fragment) {
   if (batch.bitmap != bitmap) {
     batch.Flush(this);
     batch.bitmap = bitmap;
@@ -275,7 +276,8 @@ void RendererBatcher::FlushBitmap(Bitmap* bitmap) {
   }
 }
 
-void RendererBatcher::FlushBitmapFragment(BitmapFragment* bitmap_fragment) {
+void RendererBatcher::FlushBitmapFragment(
+    resources::BitmapFragment* bitmap_fragment) {
   // Flush the batch if it is using this fragment (that is about to change or be
   // deleted).
   // We know if it is in use in the current batch if its batch_id matches the

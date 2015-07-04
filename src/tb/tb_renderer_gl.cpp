@@ -10,9 +10,9 @@
 #include <cassert>
 #include <cstdio>
 
-#include "tb_bitmap_fragment.h"
 #include "tb_renderer_gl.h"
 
+#include "tb/resources/bitmap_fragment.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 

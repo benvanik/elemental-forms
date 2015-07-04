@@ -8,11 +8,12 @@
  */
 
 #include "tb_test.h"
-#include "tb_bitmap_fragment.h"
+#include "tb/util/space_allocator.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using tb::util::SpaceAllocator;
 
 TB_TEST_GROUP(tb_space_allocator) {
   TB_TEST(free_when_full) {

@@ -10,8 +10,9 @@
 #ifndef TB_IMAGE_WIDGET_H
 #define TB_IMAGE_WIDGET_H
 
-#include "tb_image_manager.h"
 #include "tb_widgets.h"
+
+#include "tb/resources/image_manager.h"
 
 namespace tb {
 
@@ -25,9 +26,9 @@ class ImageElement : public Element {
 
   ImageElement() = default;
 
-  void SetImage(const Image& image) { m_image = image; }
+  void SetImage(const resources::Image& image) { m_image = image; }
   void SetImage(const char* filename) {
-    m_image = ImageManager::get()->GetImage(filename);
+    m_image = resources::ImageManager::get()->GetImage(filename);
   }
 
   PreferredSize OnCalculatePreferredContentSize(
@@ -37,7 +38,7 @@ class ImageElement : public Element {
   void OnPaint(const PaintProps& paint_props) override;
 
  private:
-  Image m_image;
+  resources::Image m_image;
 };
 
 }  // namespace tb

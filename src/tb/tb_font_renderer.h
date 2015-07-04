@@ -12,14 +12,20 @@
 
 #include <memory>
 
-#include "tb_bitmap_fragment.h"
 #include "tb_font_desc.h"
 #include "tb_renderer.h"
 
+#include "tb/resources/bitmap_fragment.h"
+#include "tb/resources/bitmap_fragment_manager.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
 
 namespace tb {
+// TO REMOVE:
+namespace {
+using tb::resources::BitmapFragment;
+using tb::resources::BitmapFragmentManager;
+}
 
 class FontFace;
 class FontManager;

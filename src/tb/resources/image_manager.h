@@ -7,17 +7,18 @@
  ******************************************************************************
  */
 
-#ifndef TB_IMAGE_MANAGER_H
-#define TB_IMAGE_MANAGER_H
+#ifndef TB_RESOURCES_IMAGE_MANAGER_H_
+#define TB_RESOURCES_IMAGE_MANAGER_H_
 
 #include <memory>
 
-#include "tb_bitmap_fragment.h"
 #include "tb_renderer.h"
 
+#include "tb/resources/bitmap_fragment_manager.h"
 #include "tb/util/hash_table.h"
 
 namespace tb {
+namespace resources {
 
 class ImageManager;
 
@@ -118,6 +119,7 @@ class ImageManager : private RendererListener {
   util::HashTableOf<ImageRep> m_image_rep_hash;
 };
 
+}  // namespace resources
 }  // namespace tb
 
-#endif  // TB_IMAGE_MANAGER_H
+#endif  // TB_RESOURCES_IMAGE_MANAGER_H_

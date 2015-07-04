@@ -10,7 +10,6 @@
 #include <cassert>
 
 #include "tb_font_renderer.h"
-#include "tb_image_manager.h"
 #include "tb_skin.h"
 #include "tb_tooltips.h"
 #include "tb_widget_animation.h"
@@ -18,6 +17,7 @@
 #include "tb/animation.h"
 #include "tb/config.h"
 #include "tb/resources/element_factory.h"
+#include "tb/resources/image_manager.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/string_table.h"
 
@@ -36,7 +36,7 @@ bool Initialize(Renderer* renderer, const char* language_file) {
   FontManager::set(std::make_unique<FontManager>());
   Skin::set(std::make_unique<Skin>());
   resources::ElementFactory::set(std::make_unique<resources::ElementFactory>());
-  ImageManager::set(std::make_unique<ImageManager>());
+  resources::ImageManager::set(std::make_unique<resources::ImageManager>());
   TooltipManager::set(std::make_unique<TooltipManager>());
 
   ElementAnimationManager::Init();
@@ -57,7 +57,7 @@ void Shutdown() {
   ElementAnimationManager::Shutdown();
 
   TooltipManager::set(nullptr);
-  ImageManager::set(nullptr);
+  resources::ImageManager::set(nullptr);
   resources::ElementFactory::set(nullptr);
   Skin::set(nullptr);
   FontManager::set(nullptr);

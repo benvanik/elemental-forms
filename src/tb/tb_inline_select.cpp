@@ -12,6 +12,7 @@
 
 #include "tb_inline_select.h"
 #include "tb/resources/element_factory.h"
+#include "tb/util/math.h"
 
 namespace tb {
 

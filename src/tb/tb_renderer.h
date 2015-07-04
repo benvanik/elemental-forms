@@ -17,8 +17,9 @@
 #include "tb/util/link_list.h"
 
 namespace tb {
-
+namespace resources {
 class BitmapFragment;
+}  // namespace resources
 
 // RendererListener is a listener for Renderer.
 class RendererListener : public util::TBLinkOf<RendererListener> {
@@ -90,7 +91,7 @@ class Renderer {
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          BitmapFragment* bitmap_fragment) = 0;
+                          resources::BitmapFragment* bitmap_fragment) = 0;
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // dst_rect or src_rect can have negative width and height to achieve
@@ -102,9 +103,9 @@ class Renderer {
   // The bitmap will be used as a mask for the color.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const Color& color,
-                                 BitmapFragment* bitmap_fragment) = 0;
+  virtual void DrawBitmapColored(
+      const Rect& dst_rect, const Rect& src_rect, const Color& color,
+      resources::BitmapFragment* bitmap_fragment) = 0;
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // The bitmap will be used as a mask for the color.
@@ -124,7 +125,8 @@ class Renderer {
 
   // Makes sure the given bitmap fragment is flushed from any batching, because
   // it may be changed or deleted after this call.
-  virtual void FlushBitmapFragment(BitmapFragment* bitmap_fragment) = 0;
+  virtual void FlushBitmapFragment(
+      resources::BitmapFragment* bitmap_fragment) = 0;
 
   // Creates a new Bitmap from the given data (in BGRA32 format).
   // Width and height must be a power of two.

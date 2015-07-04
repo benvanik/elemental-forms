@@ -9,11 +9,9 @@
 #include "tb_menu_window.h"
 #include "tb_text_box.h"
 #include "tb_tab_container.h"
-#include "tb_bitmap_fragment.h"
 #include "tb_widget_animation.h"
 #include "tb_node_tree.h"
 #include "tb_font_renderer.h"
-#include "tb_image_manager.h"
 #include "CodeTextBox\CodeTextBox.h"
 
 #include "tb/turbo_badger.h"

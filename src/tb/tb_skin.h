@@ -12,16 +12,22 @@
 
 #include <memory>
 
-#include "tb_bitmap_fragment.h"
 #include "tb_dimension.h"
 #include "tb_renderer.h"
 #include "tb_value.h"
 
+#include "tb/resources/bitmap_fragment.h"
+#include "tb/resources/bitmap_fragment_manager.h"
 #include "tb/types.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
 
 namespace tb {
+// TODO(benvanik): remove
+namespace {
+using tb::resources::BitmapFragment;
+using tb::resources::BitmapFragmentManager;
+}
 
 class Node;
 class Skin;
