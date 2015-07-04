@@ -6,10 +6,12 @@
 
 class CodeTextBox : public tb::TextBox {
  public:
+  static void RegisterInflater();
+
   enum SpecialStringTypes { Keyword, Variable };
   CodeTextBox();
 
-  virtual void OnInflate(const tb::InflateInfo& info);
+  virtual void OnInflate(const tb::resources::InflateInfo& info);
 
  private:
   virtual void DrawString(int32_t x, int32_t y, tb::FontFace* font,

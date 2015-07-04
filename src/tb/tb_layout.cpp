@@ -13,10 +13,15 @@
 #include "tb_layout.h"
 #include "tb_skin_util.h"
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
+
+void Layout::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Layout, Value::Type::kNull, ElementZ::kTop);
+}
 
 Layout::Layout(Axis axis) : m_axis(axis) {
   m_packed.layout_mode_size = uint32_t(LayoutSize::kGravity);
@@ -25,6 +30,45 @@ Layout::Layout(Axis axis) : m_axis(axis) {
   m_packed.layout_mode_dist = uint32_t(LayoutDistribution::kPreferred);
   m_packed.layout_mode_dist_pos = uint32_t(LayoutDistributionPosition::kCenter);
   m_packed.paint_overflow_fadeout = 1;
+}
+
+void Layout::OnInflate(const resources::InflateInfo& info) {
+  if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
+    SetSpacing(Skin::get()->GetDimensionConverter()->GetPxFromString(
+        spacing, kSpacingFromSkin));
+  }
+  SetGravity(Gravity::kAll);
+  if (const char* size = info.node->GetValueString("size", nullptr)) {
+    SetLayoutSize(from_string(size, LayoutSize::kPreferred));
+  }
+  if (const char* pos = info.node->GetValueString("position", nullptr)) {
+    LayoutPosition lp = LayoutPosition::kCenter;
+    if (strstr(pos, "left") || strstr(pos, "top")) {
+      lp = LayoutPosition::kLeftTop;
+    } else if (strstr(pos, "right") || strstr(pos, "bottom")) {
+      lp = LayoutPosition::kRightBottom;
+    } else if (strstr(pos, "gravity")) {
+      lp = LayoutPosition::kGravity;
+    }
+    SetLayoutPosition(lp);
+  }
+  if (const char* pos = info.node->GetValueString("overflow", nullptr)) {
+    SetLayoutOverflow(from_string(pos, LayoutOverflow::kClip));
+  }
+  if (const char* dist = info.node->GetValueString("distribution", nullptr)) {
+    SetLayoutDistribution(from_string(dist, LayoutDistribution::kPreferred));
+  }
+  if (const char* dist =
+          info.node->GetValueString("distribution-position", nullptr)) {
+    LayoutDistributionPosition ld = LayoutDistributionPosition::kCenter;
+    if (strstr(dist, "left") || strstr(dist, "top")) {
+      ld = LayoutDistributionPosition::kLeftTop;
+    } else if (strstr(dist, "right") || strstr(dist, "bottom")) {
+      ld = LayoutDistributionPosition::kRightBottom;
+    }
+    SetLayoutDistributionPosition(ld);
+  }
+  Element::OnInflate(info);
 }
 
 void Layout::SetAxis(Axis axis) {

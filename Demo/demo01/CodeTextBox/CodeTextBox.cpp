@@ -1,14 +1,19 @@
+#include <cctype>
+
 #include "CodeTextBox.h"
 
-#include "tb_widgets_reader.h"
-#include <ctype.h>
+#include "tb/resources/element_factory.h"
 
 using namespace tb;
-TB_WIDGET_FACTORY(CodeTextBox, Value::Type::kString, ElementZ::kTop) {}
+
+void CodeTextBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(CodeTextBox, Value::Type::kString,
+                               ElementZ::kTop);
+}
 
 CodeTextBox::CodeTextBox() : TextBox(), inComment(false) {}
 
-void CodeTextBox::OnInflate(const InflateInfo& info) {
+void CodeTextBox::OnInflate(const resources::InflateInfo& info) {
   TextBox::OnInflate(info);
 }
 

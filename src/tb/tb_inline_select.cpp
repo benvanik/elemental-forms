@@ -11,11 +11,16 @@
 #include <cstdlib>
 
 #include "tb_inline_select.h"
+#include "tb/resources/element_factory.h"
 
 namespace tb {
 
 // FIX: axis should affect the buttons arrow skin!
 // FIX: unfocus should set the correct text!
+
+void SelectInline::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SelectInline, Value::Type::kInt, ElementZ::kTop);
+}
 
 SelectInline::SelectInline() {
   SetSkinBg(TBIDC("SelectInline"));
@@ -46,6 +51,13 @@ SelectInline::~SelectInline() {
   m_layout.RemoveChild(&m_text_box);
   m_layout.RemoveChild(&m_buttons[0]);
   RemoveChild(&m_layout);
+}
+
+void SelectInline::OnInflate(const resources::InflateInfo& info) {
+  int min = info.node->GetValueInt("min", GetMinValue());
+  int max = info.node->GetValueInt("max", GetMaxValue());
+  SetLimits(min, max);
+  Element::OnInflate(info);
 }
 
 void SelectInline::SetLimits(int min, int max) {

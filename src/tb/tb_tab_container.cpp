@@ -7,10 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_tab_container.h"
-
 #include <algorithm>
 #include <cassert>
+
+#include "tb_tab_container.h"
+
+#include "tb/resources/element_factory.h"
 
 namespace tb {
 
@@ -34,6 +36,11 @@ PreferredSize TabLayout::OnCalculatePreferredContentSize(
     ps.min_h = std::min(ps.min_h, 1);
   }
   return ps;
+}
+
+void TabContainer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(TabContainer, Value::Type::kNull,
+                               ElementZ::kTop);
 }
 
 TabContainer::TabContainer() {
@@ -60,6 +67,35 @@ TabContainer::~TabContainer() {
   m_root_layout.RemoveChild(&m_content_root);
   m_root_layout.RemoveChild(&m_tab_layout);
   RemoveChild(&m_root_layout);
+}
+
+void TabContainer::OnInflate(const resources::InflateInfo& info) {
+  Element::OnInflate(info);
+
+  if (const char* align = info.node->GetValueString("align", nullptr)) {
+    SetAlignment(tb::from_string(align, GetAlignment()));
+  }
+  // Allow additional attributes to be specified for the "tabs", "content" and
+  // "root" layouts by calling OnInflate.
+  if (Node* tabs = info.node->GetNode("tabs")) {
+    // Inflate the tabs elements into the tab layout.
+    Layout* tab_layout = GetTabLayout();
+    info.reader->LoadNodeTree(tab_layout, tabs);
+
+    resources::InflateInfo inflate_info(
+        info.reader, tab_layout->GetContentRoot(), tabs, Value::Type::kNull);
+    tab_layout->OnInflate(inflate_info);
+  }
+  if (Node* tabs = info.node->GetNode("content")) {
+    resources::InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
+                                        Value::Type::kNull);
+    GetContentRoot()->OnInflate(inflate_info);
+  }
+  if (Node* tabs = info.node->GetNode("root")) {
+    resources::InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
+                                        Value::Type::kNull);
+    m_root_layout.OnInflate(inflate_info);
+  }
 }
 
 void TabContainer::SetAxis(Axis axis) {

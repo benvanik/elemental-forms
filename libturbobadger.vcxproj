@@ -11,8 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\tb\elements.cc" />
     <ClCompile Include="src\tb\rect.cc" />
     <ClCompile Include="src\tb\animation.cc" />
+    <ClCompile Include="src\tb\resources\element_factory.cc" />
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
     <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\turbo_badger.cc" />
@@ -53,7 +55,6 @@
     <ClCompile Include="src\tb\tb_widgets.cpp" />
     <ClCompile Include="src\tb\tb_widgets_common.cpp" />
     <ClCompile Include="src\tb\tb_widgets_listener.cpp" />
-    <ClCompile Include="src\tb\tb_widgets_reader.cpp" />
     <ClCompile Include="src\tb\tb_widget_animation.cpp" />
     <ClCompile Include="src\tb\tb_widget_skin_condition_context.cpp" />
     <ClCompile Include="src\tb\tb_widget_value.cpp" />
@@ -87,8 +88,10 @@
     <ClCompile Include="src\tb\util\utf8.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\tb\elements.h" />
     <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\animation.h" />
+    <ClInclude Include="src\tb\resources\element_factory.h" />
     <ClInclude Include="src\tb\tb_image_manager.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
     <ClInclude Include="src\tb\tb_parser.h" />
@@ -129,7 +132,6 @@
     <ClInclude Include="src\tb\tb_widgets.h" />
     <ClInclude Include="src\tb\tb_widgets_common.h" />
     <ClInclude Include="src\tb\tb_widgets_listener.h" />
-    <ClInclude Include="src\tb\tb_widgets_reader.h" />
     <ClInclude Include="src\tb\tb_widget_skin_condition_context.h" />
     <ClInclude Include="src\tb\tb_widget_value.h" />
     <ClInclude Include="src\tb\tb_window.h" />

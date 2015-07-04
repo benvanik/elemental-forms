@@ -75,6 +75,6 @@ class Rect {
 };
 std::string to_string(const Rect& value);
 
-};  // namespace tb
+}  // namespace tb
 
 #endif  // TB_RECT_H_

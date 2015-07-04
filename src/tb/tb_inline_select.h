@@ -23,6 +23,7 @@ namespace tb {
 class SelectInline : public Element {
  public:
   TBOBJECT_SUBCLASS(SelectInline, Element);
+  static void RegisterInflater();
 
   SelectInline();
   ~SelectInline() override;
@@ -38,7 +39,7 @@ class SelectInline : public Element {
   void SetValue(int value) override { SetValueInternal(value, true); }
   int GetValue() override { return m_value; }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   void OnSkinChanged() override;
   bool OnEvent(const ElementEvent& ev) override;
 

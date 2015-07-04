@@ -38,7 +38,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 // of element from a inline resource string.
 //
 // Syntax: <element xxx>
-// (where xxx is parsed by ElementReader).
+// (where xxx is parsed by ElementFactory).
 //
 // Example - Create a button with id "hello":
 //   <element Button: text: "Hello world!" id: "hello">
@@ -75,6 +75,7 @@ class TextBox : public Element,
                 public MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TextBox, Element);
+  static void RegisterInflater();
 
   TextBox();
   ~TextBox() override;
@@ -174,7 +175,7 @@ class TextBox : public Element,
   bool OnEvent(const ElementEvent& ev) override;
   void OnPaint(const PaintProps& paint_props) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   void OnAdded() override;
   void OnFontChanged() override;
   void OnFocusChanged(bool focused) override;

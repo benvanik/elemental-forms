@@ -21,6 +21,7 @@ namespace tb {
 class ImageElement : public Element {
  public:
   TBOBJECT_SUBCLASS(ImageElement, Element);
+  static void RegisterInflater();
 
   ImageElement() = default;
 
@@ -32,7 +33,7 @@ class ImageElement : public Element {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   void OnPaint(const PaintProps& paint_props) override;
 
  private:

@@ -22,6 +22,7 @@ class MenuWindow;
 class SelectList : public Element, public SelectItemObserver {
  public:
   TBOBJECT_SUBCLASS(SelectList, Element);
+  static void RegisterInflater();
 
   SelectList();
   ~SelectList() override;
@@ -84,7 +85,7 @@ class SelectList : public Element, public SelectItemObserver {
   // Returns the scrollcontainer used in this list.
   ScrollContainer* GetScrollContainer() { return &m_container; }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
@@ -115,6 +116,7 @@ class SelectList : public Element, public SelectItemObserver {
 class SelectDropdown : public Button, public SelectItemObserver {
  public:
   TBOBJECT_SUBCLASS(SelectDropdown, Button);
+  static void RegisterInflater();
 
   SelectDropdown();
   ~SelectDropdown() override;
@@ -144,7 +146,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   // Returns the menu window if it's open, or nullptr.
   MenuWindow* GetMenuIfOpen() const;
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;

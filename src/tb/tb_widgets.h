@@ -26,12 +26,15 @@
 namespace tb {
 
 class FontFace;
-struct InflateInfo;
+class GenericStringItemSource;
 class LongClickTimer;
 class Scroller;
 class Element;
 class ElementListener;
 class Window;
+namespace resources {
+struct InflateInfo;
+}  // namespace resources
 
 enum class Align {
   kLeft,
@@ -399,9 +402,17 @@ enum class HitStatus {
 class Element : public util::TypedObject, public util::TBLinkOf<Element> {
  public:
   TBOBJECT_SUBCLASS(Element, util::TypedObject);
+  static void RegisterInflater();
 
   Element();
   virtual ~Element();
+
+  bool LoadFile(const char* filename);
+  bool LoadData(const char* data, size_t data_length = std::string::npos);
+  bool LoadData(std::string data) {
+    return LoadData(data.c_str(), data.size());
+  }
+  void LoadNodeTree(Node* node);
 
   // Sets the rect for this element in its parent.
   // The rect is relative to the parent element. The skin may expand outside
@@ -808,7 +819,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // This will read generic element properties and add the element to the
   // hierarchy if it's not already added. If overridden, you must call the super
   // implementation.
-  virtual void OnInflate(const InflateInfo& info);
+  virtual void OnInflate(const resources::InflateInfo& info);
 
   // Gets hit status tests if this element should be hit at the given
   // coordinate.
@@ -1197,6 +1208,11 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   static bool update_skin_states;
   // true if the focused state should be painted automatically.
   static bool show_focus_state;
+
+ protected:
+  static void SetIdFromNode(TBID& id, Node* node);
+  static void ReadItemNodes(Node* parent_node,
+                            GenericStringItemSource* target_source);
 
  private:
   // Returns this element or the nearest parent that is scrollable in the given

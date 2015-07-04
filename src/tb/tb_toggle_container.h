@@ -32,6 +32,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(ToggleAction, "nothing", "enabled", "opacity",
 class ToggleContainer : public Element {
  public:
   TBOBJECT_SUBCLASS(ToggleContainer, Element);
+  static void RegisterInflater();
 
   ToggleContainer();
 
@@ -51,7 +52,7 @@ class ToggleContainer : public Element {
   void SetValue(int value) override;
   int GetValue() override { return m_value; }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
 
  private:
   void UpdateInternal();
@@ -84,6 +85,7 @@ class SectionHeader : public Button {
 class Section : public Element {
  public:
   TBOBJECT_SUBCLASS(Section, Element);
+  static void RegisterInflater();
 
   Section();
   ~Section() override;

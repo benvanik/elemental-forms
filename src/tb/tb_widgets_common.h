@@ -56,6 +56,7 @@ class ElementString {
 class Label : public Element {
  public:
   TBOBJECT_SUBCLASS(Label, Element);
+  static void RegisterInflater();
 
   Label();
 
@@ -76,7 +77,7 @@ class Label : public Element {
   void SetSqueezable(bool squeezable);
   bool GetSqueezable() { return m_squeezable; }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
   void OnFontChanged() override;
@@ -97,6 +98,7 @@ class Label : public Element {
 class Button : public Element, protected MessageHandler {
  public:
   TBOBJECT_SUBCLASS(Button, Element);
+  static void RegisterInflater();
 
   Button();
   ~Button() override;
@@ -130,7 +132,7 @@ class Button : public Element, protected MessageHandler {
   void SetValue(int value) override;
   int GetValue() override;
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
   bool OnEvent(const ElementEvent& ev) override;
@@ -168,6 +170,7 @@ class Button : public Element, protected MessageHandler {
 class LabelContainer : public Element {
  public:
   TBOBJECT_SUBCLASS(LabelContainer, Element);
+  static void RegisterInflater();
 
   LabelContainer();
   ~LabelContainer() override;
@@ -201,6 +204,7 @@ class LabelContainer : public Element {
 class SkinImage : public Element {
  public:
   TBOBJECT_SUBCLASS(SkinImage, Element);
+  static void RegisterInflater();
 
   SkinImage() = default;
   SkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
@@ -214,6 +218,7 @@ class SkinImage : public Element {
 class Separator : public Element {
  public:
   TBOBJECT_SUBCLASS(Separator, Element);
+  static void RegisterInflater();
 
   Separator();
 };
@@ -223,6 +228,7 @@ class Separator : public Element {
 class ProgressSpinner : public Element, protected MessageHandler {
  public:
   TBOBJECT_SUBCLASS(ProgressSpinner, Element);
+  static void RegisterInflater();
 
   ProgressSpinner();
 
@@ -283,6 +289,7 @@ class BaseRadioCheckBox : public Element {
 class CheckBox : public BaseRadioCheckBox {
  public:
   TBOBJECT_SUBCLASS(CheckBox, BaseRadioCheckBox);
+  static void RegisterInflater();
 
   CheckBox() { SetSkinBg(TBIDC("CheckBox"), InvokeInfo::kNoCallbacks); }
 };
@@ -293,6 +300,7 @@ class CheckBox : public BaseRadioCheckBox {
 class RadioButton : public BaseRadioCheckBox {
  public:
   TBOBJECT_SUBCLASS(RadioButton, BaseRadioCheckBox);
+  static void RegisterInflater();
 
   RadioButton() { SetSkinBg(TBIDC("RadioButton"), InvokeInfo::kNoCallbacks); }
 };
@@ -301,6 +309,7 @@ class RadioButton : public BaseRadioCheckBox {
 class ScrollBar : public Element {
  public:
   TBOBJECT_SUBCLASS(ScrollBar, Element);
+  static void RegisterInflater();
 
   ScrollBar();
   ~ScrollBar() override;
@@ -337,7 +346,7 @@ class ScrollBar : public Element {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
@@ -360,6 +369,7 @@ class ScrollBar : public Element {
 class Slider : public Element {
  public:
   TBOBJECT_SUBCLASS(Slider, Element);
+  static void RegisterInflater();
 
   Slider();
   ~Slider() override;
@@ -385,7 +395,7 @@ class Slider : public Element {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
@@ -404,6 +414,7 @@ class Slider : public Element {
 class Container : public Element {
  public:
   TBOBJECT_SUBCLASS(Container, Element);
+  static void RegisterInflater();
 
   Container();
 };
@@ -412,6 +423,7 @@ class Container : public Element {
 class Mover : public Element {
  public:
   TBOBJECT_SUBCLASS(Mover, Element);
+  static void RegisterInflater();
 
   Mover();
 
@@ -423,6 +435,7 @@ class Mover : public Element {
 class Resizer : public Element {
  public:
   TBOBJECT_SUBCLASS(Resizer, Element);
+  static void RegisterInflater();
 
   Resizer();
 
@@ -434,6 +447,7 @@ class Resizer : public Element {
 class Dimmer : public Element {
  public:
   TBOBJECT_SUBCLASS(Dimmer, Element);
+  static void RegisterInflater();
 
   Dimmer();
 

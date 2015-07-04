@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cassert>
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
@@ -95,6 +96,11 @@ void ScrollContainerRoot::GetChildTranslation(int& x, int& y) const {
   y = -sc->m_scrollbar_y.GetValue();
 }
 
+void ScrollContainer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ScrollContainer, Value::Type::kNull,
+                               ElementZ::kTop);
+}
+
 ScrollContainer::ScrollContainer() {
   AddChild(&m_scrollbar_x);
   AddChild(&m_scrollbar_y);
@@ -106,6 +112,21 @@ ScrollContainer::~ScrollContainer() {
   RemoveChild(&m_root);
   RemoveChild(&m_scrollbar_y);
   RemoveChild(&m_scrollbar_x);
+}
+
+void ScrollContainer::OnInflate(const resources::InflateInfo& info) {
+  SetGravity(Gravity::kAll);
+  SetAdaptContentSize(
+      info.node->GetValueInt("adapt-content", GetAdaptContentSize()) ? true
+                                                                     : false);
+  SetAdaptToContentSize(
+      info.node->GetValueInt("adapt-to-content", GetAdaptToContentSize())
+          ? true
+          : false);
+  if (const char* mode = info.node->GetValueString("scroll-mode", nullptr)) {
+    SetScrollMode(from_string(mode, GetScrollMode()));
+  }
+  Element::OnInflate(info);
 }
 
 void ScrollContainer::SetAdaptToContentSize(bool adapt) {

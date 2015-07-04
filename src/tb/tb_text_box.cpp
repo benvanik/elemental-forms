@@ -7,8 +7,6 @@
  ******************************************************************************
  */
 
-#include "tb_text_box.h"
-
 #include <algorithm>
 
 #include "tb_font_renderer.h"
@@ -16,9 +14,10 @@
 #include "tb_select.h"
 #include "tb_skin_util.h"
 #include "tb_style_edit_content.h"
+#include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
-#include "tb_widgets_reader.h"
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
 
@@ -38,6 +37,10 @@ int GetSelectionScrollSpeed(int pointerpos, int min, int max) {
   d *= d;
   d /= 40;
   return (pointerpos < min) ? -d : d;
+}
+
+void TextBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(TextBox, Value::Type::kString, ElementZ::kTop);
 }
 
 TextBox::TextBox() {
@@ -72,6 +75,29 @@ TextBox::~TextBox() {
   RemoveChild(&m_root);
   RemoveChild(&m_scrollbar_y);
   RemoveChild(&m_scrollbar_x);
+}
+
+void TextBox::OnInflate(const resources::InflateInfo& info) {
+  SetMultiline(info.node->GetValueInt("multiline", 0) ? true : false);
+  SetStyling(info.node->GetValueInt("styling", 0) ? true : false);
+  SetReadOnly(info.node->GetValueInt("readonly", 0) ? true : false);
+  SetWrapping(info.node->GetValueInt("wrap", GetWrapping()) ? true : false);
+  SetAdaptToContentSize(
+      info.node->GetValueInt("adapt-to-content", GetAdaptToContentSize())
+          ? true
+          : false);
+  if (const char* virtual_width =
+          info.node->GetValueString("virtual-width", nullptr)) {
+    SetVirtualWidth(Skin::get()->GetDimensionConverter()->GetPxFromString(
+        virtual_width, GetVirtualWidth()));
+  }
+  if (const char* text = info.node->GetValueString("placeholder", nullptr)) {
+    SetPlaceholderText(text);
+  }
+  if (const char* type = info.node->GetValueString("type", nullptr)) {
+    SetEditType(from_string(type, GetEditType()));
+  }
+  Element::OnInflate(info);
 }
 
 Rect TextBox::GetVisibleRect() {
@@ -574,7 +600,7 @@ TextFragmentContent* TextBoxContentFactory::CreateFragmentContent(
     // Its size will adapt to the content.
     auto element = new Element();
     auto cw = new TextFragmentContentElement(text_box, element);
-    ElementReader::get()->LoadData(element, text + 8, text_len - 9);
+    element->LoadData(text + 8, text_len - 9);
     return cw;
   }
 

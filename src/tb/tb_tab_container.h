@@ -29,6 +29,7 @@ class TabLayout : public Layout {
 class TabContainer : public Element {
  public:
   TBOBJECT_SUBCLASS(TabContainer, Element);
+  static void RegisterInflater();
 
   TabContainer();
   ~TabContainer() override;
@@ -55,7 +56,7 @@ class TabContainer : public Element {
   // Returns the element that is the current page, or nullptr if none is active.
   Element* GetCurrentPageElement() const;
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnProcess() override;
 

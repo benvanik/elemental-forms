@@ -165,9 +165,10 @@ class FileParserStream : public ParserStream {
 
 class DataParserStream : public ParserStream {
  public:
-  bool Read(const char* data, size_t data_len, ParserTarget* target) {
+  bool Read(const char* data, size_t data_length, ParserTarget* target) {
     m_data = data;
-    m_data_len = data_len;
+    m_data_len =
+        data_length == std::string::npos ? std::strlen(data) : data_length;
     Parser p;
     auto status = p.Read(this, target);
     return status == Parser::Status::kOk ? true : false;
@@ -289,13 +290,13 @@ void Node::ReadData(const char* data, ReadFlags flags) {
   ReadData(data, strlen(data), flags);
 }
 
-void Node::ReadData(const char* data, size_t data_len, ReadFlags flags) {
+void Node::ReadData(const char* data, size_t data_length, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();
   }
   DataParserStream p;
   NodeTarget t(this, "{data}");
-  p.Read(data, data_len, &t);
+  p.Read(data, data_length, &t);
   NodeRefTree::ResolveConditions(this);
 }
 

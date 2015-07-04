@@ -14,7 +14,6 @@
 
 #include "tb_font_renderer.h"
 #include "tb_text_box.h"
-#include "tb_widgets_reader.h"
 #include "tb_window.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
@@ -35,8 +34,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   DebugSettingsWindow(Element* root) {
     SetText("Debug settings");
-    ElementReader::get()->LoadData(
-        this,
+    LoadData(
         "Layout: axis: y, distribution: available, position: left\n"
         "	Layout: id: 'container', axis: y, size: available\n"
         "	Label: text: 'Event output:'\n"

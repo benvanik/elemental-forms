@@ -11,7 +11,6 @@
 
 #include "tb_message_window.h"
 #include "tb_text_box.h"
-#include "tb_widgets_reader.h"
 
 #include "tb/util/string_table.h"
 
@@ -48,7 +47,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "		SkinImage: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	Layout: distribution-position: right bottom, id: 3\n";
-  if (!ElementReader::get()->LoadData(GetContentRoot(), source)) {
+  if (!GetContentRoot()->LoadData(source)) {
     return false;
   }
 

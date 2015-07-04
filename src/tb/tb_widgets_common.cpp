@@ -15,6 +15,7 @@
 #include "tb_font_renderer.h"
 #include "tb_widgets_listener.h"
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
 
@@ -70,7 +71,19 @@ void ElementString::Paint(Element* element, const Rect& rect,
   }
 }
 
+void Label::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Label, Value::Type::kString, ElementZ::kTop);
+}
+
 Label::Label() { SetSkinBg(TBIDC("Label"), InvokeInfo::kNoCallbacks); }
+
+void Label::OnInflate(const resources::InflateInfo& info) {
+  if (const char* text_align =
+          info.node->GetValueString("text-align", nullptr)) {
+    SetTextAlign(from_string(text_align, GetTextAlign()));
+  }
+  Element::OnInflate(info);
+}
 
 void Label::SetText(const char* text) {
   if (m_text.m_text.compare(text) == 0) return;
@@ -117,6 +130,10 @@ void Label::OnPaint(const PaintProps& paint_props) {
   m_text.Paint(this, GetPaddingRect(), paint_props.text_color);
 }
 
+void Button::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Button, Value::Type::kNull, ElementZ::kBottom);
+}
+
 Button::Button() {
   SetIsFocusable(true);
   SetClickByKey(true);
@@ -137,6 +154,12 @@ Button::Button() {
 Button::~Button() {
   m_layout.RemoveChild(&m_textfield);
   RemoveChild(&m_layout);
+}
+
+void Button::OnInflate(const resources::InflateInfo& info) {
+  SetToggleMode(info.node->GetValueInt("toggle-mode", GetToggleMode()) ? true
+                                                                       : false);
+  Element::OnInflate(info);
 }
 
 void Button::SetText(const char* text) {
@@ -236,6 +259,11 @@ void Button::ButtonLayout::OnChildRemove(Element* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
+void LabelContainer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(LabelContainer, Value::Type::kString,
+                               ElementZ::kBottom);
+}
+
 LabelContainer::LabelContainer() {
   AddChild(&m_layout);
   m_layout.AddChild(&m_textfield);
@@ -282,6 +310,10 @@ bool LabelContainer::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
+void SkinImage::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SkinImage, Value::Type::kNull, ElementZ::kTop);
+}
+
 PreferredSize SkinImage::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
@@ -291,9 +323,18 @@ PreferredSize SkinImage::OnCalculatePreferredSize(
   return ps;
 }
 
+void Separator::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Separator, Value::Type::kNull, ElementZ::kTop);
+}
+
 Separator::Separator() {
   SetSkinBg(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
   SetState(SkinState::kDisabled, true);
+}
+
+void ProgressSpinner::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ProgressSpinner, Value::Type::kInt,
+                               ElementZ::kTop);
 }
 
 ProgressSpinner::ProgressSpinner() {
@@ -377,6 +418,14 @@ void BaseRadioCheckBox::SetValue(int value) {
   if (value && GetGroupID()) UpdateGroupElements(this);
 }
 
+void CheckBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(CheckBox, Value::Type::kInt, ElementZ::kTop);
+}
+
+void RadioButton::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(RadioButton, Value::Type::kInt, ElementZ::kTop);
+}
+
 PreferredSize BaseRadioCheckBox::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
@@ -395,6 +444,10 @@ bool BaseRadioCheckBox::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
+void ScrollBar::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ScrollBar, Value::Type::kFloat, ElementZ::kTop);
+}
+
 ScrollBar::ScrollBar()
     : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
 {
@@ -403,6 +456,13 @@ ScrollBar::ScrollBar()
 }
 
 ScrollBar::~ScrollBar() { RemoveChild(&m_handle); }
+
+void ScrollBar::OnInflate(const resources::InflateInfo& info) {
+  auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
+  SetAxis(axis);
+  SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
+  Element::OnInflate(info);
+}
 
 void ScrollBar::SetAxis(Axis axis) {
   if (axis == m_axis) return;
@@ -517,6 +577,10 @@ void ScrollBar::UpdateHandle() {
 
 void ScrollBar::OnResized(int old_w, int old_h) { UpdateHandle(); }
 
+void Slider::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Slider, Value::Type::kFloat, ElementZ::kTop);
+}
+
 Slider::Slider()
     : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
 {
@@ -526,6 +590,16 @@ Slider::Slider()
 }
 
 Slider::~Slider() { RemoveChild(&m_handle); }
+
+void Slider::OnInflate(const resources::InflateInfo& info) {
+  auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
+  SetAxis(axis);
+  SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
+  double min = double(info.node->GetValueFloat("min", (float)GetMinValue()));
+  double max = double(info.node->GetValueFloat("max", (float)GetMaxValue()));
+  SetLimits(min, max);
+  Element::OnInflate(info);
+}
 
 void Slider::SetAxis(Axis axis) {
   if (axis == m_axis) return;
@@ -633,6 +707,14 @@ Container::Container() {
   SetSkinBg(TBIDC("Container"), InvokeInfo::kNoCallbacks);
 }
 
+void Container::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Container, Value::Type::kNull, ElementZ::kTop);
+}
+
+void Mover::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Mover, Value::Type::kNull, ElementZ::kTop);
+}
+
 Mover::Mover() { SetSkinBg(TBIDC("Mover"), InvokeInfo::kNoCallbacks); }
 
 bool Mover::OnEvent(const ElementEvent& ev) {
@@ -655,6 +737,10 @@ bool Mover::OnEvent(const ElementEvent& ev) {
     return true;
   }
   return false;
+}
+
+void Resizer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Resizer, Value::Type::kNull, ElementZ::kTop);
 }
 
 Resizer::Resizer() { SetSkinBg(TBIDC("Resizer"), InvokeInfo::kNoCallbacks); }
@@ -686,6 +772,10 @@ bool Resizer::OnEvent(const ElementEvent& ev) {
     return false;
   }
   return true;
+}
+
+void Dimmer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Dimmer, Value::Type::kNull, ElementZ::kTop);
 }
 
 Dimmer::Dimmer() {

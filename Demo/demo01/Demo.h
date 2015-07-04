@@ -3,7 +3,6 @@
 
 #include "tb_widgets.h"
 #include "tb_widgets_common.h"
-#include "tb_widgets_reader.h"
 #include "tb_widgets_listener.h"
 #include "tb_message_window.h"
 #include "tb_msg.h"

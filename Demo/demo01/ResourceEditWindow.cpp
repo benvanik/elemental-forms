@@ -1,7 +1,6 @@
 #include <cstdio>
 
 #include "ResourceEditWindow.h"
-#include "tb_widgets_reader.h"
 #include "tb_message_window.h"
 #include "tb_select.h"
 #include "tb_text_box.h"
@@ -28,8 +27,7 @@ ResourceEditWindow::ResourceEditWindow()
   // Register as global listener to intercept events in the build container
   ElementListener::AddGlobalListener(this);
 
-  ElementReader::get()->LoadFile(
-      this, "Demo/demo01/ui_resources/resource_edit_window.tb.txt");
+  LoadFile("Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
       GetElementByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
@@ -80,8 +78,7 @@ void ResourceEditWindow::RefreshFromSource() {
   }
 
   // Create new elements from source
-  ElementReader::get()->LoadData(m_build_container,
-                                 m_source_text_box->GetText().c_str());
+  m_build_container->LoadData(m_source_text_box->GetText());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
@@ -157,8 +154,7 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
     // Create a window containing the current layout, resize and center it.
     Window* win = new Window();
     win->SetText("Test window");
-    ElementReader::get()->LoadData(win->GetContentRoot(),
-                                   m_source_text_box->GetText().c_str());
+    win->GetContentRoot()->LoadData(m_source_text_box->GetText());
     Rect bounds(0, 0, GetParent()->rect().w, GetParent()->rect().h);
     win->set_rect(
         win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(

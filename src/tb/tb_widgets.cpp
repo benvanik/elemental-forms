@@ -13,14 +13,18 @@
 #include <cassert>
 
 #include "tb_font_renderer.h"
+#include "tb_node_tree.h"
 #include "tb_renderer.h"
 #include "tb_scroller.h"
+#include "tb_select_item.h"
 #include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 #include "tb_widgets_common.h"
 #include "tb_widgets_listener.h"
 #include "tb_window.h"
+#include "tb_value.h"
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
@@ -63,6 +67,10 @@ Element::PaintProps::PaintProps() {
   text_color = Skin::get()->GetDefaultTextColor();
 }
 
+void Element::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Element, Value::Type::kNull, ElementZ::kTop);
+}
+
 Element::Element() = default;
 
 Element::~Element() {
@@ -89,6 +97,196 @@ Element::~Element() {
 
   assert(!m_listeners
               .HasLinks());  // There's still listeners added to this element!
+}
+
+bool Element::LoadFile(const char* filename) {
+  return resources::ElementFactory::get()->LoadFile(this, filename);
+}
+
+bool Element::LoadData(const char* data, size_t data_length) {
+  return resources::ElementFactory::get()->LoadData(this, data, data_length);
+}
+
+void Element::LoadNodeTree(Node* node) {
+  return resources::ElementFactory::get()->LoadNodeTree(this, node);
+}
+
+// Sets the id from the given node.
+void Element::SetIdFromNode(TBID& id, Node* node) {
+  if (!node) return;
+  if (node->GetValue().IsString()) {
+    id.Set(node->GetValue().GetString());
+  } else {
+    id.Set(node->GetValue().GetInt());
+  }
+}
+
+void Element::ReadItemNodes(Node* parent_node,
+                            GenericStringItemSource* target_source) {
+  // If there is a items node, loop through all its children and add
+  // items to the target item source.
+  auto items_node = parent_node->GetNode("items");
+  if (!items_node) {
+    return;
+  }
+  for (auto node = items_node->GetFirstChild(); node; node = node->GetNext()) {
+    if (std::strcmp(node->GetName(), "item") != 0) {
+      continue;
+    }
+    const char* text = node->GetValueString("text", "");
+    TBID item_id;
+    if (auto id_node = node->GetNode("id")) {
+      Element::SetIdFromNode(item_id, id_node);
+    }
+    auto item = std::make_unique<GenericStringItem>(text, item_id);
+    target_source->AddItem(std::move(item));
+  }
+}
+
+void Element::OnInflate(const resources::InflateInfo& info) {
+  Element::SetIdFromNode(GetID(), info.node->GetNode("id"));
+  Element::SetIdFromNode(GetGroupID(), info.node->GetNode("group-id"));
+
+  if (info.sync_type == Value::Type::kFloat) {
+    SetValueDouble(info.node->GetValueFloat("value", 0));
+  } else {
+    SetValue(info.node->GetValueInt("value", 0));
+  }
+
+  if (Node* data_node = info.node->GetNode("data")) {
+    data.Copy(data_node->GetValue());
+  }
+
+  SetIsGroupRoot(
+      info.node->GetValueInt("is-group-root", GetIsGroupRoot()) ? true : false);
+
+  SetIsFocusable(
+      info.node->GetValueInt("is-focusable", GetIsFocusable()) ? true : false);
+
+  SetWantLongClick(info.node->GetValueInt("want-long-click", GetWantLongClick())
+                       ? true
+                       : false);
+
+  SetIgnoreInput(
+      info.node->GetValueInt("ignore-input", GetIgnoreInput()) ? true : false);
+
+  SetOpacity(info.node->GetValueFloat("opacity", GetOpacity()));
+
+  if (const char* text = info.node->GetValueString("text", nullptr)) {
+    SetText(text);
+  }
+
+  if (const char* connection =
+          info.node->GetValueStringRaw("connection", nullptr)) {
+    // If we already have a element value with this name, just connect to it and
+    // the element will adjust its value to it. Otherwise create a new element
+    // value, and give it the value we got from the resource.
+    if (ElementValue* value = ValueGroup::get()->GetValue(connection)) {
+      Connect(value);
+    } else if (ElementValue* value = ValueGroup::get()->CreateValueIfNeeded(
+                   connection, info.sync_type)) {
+      value->SetFromElement(this);
+      Connect(value);
+    }
+  }
+  if (const char* axis = info.node->GetValueString("axis", nullptr)) {
+    SetAxis(tb::from_string(axis, Axis::kY));
+  }
+  if (const char* gravity = info.node->GetValueString("gravity", nullptr)) {
+    Gravity g = Gravity::kNone;
+    if (strstr(gravity, "left")) g |= Gravity::kLeft;
+    if (strstr(gravity, "top")) g |= Gravity::kTop;
+    if (strstr(gravity, "right")) g |= Gravity::kRight;
+    if (strstr(gravity, "bottom")) g |= Gravity::kBottom;
+    if (strstr(gravity, "all")) g |= Gravity::kAll;
+    if (!any(g & Gravity::kLeftRight)) g |= Gravity::kLeft;
+    if (!any(g & Gravity::kTopBottom)) g |= Gravity::kTop;
+    SetGravity(g);
+  }
+  if (const char* visibility =
+          info.node->GetValueString("visibility", nullptr)) {
+    SetVisibilility(from_string(visibility, GetVisibility()));
+  }
+  if (const char* state = info.node->GetValueString("state", nullptr)) {
+    if (strstr(state, "disabled")) {
+      SetState(SkinState::kDisabled, true);
+    }
+  }
+  if (const char* skin = info.node->GetValueString("skin", nullptr)) {
+    SetSkinBg(skin);
+  }
+  if (Node* lp = info.node->GetNode("lp")) {
+    LayoutParams layout_params;
+    if (GetLayoutParams()) {
+      layout_params = *GetLayoutParams();
+    }
+    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
+    if (const char* str = lp->GetValueString("width", nullptr)) {
+      layout_params.set_width(
+          dc->GetPxFromString(str, LayoutParams::kUnspecified));
+    }
+    if (const char* str = lp->GetValueString("height", nullptr)) {
+      layout_params.set_height(
+          dc->GetPxFromString(str, LayoutParams::kUnspecified));
+    }
+    if (const char* str = lp->GetValueString("min-width", nullptr)) {
+      layout_params.min_w =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    if (const char* str = lp->GetValueString("max-width", nullptr)) {
+      layout_params.max_w =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    if (const char* str = lp->GetValueString("pref-width", nullptr)) {
+      layout_params.pref_w =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    if (const char* str = lp->GetValueString("min-height", nullptr)) {
+      layout_params.min_h =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    if (const char* str = lp->GetValueString("max-height", nullptr)) {
+      layout_params.max_h =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    if (const char* str = lp->GetValueString("pref-height", nullptr)) {
+      layout_params.pref_h =
+          dc->GetPxFromString(str, LayoutParams::kUnspecified);
+    }
+    SetLayoutParams(layout_params);
+  }
+
+  SetTooltip(info.node->GetValueString("tooltip", nullptr));
+
+  // Add the new element to the hiearchy if not already added.
+  if (!GetParent()) info.target->AddChild(this, info.target->GetZInflate());
+
+  // Read the font now when the element is in the hiearchy so inheritance works.
+  if (Node* font = info.node->GetNode("font")) {
+    FontDescription fd = GetCalculatedFontDescription();
+    if (const char* size = font->GetValueString("size", nullptr)) {
+      int new_size = Skin::get()->GetDimensionConverter()->GetPxFromString(
+          size, fd.GetSize());
+      fd.SetSize(new_size);
+    }
+    if (const char* name = font->GetValueString("name", nullptr)) {
+      fd.SetID(name);
+    }
+    SetFontDescription(fd);
+  }
+
+  info.target->OnInflateChild(this);
+
+  if (Node* rect_node = info.node->GetNode("rect")) {
+    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
+    Value& val = rect_node->GetValue();
+    if (val.GetArrayLength() == 4) {
+      set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
+                dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)});
+    }
+  }
 }
 
 void Element::set_rect(const Rect& rect) {

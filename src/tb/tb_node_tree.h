@@ -52,7 +52,7 @@ class Node : public util::TBLinkOf<Node> {
   void ReadData(const char* data, ReadFlags flags = ReadFlags::kNone);
 
   // Reads a tree of nodes from a buffer with a known length.
-  void ReadData(const char* data, size_t data_len,
+  void ReadData(const char* data, size_t data_length,
                 ReadFlags flags = ReadFlags::kNone);
 
   // Clears the contents of this node.

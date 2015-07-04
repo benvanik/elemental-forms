@@ -89,6 +89,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 class Layout : public Element {
  public:
   TBOBJECT_SUBCLASS(Layout, Element);
+  static void RegisterInflater();
 
   // This means the spacing should be the default, read from the skin.
   static const int kSpacingFromSkin = kInvalidDimension;
@@ -132,7 +133,7 @@ class Layout : public Element {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const InflateInfo& info) override;
+  void OnInflate(const resources::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;

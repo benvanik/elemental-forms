@@ -117,8 +117,7 @@ Any element may contain other elements and may control into which sub-element ot
 elements are inflated from resources (using `Element::GetContentRoot`).
 
 Custom elements can be inflated from UI resources too. See the use of the
-`TB_WIDGET_FACTORY` macro in `tb_widgets_reader.cpp` for examples on how to do
-this.
+`TB_ELEMENT_INFLATER` macro in `element_reader.h` for examples on how to do this.
 
 
 Building the demo

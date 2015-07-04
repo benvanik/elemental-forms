@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
+#include "tb_node_tree.h"
 #include "tb_toggle_container.h"
 
-#include "tb_node_tree.h"
-#include "tb_widgets_reader.h"
+#include "tb/resources/element_factory.h"
 
 namespace tb {
 
@@ -57,6 +57,10 @@ Section::~Section() {
   RemoveChild(&m_layout);
 }
 
+void Section::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Section, Value::Type::kInt, ElementZ::kTop);
+}
+
 void Section::SetValue(int value) {
   m_header.SetValue(value);
   m_toggle_container.SetValue(value);
@@ -77,8 +81,21 @@ PreferredSize Section::OnCalculatePreferredSize(
   return ps;
 }
 
+void ToggleContainer::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ToggleContainer, Value::Type::kInt,
+                               ElementZ::kTop);
+}
+
 ToggleContainer::ToggleContainer() {
   SetSkinBg(TBIDC("ToggleContainer"), InvokeInfo::kNoCallbacks);
+}
+
+void ToggleContainer::OnInflate(const resources::InflateInfo& info) {
+  if (const char* toggle = info.node->GetValueString("toggle", nullptr)) {
+    SetToggleAction(from_string(toggle, GetToggleAction()));
+  }
+  SetInvert(info.node->GetValueInt("invert", GetInvert()) ? true : false);
+  Element::OnInflate(info);
 }
 
 void ToggleContainer::SetToggleAction(ToggleAction toggle) {

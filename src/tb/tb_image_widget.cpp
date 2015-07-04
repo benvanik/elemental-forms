@@ -8,11 +8,23 @@
  */
 
 #include "tb_image_widget.h"
-
 #include "tb_node_tree.h"
-#include "tb_widgets_reader.h"
+
+#include "tb/resources/element_factory.h"
 
 namespace tb {
+
+void ImageElement::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ImageElement, Value::Type::kNull,
+                               ElementZ::kTop);
+}
+
+void ImageElement::OnInflate(const resources::InflateInfo& info) {
+  if (const char* filename = info.node->GetValueString("filename", nullptr)) {
+    SetImage(filename);
+  }
+  Element::OnInflate(info);
+}
 
 PreferredSize ImageElement::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {

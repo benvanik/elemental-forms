@@ -13,11 +13,16 @@
 #include "tb_select.h"
 #include "tb_widgets_listener.h"
 
+#include "tb/resources/element_factory.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/string_table.h"
 
 namespace tb {
+
+void SelectList::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SelectList, Value::Type::kInt, ElementZ::kTop);
+}
 
 SelectList::SelectList() : m_header_lng_string_id(TBIDC("SelectList.header")) {
   SetSource(&m_default_source);
@@ -41,6 +46,12 @@ SelectList::~SelectList() {
   m_container.GetContentRoot()->RemoveChild(&m_layout);
   RemoveChild(&m_container);
   SetSource(nullptr);
+}
+
+void SelectList::OnInflate(const resources::InflateInfo& info) {
+  // Read items (if there is any) into the default source.
+  Element::ReadItemNodes(info.node, GetDefaultSource());
+  Element::OnInflate(info);
 }
 
 void SelectList::OnSourceChanged() { InvalidateList(); }
@@ -342,6 +353,11 @@ bool SelectList::ChangeValue(SpecialKey key) {
   return false;
 }
 
+void SelectDropdown::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SelectDropdown, Value::Type::kInt,
+                               ElementZ::kTop);
+}
+
 SelectDropdown::SelectDropdown() {
   SetSource(&m_default_source);
   SetSkinBg(TBIDC("SelectDropdown"), InvokeInfo::kNoCallbacks);
@@ -353,6 +369,12 @@ SelectDropdown::~SelectDropdown() {
   GetContentRoot()->RemoveChild(&m_arrow);
   SetSource(nullptr);
   CloseWindow();
+}
+
+void SelectDropdown::OnInflate(const resources::InflateInfo& info) {
+  // Read items (if there is any) into the default source.
+  Element::ReadItemNodes(info.node, GetDefaultSource());
+  Element::OnInflate(info);
 }
 
 void SelectDropdown::OnSourceChanged() {

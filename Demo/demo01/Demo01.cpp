@@ -54,7 +54,7 @@ void const_expr_test() {
 DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 
 bool DemoWindow::LoadResourceFile(const std::string& filename) {
-  // We could do ElementReader::get()->LoadFile(this, filename) but we want
+  // We could do ElementFactory::get()->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   if (!node.ReadFile(filename)) return false;
@@ -63,7 +63,7 @@ bool DemoWindow::LoadResourceFile(const std::string& filename) {
 }
 
 void DemoWindow::LoadResourceData(const char* data) {
-  // We could do ElementReader::get()->LoadData(this, filename) but we want
+  // We could do ElementFactory::get()->LoadData(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   node.ReadData(data);
@@ -71,7 +71,7 @@ void DemoWindow::LoadResourceData(const char* data) {
 }
 
 void DemoWindow::LoadResource(Node& node) {
-  ElementReader::get()->LoadNodeTree(this, &node);
+  this->LoadNodeTree(&node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
@@ -794,6 +794,7 @@ int app_main() {
 
   tb::Initialize(application_backend->GetRenderer(),
                  "resources/language/lng_en.tb.txt");
+  CodeTextBox::RegisterInflater();
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.
