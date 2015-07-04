@@ -22,6 +22,8 @@
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
 
+using tb::graphics::Renderer;
+
 static Application* application;
 
 AdvancedItemSource advanced_source;

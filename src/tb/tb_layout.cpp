@@ -19,6 +19,8 @@
 
 namespace tb {
 
+using graphics::Renderer;
+
 void Layout::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Layout, Value::Type::kNull, ElementZ::kTop);
 }

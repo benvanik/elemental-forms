@@ -7,9 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_renderer.h"
+#include "tb/graphics/renderer.h"
 
 namespace tb {
+namespace graphics {
 
 Renderer* Renderer::renderer_singleton_ = nullptr;
 
@@ -20,17 +21,18 @@ Renderer::~Renderer() {
 }
 
 void Renderer::InvokeContextLost() {
-  auto iter = m_listeners.IterateForward();
+  auto iter = listeners_.IterateForward();
   while (RendererListener* listener = iter.GetAndStep()) {
     listener->OnContextLost();
   }
 }
 
 void Renderer::InvokeContextRestored() {
-  auto iter = m_listeners.IterateForward();
+  auto iter = listeners_.IterateForward();
   while (RendererListener* listener = iter.GetAndStep()) {
     listener->OnContextRestored();
   }
 }
 
+}  // namespace graphics
 }  // namespace tb

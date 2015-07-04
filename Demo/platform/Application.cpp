@@ -20,9 +20,9 @@ void Application::Process() {
 }
 
 void Application::RenderFrame(int window_w, int window_h) {
-  Renderer::get()->BeginPaint(window_w, window_h);
+  graphics::Renderer::get()->BeginPaint(window_w, window_h);
   GetRoot()->InvokePaint(Element::PaintProps());
-  Renderer::get()->EndPaint();
+  graphics::Renderer::get()->EndPaint();
 
   // If animations are running, reinvalidate immediately
   if (AnimationManager::HasAnimationsRunning()) GetRoot()->Invalidate();

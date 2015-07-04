@@ -7,12 +7,12 @@
  ******************************************************************************
  */
 
-#ifndef TB_RENDERER_GL_H
-#define TB_RENDERER_GL_H
+#ifndef TB_GRAPHICS_GLES_1_RENDERER_H_
+#define TB_GRAPHICS_GLES_1_RENDERER_H_
 
 #include <cstdint>
 
-#include "tb_renderer_batcher.h"
+#include "tb/graphics/batching_renderer.h"
 
 #ifdef TB_RENDERER_GLES_1
 #include <EGL/egl.h>
@@ -30,6 +30,7 @@
 #endif
 
 namespace tb {
+namespace graphics {
 
 class RendererGL;
 
@@ -49,7 +50,7 @@ class BitmapGL : public Bitmap {
   GLuint m_texture = 0;
 };
 
-class RendererGL : public RendererBatcher {
+class RendererGL : public BatchingRenderer {
  public:
   RendererGL();
 
@@ -62,6 +63,7 @@ class RendererGL : public RendererBatcher {
   void SetClipRect(const Rect& rect) override;
 };
 
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RENDERER_GL_H
+#endif  // TB_GRAPHICS_GLES_1_RENDERER_H_

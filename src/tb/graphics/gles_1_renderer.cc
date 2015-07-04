@@ -10,13 +10,13 @@
 #include <cassert>
 #include <cstdio>
 
-#include "tb_renderer_gl.h"
-
-#include "tb/resources/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment.h"
+#include "tb/graphics/gles_1_renderer.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 
 namespace tb {
+namespace graphics {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 uint32_t dbg_bitmap_validations = 0;
@@ -31,7 +31,7 @@ static void Ortho2D(GLfloat left, GLfloat right, GLfloat bottom, GLfloat top) {
 }
 
 GLuint g_current_texture = (GLuint)-1;
-RendererBatcher::Batch* g_current_batch = 0;
+BatchingRenderer::Batch* g_current_batch = 0;
 
 void BindBitmap(Bitmap* bitmap) {
   GLuint texture = bitmap ? static_cast<BitmapGL*>(bitmap)->m_texture : 0;
@@ -85,7 +85,7 @@ void RendererGL::BeginPaint(int render_target_w, int render_target_h) {
   dbg_bitmap_validations = 0;
 #endif
 
-  RendererBatcher::BeginPaint(render_target_w, render_target_h);
+  BatchingRenderer::BeginPaint(render_target_w, render_target_h);
 
   g_current_texture = (GLuint)-1;
   g_current_batch = nullptr;
@@ -109,7 +109,7 @@ void RendererGL::BeginPaint(int render_target_w, int render_target_h) {
 }
 
 void RendererGL::EndPaint() {
-  RendererBatcher::EndPaint();
+  BatchingRenderer::EndPaint();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches))
@@ -142,8 +142,9 @@ void RendererGL::RenderBatch(Batch* batch) {
 }
 
 void RendererGL::SetClipRect(const Rect& rect) {
-  glScissor(m_clip_rect.x, m_screen_rect.h - (m_clip_rect.y + m_clip_rect.h),
-            m_clip_rect.w, m_clip_rect.h);
+  glScissor(clip_rect_.x, screen_rect_.h - (clip_rect_.y + clip_rect_.h),
+            clip_rect_.w, clip_rect_.h);
 }
 
+}  // namespace graphics
 }  // namespace tb

@@ -7,14 +7,14 @@
  ******************************************************************************
  */
 
-#include "tb/resources/image_manager.h"
+#include "tb/graphics/image_manager.h"
 #include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/hash.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 std::unique_ptr<ImageManager> ImageManager::image_manager_singleton_;
 
@@ -99,10 +99,10 @@ Image ImageManager::GetImage(const char* filename) {
   if (!image_rep) {
     // Load a fragment. Load a destination DPI bitmap if available.
     BitmapFragment* fragment = nullptr;
-    if (Skin::get()->GetDimensionConverter()->NeedConversion()) {
+    auto dimension_converter = resources::Skin::get()->GetDimensionConverter();
+    if (dimension_converter->NeedConversion()) {
       util::StringBuilder filename_dst_DPI;
-      Skin::get()->GetDimensionConverter()->GetDstDPIFilename(
-          filename, &filename_dst_DPI);
+      dimension_converter->GetDstDPIFilename(filename, &filename_dst_DPI);
       fragment =
           m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
     }
@@ -136,5 +136,5 @@ void ImageManager::OnContextRestored() {
   // No need to do anything. The bitmaps will be created when drawing.
 }
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb

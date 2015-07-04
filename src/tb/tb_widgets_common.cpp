@@ -372,9 +372,9 @@ void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
       int size = e->bitmap->Height();
       int num_frames = e->bitmap->Width() / e->bitmap->Height();
       int current_frame = m_frame % num_frames;
-      Renderer::get()->DrawBitmap(GetPaddingRect(),
-                                  Rect(current_frame * size, 0, size, size),
-                                  e->bitmap);
+      graphics::Renderer::get()->DrawBitmap(
+          GetPaddingRect(), Rect(current_frame * size, 0, size, size),
+          e->bitmap);
     }
   }
 }

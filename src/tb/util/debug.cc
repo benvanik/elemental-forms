@@ -9,8 +9,8 @@
 
 #include <cstdio>
 
+#include "tb/graphics/image_manager.h"
 #include "tb/resources/font_manager.h"
-#include "tb/resources/image_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 
@@ -93,7 +93,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   void OnPaint(const PaintProps& paint_props) override {
     // Draw stuff to the right of the debug window.
-    Renderer::get()->Translate(rect().w, 0);
+    graphics::Renderer::get()->Translate(rect().w, 0);
 
     // Draw skin bitmap fragments.
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawSkinBitmapFragments)) {
@@ -112,10 +112,10 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
     // Draw image manager fragments.
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawImageBitmapFragments)) {
-      resources::ImageManager::get()->Debug();
+      graphics::ImageManager::get()->Debug();
     }
 
-    Renderer::get()->Translate(-rect().w, 0);
+    graphics::Renderer::get()->Translate(-rect().w, 0);
   }
 
   std::string GetIDString(const TBID& id) {

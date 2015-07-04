@@ -13,11 +13,10 @@
 #include <memory>
 #include <string>
 
-#include "tb/tb_renderer.h"
-
 #include "tb/font_description.h"
-#include "tb/resources/bitmap_fragment.h"
-#include "tb/resources/bitmap_fragment_manager.h"
+#include "tb/graphics/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment_manager.h"
+#include "tb/graphics/renderer.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/font_renderer.h"
 #include "tb/util/utf8.h"
@@ -50,7 +49,7 @@ class FontInfo {
 
 // Caches glyphs for font faces.
 // Rendered glyphs use bitmap fragments from its fragment manager.
-class FontGlyphCache : private RendererListener {
+class FontGlyphCache : private graphics::RendererListener {
  public:
   FontGlyphCache();
   ~FontGlyphCache();
@@ -65,8 +64,8 @@ class FontGlyphCache : private RendererListener {
   // Creates a bitmap fragment for the given glyph and render data. This may
   // drop other rendered glyphs from the fragment map.
   // Returns the fragment, or nullptr on fail.
-  BitmapFragment* CreateFragment(FontGlyph* glyph, int w, int h, int stride,
-                                 uint32_t* data);
+  graphics::BitmapFragment* CreateFragment(FontGlyph* glyph, int w, int h,
+                                           int stride, uint32_t* data);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   // Renders the glyph bitmaps on screen, to analyze fragment positioning.
@@ -79,7 +78,7 @@ class FontGlyphCache : private RendererListener {
  private:
   void DropGlyphFragment(FontGlyph* glyph);
 
-  BitmapFragmentManager m_frag_manager;
+  graphics::BitmapFragmentManager m_frag_manager;
   util::HashTableAutoDeleteOf<FontGlyph> m_glyphs;
   util::TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };

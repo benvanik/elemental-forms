@@ -23,8 +23,10 @@
 
 namespace tb {
 
-const int CARET_BLINK_TIME = 500;
-const int SELECTION_SCROLL_DELAY = 1000 / 30;
+using graphics::Renderer;
+
+const int kCaretBlinkTimeMillis = 500;
+const int kSelectionScrollDelayMillis = 1000 / 30;
 
 // Gets the delta that should be scrolled if dragging the pointer outside the
 // range min-max.
@@ -236,7 +238,8 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
             Point(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y),
             1, ev.count, ModifierKeys::kNone, ev.touch)) {
       // Post a message to start selection scroll
-      PostMessageDelayed(TBIDC("selscroll"), nullptr, SELECTION_SCROLL_DELAY);
+      PostMessageDelayed(TBIDC("selscroll"), nullptr,
+                         kSelectionScrollDelayMillis);
       return true;
     }
   } else if (ev.type == EventType::kPointerMove && ev.target == this) {
@@ -420,7 +423,7 @@ void TextBox::OnMessageReceived(Message* msg) {
     m_style_edit.caret.Invalidate();
 
     // Post another blink message so we blink again.
-    PostMessageDelayed(TBIDC("blink"), nullptr, CARET_BLINK_TIME);
+    PostMessageDelayed(TBIDC("blink"), nullptr, kCaretBlinkTimeMillis);
   } else if (msg->message == TBIDC("selscroll") && captured_element == this) {
     // Get scroll speed from where mouse is relative to the padding rect.
     Rect padding_rect = GetVisibleRect().Shrink(2, 2);
@@ -440,7 +443,8 @@ void TextBox::OnMessageReceived(Message* msg) {
     // Post another setscroll message so we continue scrolling if we still
     // should.
     if (m_style_edit.select_state) {
-      PostMessageDelayed(TBIDC("selscroll"), nullptr, SELECTION_SCROLL_DELAY);
+      PostMessageDelayed(TBIDC("selscroll"), nullptr,
+                         kSelectionScrollDelayMillis);
     }
   }
 }
@@ -509,7 +513,7 @@ void TextBox::UpdateScrollbars() {
 void TextBox::CaretBlinkStart() {
   // Post the delayed blink message if we don't already have one
   if (!GetMessageByID(TBIDC("blink"))) {
-    PostMessageDelayed(TBIDC("blink"), nullptr, CARET_BLINK_TIME);
+    PostMessageDelayed(TBIDC("blink"), nullptr, kCaretBlinkTimeMillis);
   }
 }
 

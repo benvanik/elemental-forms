@@ -7,7 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_renderer.h"
+#include "tb/graphics/renderer.h"
 #include "tb/resources/font_renderer.h"
 #include "tb/util/file.h"
 

@@ -179,7 +179,7 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
                       selected_element->rect().h);
     selected_element->ConvertToRoot(element_rect.x, element_rect.y);
     ConvertFromRoot(element_rect.x, element_rect.y);
-    Renderer::get()->DrawRect(element_rect, Color(255, 205, 0));
+    graphics::Renderer::get()->DrawRect(element_rect, Color(255, 205, 0));
   }
 }
 

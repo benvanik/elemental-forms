@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_BITMAP_FRAGMENT_H_
-#define TB_RESOURCES_BITMAP_FRAGMENT_H_
+#ifndef TB_GRAPHICS_BITMAP_FRAGMENT_H_
+#define TB_GRAPHICS_BITMAP_FRAGMENT_H_
 
 #include <memory>
 #include <vector>
@@ -18,12 +18,9 @@
 #include "tb/util/space_allocator.h"
 
 namespace tb {
+namespace graphics {
+
 class Bitmap;
-}  // namespace tb
-
-namespace tb {
-namespace resources {
-
 class BitmapFragmentMap;
 
 // Specify when the bitmap should be validated when calling
@@ -56,7 +53,7 @@ class BitmapFragment {
   // Returns the bitmap for this fragment.
   // By default, the bitmap is validated if needed before returning (See
   // Validate).
-  Bitmap* GetBitmap(Validate validate_type = Validate::kAlways);
+  graphics::Bitmap* GetBitmap(Validate validate_type = Validate::kAlways);
 
   // Returns the height allocated to this fragment. This may be larger than
   // Height() depending of the internal allocation of fragments in a map. It
@@ -76,7 +73,7 @@ class BitmapFragment {
   uint32_t m_batch_id = UINT_MAX;
 };
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RESOURCES_BITMAP_FRAGMENT_H_
+#endif  // TB_GRAPHICS_BITMAP_FRAGMENT_H_

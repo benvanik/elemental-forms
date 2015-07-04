@@ -21,6 +21,8 @@
 namespace tb {
 namespace resources {
 
+using graphics::Renderer;
+
 std::unique_ptr<Skin> Skin::skin_singleton_;
 
 SkinState StringToState(const char* state_str) {

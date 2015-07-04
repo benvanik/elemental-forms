@@ -12,10 +12,9 @@
 
 #include <memory>
 
-#include "tb_renderer.h"
-
-#include "tb/resources/bitmap_fragment.h"
-#include "tb/resources/bitmap_fragment_manager.h"
+#include "tb/graphics/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment_manager.h"
+#include "tb/graphics/renderer.h"
 #include "tb/types.h"
 #include "tb/util/dimension_converter.h"
 #include "tb/util/hash_table.h"
@@ -219,7 +218,7 @@ class SkinElement {
   TBID id;           // ID of the skin element.
   std::string name;  // Name of the skin element, f.ex "SelectDropdown.arrow".
   std::string bitmap_file;  // File name of the bitmap (might be empty).
-  BitmapFragment* bitmap =
+  graphics::BitmapFragment* bitmap =
       nullptr;      // Bitmap fragment containing the graphics, or nullptr.
   uint8_t cut = 0;  // How the bitmap should be sliced using StretchBox.
   int16_t expand =
@@ -349,7 +348,7 @@ class SkinListener {
 };
 
 // Skin contains a list of SkinElement.
-class Skin : private RendererListener {
+class Skin : private graphics::RendererListener {
  public:
   static Skin* get() { return skin_singleton_.get(); }
   static void set(std::unique_ptr<Skin> value) {
@@ -459,7 +458,9 @@ class Skin : private RendererListener {
   void Debug();
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  BitmapFragmentManager* GetFragmentManager() { return &m_frag_manager; }
+  graphics::BitmapFragmentManager* GetFragmentManager() {
+    return &m_frag_manager;
+  }
 
   void OnContextLost() override;
   void OnContextRestored() override;
@@ -483,7 +484,7 @@ class Skin : private RendererListener {
 
   SkinListener* m_listener = nullptr;
   util::HashTableAutoDeleteOf<SkinElement> m_elements;
-  BitmapFragmentManager m_frag_manager;
+  graphics::BitmapFragmentManager m_frag_manager;
   util::DimensionConverter m_dim_conv;
   Color m_default_text_color;
   float m_default_disabled_opacity = 0.3f;

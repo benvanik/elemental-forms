@@ -12,7 +12,7 @@
 
 #include "tb_widgets.h"
 
-#include "tb/resources/image_manager.h"
+#include "tb/graphics/image_manager.h"
 
 namespace tb {
 
@@ -26,9 +26,9 @@ class ImageElement : public Element {
 
   ImageElement() = default;
 
-  void SetImage(const resources::Image& image) { m_image = image; }
+  void SetImage(const graphics::Image& image) { m_image = image; }
   void SetImage(const char* filename) {
-    m_image = resources::ImageManager::get()->GetImage(filename);
+    m_image = graphics::ImageManager::get()->GetImage(filename);
   }
 
   PreferredSize OnCalculatePreferredContentSize(
@@ -38,7 +38,7 @@ class ImageElement : public Element {
   void OnPaint(const PaintProps& paint_props) override;
 
  private:
-  resources::Image m_image;
+  graphics::Image m_image;
 };
 
 }  // namespace tb

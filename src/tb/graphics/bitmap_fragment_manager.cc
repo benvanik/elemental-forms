@@ -9,17 +9,16 @@
 
 #include <algorithm>
 
-#include "tb_renderer.h"
-
-#include "tb/resources/bitmap_fragment.h"
-#include "tb/resources/bitmap_fragment_manager.h"
-#include "tb/resources/bitmap_fragment_map.h"
-#include "tb/resources/image_loader.h"
+#include "tb/graphics/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment_manager.h"
+#include "tb/graphics/bitmap_fragment_map.h"
+#include "tb/graphics/image_loader.h"
+#include "tb/graphics/renderer.h"
 #include "tb/util/math.h"
 #include "tb/util/space_allocator.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 BitmapFragmentManager::BitmapFragmentManager() = default;
 
@@ -176,5 +175,5 @@ void BitmapFragmentManager::Debug() {
 }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb

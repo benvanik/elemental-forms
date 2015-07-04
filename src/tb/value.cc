@@ -78,6 +78,12 @@ Value* ValueArray::AddValue() {
   return list_.back().get();
 }
 
+Value* ValueArray::AddInteger(int32_t value) {
+  auto v = AddValue();
+  v->set_integer(value);
+  return v;
+}
+
 Value* ValueArray::at(size_t i) const {
   if (i >= 0 && i < list_.size()) {
     return list_[i].get();

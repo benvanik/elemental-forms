@@ -7,15 +7,15 @@
  ******************************************************************************
  */
 
-#include "tb/resources/bitmap_fragment.h"
-#include "tb/resources/bitmap_fragment_map.h"
+#include "tb/graphics/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment_map.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 Bitmap* BitmapFragment::GetBitmap(Validate validate_type) {
   return m_map->GetBitmap(validate_type);
 }
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb

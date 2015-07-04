@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RENDERER_H
-#define TB_RENDERER_H
+#ifndef TB_GRAPHICS_RENDERER_H_
+#define TB_GRAPHICS_RENDERER_H_
 
 #include <cstdint>
 
@@ -17,9 +17,9 @@
 #include "tb/util/link_list.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
+
 class BitmapFragment;
-}  // namespace resources
 
 // RendererListener is a listener for Renderer.
 class RendererListener : public util::TBLinkOf<RendererListener> {
@@ -91,7 +91,7 @@ class Renderer {
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
   virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          resources::BitmapFragment* bitmap_fragment) = 0;
+                          BitmapFragment* bitmap_fragment) = 0;
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // dst_rect or src_rect can have negative width and height to achieve
@@ -103,9 +103,9 @@ class Renderer {
   // The bitmap will be used as a mask for the color.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmapColored(
-      const Rect& dst_rect, const Rect& src_rect, const Color& color,
-      resources::BitmapFragment* bitmap_fragment) = 0;
+  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
+                                 const Color& color,
+                                 BitmapFragment* bitmap_fragment) = 0;
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // The bitmap will be used as a mask for the color.
@@ -125,8 +125,7 @@ class Renderer {
 
   // Makes sure the given bitmap fragment is flushed from any batching, because
   // it may be changed or deleted after this call.
-  virtual void FlushBitmapFragment(
-      resources::BitmapFragment* bitmap_fragment) = 0;
+  virtual void FlushBitmapFragment(BitmapFragment* bitmap_fragment) = 0;
 
   // Creates a new Bitmap from the given data (in BGRA32 format).
   // Width and height must be a power of two.
@@ -135,13 +134,11 @@ class Renderer {
 
   // Adds a listener to this renderer.
   // Does not take ownership.
-  void AddListener(RendererListener* listener) {
-    m_listeners.AddLast(listener);
-  }
+  void AddListener(RendererListener* listener) { listeners_.AddLast(listener); }
 
   // Removes a listener from this renderer.
   void RemoveListener(RendererListener* listener) {
-    m_listeners.Remove(listener);
+    listeners_.Remove(listener);
   }
 
   // Invokes OnContextLost on all listeners.
@@ -172,9 +169,10 @@ class Renderer {
  private:
   static Renderer* renderer_singleton_;
 
-  util::TBLinkListOf<RendererListener> m_listeners;
+  util::TBLinkListOf<RendererListener> listeners_;
 };
 
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RENDERER_H
+#endif  // TB_GRAPHICS_RENDERER_H_

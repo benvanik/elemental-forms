@@ -18,7 +18,7 @@ class ApplicationBackend {
   virtual ~ApplicationBackend() {}
   virtual void Run() = 0;
   virtual tb::Element* GetRoot() = 0;
-  virtual tb::Renderer* GetRenderer() = 0;
+  virtual tb::graphics::Renderer* GetRenderer() = 0;
 };
 
 /** Application interface, for setting up the application using turbo badger. */

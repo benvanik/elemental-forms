@@ -12,11 +12,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\tb\elements.cc" />
+    <ClCompile Include="src\tb\graphics\batching_renderer.cc" />
+    <ClCompile Include="src\tb\graphics\bitmap_fragment.cc" />
+    <ClCompile Include="src\tb\graphics\bitmap_fragment_manager.cc" />
+    <ClCompile Include="src\tb\graphics\bitmap_fragment_map.cc" />
+    <ClCompile Include="src\tb\graphics\gles_1_renderer.cc" />
+    <ClCompile Include="src\tb\graphics\image_loader_stb.cc" />
+    <ClCompile Include="src\tb\graphics\image_manager.cc" />
+    <ClCompile Include="src\tb\graphics\renderer.cc" />
     <ClCompile Include="src\tb\rect.cc" />
     <ClCompile Include="src\tb\animation.cc" />
-    <ClCompile Include="src\tb\resources\bitmap_fragment.cc" />
-    <ClCompile Include="src\tb\resources\bitmap_fragment_manager.cc" />
-    <ClCompile Include="src\tb\resources\bitmap_fragment_map.cc" />
     <ClCompile Include="src\tb\resources\element_factory.cc" />
     <ClCompile Include="src\tb\resources\font_effect.cc" />
     <ClCompile Include="src\tb\resources\font_face.cc" />
@@ -24,9 +29,7 @@
     <ClCompile Include="src\tb\resources\font_renderer_freetype.cc" />
     <ClCompile Include="src\tb\resources\font_renderer_stb.cc" />
     <ClCompile Include="src\tb\resources\font_renderer_tbbf.cc" />
-    <ClCompile Include="src\tb\resources\image_loader_stb.cc" />
     <ClCompile Include="src\tb\color.cc" />
-    <ClCompile Include="src\tb\resources\image_manager.cc" />
     <ClCompile Include="src\tb\resources\skin.cc" />
     <ClCompile Include="src\tb\resources\text_parser.cc" />
     <ClCompile Include="src\tb\resources\text_parser_stream.cc" />
@@ -42,9 +45,6 @@
     <ClCompile Include="src\tb\tb_node_ref_tree.cpp" />
     <ClCompile Include="src\tb\tb_node_tree.cpp" />
     <ClCompile Include="src\tb\tb_popup_window.cpp" />
-    <ClCompile Include="src\tb\tb_renderer.cpp" />
-    <ClCompile Include="src\tb\tb_renderer_batcher.cpp" />
-    <ClCompile Include="src\tb\tb_renderer_gl.cpp" />
     <ClCompile Include="src\tb\tb_scroller.cpp" />
     <ClCompile Include="src\tb\tb_scroll_container.cpp" />
     <ClCompile Include="src\tb\tb_select.cpp" />
@@ -94,24 +94,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tb\elements.h" />
+    <ClInclude Include="src\tb\graphics\batching_renderer.h" />
+    <ClInclude Include="src\tb\graphics\bitmap_fragment.h" />
+    <ClInclude Include="src\tb\graphics\bitmap_fragment_manager.h" />
+    <ClInclude Include="src\tb\graphics\bitmap_fragment_map.h" />
+    <ClInclude Include="src\tb\graphics\gles_1_renderer.h" />
+    <ClInclude Include="src\tb\graphics\image_loader.h" />
+    <ClInclude Include="src\tb\graphics\image_manager.h" />
+    <ClInclude Include="src\tb\graphics\renderer.h" />
     <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\animation.h" />
-    <ClInclude Include="src\tb\resources\bitmap_fragment.h" />
-    <ClInclude Include="src\tb\resources\bitmap_fragment_manager.h" />
-    <ClInclude Include="src\tb\resources\bitmap_fragment_map.h" />
     <ClInclude Include="src\tb\resources\element_factory.h" />
     <ClInclude Include="src\tb\resources\font_effect.h" />
     <ClInclude Include="src\tb\resources\font_face.h" />
     <ClInclude Include="src\tb\resources\font_manager.h" />
     <ClInclude Include="src\tb\resources\font_renderer.h" />
-    <ClInclude Include="src\tb\resources\image_loader.h" />
-    <ClInclude Include="src\tb\resources\image_manager.h" />
     <ClInclude Include="src\tb\resources\skin.h" />
     <ClInclude Include="src\tb\resources\text_parser.h" />
     <ClInclude Include="src\tb\resources\text_parser_stream.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
-    <ClInclude Include="src\tb\tb_renderer_batcher.h" />
-    <ClInclude Include="src\tb\tb_renderer_gl.h" />
     <ClInclude Include="src\tb\tb_tooltips.h" />
     <ClInclude Include="src\tb\tb_widget_animation.h" />
     <ClInclude Include="src\tb\color.h" />
@@ -128,7 +129,6 @@
     <ClInclude Include="src\tb\tb_node_ref_tree.h" />
     <ClInclude Include="src\tb\tb_node_tree.h" />
     <ClInclude Include="src\tb\tb_popup_window.h" />
-    <ClInclude Include="src\tb\tb_renderer.h" />
     <ClInclude Include="src\tb\tb_scroller.h" />
     <ClInclude Include="src\tb\tb_scroll_container.h" />
     <ClInclude Include="src\tb\tb_select.h" />

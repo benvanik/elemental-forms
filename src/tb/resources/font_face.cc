@@ -17,6 +17,8 @@
 namespace tb {
 namespace resources {
 
+using graphics::Renderer;
+
 FontGlyph::FontGlyph(const TBID& hash_id, UCS4 cp) : hash_id(hash_id), cp(cp) {}
 
 FontFace::FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,

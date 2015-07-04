@@ -10,12 +10,12 @@
 #include <algorithm>
 
 #include "tb_node_tree.h"
-#include "tb_renderer.h"
 
+#include "tb/graphics/image_loader.h"
+#include "tb/graphics/renderer.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
-#include "tb/resources/image_loader.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 
@@ -108,7 +108,7 @@ class TBBFRenderer : public FontRenderer {
  private:
   Node m_node;
   FontMetrics m_metrics;
-  resources::ImageLoader* m_img;
+  graphics::ImageLoader* m_img;
   int m_size;
   int m_x_ofs;
   int m_advance_delta;
@@ -190,7 +190,7 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   // Append the bitmap filename for the given size.
   bitmap_filename.AppendString(size_node->GetValueString("bitmap", ""));
 
-  m_img = resources::ImageLoader::CreateFromFile(bitmap_filename.GetData());
+  m_img = graphics::ImageLoader::CreateFromFile(bitmap_filename.GetData());
 
   return FindGlyphs();
 }

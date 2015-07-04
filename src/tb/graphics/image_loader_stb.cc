@@ -10,13 +10,13 @@
 #include <cstdint>
 #include <vector>
 
-#include "tb/resources/image_loader.h"
+#include "tb/graphics/image_loader.h"
 #include "tb/util/file.h"
 
 #ifdef TB_IMAGE_LOADER_STB
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 // Configure stb image and remove some features we don't use to reduce binary
 // size.
@@ -71,7 +71,7 @@ ImageLoader* ImageLoader::CreateFromFile(const std::string& filename) {
   return img;
 }
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb
 
 #endif  // TB_IMAGE_LOADER_STB

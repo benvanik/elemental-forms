@@ -7,14 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb_renderer.h"
-
-#include "tb/resources/bitmap_fragment_map.h"
+#include "tb/graphics/bitmap_fragment_map.h"
+#include "tb/graphics/renderer.h"
 #include "tb/util/math.h"
 #include "tb/util/space_allocator.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 BitmapFragmentMap::BitmapFragmentMap() = default;
 
@@ -227,5 +226,5 @@ void BitmapFragmentMap::DeleteBitmap() {
   m_need_update = true;
 }
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb

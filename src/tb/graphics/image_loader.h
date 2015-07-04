@@ -7,14 +7,14 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_IMAGE_LOADER_H_
-#define TB_RESOURCES_IMAGE_LOADER_H_
+#ifndef TB_GRAPHICS_IMAGE_LOADER_H_
+#define TB_GRAPHICS_IMAGE_LOADER_H_
 
 #include <memory>
 #include <string>
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 // A class used to load skin images. It can be implemented in any way the system
 // wants, but the system has to provide a image loader capable of handling all
@@ -33,7 +33,7 @@ class ImageLoader {
   virtual uint32_t* Data() = 0;
 };
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RESOURCES_IMAGE_LOADER_H_
+#endif  // TB_GRAPHICS_IMAGE_LOADER_H_

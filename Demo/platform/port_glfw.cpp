@@ -8,9 +8,9 @@
 
 #include "tb_widgets.h"
 #include "tb_msg.h"
-#include "tb_renderer_gl.h"
 #include "Application.h"
 
+#include "tb/graphics/gles_1_renderer.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/metrics.h"
 #include "tb/util/timer.h"
@@ -64,13 +64,13 @@ class ApplicationBackendGLFW : public ApplicationBackend {
 
   virtual void Run();
   virtual Element* GetRoot() { return &m_root; }
-  virtual Renderer* GetRenderer() { return m_renderer; }
+  virtual graphics::Renderer* GetRenderer() { return m_renderer; }
 
   int width() const { return m_root.rect().w; }
   int height() const { return m_root.rect().h; }
 
   Application* m_application;
-  RendererGL* m_renderer;
+  graphics::RendererGL* m_renderer;
   RootElement m_root;
   GLFWwindow* mainWindow;
   bool has_pending_update;
@@ -488,7 +488,7 @@ bool ApplicationBackendGLFW::Init(Application* app, int width, int height,
   glfwSetDropCallback(mainWindow, drop_callback);
 #endif
 
-  m_renderer = new RendererGL();
+  m_renderer = new graphics::RendererGL();
   m_root.set_rect({0, 0, width, height});
 
   // Create the application object for our demo

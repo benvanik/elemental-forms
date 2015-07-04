@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_BITMAP_FRAGMENT_MANAGER_H_
-#define TB_RESOURCES_BITMAP_FRAGMENT_MANAGER_H_
+#ifndef TB_GRAPHICS_BITMAP_FRAGMENT_MANAGER_H_
+#define TB_GRAPHICS_BITMAP_FRAGMENT_MANAGER_H_
 
 #include <memory>
 #include <vector>
@@ -17,7 +17,7 @@
 #include "tb/util/hash_table.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 class BitmapFragment;
 class BitmapFragmentMap;
@@ -104,7 +104,7 @@ class BitmapFragmentManager {
   int m_default_map_h = 512;
 };
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RESOURCES_BITMAP_FRAGMENT_MANAGER_H_
+#endif  // TB_GRAPHICS_BITMAP_FRAGMENT_MANAGER_H_

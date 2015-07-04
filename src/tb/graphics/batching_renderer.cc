@@ -7,12 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_renderer_batcher.h"
-
-#include "tb/resources/bitmap_fragment.h"
+#include "tb/graphics/batching_renderer.h"
+#include "tb/graphics/bitmap_fragment.h"
 #include "tb/util/debug.h"
 
 namespace tb {
+namespace graphics {
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 uint32_t dbg_begin_paint_batch_id = 0;
@@ -22,7 +22,7 @@ uint32_t dbg_frame_triangle_count = 0;
 #define VER_COL(r, g, b, a) (((a) << 24) + ((b) << 16) + ((g) << 8) + r)
 #define VER_COL_OPACITY(a) (0x00ffffff + (((uint32_t)a) << 24))
 
-void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
+void BatchingRenderer::Batch::Flush(BatchingRenderer* batch_renderer) {
   if (!vertex_count || is_flushing) {
     return;
   }
@@ -36,7 +36,7 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
     // Now it's time to ensure the bitmap data is up to date. A call to
     // GetBitmap with Validate::kAlways should guarantee that its data is
     // validated.
-    Bitmap* frag_bitmap = fragment->GetBitmap(resources::Validate::kAlways);
+    auto frag_bitmap = fragment->GetBitmap(Validate::kAlways);
     ((void)frag_bitmap);  // silence warning about unused variable
     assert(frag_bitmap == bitmap);
   }
@@ -50,7 +50,7 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
     dbg_frame_triangle_count += vertex_count / 3;
 
     // Draw the triangles again using a random color based on the batch
-    // id. This indicates which triangles belong to the same batch.
+    // id. This indicates which triangles belong to the same batch_.
     uint32_t id = batch_id - dbg_begin_paint_batch_id;
     uint32_t hash = id * (2166136261U ^ id);
     uint32_t color = 0xAA000000 + (hash & 0x00FFFFFF);
@@ -69,10 +69,10 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
   is_flushing = false;
 }
 
-RendererBatcher::Vertex* RendererBatcher::Batch::Reserve(
-    RendererBatcher* batch_renderer, int count) {
-  assert(count < VERTEX_BATCH_SIZE);
-  if (vertex_count + count > VERTEX_BATCH_SIZE) {
+BatchingRenderer::Vertex* BatchingRenderer::Batch::Reserve(
+    BatchingRenderer* batch_renderer, int count) {
+  assert(count < kVertexBatchSize);
+  if (vertex_count + count > kVertexBatchSize) {
     Flush(batch_renderer);
   }
   Vertex* ret = &vertex[vertex_count];
@@ -80,115 +80,114 @@ RendererBatcher::Vertex* RendererBatcher::Batch::Reserve(
   return ret;
 }
 
-RendererBatcher::RendererBatcher() = default;
+BatchingRenderer::BatchingRenderer() = default;
 
-RendererBatcher::~RendererBatcher() = default;
+BatchingRenderer::~BatchingRenderer() = default;
 
-void RendererBatcher::BeginPaint(int render_target_w, int render_target_h) {
+void BatchingRenderer::BeginPaint(int render_target_w, int render_target_h) {
 #ifdef TB_RUNTIME_DEBUG_INFO
-  dbg_begin_paint_batch_id = batch.batch_id;
+  dbg_begin_paint_batch_id = batch_.batch_id;
   dbg_frame_triangle_count = 0;
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  m_screen_rect.reset(0, 0, render_target_w, render_target_h);
-  m_clip_rect = m_screen_rect;
+  screen_rect_.reset(0, 0, render_target_w, render_target_h);
+  clip_rect_ = screen_rect_;
 }
 
-void RendererBatcher::EndPaint() {
+void BatchingRenderer::EndPaint() {
   FlushAllInternal();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
   if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches)) {
     TBDebugOut("Frame rendered using %d batches and a total of %d triangles.\n",
-               batch.batch_id - dbg_begin_paint_batch_id,
+               batch_.batch_id - dbg_begin_paint_batch_id,
                dbg_frame_triangle_count);
   }
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 
-void RendererBatcher::Translate(int dx, int dy) {
-  m_translation_x += dx;
-  m_translation_y += dy;
+void BatchingRenderer::Translate(int dx, int dy) {
+  translation_x_ += dx;
+  translation_y_ += dy;
 }
 
-void RendererBatcher::SetOpacity(float opacity) {
+void BatchingRenderer::SetOpacity(float opacity) {
   int8_t opacity8 = (uint8_t)(opacity * 255);
-  if (opacity8 == m_opacity) return;
-  m_opacity = opacity8;
+  if (opacity8 == opacity_) return;
+  opacity_ = opacity8;
 }
 
-float RendererBatcher::GetOpacity() { return m_opacity / 255.f; }
+float BatchingRenderer::GetOpacity() { return opacity_ / 255.0f; }
 
-Rect RendererBatcher::SetClipRect(const Rect& rect, bool add_to_current) {
-  Rect old_clip_rect = m_clip_rect;
-  m_clip_rect = rect;
-  m_clip_rect.x += m_translation_x;
-  m_clip_rect.y += m_translation_y;
+Rect BatchingRenderer::SetClipRect(const Rect& rect, bool add_to_current) {
+  Rect old_clip_rect = clip_rect_;
+  clip_rect_ = rect;
+  clip_rect_.x += translation_x_;
+  clip_rect_.y += translation_y_;
 
   if (add_to_current) {
-    m_clip_rect = m_clip_rect.Clip(old_clip_rect);
+    clip_rect_ = clip_rect_.Clip(old_clip_rect);
   }
 
   FlushAllInternal();
-  SetClipRect(m_clip_rect);
+  SetClipRect(clip_rect_);
 
-  old_clip_rect.x -= m_translation_x;
-  old_clip_rect.y -= m_translation_y;
+  old_clip_rect.x -= translation_x_;
+  old_clip_rect.y -= translation_y_;
   return old_clip_rect;
 }
 
-Rect RendererBatcher::GetClipRect() {
-  Rect curr_clip_rect = m_clip_rect;
-  curr_clip_rect.x -= m_translation_x;
-  curr_clip_rect.y -= m_translation_y;
+Rect BatchingRenderer::GetClipRect() {
+  Rect curr_clip_rect = clip_rect_;
+  curr_clip_rect.x -= translation_x_;
+  curr_clip_rect.y -= translation_y_;
   return curr_clip_rect;
 }
 
-void RendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                                 resources::BitmapFragment* bitmap_fragment) {
-  if (Bitmap* bitmap =
-          bitmap_fragment->GetBitmap(resources::Validate::kFirstTime)) {
+void BatchingRenderer::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
+                                  BitmapFragment* bitmap_fragment) {
+  if (auto bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
     AddQuadInternal(
-        dst_rect.Offset(m_translation_x, m_translation_y),
+        dst_rect.Offset(translation_x_, translation_y_),
         src_rect.Offset(bitmap_fragment->m_rect.x, bitmap_fragment->m_rect.y),
-        VER_COL_OPACITY(m_opacity), bitmap, bitmap_fragment);
+        VER_COL_OPACITY(opacity_), bitmap, bitmap_fragment);
   }
 }
 
-void RendererBatcher::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                                 Bitmap* bitmap) {
-  AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), src_rect,
-                  VER_COL_OPACITY(m_opacity), bitmap, nullptr);
+void BatchingRenderer::DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
+                                  Bitmap* bitmap) {
+  AddQuadInternal(dst_rect.Offset(translation_x_, translation_y_), src_rect,
+                  VER_COL_OPACITY(opacity_), bitmap, nullptr);
 }
 
-void RendererBatcher::DrawBitmapColored(
-    const Rect& dst_rect, const Rect& src_rect, const Color& color,
-    resources::BitmapFragment* bitmap_fragment) {
-  if (Bitmap* bitmap =
-          bitmap_fragment->GetBitmap(resources::Validate::kFirstTime)) {
-    uint32_t a = (color.a * m_opacity) / 255;
+void BatchingRenderer::DrawBitmapColored(const Rect& dst_rect,
+                                         const Rect& src_rect,
+                                         const Color& color,
+                                         BitmapFragment* bitmap_fragment) {
+  if (auto bitmap = bitmap_fragment->GetBitmap(Validate::kFirstTime)) {
+    uint32_t a = (color.a * opacity_) / 255;
     AddQuadInternal(
-        dst_rect.Offset(m_translation_x, m_translation_y),
+        dst_rect.Offset(translation_x_, translation_y_),
         src_rect.Offset(bitmap_fragment->m_rect.x, bitmap_fragment->m_rect.y),
         VER_COL(color.r, color.g, color.b, a), bitmap, bitmap_fragment);
   }
 }
 
-void RendererBatcher::DrawBitmapColored(const Rect& dst_rect,
-                                        const Rect& src_rect,
-                                        const Color& color, Bitmap* bitmap) {
-  uint32_t a = (color.a * m_opacity) / 255;
-  AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), src_rect,
+void BatchingRenderer::DrawBitmapColored(const Rect& dst_rect,
+                                         const Rect& src_rect,
+                                         const Color& color, Bitmap* bitmap) {
+  uint32_t a = (color.a * opacity_) / 255;
+  AddQuadInternal(dst_rect.Offset(translation_x_, translation_y_), src_rect,
                   VER_COL(color.r, color.g, color.b, a), bitmap, nullptr);
 }
 
-void RendererBatcher::DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) {
-  AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y),
-                  Rect(0, 0, dst_rect.w, dst_rect.h),
-                  VER_COL_OPACITY(m_opacity), bitmap, nullptr);
+void BatchingRenderer::DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) {
+  AddQuadInternal(dst_rect.Offset(translation_x_, translation_y_),
+                  Rect(0, 0, dst_rect.w, dst_rect.h), VER_COL_OPACITY(opacity_),
+                  bitmap, nullptr);
 }
 
-void RendererBatcher::DrawRect(const Rect& dst_rect, const Color& color) {
+void BatchingRenderer::DrawRect(const Rect& dst_rect, const Color& color) {
   if (dst_rect.empty()) return;
   // Top.
   DrawRectFill(Rect(dst_rect.x, dst_rect.y, dst_rect.w, 1), color);
@@ -203,22 +202,22 @@ void RendererBatcher::DrawRect(const Rect& dst_rect, const Color& color) {
       color);
 }
 
-void RendererBatcher::DrawRectFill(const Rect& dst_rect, const Color& color) {
+void BatchingRenderer::DrawRectFill(const Rect& dst_rect, const Color& color) {
   if (dst_rect.empty()) return;
-  uint32_t a = (color.a * m_opacity) / 255;
-  AddQuadInternal(dst_rect.Offset(m_translation_x, m_translation_y), Rect(),
+  uint32_t a = (color.a * opacity_) / 255;
+  AddQuadInternal(dst_rect.Offset(translation_x_, translation_y_), Rect(),
                   VER_COL(color.r, color.g, color.b, a), nullptr, nullptr);
 }
 
-void RendererBatcher::AddQuadInternal(const Rect& dst_rect,
-                                      const Rect& src_rect, uint32_t color,
-                                      Bitmap* bitmap,
-                                      resources::BitmapFragment* fragment) {
-  if (batch.bitmap != bitmap) {
-    batch.Flush(this);
-    batch.bitmap = bitmap;
+void BatchingRenderer::AddQuadInternal(const Rect& dst_rect,
+                                       const Rect& src_rect, uint32_t color,
+                                       Bitmap* bitmap,
+                                       BitmapFragment* fragment) {
+  if (batch_.bitmap != bitmap) {
+    batch_.Flush(this);
+    batch_.bitmap = bitmap;
   }
-  batch.fragment = fragment;
+  batch_.fragment = fragment;
   if (bitmap) {
     int bitmap_w = bitmap->Width();
     int bitmap_h = bitmap->Height();
@@ -227,7 +226,7 @@ void RendererBatcher::AddQuadInternal(const Rect& dst_rect,
     m_uu = (float)(src_rect.x + src_rect.w) / bitmap_w;
     m_vv = (float)(src_rect.y + src_rect.h) / bitmap_h;
   }
-  Vertex* ver = batch.Reserve(this, 6);
+  Vertex* ver = batch_.Reserve(this, 6);
   ver[0].x = (float)dst_rect.x;
   ver[0].y = (float)(dst_rect.y + dst_rect.h);
   ver[0].u = m_u;
@@ -262,31 +261,31 @@ void RendererBatcher::AddQuadInternal(const Rect& dst_rect,
 
   // Update fragments batch id (See FlushBitmapFragment).
   if (fragment) {
-    fragment->m_batch_id = batch.batch_id;
+    fragment->m_batch_id = batch_.batch_id;
   }
 }
 
-void RendererBatcher::FlushAllInternal() { batch.Flush(this); }
+void BatchingRenderer::FlushAllInternal() { batch_.Flush(this); }
 
-void RendererBatcher::FlushBitmap(Bitmap* bitmap) {
+void BatchingRenderer::FlushBitmap(Bitmap* bitmap) {
   // Flush the batch if it's using this bitmap (that is about to change or be
   // deleted).
-  if (batch.vertex_count && bitmap == batch.bitmap) {
-    batch.Flush(this);
+  if (batch_.vertex_count && bitmap == batch_.bitmap) {
+    batch_.Flush(this);
   }
 }
 
-void RendererBatcher::FlushBitmapFragment(
-    resources::BitmapFragment* bitmap_fragment) {
+void BatchingRenderer::FlushBitmapFragment(BitmapFragment* bitmap_fragment) {
   // Flush the batch if it is using this fragment (that is about to change or be
   // deleted).
   // We know if it is in use in the current batch if its batch_id matches the
-  // current batch_id in our (one and only) batch.
+  // current batch_id in our (one and only) batch_.
   // If we switch to a more advance batching system with multiple batches, we
   // need to solve this a bit differently.
-  if (batch.vertex_count && bitmap_fragment->m_batch_id == batch.batch_id) {
-    batch.Flush(this);
+  if (batch_.vertex_count && bitmap_fragment->m_batch_id == batch_.batch_id) {
+    batch_.Flush(this);
   }
 }
 
+}  // namespace graphics
 }  // namespace tb

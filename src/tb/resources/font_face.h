@@ -20,9 +20,14 @@
 #include "tb/util/utf8.h"
 
 namespace tb {
+namespace graphics {
+class BitmapFragment;
+}  // namespace graphics
+}  // namespace tb
+
+namespace tb {
 namespace resources {
 
-class BitmapFragment;
 class FontGlyphCache;
 class FontRenderer;
 namespace {
@@ -66,7 +71,7 @@ class FontGlyph : public util::TBLinkOf<FontGlyph> {
   TBID hash_id;
   UCS4 cp;
   GlyphMetrics metrics;  // The glyph metrics.
-  BitmapFragment* frag =
+  graphics::BitmapFragment* frag =
       nullptr;           // The bitmap fragment, or nullptr if missing.
   bool has_rgb = false;  // if true, drawing should ignore text color.
 };

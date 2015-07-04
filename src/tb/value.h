@@ -33,6 +33,7 @@ class ValueArray {
   static ValueArray* Clone(ValueArray* source);
 
   Value* AddValue();
+  Value* AddInteger(int32_t value);
 
   size_t size() const { return list_.size(); }
   Value* at(size_t i) const;

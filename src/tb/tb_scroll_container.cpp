@@ -79,15 +79,15 @@ void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
       sc->m_scrollbar_x.CanScrollPositive() ? 0 : fluff,
       sc->m_scrollbar_y.CanScrollPositive() ? 0 : fluff);
 
-  Rect old_clip_rect = Renderer::get()->SetClipRect(clip_rect, true);
+  Rect old_clip_rect = graphics::Renderer::get()->SetClipRect(clip_rect, true);
 
   TB_IF_DEBUG_SETTING(
       util::DebugInfo::Setting::kLayoutClipping,
-      Renderer::get()->DrawRect(clip_rect, Color(255, 0, 0, 200)));
+      graphics::Renderer::get()->DrawRect(clip_rect, Color(255, 0, 0, 200)));
 
   Element::OnPaintChildren(paint_props);
 
-  Renderer::get()->SetClipRect(old_clip_rect, false);
+  graphics::Renderer::get()->SetClipRect(old_clip_rect, false);
 }
 
 void ScrollContainerRoot::GetChildTranslation(int& x, int& y) const {

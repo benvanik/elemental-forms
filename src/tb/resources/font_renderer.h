@@ -12,9 +12,8 @@
 
 #include <string>
 
-#include "tb/tb_renderer.h"
-
 #include "tb/font_description.h"
+#include "tb/graphics/renderer.h"
 #include "tb/util/utf8.h"
 
 namespace tb {

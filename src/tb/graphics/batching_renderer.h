@@ -7,26 +7,25 @@
  ******************************************************************************
  */
 
-#ifndef TB_RENDERER_BATCHER_H
-#define TB_RENDERER_BATCHER_H
+#ifndef TB_GRAPHICS_BATCHING_RENDERER_H_
+#define TB_GRAPHICS_BATCHING_RENDERER_H_
 
-#include "tb_renderer.h"
+#include "tb/graphics/renderer.h"
 
 namespace tb {
+namespace graphics {
 
-namespace resources {
 class BitmapFragment;
-}  // namespace resources
-
-#define VERTEX_BATCH_SIZE 6 * 2048
 
 // A helper class that implements batching of draw operations for a Renderer.
 // If you do not want to do your own batching you can subclass this class
 // instead of Renderer.
 // If overriding any function in this class, make sure to call the base class
 // too.
-class RendererBatcher : public Renderer {
+class BatchingRenderer : public Renderer {
  public:
+  static const size_t kVertexBatchSize = 6 * 2048;
+
   // Vertex stored in a Batch.
   struct Vertex {
     float x, y;
@@ -38,25 +37,26 @@ class RendererBatcher : public Renderer {
       uint32_t col;
     };
   };
+
   // A batch which should be rendered.
   class Batch {
    public:
     Batch() = default;
-    void Flush(RendererBatcher* batch_renderer);
-    Vertex* Reserve(RendererBatcher* batch_renderer, int count);
+    void Flush(BatchingRenderer* batch_renderer);
+    Vertex* Reserve(BatchingRenderer* batch_renderer, int count);
 
-    Vertex vertex[VERTEX_BATCH_SIZE];
+    Vertex vertex[kVertexBatchSize];
     int vertex_count = 0;
 
     Bitmap* bitmap = nullptr;
-    resources::BitmapFragment* fragment = nullptr;
+    BitmapFragment* fragment = nullptr;
 
     uint32_t batch_id = 0;
     bool is_flushing = false;
   };
 
-  RendererBatcher();
-  ~RendererBatcher() override;
+  BatchingRenderer();
+  ~BatchingRenderer() override;
 
   void BeginPaint(int render_target_w, int render_target_h) override;
   void EndPaint() override;
@@ -70,19 +70,19 @@ class RendererBatcher : public Renderer {
   Rect GetClipRect() override;
 
   void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                  resources::BitmapFragment* bitmap_fragment) override;
+                  BitmapFragment* bitmap_fragment) override;
   void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                   Bitmap* bitmap) override;
   void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                          const Color& color,
-                         resources::BitmapFragment* bitmap_fragment) override;
+                         BitmapFragment* bitmap_fragment) override;
   void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
                          const Color& color, Bitmap* bitmap) override;
   void DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) override;
   void DrawRect(const Rect& dst_rect, const Color& color) override;
   void DrawRectFill(const Rect& dst_rect, const Color& color) override;
   void FlushBitmap(Bitmap* bitmap);
-  void FlushBitmapFragment(resources::BitmapFragment* bitmap_fragment) override;
+  void FlushBitmapFragment(BitmapFragment* bitmap_fragment) override;
 
   void BeginBatchHint(Renderer::BatchHint hint) override {}
   void EndBatchHint() override {}
@@ -94,19 +94,20 @@ class RendererBatcher : public Renderer {
  protected:
   void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
                        uint32_t color, Bitmap* bitmap,
-                       resources::BitmapFragment* fragment);
+                       BitmapFragment* fragment);
   void FlushAllInternal();
 
-  uint8_t m_opacity = 255;
-  Rect m_screen_rect;
-  Rect m_clip_rect;
-  int m_translation_x = 0;
-  int m_translation_y = 0;
+  uint8_t opacity_ = 255;
+  Rect screen_rect_;
+  Rect clip_rect_;
+  int translation_x_ = 0;
+  int translation_y_ = 0;
 
+  Batch batch_;
   float m_u = 0, m_v = 0, m_uu = 0, m_vv = 0;
-  Batch batch;
 };
 
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RENDERER_BATCHER_H
+#endif  // TB_GRAPHICS_BATCHING_RENDERER_H_

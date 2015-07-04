@@ -7,16 +7,16 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_BITMAP_FRAGMENT_MAP_H_
-#define TB_RESOURCES_BITMAP_FRAGMENT_MAP_H_
+#ifndef TB_GRAPHICS_BITMAP_FRAGMENT_MAP_H_
+#define TB_GRAPHICS_BITMAP_FRAGMENT_MAP_H_
 
 #include <memory>
 #include <vector>
 
-#include "tb/resources/bitmap_fragment.h"
+#include "tb/graphics/bitmap_fragment.h"
 
 namespace tb {
-namespace resources {
+namespace graphics {
 
 class BitmapFragmentManager;
 
@@ -65,7 +65,7 @@ class BitmapFragmentMap {
   int m_allocated_pixels = 0;
 };
 
-}  // namespace resources
+}  // namespace graphics
 }  // namespace tb
 
-#endif  // TB_RESOURCES_BITMAP_FRAGMENT_MAP_H_
+#endif  // TB_GRAPHICS_BITMAP_FRAGMENT_MAP_H_

@@ -29,12 +29,17 @@ freely, subject to the following restrictions:
 #define TB_TURBO_BADGER_H_
 
 #include "tb/config.h"
-#include "tb/tb_renderer.h"
+
+namespace tb {
+namespace graphics {
+class Renderer;
+}  // namespace graphics
+}  // namespace tb
 
 namespace tb {
 
 // Initializes turbo badger. Call this before using any turbo badger API.
-bool Initialize(Renderer* renderer, const char* language_file);
+bool Initialize(graphics::Renderer* renderer, const char* language_file);
 
 // Shuts down turbo badger. Call this after deleting the last element, to free
 // turbo badger internals.

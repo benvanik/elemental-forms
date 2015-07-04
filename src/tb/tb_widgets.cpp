@@ -13,7 +13,6 @@
 #include <cassert>
 
 #include "tb_node_tree.h"
-#include "tb_renderer.h"
 #include "tb_scroller.h"
 #include "tb_select_item.h"
 #include "tb_text_box.h"
@@ -22,6 +21,7 @@
 #include "tb_widgets_listener.h"
 #include "tb_window.h"
 
+#include "tb/graphics/renderer.h"
 #include "tb/resources/element_factory.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
@@ -30,6 +30,8 @@
 #include "tb/value.h"
 
 namespace tb {
+
+using graphics::Renderer;
 
 Element* Element::hovered_element = nullptr;
 Element* Element::captured_element = nullptr;
