@@ -13,8 +13,8 @@
 #include <memory>
 #include <string>
 
-#include "tb_font_desc.h"
-#include "tb_renderer.h"
+#include "tb/tb_font_desc.h"
+#include "tb/tb_renderer.h"
 
 #include "tb/resources/bitmap_fragment.h"
 #include "tb/resources/bitmap_fragment_manager.h"
