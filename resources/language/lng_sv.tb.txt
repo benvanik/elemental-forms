@@ -9,7 +9,7 @@ MessageWindow.ok Ok
 MessageWindow.cancel Avbryt
 MessageWindow.yes Ja
 MessageWindow.no Nej
-TBList.header Visar %d av %d
+SelectList.header Visar %d av %d
 new Ny
 save Spara
 close Stäng

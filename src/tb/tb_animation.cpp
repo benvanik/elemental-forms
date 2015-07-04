@@ -31,24 +31,26 @@ inline float SmoothCurve(float x, float a) {
 }
 
 void Animation::InvokeOnAnimationStart() {
-  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  auto li = m_listeners.IterateForward();
   OnAnimationStart();
   while (AnimationListener* listener = li.GetAndStep())
     listener->OnAnimationStart(this);
 }
 
 void Animation::InvokeOnAnimationUpdate(float progress) {
-  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  auto li = m_listeners.IterateForward();
   OnAnimationUpdate(progress);
-  while (AnimationListener* listener = li.GetAndStep())
+  while (AnimationListener* listener = li.GetAndStep()) {
     listener->OnAnimationUpdate(this, progress);
+  }
 }
 
 void Animation::InvokeOnAnimationStop(bool aborted) {
-  util::TBLinkListOf<AnimationListener>::Iterator li = m_listeners.IterateForward();
+  auto li = m_listeners.IterateForward();
   OnAnimationStop(aborted);
-  while (AnimationListener* listener = li.GetAndStep())
+  while (AnimationListener* listener = li.GetAndStep()) {
     listener->OnAnimationStop(this, aborted);
+  }
 }
 
 util::TBLinkListOf<Animation> AnimationManager::animating_objects;
@@ -56,15 +58,16 @@ int AnimationManager::block_animations_counter = 0;
 
 // static
 void AnimationManager::AbortAllAnimations() {
-  while (Animation* obj = animating_objects.GetFirst())
+  while (Animation* obj = animating_objects.GetFirst()) {
     AbortAnimation(obj, true);
+  }
 }
 
 // static
 void AnimationManager::Update() {
   uint64_t time_now = TBSystem::GetTimeMS();
 
-  util::TBLinkListOf<Animation>::Iterator iter = animating_objects.IterateForward();
+  auto iter = animating_objects.IterateForward();
   while (Animation* obj = iter.GetAndStep()) {
     // Adjust the start time if it's the first update time for this object.
     if (obj->adjust_start_time) {
@@ -126,8 +129,12 @@ void AnimationManager::StartAnimation(Animation* obj,
                                       AnimationCurve animation_curve,
                                       double animation_duration,
                                       AnimationTime animation_time) {
-  if (obj->IsAnimating()) AbortAnimation(obj, false);
-  if (IsAnimationsBlocked()) animation_duration = 0;
+  if (obj->IsAnimating()) {
+    AbortAnimation(obj, false);
+  }
+  if (IsAnimationsBlocked()) {
+    animation_duration = 0;
+  }
   obj->adjust_start_time = animation_time == AnimationTime::kFirstUpdate;
   obj->animation_start_time = TBSystem::GetTimeMS();
   obj->animation_duration = uint64_t(std::max(animation_duration, 0.0));

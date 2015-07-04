@@ -22,7 +22,8 @@ class Element;
 // Should never be created or subclassed anywhere except in ElementListener.
 // It's only purpose is to add a extra typed link for ElementListener, since it
 // needs to be added in multiple lists.
-class ElementListenerGlobalLink : public util::TBLinkOf<ElementListenerGlobalLink> {};
+class ElementListenerGlobalLink
+    : public util::TBLinkOf<ElementListenerGlobalLink> {};
 
 // Listens to some callbacks from Element.
 // It may either listen to all elements globally, or one specific element.

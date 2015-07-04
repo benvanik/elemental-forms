@@ -160,11 +160,11 @@ class TBTestGroup {
   bool IsSpecialTest(TBCall* call) const { return !call->linklist; }
 
  public:
-  const char* name;            // Test group name.
-  TBCall* setup;               // Setup call, or nullptr.
-  TBCall* cleanup;             // Cleanup call, or nullptr.
-  TBCall* init;                // Init call, or nullptr.
-  TBCall* shutdown;            // Shutdown call, or nullptr.
+  const char* name;                  // Test group name.
+  TBCall* setup;                     // Setup call, or nullptr.
+  TBCall* cleanup;                   // Cleanup call, or nullptr.
+  TBCall* init;                      // Init call, or nullptr.
+  TBCall* shutdown;                  // Shutdown call, or nullptr.
   util::TBLinkListOf<TBCall> calls;  // All test calls to call.
   TBTestGroup* next_test_group;
 };

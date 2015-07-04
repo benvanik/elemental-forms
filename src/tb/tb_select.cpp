@@ -20,7 +20,7 @@
 
 namespace tb {
 
-SelectList::SelectList() : m_header_lng_string_id(TBIDC("TBList.header")) {
+SelectList::SelectList() : m_header_lng_string_id(TBIDC("SelectList.header")) {
   SetSource(&m_default_source);
   SetIsFocusable(true);
   SetSkinBg(TBIDC("SelectList"), InvokeInfo::kNoCallbacks);
@@ -165,7 +165,7 @@ void SelectList::ValidateList() {
     auto fmt = g_tb_lng->GetString(m_header_lng_string_id);
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
                                              m_source->GetNumItems()));
-    element->SetSkinBg(TBIDC("TBList.header"));
+    element->SetSkinBg(TBIDC("SelectList.header"));
     element->SetState(SkinState::kDisabled, true);
     element->SetGravity(Gravity::kAll);
     element->data.SetInt(-1);
