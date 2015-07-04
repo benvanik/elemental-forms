@@ -13,10 +13,9 @@
 #include <memory>
 #include <vector>
 
-#include "tb_id.h"
-#include "tb_value.h"
-
+#include "tb/id.h"
 #include "tb/util/link_list.h"
+#include "tb/value.h"
 
 namespace tb {
 
@@ -106,7 +105,7 @@ class SelectItemSource {
                                      SelectItemObserver* observer);
 
   // Gets the number of items.
-  virtual size_t GetNumItems() = 0;
+  virtual size_t size() = 0;
 
   // Sets sort type. Default is Sort::kNone.
   void SetSort(Sort sort) { m_sort = sort; }
@@ -143,14 +142,14 @@ class SelectItemSourceList : public SelectItemSource {
     return GetItem(index)->skin_image;
   }
   TBID GetItemID(size_t index) override { return GetItem(index)->id; }
-  size_t GetNumItems() override { return items_.size(); }
+  size_t size() override { return items_.size(); }
 
   Element* CreateItemElement(size_t index,
                              SelectItemObserver* observer) override {
     if (Element* element =
             SelectItemSource::CreateItemElement(index, observer)) {
       auto& item = items_[index];
-      element->SetID(item->id);
+      element->set_id(item->id);
       return element;
     }
     return nullptr;

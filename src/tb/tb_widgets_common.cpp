@@ -342,7 +342,7 @@ void ProgressSpinner::RegisterInflater() {
 
 ProgressSpinner::ProgressSpinner() {
   SetSkinBg(TBIDC("ProgressSpinner"), InvokeInfo::kNoCallbacks);
-  m_skin_fg.Set(TBIDC("ProgressSpinner.fg"));
+  m_skin_fg.reset(TBIDC("ProgressSpinner.fg"));
 }
 
 void ProgressSpinner::SetValue(int value) {

@@ -13,9 +13,9 @@
 #include <memory>
 #include <string>
 
-#include "tb/tb_font_desc.h"
 #include "tb/tb_renderer.h"
 
+#include "tb/font_description.h"
 #include "tb/resources/bitmap_fragment.h"
 #include "tb/resources/bitmap_fragment_manager.h"
 #include "tb/resources/font_face.h"
@@ -37,7 +37,7 @@ class FontInfo {
 
   // Gets the font ID that can be used to create this font from a
   // FontDescription (See FontDescription::SetID).
-  TBID GetID() const { return m_id; }
+  TBID id() const { return m_id; }
 
  private:
   friend class FontManager;

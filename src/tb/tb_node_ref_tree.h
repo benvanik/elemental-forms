@@ -10,9 +10,9 @@
 #ifndef TB_NODE_REF_TREE_H
 #define TB_NODE_REF_TREE_H
 
-#include "tb_id.h"
 #include "tb_node_tree.h"
 
+#include "tb/id.h"
 #include "tb/util/link_list.h"
 
 namespace tb {

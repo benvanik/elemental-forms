@@ -18,7 +18,7 @@ namespace tb {
 
 MessageWindow::MessageWindow(Element* target, TBID id) : m_target(target) {
   ElementListener::AddGlobalListener(this);
-  SetID(id);
+  set_id(id);
 }
 
 MessageWindow::~MessageWindow() {
@@ -100,8 +100,8 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   Layout* layout = GetElementByIDAndType<Layout>(3);
   if (!layout) return;
   Button* btn = new Button();
-  btn->SetID(id);
-  btn->SetText(util::GetString(btn->GetID()));
+  btn->set_id(id);
+  btn->SetText(util::GetString(btn->id()));
   layout->AddChild(btn);
   if (focused) {
     btn->SetFocus(FocusReason::kUnknown);
@@ -114,7 +114,7 @@ bool MessageWindow::OnEvent(const ElementEvent& ev) {
 
     // Invoke the click on the target.
     ElementEvent target_ev(EventType::kClick);
-    target_ev.ref_id = ev.target->GetID();
+    target_ev.ref_id = ev.target->id();
     InvokeEvent(target_ev);
 
     // If target got deleted, close.

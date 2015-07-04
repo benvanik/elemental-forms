@@ -681,7 +681,7 @@ void TextBlock::Split() {
     ++brlen;
   }
   len -= brlen;
-  for (size_t i = 0; i < len; i++) {
+  for (size_t i = 0; i < len; ++i) {
     if (is_linebreak(str[i])) {
       TextBlock* block = new TextBlock(style_edit);
       style_edit->blocks.AddAfter(block, this);
@@ -1112,7 +1112,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
   if (block->style_edit->packed.password_on) {
     int cw = block->CalculateStringWidth(font, special_char_password);
     size_t num_char = util::utf8::count_characters(Str(), len);
-    for (size_t i = 0; i < num_char; i++) {
+    for (size_t i = 0; i < num_char; ++i) {
       listener->DrawString(int(x + i * cw), y, font, color,
                            special_char_password);
     }
@@ -1441,7 +1441,7 @@ void StyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
     }
 
     // Paint bg selection.
-    for (int i = 0; i < bg_region.size(); i++) {
+    for (int i = 0; i < bg_region.size(); ++i) {
       listener->DrawTextSelectionBg(bg_region[i]);
     }
   }
@@ -1457,7 +1457,7 @@ void StyleEdit::Paint(const Rect& rect, const FontDescription& font_desc,
   }
 
   // Paint fg selection.
-  for (int i = 0; i < fg_region.size(); i++) {
+  for (int i = 0; i < fg_region.size(); ++i) {
     listener->DrawTextSelectionBg(fg_region[i]);
   }
 

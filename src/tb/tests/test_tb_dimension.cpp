@@ -8,14 +8,14 @@
  */
 
 #include "tb_test.h"
-#include "tb_dimension.h"
+#include "tb/util/dimension_converter.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
 
 TB_TEST_GROUP(tb_dimension_converter) {
-  DimensionConverter dim_conv;
+  util::DimensionConverter dim_conv;
 
   TB_TEST(Init) { dim_conv.SetDPI(100, 200); }
 

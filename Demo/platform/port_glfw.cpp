@@ -436,7 +436,7 @@ static void drop_callback(GLFWwindow* window, int count,
   if (!target) target = backend->GetRoot();
   if (target) {
     ElementEventFileDrop ev;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       ev.files.push_back(files_utf8[i]);
     }
     target->InvokeEvent(ev);

@@ -10,11 +10,10 @@
 #ifndef TB_WIDGET_VALUE_H
 #define TB_WIDGET_VALUE_H
 
-#include "tb_id.h"
-#include "tb_value.h"
-
+#include "tb/id.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
+#include "tb/value.h"
 
 namespace tb {
 

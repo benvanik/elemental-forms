@@ -65,7 +65,7 @@ bool RectRegion::AddRect(const Rect& rect, bool coalesce) {
 }
 
 bool RectRegion::IncludeRect(const Rect& include_rect) {
-  for (size_t i = 0; i < rects_.size(); i++) {
+  for (size_t i = 0; i < rects_.size(); ++i) {
     if (include_rect.intersects(rects_[i])) {
       // Make a region containing the non intersecting parts and then include
       // those recursively (they might still intersect some other part of the
@@ -89,7 +89,7 @@ bool RectRegion::IncludeRect(const Rect& include_rect) {
 
 bool RectRegion::ExcludeRect(const Rect& exclude_rect) {
   size_t num_rects_to_check = rects_.size();
-  for (size_t i = 0; i < num_rects_to_check; i++) {
+  for (size_t i = 0; i < num_rects_to_check; ++i) {
     if (rects_[i].intersects(exclude_rect)) {
       // Remove the existing rectangle we found we intersect
       // and add the pieces we don't intersect. New rects

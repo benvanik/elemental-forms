@@ -83,7 +83,7 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
   // Get the smallest row where we fit.
   int best_row_index = -1;
   BitmapFragmentSpaceAllocator* best_row = nullptr;
-  for (int i = 0; i < m_rows.size(); i++) {
+  for (int i = 0; i < m_rows.size(); ++i) {
     auto row = m_rows[i].get();
     if (!best_row || row->height < best_row->height) {
       // This is the best row so far, if we fit.
@@ -150,7 +150,7 @@ void BitmapFragmentMap::FreeFragmentSpace(BitmapFragment* frag) {
   // If the row is now empty, merge empty rows so larger fragments
   // have a chance of allocating the space.
   if (frag->m_row->IsAllAvailable()) {
-    for (size_t i = 0; i < m_rows.size() - 1; i++) {
+    for (size_t i = 0; i < m_rows.size() - 1; ++i) {
       assert(i >= 0);
       assert(i < m_rows.size() - 1);
       auto row = m_rows[i].get();
@@ -169,7 +169,7 @@ void BitmapFragmentMap::CopyData(BitmapFragment* frag, int data_stride,
   // Copy the bitmap data.
   uint32_t* dst = m_bitmap_data + frag->m_rect.x + frag->m_rect.y * m_bitmap_w;
   uint32_t* src = frag_data;
-  for (int i = 0; i < frag->m_rect.h; i++) {
+  for (int i = 0; i < frag->m_rect.h; ++i) {
     std::memcpy(dst, src, frag->m_rect.w * sizeof(uint32_t));
     dst += m_bitmap_w;
     src += data_stride;
@@ -180,7 +180,7 @@ void BitmapFragmentMap::CopyData(BitmapFragment* frag, int data_stride,
     // Copy vertical edges.
     dst = m_bitmap_data + rect.x + (rect.y + 1) * m_bitmap_w;
     src = frag_data;
-    for (int i = 0; i < frag->m_rect.h; i++) {
+    for (int i = 0; i < frag->m_rect.h; ++i) {
       dst[0] = src[0] & 0x00ffffff;
       dst[rect.w - 1] = src[frag->m_rect.w - 1] & 0x00ffffff;
       dst += m_bitmap_w;
@@ -189,12 +189,12 @@ void BitmapFragmentMap::CopyData(BitmapFragment* frag, int data_stride,
     // Copy horizontal edges.
     dst = m_bitmap_data + rect.x + 1 + rect.y * m_bitmap_w;
     src = frag_data;
-    for (int i = 0; i < frag->m_rect.w; i++) {
+    for (int i = 0; i < frag->m_rect.w; ++i) {
       dst[i] = src[i] & 0x00ffffff;
     }
     dst = m_bitmap_data + rect.x + 1 + (rect.y + rect.h - 1) * m_bitmap_w;
     src = frag_data + (frag->m_rect.h - 1) * data_stride;
-    for (int i = 0; i < frag->m_rect.w; i++) {
+    for (int i = 0; i < frag->m_rect.w; ++i) {
       dst[i] = src[i] & 0x00ffffff;
     }
   }

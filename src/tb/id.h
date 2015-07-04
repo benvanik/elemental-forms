@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_ID_H
-#define TB_ID_H
+#ifndef TB_ID_H_
+#define TB_ID_H_
 
 #include <cassert>
 #include <cstdint>
@@ -23,24 +23,24 @@ namespace tb {
 // string which will be hashed into the uint32_t.
 class TBID {
  public:
-  TBID(uint32_t id = 0) { Set(id); }
-  TBID(const char* string) { Set(string); }
-  TBID(const std::string& string) { Set(string.c_str()); }
-  TBID(const TBID& id) { Set(id); }
+  TBID(uint32_t id = 0) { reset(id); }
+  TBID(const char* string) { reset(string); }
+  TBID(const std::string& string) { reset(string.c_str()); }
+  TBID(const TBID& id) { reset(id); }
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  void Set(uint32_t newid);
-  void Set(const TBID& newid);
-  void Set(const char* string);
+  void reset(uint32_t newid);
+  void reset(const TBID& newid);
+  void reset(const char* string);
 #else
-  void Set(uint32_t newid) { id_ = newid; }
-  void Set(const TBID& newid) { id_ = newid; }
-  void Set(const char* string);
+  void reset(uint32_t newid) { id_ = newid; }
+  void reset(const TBID& newid) { id_ = newid; }
+  void reset(const char* string);
 #endif  // TB_RUNTIME_DEBUG_INFO
 
   operator uint32_t() const { return id_; }
   const TBID& operator=(const TBID& id) {
-    Set(id);
+    reset(id);
     return *this;
   }
 
@@ -61,4 +61,4 @@ static_assert(sizeof(TBID) == sizeof(uint32_t), "Treated as uint32_t");
 
 }  // namespace tb
 
-#endif  // TB_ID_H
+#endif  // TB_ID_H_

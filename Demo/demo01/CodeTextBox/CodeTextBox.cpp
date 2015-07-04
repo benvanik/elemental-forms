@@ -48,7 +48,7 @@ bool CodeTextBox::StringHasColorOverride(const char* str, size_t len,
     int32_t matchLen = (int32_t)strlen(matchAgainst);
     if (matchLen == len) {
       auto matched = true;
-      for (int32_t i = 0; i < len; i++) {
+      for (int32_t i = 0; i < len; ++i) {
         if (toupper(matchAgainst[i]) != toupper(str[i])) {
           matched = false;
           break;

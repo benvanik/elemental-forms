@@ -27,7 +27,7 @@ void HashTable::RemoveAll(bool delete_content) {
 #ifdef TB_RUNTIME_DEBUG_INFO
 // Debug();
 #endif
-  for (uint32_t i = 0; i < m_num_buckets; i++) {
+  for (uint32_t i = 0; i < m_num_buckets; ++i) {
     ITEM* item = m_buckets[i];
     while (item) {
       ITEM* item_next = item->next;
@@ -48,7 +48,7 @@ void HashTable::Rehash(uint32_t new_num_buckets) {
   ITEM** new_buckets = new ITEM* [new_num_buckets];
   std::memset(new_buckets, 0, sizeof(ITEM*) * new_num_buckets);
   // Rehash all items into the new buckets
-  for (uint32_t i = 0; i < m_num_buckets; i++) {
+  for (uint32_t i = 0; i < m_num_buckets; ++i) {
     ITEM* item = m_buckets[i];
     while (item) {
       ITEM* item_next = item->next;
@@ -131,7 +131,7 @@ void HashTable::Debug() {
   StringBuilder line;
   line.AppendString("Hash table: ");
   int total_count = 0;
-  for (uint32_t i = 0; i < m_num_buckets; i++) {
+  for (uint32_t i = 0; i < m_num_buckets; ++i) {
     int count = 0;
     ITEM* item = m_buckets[i];
     while (item) {

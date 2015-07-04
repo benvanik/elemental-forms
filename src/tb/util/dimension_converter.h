@@ -7,49 +7,38 @@
  ******************************************************************************
  */
 
-#ifndef TB_DIMENSION_H
-#define TB_DIMENSION_H
+#ifndef TB_UTIL_DIMENSION_CONVERTER_H_
+#define TB_UTIL_DIMENSION_CONVERTER_H_
 
 #include <string>
 
 #include "tb/config.h"
 
 namespace tb {
-
 class Value;
+}  // namespace tb
+
+namespace tb {
 namespace util {
+
 class StringBuilder;
-}  // namespace util
 
 // Dimensions <= this value will be untouched by conversion in
 // DimensionConverter.
 // To preserve special constants, those must be <= this value.
 constexpr int kInvalidDimension = -5555;
 
-constexpr int kDefaultDpi = 0;
-
 // Converts device independant points to pixels, based on two DPI values.
 // Dimensions in Turbo Badger are normally in pixels (if not specified
 // differently) and conversion normally take place when loading skin.
 class DimensionConverter {
-  int m_src_dpi = 100;  // The source DPI (Normally the base_dpi from skin).
-  int m_dst_dpi = 100;  // The destination DPI (Normally the supported skin DPI
-                        // nearest to util::GetDPI).
-  std::string m_dst_dpi_str;  // The file suffix that should be used to load
-                              // bitmaps in destinatin DPI.
  public:
   DimensionConverter() = default;
 
+  int GetSrcDPI() const { return src_dpi_; }
+  int GetDstDPI() const { return dst_dpi_; }
   // Sets the source and destination DPI that will affect the conversion.
   void SetDPI(int src_dpi, int dst_dpi);
-
-  int GetSrcDPI() const { return m_src_dpi; }
-  int GetDstDPI() const { return m_dst_dpi; }
-
-  // Gets the file name suffix that should be used to load bitmaps in the
-  // destination DPI.
-  // Examples: "@96", "@196"
-  const std::string& GetDstDPIStr() const { return m_dst_dpi_str; }
 
   // Gets the file name with destination DPI suffix.
   // The temp buffer will contain the resulting file name.
@@ -58,7 +47,7 @@ class DimensionConverter {
                          util::StringBuilder* tempbuf) const;
 
   // Returns true if the source and destinatin DPI are different.
-  bool NeedConversion() const { return m_src_dpi != m_dst_dpi; }
+  bool NeedConversion() const { return src_dpi_ != dst_dpi_; }
 
   // Converts device independant points to pixels.
   int DpToPx(int dp) const;
@@ -77,8 +66,19 @@ class DimensionConverter {
   // Number formats are treated as dp.
   // String format is treated like for GetPxFromString.
   int GetPxFromValue(Value* value, int def_value) const;
+
+ private:
+  int src_dpi_ = 100;  // The source DPI (Normally the base_dpi from skin).
+  int dst_dpi_ = 100;  // The destination DPI (Normally the supported skin DPI
+                       // nearest to util::GetDPI).
+
+  // The file name suffix that should be used to load bitmaps in the destination
+  // DPI.
+  // Examples: "@96", "@196"
+  std::string dst_dpi_suffix_;
 };
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_DIMENSION_H
+#endif  // TB_UTIL_DIMENSION_CONVERTER_H_

@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "tb/color.h"
-#include "tb/tb_font_desc.h"
+#include "tb/font_description.h"
 #include "tb/resources/font_effect.h"
 #include "tb/util/link_list.h"
 #include "tb/util/string_builder.h"

@@ -13,8 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "tb_id.h"
-
+#include "tb/id.h"
 #include "tb/util/hash_table.h"
 
 namespace tb {

@@ -126,7 +126,7 @@ FontManager::~FontManager() = default;
 
 FontInfo* FontManager::AddFontInfo(const char* filename, const char* name) {
   FontInfo* fi = new FontInfo(filename, name);
-  m_font_info.Add(fi->GetID(), fi);
+  m_font_info.Add(fi->id(), fi);
   return fi;
 }
 
@@ -154,12 +154,12 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
       !HasFontFace(
           font_desc));  // There is already a font added with this description!
 
-  FontInfo* fi = GetFontInfo(font_desc.GetID());
+  FontInfo* fi = GetFontInfo(font_desc.id());
   if (!fi) {
     return nullptr;
   }
 
-  if (fi->GetID() == 0) {
+  if (fi->id() == 0) {
     // Is this the test dummy font.
     FontFace* font = new FontFace(&m_glyph_cache, nullptr, font_desc);
     m_fonts.Add(font_desc.GetFontFaceID(), font);

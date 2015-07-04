@@ -10,11 +10,10 @@
 #ifndef TB_MSG_H
 #define TB_MSG_H
 
-#include "tb_id.h"
-#include "tb_value.h"
-
+#include "tb/id.h"
 #include "tb/util/link_list.h"
 #include "tb/util/object.h"
+#include "tb/value.h"
 
 namespace tb {
 

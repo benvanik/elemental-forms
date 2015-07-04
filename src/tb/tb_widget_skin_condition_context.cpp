@@ -72,7 +72,7 @@ bool ElementSkinConditionContext::GetCondition(
       }
       return false;
     case SkinProperty::kId:
-      return element->GetID() == info.value;
+      return element->id() == info.value;
     case SkinProperty::kState:
       return !!(uint32_t(element->GetAutoState()) & info.value);
     case SkinProperty::kValue:

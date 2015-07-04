@@ -38,8 +38,8 @@ SelectInline::SelectInline() {
   m_buttons[1].GetContentRoot()->AddChild(new SkinImage(TBIDC("arrow.right")));
   m_buttons[0].SetIsFocusable(false);
   m_buttons[1].SetIsFocusable(false);
-  m_buttons[0].SetID(TBIDC("dec"));
-  m_buttons[1].SetID(TBIDC("inc"));
+  m_buttons[0].set_id(TBIDC("dec"));
+  m_buttons[1].set_id(TBIDC("inc"));
   m_buttons[0].SetAutoRepeat(true);
   m_buttons[1].SetAutoRepeat(true);
   m_text_box.SetTextAlign(TextAlign::kCenter);
@@ -94,12 +94,10 @@ bool SelectInline::OnEvent(const ElementEvent& ev) {
       SetValue(GetValue() + dv);
       return true;
     }
-  } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("dec")) {
+  } else if (ev.type == EventType::kClick && ev.target->id() == TBIDC("dec")) {
     SetValue(GetValue() - 1);
     return true;
-  } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("inc")) {
+  } else if (ev.type == EventType::kClick && ev.target->id() == TBIDC("inc")) {
     SetValue(GetValue() + 1);
     return true;
   } else if (ev.type == EventType::kChanged && ev.target == &m_text_box) {

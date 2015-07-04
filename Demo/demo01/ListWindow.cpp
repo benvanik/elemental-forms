@@ -24,14 +24,14 @@ AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
 }
 
 bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
-  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
+  if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
     AdvancedItem* item = m_source->GetItem(m_index);
     item->SetChecked(ev.target->GetValue() ? true : false);
 
     m_source->InvokeItemChanged(m_index, m_source_viewer);
     return true;
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("delete")) {
+             ev.target->id() == TBIDC("delete")) {
     m_source->DeleteItem(m_index);
     return true;
   }
@@ -68,7 +68,7 @@ ListWindow::ListWindow(SelectItemSource* source) {
 }
 
 bool ListWindow::OnEvent(const ElementEvent& ev) {
-  if (ev.type == EventType::kChanged && ev.target->GetID() == TBIDC("filter")) {
+  if (ev.type == EventType::kChanged && ev.target->id() == TBIDC("filter")) {
     SelectList* select = GetElementByIDAndType<SelectList>("list");
     select->SetFilter(ev.target->GetText());
     return true;
@@ -91,11 +91,11 @@ AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
 bool AdvancedListWindow::OnEvent(const ElementEvent& ev) {
   SelectList* select = GetElementByIDAndType<SelectList>("list");
   if (select && ev.type == EventType::kChanged &&
-      ev.target->GetID() == TBIDC("filter")) {
+      ev.target->id() == TBIDC("filter")) {
     select->SetFilter(ev.target->GetText());
     return true;
   } else if (select && ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("add")) {
+             ev.target->id() == TBIDC("add")) {
     std::string name = GetTextByID(TBIDC("add_name"));
     if (!name.empty()) {
       m_source->AddItem(std::make_unique<AdvancedItem>(
@@ -103,7 +103,7 @@ bool AdvancedListWindow::OnEvent(const ElementEvent& ev) {
     }
     return true;
   } else if (select && ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("delete all")) {
+             ev.target->id() == TBIDC("delete all")) {
     m_source->DeleteAllItems();
     return true;
   }

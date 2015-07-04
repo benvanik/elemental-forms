@@ -7,38 +7,34 @@
  ******************************************************************************
  */
 
-#include "tb_dimension.h"
-
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
 
-#include "tb_value.h"
-
+#include "tb/util/dimension_converter.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
+#include "tb/value.h"
 
 namespace tb {
+namespace util {
 
 void DimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
-  m_src_dpi = src_dpi;
-  m_dst_dpi = dst_dpi;
-  m_dst_dpi_str.clear();
+  src_dpi_ = src_dpi;
+  dst_dpi_ = dst_dpi;
+  dst_dpi_suffix_.clear();
   if (NeedConversion()) {
-    m_dst_dpi_str = tb::util::format_string("@%d", m_dst_dpi);
+    dst_dpi_suffix_ = tb::util::format_string("@%d", dst_dpi_);
   }
 }
 
 void DimensionConverter::GetDstDPIFilename(const std::string& filename,
                                            util::StringBuilder* tempbuf) const {
-  size_t dot_pos = 0;
-  for (dot_pos = filename.size() - 1; dot_pos > 0; dot_pos--) {
-    if (filename[dot_pos] == '.') break;
-  }
+  size_t dot_pos = filename.find_last_of('.');
   tempbuf->ResetAppendPos();
   tempbuf->Append(filename.c_str(), dot_pos);
-  tempbuf->AppendString(GetDstDPIStr());
+  tempbuf->AppendString(dst_dpi_suffix_);
   tempbuf->AppendString(filename.c_str() + dot_pos);
 }
 
@@ -47,10 +43,10 @@ int DimensionConverter::DpToPx(int dp) const {
     return dp;
   }
   if (dp > 0) {
-    dp = dp * m_dst_dpi / m_src_dpi;
+    dp = dp * dst_dpi_ / src_dpi_;
     return std::max(dp, 1);
   } else {
-    dp = dp * m_dst_dpi / m_src_dpi;
+    dp = dp * dst_dpi_ / src_dpi_;
     return std::min(dp, -1);
   }
 }
@@ -92,4 +88,5 @@ int DimensionConverter::GetPxFromValue(Value* value, int def_value) const {
   return GetPxFromString(value->GetString(), def_value);
 }
 
+}  // namespace util
 }  // namespace tb

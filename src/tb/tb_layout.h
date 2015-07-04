@@ -92,7 +92,7 @@ class Layout : public Element {
   static void RegisterInflater();
 
   // This means the spacing should be the default, read from the skin.
-  static const int kSpacingFromSkin = kInvalidDimension;
+  static const int kSpacingFromSkin = util::kInvalidDimension;
 
   Layout(Axis axis = Axis::kX);
 

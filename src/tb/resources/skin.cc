@@ -87,7 +87,7 @@ bool Skin::LoadInternal(const char* skin_file) {
       if (ValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
         int screen_dpi = util::GetDPI();
         int best_supported_dpi = 0;
-        for (int i = 0; i < arr->GetLength(); i++) {
+        for (int i = 0; i < arr->GetLength(); ++i) {
           int candidate_dpi = arr->GetValue(i)->GetInt();
           if (!best_supported_dpi ||
               std::abs(candidate_dpi - screen_dpi) <
@@ -470,6 +470,52 @@ void Skin::PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
   }
 }
 
+int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
+  // Make it appear gradually.
+  // float factor = scrolled_distance / 10.f;
+  // factor = Clamp(factor, 0.5f, 1);
+  // return (int)(fadeout_length * factor);
+  return scrolled_distance > 0 ? fadeout_length : 0;
+}
+
+void Skin::DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y,
+                           int left, int top, int right, int bottom) {
+  if (auto skin = Skin::get()->GetSkinElement(skin_x)) {
+    if (skin->bitmap) {
+      int bw = skin->bitmap->Width();
+      int bh = skin->bitmap->Height();
+      int dw;
+      if ((dw = GetFadeoutSize(left, bw)) > 0) {
+        Renderer::get()->DrawBitmap(
+            Rect(dst_rect.x, dst_rect.y, dw, dst_rect.h), Rect(0, 0, bw, bh),
+            skin->bitmap);
+      }
+      if ((dw = GetFadeoutSize(right, bw)) > 0) {
+        Renderer::get()->DrawBitmap(
+            Rect(dst_rect.x + dst_rect.w - dw, dst_rect.y, dw, dst_rect.h),
+            Rect(bw, 0, -bw, bh), skin->bitmap);
+      }
+    }
+  }
+  if (auto skin = Skin::get()->GetSkinElement(skin_y)) {
+    if (skin->bitmap) {
+      int bw = skin->bitmap->Width();
+      int bh = skin->bitmap->Height();
+      int dh;
+      if ((dh = GetFadeoutSize(top, bh)) > 0) {
+        Renderer::get()->DrawBitmap(
+            Rect(dst_rect.x, dst_rect.y, dst_rect.w, dh), Rect(0, 0, bw, bh),
+            skin->bitmap);
+      }
+      if ((dh = GetFadeoutSize(bottom, bh)) > 0) {
+        Renderer::get()->DrawBitmap(
+            Rect(dst_rect.x, dst_rect.y + dst_rect.h - dh, dst_rect.w, dh),
+            Rect(0, bh, bw, -bh), skin->bitmap);
+      }
+    }
+  }
+}
+
 #ifdef TB_RUNTIME_DEBUG_INFO
 void Skin::Debug() { m_frag_manager.Debug(); }
 #endif  // TB_RUNTIME_DEBUG_INFO
@@ -532,7 +578,7 @@ int SkinElement::GetIntrinsicHeight() const {
   return kSkinValueNotSpecified;
 }
 
-void SkinElement::SetBitmapDPI(const DimensionConverter& dim_conv,
+void SkinElement::SetBitmapDPI(const util::DimensionConverter& dim_conv,
                                int bitmap_dpi) {
   if (this->bitmap_dpi) {
     // We have already applied the modifications so abort. This may
@@ -581,7 +627,7 @@ void SkinElement::Load(Node* n, Skin* skin, const char* skin_path) {
   name = n->GetName();
   id = n->GetName();
 
-  const DimensionConverter* dim_conv = skin->GetDimensionConverter();
+  auto dim_conv = skin->GetDimensionConverter();
 
   if (Node* padding_node = n->GetNode("padding")) {
     Value& val = padding_node->GetValue();
@@ -724,7 +770,7 @@ void SkinElementStateList::Load(Node* n) {
 
     // By default, a state element applies to all combinations of states.
     state->state = SkinState::kAll;
-    state->element_id.Set(element_node->GetValue().GetString());
+    state->element_id.reset(element_node->GetValue().GetString());
 
     // Loop through all nodes, read state and create all found conditions.
     for (Node* condition_node = element_node->GetFirstChild(); condition_node;
@@ -739,7 +785,7 @@ void SkinElementStateList::Load(Node* n) {
         auto prop = from_string(prop_str, SkinProperty::kCustom);
         TBID custom_prop;
         if (prop == SkinProperty::kCustom) {
-          custom_prop.Set(prop_str);
+          custom_prop.reset(prop_str);
         }
 
         TBID value;
@@ -747,11 +793,12 @@ void SkinElementStateList::Load(Node* n) {
           // Set the it to number or string. If it's a state, we must first
           // convert the state string to the SkinState state combo.
           if (prop == SkinProperty::kState) {
-            value.Set(uint32_t(StringToState(value_n->GetValue().GetString())));
+            value.reset(
+                uint32_t(StringToState(value_n->GetValue().GetString())));
           } else if (value_n->GetValue().IsString()) {
-            value.Set(value_n->GetValue().GetString());
+            value.reset(value_n->GetValue().GetString());
           } else {
-            value.Set(value_n->GetValue().GetInt());
+            value.reset(value_n->GetValue().GetInt());
           }
         }
 

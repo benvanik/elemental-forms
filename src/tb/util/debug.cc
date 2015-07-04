@@ -71,7 +71,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     CheckBox* check = new CheckBox();
     check->SetValue(DebugInfo::get()->settings[int(setting)]);
     check->data.SetInt(int(setting));
-    check->SetID(TBIDC("check"));
+    check->set_id(TBIDC("check"));
 
     LabelContainer* label = new LabelContainer();
     label->SetText(str);
@@ -81,7 +81,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
   }
 
   bool OnEvent(const ElementEvent& ev) override {
-    if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
+    if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
       // Update setting and invalidate.
       DebugInfo::get()->settings[ev.target->data.GetInt()] =
           ev.target->GetValue();
@@ -149,7 +149,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     buf.AppendString(")");
 
     buf.AppendString(" id: ");
-    buf.AppendString(GetIDString(ev.target->GetID()));
+    buf.AppendString(GetIDString(ev.target->id()));
 
     if (ev.ref_id) {
       buf.AppendString(", ref_id: ");

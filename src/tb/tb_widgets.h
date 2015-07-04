@@ -14,11 +14,11 @@
 #include <string>
 #include <vector>
 
-#include "tb_font_desc.h"
 #include "tb_widget_value.h"
 
-#include "tb/resources/skin.h"
+#include "tb/font_description.h"
 #include "tb/rect.h"
+#include "tb/resources/skin.h"
 #include "tb/types.h"
 #include "tb/util/link_list.h"
 #include "tb/util/object.h"
@@ -280,7 +280,7 @@ class PreferredSize {
 // override size preferences from skin and element.
 class LayoutParams {
  public:
-  static const int kUnspecified = kInvalidDimension;
+  static const int kUnspecified = util::kInvalidDimension;
 
   LayoutParams() = default;
 
@@ -468,8 +468,8 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // Sets the id reference for this elements. This id is 0 by default.
   // You can use this id to receive the element from GetElementByID (or
   // preferable TBSafeGetByID to avoid dangerous casts).
-  void SetID(const TBID& id);
-  TBID& GetID() { return m_id; }
+  void set_id(const TBID& id);
+  TBID& id() { return m_id; }
 
   // Sets the group id reference for this elements. This id is 0 by default.
   // All elements with the same group id under the same group root will be

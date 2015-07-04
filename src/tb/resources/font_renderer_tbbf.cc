@@ -231,7 +231,7 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
   glyph->w = -1;
 
   // Find the left edge of the glyph
-  for (int i = x; i < width && glyph->x == -1; i++) {
+  for (int i = x; i < width && glyph->x == -1; ++i) {
     for (int j = 0; j < height; j++)
       if (GetAlpha(data32[i + j * width])) {
         glyph->x = x = i;
@@ -240,7 +240,7 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
   }
 
   // Find the right edge of the glyph
-  for (int i = x; i < width; i++) {
+  for (int i = x; i < width; ++i) {
     int j;
     for (j = 0; j < height; j++) {
       if (GetAlpha(data32[i + j * width])) break;

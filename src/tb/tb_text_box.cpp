@@ -11,13 +11,13 @@
 
 #include "tb_menu_window.h"
 #include "tb_select.h"
-#include "tb_skin_util.h"
 #include "tb_style_edit_content.h"
 #include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 
 #include "tb/resources/element_factory.h"
 #include "tb/resources/font_face.h"
+#include "tb/resources/skin.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
 
@@ -253,7 +253,7 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kKeyUp) {
     return true;
   } else if ((ev.type == EventType::kClick &&
-              ev.target->GetID() == TBIDC("popupmenu")) ||
+              ev.target->id() == TBIDC("popupmenu")) ||
              (ev.type == EventType::kShortcut)) {
     if (ev.ref_id == TBIDC("cut") && !m_style_edit.packed.read_only) {
       m_style_edit.Cut();
@@ -334,7 +334,7 @@ void TextBox::OnPaintChildren(const PaintProps& paint_props) {
   Element::OnPaintChildren(paint_props);
 
   // Draw fadeout skin at the needed edges.
-  DrawEdgeFadeout(
+  resources::Skin::DrawEdgeFadeout(
       GetVisibleRect(), TBIDC("TextBox.fadeout_x"), TBIDC("TextBox.fadeout_y"),
       m_scrollbar_x.GetValue(), m_scrollbar_y.GetValue(),
       int(m_scrollbar_x.GetMaxValue() - m_scrollbar_x.GetValueDouble()),

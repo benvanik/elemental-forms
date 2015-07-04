@@ -21,13 +21,13 @@
 #include "tb_widgets_common.h"
 #include "tb_widgets_listener.h"
 #include "tb_window.h"
-#include "tb_value.h"
 
 #include "tb/resources/element_factory.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
+#include "tb/value.h"
 
 namespace tb {
 
@@ -115,9 +115,9 @@ void Element::LoadNodeTree(Node* node) {
 void Element::SetIdFromNode(TBID& id, Node* node) {
   if (!node) return;
   if (node->GetValue().IsString()) {
-    id.Set(node->GetValue().GetString());
+    id.reset(node->GetValue().GetString());
   } else {
-    id.Set(node->GetValue().GetInt());
+    id.reset(node->GetValue().GetInt());
   }
 }
 
@@ -144,7 +144,7 @@ void Element::ReadItemNodes(Node* parent_node,
 }
 
 void Element::OnInflate(const resources::InflateInfo& info) {
-  Element::SetIdFromNode(GetID(), info.node->GetNode("id"));
+  Element::SetIdFromNode(id(), info.node->GetNode("id"));
   Element::SetIdFromNode(GetGroupID(), info.node->GetNode("group-id"));
 
   if (info.sync_type == Value::Type::kFloat) {
@@ -220,8 +220,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
     }
-    const DimensionConverter* dc =
-        resources::Skin::get()->GetDimensionConverter();
+    auto dc = resources::Skin::get()->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
       layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -272,7 +271,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
       fd.SetSize(new_size);
     }
     if (const char* name = font->GetValueString("name", nullptr)) {
-      fd.SetID(name);
+      fd.set_id(name);
     }
     SetFontDescription(fd);
   }
@@ -280,8 +279,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   info.target->OnInflateChild(this);
 
   if (Node* rect_node = info.node->GetNode("rect")) {
-    const DimensionConverter* dc =
-        resources::Skin::get()->GetDimensionConverter();
+    auto dc = resources::Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
       set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
@@ -366,7 +364,7 @@ int Element::GetValueByID(const TBID& id) {
   return 0;
 }
 
-void Element::SetID(const TBID& id) {
+void Element::set_id(const TBID& id) {
   m_id = id;
   InvalidateSkinStates();
 }
@@ -897,7 +895,7 @@ Element* Element::GetChildFromIndex(int index) const {
 int Element::GetIndexFromChild(Element* child) const {
   assert(child->GetParent() == this);
   int i = 0;
-  for (Element* tmp = GetFirstChild(); tmp; tmp = tmp->GetNext(), i++) {
+  for (Element* tmp = GetFirstChild(); tmp; tmp = tmp->GetNext(), ++i) {
     if (tmp == child) {
       return i;
     }

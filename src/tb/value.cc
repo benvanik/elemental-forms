@@ -7,8 +7,6 @@
  ******************************************************************************
  */
 
-#include "tb_value.h"
-
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -16,6 +14,7 @@
 
 #include "tb/util/object.h"
 #include "tb/util/string.h"
+#include "tb/value.h"
 
 namespace tb {
 

@@ -13,7 +13,7 @@
 #include <string>
 
 #include "tb/util/string_builder.h"
-#include "tb_value.h"
+#include "tb/value.h"
 
 namespace tb {
 namespace resources {

@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_VALUE_H
-#define TB_VALUE_H
+#ifndef TB_VALUE_H_
+#define TB_VALUE_H_
 
 #include <cstdint>
 #include <memory>
@@ -150,4 +150,4 @@ class Value {
 
 }  // namespace tb
 
-#endif  // TB_VALUE_H
+#endif  // TB_VALUE_H_

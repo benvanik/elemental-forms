@@ -120,7 +120,7 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
 ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromElement(
     Element* element) {
   ITEM_INFO item_info = {nullptr, -1};
-  for (int i = 0; i < m_element_list_source.GetNumItems(); i++)
+  for (int i = 0; i < m_element_list_source.size(); i++)
     if (m_element_list_source.GetItem(i)->GetElement() == element) {
       item_info.index = i;
       item_info.item = m_element_list_source.GetItem(i);
@@ -137,20 +137,19 @@ void ResourceEditWindow::SetSelectedElement(Element* element) {
 
 bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
-      ev.target->GetID() == TBIDC("element_list_search")) {
+      ev.target->id() == TBIDC("element_list_search")) {
     m_element_list->SetFilter(ev.target->GetText());
     return true;
   } else if (ev.type == EventType::kChanged && ev.target == m_element_list) {
     if (m_element_list->GetValue() >= 0 &&
-        m_element_list->GetValue() < m_element_list_source.GetNumItems())
+        m_element_list->GetValue() < m_element_list_source.size())
       if (ResourceItem* item =
               m_element_list_source.GetItem(m_element_list->GetValue()))
         SetSelectedElement(item->GetElement());
   } else if (ev.type == EventType::kChanged && ev.target == m_source_text_box) {
     RefreshFromSource();
     return true;
-  } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("test")) {
+  } else if (ev.type == EventType::kClick && ev.target->id() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
     Window* win = new Window();
     win->SetText("Test window");
@@ -161,7 +160,7 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
             bounds));
     GetParent()->AddChild(win);
     return true;
-  } else if (ev.target->GetID() == TBIDC("constrained")) {
+  } else if (ev.target->id() == TBIDC("constrained")) {
     m_scroll_container->SetAdaptContentSize(ev.target->GetValue() ? true
                                                                   : false);
     return true;

@@ -26,7 +26,7 @@ Window::Window() {
   m_mover.AddChild(&m_close_button);
   m_close_button.SetSkinBg(TBIDC("Window.close"));
   m_close_button.SetIsFocusable(false);
-  m_close_button.SetID(TBIDC("Window.close"));
+  m_close_button.set_id(TBIDC("Window.close"));
   SetIsGroupRoot(true);
 }
 

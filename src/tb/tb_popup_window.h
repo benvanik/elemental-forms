@@ -21,7 +21,7 @@ namespace tb {
 // popup and target.
 class PopupAlignment {
  public:
-  static const int kUnspecified = kInvalidDimension;
+  static const int kUnspecified = util::kInvalidDimension;
 
   // Aligns relative to the target element.
   PopupAlignment(Align align = Align::kBottom)

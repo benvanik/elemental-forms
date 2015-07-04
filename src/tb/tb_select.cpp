@@ -141,24 +141,24 @@ void SelectList::ValidateList() {
     child->GetParent()->RemoveChild(child);
     delete child;
   }
-  if (!m_source || !m_source->GetNumItems()) {
+  if (!m_source || !m_source->size()) {
     return;
   }
 
   // Create a sorted list of the items we should include using the current
   // filter.
-  util::StringBuilder sort_buf(m_source->GetNumItems() * sizeof(int));
+  util::StringBuilder sort_buf(m_source->size() * sizeof(int));
   int* sorted_index = (int*)sort_buf.GetData();
 
-  // Populate the sorted index list
+  // Populate the sorted index list.
   int num_sorted_items = 0;
-  for (int i = 0; i < m_source->GetNumItems(); i++) {
+  for (size_t i = 0; i < m_source->size(); ++i) {
     if (m_filter.empty() || m_source->Filter(i, m_filter)) {
-      sorted_index[num_sorted_items++] = i;
+      sorted_index[num_sorted_items++] = int(i);
     }
   }
 
-  // Sort
+  // Sort.
   if (m_source->GetSort() != Sort::kNone) {
     std::sort(&sorted_index[0], &sorted_index[num_sorted_items],
               [&](const int a, const int b) {
@@ -174,7 +174,7 @@ void SelectList::ValidateList() {
     Element* element = new Label();
     auto fmt = util::GetString(m_header_lng_string_id);
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
-                                             m_source->GetNumItems()));
+                                             m_source->size()));
     element->SetSkinBg(TBIDC("SelectList.header"));
     element->SetState(Element::State::kDisabled, true);
     element->SetGravity(Gravity::kAll);
@@ -183,7 +183,7 @@ void SelectList::ValidateList() {
   }
 
   // Create new items.
-  for (int i = 0; i < num_sorted_items; i++) {
+  for (int i = 0; i < num_sorted_items; ++i) {
     CreateAndAddItemAfter(sorted_index[i], nullptr);
   }
 
@@ -215,13 +215,13 @@ void SelectList::SetValue(int value) {
 
   ElementEvent ev(EventType::kChanged);
   if (Element* element = GetItemElement(m_value)) {
-    ev.ref_id = element->GetID();
+    ev.ref_id = element->id();
   }
   InvokeEvent(ev);
 }
 
 TBID SelectList::GetSelectedItemID() {
-  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems()) {
+  if (m_source && m_value >= 0 && m_value < m_source->size()) {
     return m_source->GetItemID(m_value);
   }
   return TBID();
@@ -293,7 +293,7 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
       // Invoke the click event on the target list.
       ElementEvent ev(EventType::kClick);
       if (Element* element = GetItemElement(m_value)) {
-        ev.ref_id = element->GetID();
+        ev.ref_id = element->id();
       }
       target_list->InvokeEvent(ev);
     }
@@ -379,7 +379,7 @@ void SelectDropdown::OnInflate(const resources::InflateInfo& info) {
 
 void SelectDropdown::OnSourceChanged() {
   m_value = -1;
-  if (m_source && m_source->GetNumItems()) {
+  if (m_source && m_source->size()) {
     SetValue(0);
   }
 }
@@ -392,7 +392,7 @@ void SelectDropdown::SetValue(int value) {
 
   if (m_value < 0) {
     SetText("");
-  } else if (m_value < m_source->GetNumItems()) {
+  } else if (m_value < m_source->size()) {
     SetText(m_source->GetItemString(m_value));
   }
 
@@ -401,14 +401,14 @@ void SelectDropdown::SetValue(int value) {
 }
 
 TBID SelectDropdown::GetSelectedItemID() {
-  if (m_source && m_value >= 0 && m_value < m_source->GetNumItems()) {
+  if (m_source && m_value >= 0 && m_value < m_source->size()) {
     return m_source->GetItemID(m_value);
   }
   return TBID();
 }
 
 void SelectDropdown::OpenWindow() {
-  if (!m_source || !m_source->GetNumItems() || m_window_pointer.Get()) {
+  if (!m_source || !m_source->size() || m_window_pointer.Get()) {
     return;
   }
 
@@ -444,7 +444,7 @@ bool SelectDropdown::OnEvent(const ElementEvent& ev) {
       OpenWindow();
     }
     return true;
-  } else if (ev.target->GetID() == TBIDC("SelectDropdown.window") &&
+  } else if (ev.target->id() == TBIDC("SelectDropdown.window") &&
              ev.type == EventType::kClick) {
     // Set the value of the clicked item.
     if (MenuWindow* menu_window = GetMenuIfOpen()) {

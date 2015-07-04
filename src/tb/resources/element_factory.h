@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "tb_node_tree.h"
-#include "tb_value.h"
+#include "tb/value.h"
 
 namespace tb {
 class Element;

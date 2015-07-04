@@ -14,7 +14,7 @@
 namespace tb {
 
 MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
-  SetID(id);
+  set_id(id);
   SetSkinBg(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
   m_select_list.GetScrollContainer()->SetAdaptToContentSize(true);
   // Avoid it autoclosing its window on click:

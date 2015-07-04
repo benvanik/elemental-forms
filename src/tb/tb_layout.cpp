@@ -11,9 +11,9 @@
 #include <cassert>
 
 #include "tb_layout.h"
-#include "tb_skin_util.h"
 
 #include "tb/resources/element_factory.h"
+#include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
@@ -482,9 +482,9 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
       skin_y = TBIDC("Layout.fadeout_y");
     }
 
-    DrawEdgeFadeout(padding_rect, skin_x, skin_y, m_overflow_scroll,
-                    m_overflow_scroll, m_overflow - m_overflow_scroll,
-                    m_overflow - m_overflow_scroll);
+    resources::Skin::DrawEdgeFadeout(
+        padding_rect, skin_x, skin_y, m_overflow_scroll, m_overflow_scroll,
+        m_overflow - m_overflow_scroll, m_overflow - m_overflow_scroll);
   }
 
   // Restore clipping

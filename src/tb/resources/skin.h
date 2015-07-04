@@ -12,15 +12,15 @@
 
 #include <memory>
 
-#include "tb_dimension.h"
 #include "tb_renderer.h"
-#include "tb_value.h"
 
 #include "tb/resources/bitmap_fragment.h"
 #include "tb/resources/bitmap_fragment_manager.h"
 #include "tb/types.h"
+#include "tb/util/dimension_converter.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
+#include "tb/value.h"
 
 namespace tb {
 class Node;
@@ -34,7 +34,7 @@ class SkinConditionContext;
 
 // Used for some values in SkinElement if they has not been specified in the
 // skin.
-constexpr int kSkinValueNotSpecified = kInvalidDimension;
+constexpr int kSkinValueNotSpecified = util::kInvalidDimension;
 
 // Skin state types (may be combined).
 enum class SkinState {
@@ -311,7 +311,7 @@ class SkinElement {
 
   // Sets the DPI that the bitmap was loaded in. This may modify properties to
   // compensate for the bitmap resolution.
-  void SetBitmapDPI(const DimensionConverter& dim_conv, int bitmap_dpi);
+  void SetBitmapDPI(const util::DimensionConverter& dim_conv, int bitmap_dpi);
 
   // List of override elements (See Skin::PaintSkin).
   SkinElementStateList m_override_elements;
@@ -381,7 +381,7 @@ class Skin : private RendererListener {
   // Gets the dimension converter used for the current skin. This dimension
   // converter converts to px by the same factor as the skin (based on the skin
   // DPI settings).
-  const DimensionConverter* GetDimensionConverter() const {
+  const util::DimensionConverter* GetDimensionConverter() const {
     return &m_dim_conv;
   }
 
@@ -447,6 +447,13 @@ class Skin : private RendererListener {
   void PaintSkinOverlay(const Rect& dst_rect, SkinElement* element,
                         SkinState state, SkinConditionContext& context);
 
+  // Draw fade out skin elements at the edges of dst_rect if needed.
+  // It indicates to the user that there is hidden content.
+  // left, top, right, bottom specifies the (positive) distance scrolled from
+  // the limit.
+  static void DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y,
+                              int left, int top, int right, int bottom);
+
 #ifdef TB_RUNTIME_DEBUG_INFO
   // Renders the skin bitmaps on screen, to analyze fragment positioning.
   void Debug();
@@ -477,7 +484,7 @@ class Skin : private RendererListener {
   SkinListener* m_listener = nullptr;
   util::HashTableAutoDeleteOf<SkinElement> m_elements;
   BitmapFragmentManager m_frag_manager;
-  DimensionConverter m_dim_conv;
+  util::DimensionConverter m_dim_conv;
   Color m_default_text_color;
   float m_default_disabled_opacity = 0.3f;
   float m_default_placeholder_opacity = 0.2f;

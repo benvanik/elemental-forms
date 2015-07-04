@@ -25,7 +25,7 @@ bool is_hex(char c) {
 
 uint32_t parse_hex(char*& src, int max_count) {
   uint32_t hex = 0;
-  for (int i = 0; i < max_count; i++) {
+  for (int i = 0; i < max_count; ++i) {
     char c = *src;
     if (!is_hex(c)) break;
     hex <<= 4;

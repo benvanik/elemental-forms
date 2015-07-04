@@ -20,7 +20,7 @@ void TabLayout::OnChildAdded(Element* child) {
   if (Button* button = util::SafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
-    button->SetID(TBIDC("tab"));
+    button->set_id(TBIDC("tab"));
   }
 }
 
@@ -146,7 +146,7 @@ void TabContainer::SetAlignment(Align align) {
 
 bool TabContainer::OnEvent(const ElementEvent& ev) {
   if ((ev.type == EventType::kClick || ev.type == EventType::kPointerDown) &&
-      ev.target->GetID() == TBIDC("tab") &&
+      ev.target->id() == TBIDC("tab") &&
       ev.target->GetParent() == &m_tab_layout) {
     int clicked_index = m_tab_layout.GetIndexFromChild(ev.target);
     SetValue(clicked_index);

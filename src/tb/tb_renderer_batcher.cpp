@@ -54,7 +54,7 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
     uint32_t id = batch_id - dbg_begin_paint_batch_id;
     uint32_t hash = id * (2166136261U ^ id);
     uint32_t color = 0xAA000000 + (hash & 0x00FFFFFF);
-    for (int i = 0; i < vertex_count; i++) {
+    for (int i = 0; i < vertex_count; ++i) {
       vertex[i].col = color;
     }
     bitmap = nullptr;

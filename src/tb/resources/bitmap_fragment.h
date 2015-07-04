@@ -13,8 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "tb/id.h"
 #include "tb/rect.h"
-#include "tb/tb_id.h"
 #include "tb/util/space_allocator.h"
 
 namespace tb {

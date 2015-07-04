@@ -154,18 +154,18 @@ class EditWindow : public DemoWindow {
       TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
 
-      if (ev.target->GetID() == TBIDC("clear")) {
+      if (ev.target->id() == TBIDC("clear")) {
         edit->SetText("");
         return true;
-      } else if (ev.target->GetID() == TBIDC("undo")) {
+      } else if (ev.target->id() == TBIDC("undo")) {
         edit->GetStyleEdit()->Undo();
         return true;
-      } else if (ev.target->GetID() == TBIDC("redo")) {
+      } else if (ev.target->id() == TBIDC("redo")) {
         edit->GetStyleEdit()->Redo();
         return true;
-      } else if (ev.target->GetID() == TBIDC("menu")) {
+      } else if (ev.target->id() == TBIDC("menu")) {
         static GenericStringItemSource source;
-        if (!source.GetNumItems()) {
+        if (!source.size()) {
           source.AddItem(std::make_unique<GenericStringItem>(
               "Default font", TBIDC("default font")));
           source.AddItem(std::make_unique<GenericStringItem>(
@@ -194,7 +194,7 @@ class EditWindow : public DemoWindow {
         if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popup_menu")))
           menu->Show(&source, PopupAlignment());
         return true;
-      } else if (ev.target->GetID() == TBIDC("popup_menu")) {
+      } else if (ev.target->id() == TBIDC("popup_menu")) {
         if (ev.ref_id == TBIDC("default font"))
           edit->SetFontDescription(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
@@ -203,19 +203,19 @@ class EditWindow : public DemoWindow {
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
           FontDescription fd = edit->GetCalculatedFontDescription();
-          fd.SetID(TBIDC("Neon"));
+          fd.set_id(TBIDC("Neon"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orangutang")) {
           FontDescription fd = edit->GetCalculatedFontDescription();
-          fd.SetID(TBIDC("Orangutang"));
+          fd.set_id(TBIDC("Orangutang"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orange")) {
           FontDescription fd = edit->GetCalculatedFontDescription();
-          fd.SetID(TBIDC("Orange"));
+          fd.set_id(TBIDC("Orange"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("CJK")) {
           util::StringBuilder buf;
-          for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; cp++, i++) {
+          for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; ++cp, ++i) {
             char utf8[8];
             int len = util::utf8::encode(cp, utf8);
             buf.Append(utf8, len);
@@ -245,7 +245,7 @@ LayoutWindow::LayoutWindow(const std::string& filename) {
 
 bool LayoutWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
-      ev.target->GetID() == TBIDC("select position")) {
+      ev.target->id() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
     if (SelectDropdown* select =
             GetElementByIDAndType<SelectDropdown>(TBIDC("select position")))
@@ -255,7 +255,7 @@ bool LayoutWindow::OnEvent(const ElementEvent& ev) {
         layout->SetLayoutPosition(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("toggle axis")) {
+             ev.target->id() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
       if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
@@ -277,14 +277,13 @@ TabContainerWindow::TabContainerWindow() {
 }
 
 bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
-  if (ev.type == EventType::kClick &&
-      ev.target->GetID() == TBIDC("set_align")) {
+  if (ev.type == EventType::kClick && ev.target->id() == TBIDC("set_align")) {
     if (TabContainer* tc =
             GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer")))
       tc->SetAlignment(static_cast<Align>(ev.target->data.GetInt()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("toggle_tab_axis")) {
+             ev.target->id() == TBIDC("toggle_tab_axis")) {
     static Axis axis = Axis::kX;
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
@@ -298,12 +297,12 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
     }
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("start_spinner")) {
+             ev.target->id() == TBIDC("start_spinner")) {
     if (ProgressSpinner* spinner =
             GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(1);
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("stop_spinner")) {
+             ev.target->id() == TBIDC("stop_spinner")) {
     if (ProgressSpinner* spinner =
             GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
       spinner->SetValue(0);
@@ -319,11 +318,11 @@ ConnectionWindow::ConnectionWindow() {
 
 bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
-      ev.target->GetID() == TBIDC("reset-master-volume")) {
+      ev.target->id() == TBIDC("reset-master-volume")) {
     if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("master-volume")))
       val->SetInt(50);
   } else if (ev.type == EventType::kClick &&
-             ev.target->GetID() == TBIDC("reset-user-name")) {
+             ev.target->id() == TBIDC("reset-user-name")) {
     if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("user-name")))
       val->SetText("");
   }
@@ -346,37 +345,37 @@ ScrollContainerWindow::ScrollContainerWindow() {
 
 bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
-    if (ev.target->GetID() == TBIDC("add img")) {
+    if (ev.target->id() == TBIDC("add img")) {
       Button* button = util::SafeCast<Button>(ev.target);
       SkinImage* skin_image = new SkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
       button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
       return true;
-    } else if (ev.target->GetID() == TBIDC("new buttons")) {
-      for (int i = 0; i < ev.target->data.GetInt(); i++) {
+    } else if (ev.target->id() == TBIDC("new buttons")) {
+      for (int i = 0; i < ev.target->data.GetInt(); ++i) {
         Button* button = new Button;
-        button->SetID(TBIDC("remove button"));
+        button->set_id(TBIDC("remove button"));
         button->SetText(tb::util::format_string("Remove %d", i));
         ev.target->GetParent()->AddChild(button);
       }
       return true;
-    } else if (ev.target->GetID() == TBIDC("new buttons delayed")) {
-      for (int i = 0; i < ev.target->data.GetInt(); i++) {
+    } else if (ev.target->id() == TBIDC("new buttons delayed")) {
+      for (int i = 0; i < ev.target->data.GetInt(); ++i) {
         MessageData* data = new MessageData();
-        data->id1 = ev.target->GetParent()->GetID();
+        data->id1 = ev.target->GetParent()->id();
         data->v1.SetInt(i);
         PostMessageDelayed(TBIDC("new button"), data, 100 + i * 500);
       }
       return true;
-    } else if (ev.target->GetID() == TBIDC("remove button")) {
+    } else if (ev.target->id() == TBIDC("remove button")) {
       ev.target->GetParent()->RemoveChild(ev.target);
       delete ev.target;
       return true;
-    } else if (ev.target->GetID() == TBIDC("showpopupmenu1")) {
+    } else if (ev.target->id() == TBIDC("showpopupmenu1")) {
       if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu1")))
         menu->Show(&popup_menu_source, PopupAlignment());
       return true;
-    } else if (ev.target->GetID() == TBIDC("popupmenu1")) {
+    } else if (ev.target->id() == TBIDC("popupmenu1")) {
       MessageWindow* msg_win = new MessageWindow(this, TBIDC("popup_dialog"));
       msg_win->Show("Info",
                     tb::util::format_string("Menu event received!\nref_id: %d",
@@ -391,7 +390,7 @@ void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message == TBIDC("new button") && msg->data) {
     if (Element* target = GetElementByID(msg->data->id1)) {
       Button* button = new Button;
-      button->SetID(TBIDC("remove button"));
+      button->set_id(TBIDC("remove button"));
       button->SetText(
           tb::util::format_string("Remove %d", msg->data->v1.GetInt()));
       target->AddChild(button);
@@ -406,7 +405,7 @@ ImageWindow::ImageWindow() {
 }
 
 bool ImageWindow::OnEvent(const ElementEvent& ev) {
-  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("remove")) {
+  if (ev.type == EventType::kClick && ev.target->id() == TBIDC("remove")) {
     Element* image = ev.target->GetParent();
     image->GetParent()->RemoveChild(image);
     delete image;
@@ -474,7 +473,7 @@ void AnimationsWindow::Animate() {
 }
 
 bool AnimationsWindow::OnEvent(const ElementEvent& ev) {
-  if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("Animate!"))
+  if (ev.type == EventType::kClick && ev.target->id() == TBIDC("Animate!"))
     Animate();
   return DemoWindow::OnEvent(ev);
 }
@@ -506,14 +505,14 @@ void MainWindow::OnMessageReceived(Message* msg) {
 
 bool MainWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
-    if (ev.target->GetID() == TBIDC("new")) {
+    if (ev.target->id() == TBIDC("new")) {
       new MainWindow();
       return true;
     }
-    if (ev.target->GetID() == TBIDC("msg")) {
+    if (ev.target->id() == TBIDC("msg")) {
       PostMessage(TBIDC("instantmsg"), nullptr);
       return true;
-    } else if (ev.target->GetID() == TBIDC("busymsg")) {
+    } else if (ev.target->id() == TBIDC("busymsg")) {
       if (ev.target->GetValue() == 1) {
         // Post the first "busy" message when we check the checkbox.
         assert(!GetMessageByID(TBIDC("busy")));
@@ -534,10 +533,10 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
           DeleteMessage(busymsg);
       }
       return true;
-    } else if (ev.target->GetID() == TBIDC("delayedmsg")) {
+    } else if (ev.target->id() == TBIDC("delayedmsg")) {
       PostMessageDelayed(TBIDC("delayedmsg"), nullptr, 2000);
       return true;
-    } else if (ev.target->GetID() == TBIDC("Window.close")) {
+    } else if (ev.target->id() == TBIDC("Window.close")) {
       // Intercept the Window.close message and stop it from bubbling
       // to Window (prevent the window from closing)
       MessageWindow* msg_win =
@@ -550,13 +549,13 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
                     "Really <color #0794f8>close</color> the window?",
                     &settings);
       return true;
-    } else if (ev.target->GetID() == TBIDC("confirm_close_dialog")) {
+    } else if (ev.target->id() == TBIDC("confirm_close_dialog")) {
       if (ev.ref_id == TBIDC("MessageWindow.yes")) Close();
       return true;
-    } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
+    } else if (ev.target->id() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
       uint64_t t1 = util::GetTimeMS();
-      for (int i = 0; i < reload_count; i++) {
+      for (int i = 0; i < reload_count; ++i) {
         resources::Skin::get()->ReloadBitmaps();
       }
       uint64_t t2 = util::GetTimeMS();
@@ -567,7 +566,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
                         "Reloading the skin graphics %d times took %dms",
                         reload_count, (int)(t2 - t1)));
       return true;
-    } else if (ev.target->GetID() == TBIDC("test context lost")) {
+    } else if (ev.target->id() == TBIDC("test context lost")) {
       Renderer::get()->InvokeContextLost();
       Renderer::get()->InvokeContextRestored();
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
@@ -575,30 +574,30 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
                     "Called InvokeContextLost and InvokeContextRestored.\n\n"
                     "Does everything look fine?");
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-layout")) {
+    } else if (ev.target->id() == TBIDC("test-layout")) {
       std::string resource_file("Demo/demo01/ui_resources/");
       resource_file.append(ev.target->data.GetString());
       new LayoutWindow(resource_file);
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-connections")) {
+    } else if (ev.target->id() == TBIDC("test-connections")) {
       new ConnectionWindow();
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-list")) {
+    } else if (ev.target->id() == TBIDC("test-list")) {
       new AdvancedListWindow(&advanced_source);
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-image")) {
+    } else if (ev.target->id() == TBIDC("test-image")) {
       new ImageWindow();
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-page")) {
+    } else if (ev.target->id() == TBIDC("test-page")) {
       new PageWindow();
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-animations")) {
+    } else if (ev.target->id() == TBIDC("test-animations")) {
       new AnimationsWindow();
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-scroll-container")) {
+    } else if (ev.target->id() == TBIDC("test-scroll-container")) {
       new ScrollContainerWindow();
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-skin-conditions")) {
+    } else if (ev.target->id() == TBIDC("test-skin-conditions")) {
       (new DemoWindow())
           ->LoadResourceFile(
               "Demo/demo01/ui_resources/test_skin_conditions01.tb.txt");
@@ -606,13 +605,13 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
           ->LoadResourceFile(
               "Demo/demo01/ui_resources/test_skin_conditions02.tb.txt");
       return true;
-    } else if (ev.target->GetID() == TBIDC("test-resource-edit")) {
+    } else if (ev.target->id() == TBIDC("test-resource-edit")) {
       ResourceEditWindow* res_edit_win = new ResourceEditWindow();
       res_edit_win->Load("Demo/demo01/ui_resources/resource_edit_test.tb.txt");
       GetParent()->AddChild(res_edit_win);
       return true;
     } else if (ev.type == EventType::kClick &&
-               ev.target->GetID() == TBIDC("debug settings")) {
+               ev.target->id() == TBIDC("debug settings")) {
 #ifdef TB_RUNTIME_DEBUG_INFO
       util::ShowDebugInfoSettingsWindow(GetParentRoot());
 #else
@@ -830,9 +829,9 @@ int app_main() {
   // added
   FontDescription fd;
 #ifdef TB_FONT_RENDERER_TBBF
-  fd.SetID(TBIDC("Segoe"));
+  fd.set_id(TBIDC("Segoe"));
 #else
-  fd.SetID(TBIDC("Vera"));
+  fd.set_id(TBIDC("Vera"));
 #endif
   fd.SetSize(resources::Skin::get()->GetDimensionConverter()->DpToPx(14));
   font_manager->SetDefaultFontDescription(fd);

@@ -7,8 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_id.h"
-
+#include "tb/id.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/debug.h"
 #include "tb/util/hash.h"
@@ -23,7 +22,7 @@ namespace tb {
 static util::HashTableAutoDeleteOf<TBID> all_id_hash;
 static bool is_adding = false;
 
-void TBID::Set(uint32_t newid) {
+void TBID::reset(uint32_t newid) {
   id_ = newid;
   debug_string.clear();
   if (!is_adding && tb::is_initialized()) {
@@ -35,7 +34,7 @@ void TBID::Set(uint32_t newid) {
   }
 }
 
-void TBID::Set(const TBID& newid) {
+void TBID::reset(const TBID& newid) {
   id_ = newid;
   TB_IF_DEBUG(debug_string = newid.debug_string);
   if (!is_adding && tb::is_initialized()) {
@@ -51,7 +50,7 @@ void TBID::Set(const TBID& newid) {
   }
 }
 
-void TBID::Set(const char* string) {
+void TBID::reset(const char* string) {
   id_ = util::hash(string);
   TB_IF_DEBUG(debug_string = string);
   if (!is_adding && tb::is_initialized()) {
@@ -67,7 +66,7 @@ void TBID::Set(const char* string) {
 
 #else
 
-void TBID::Set(const char* string) { id_ = util::hash(string); }
+void TBID::reset(const char* string) { id_ = util::hash(string); }
 
 #endif  // TB_RUNTIME_DEBUG_INFO
 
