@@ -16,8 +16,9 @@
 #include <string>
 
 #include "tb_node_ref_tree.h"
-#include "tb_parser.h"
 
+#include "tb/resources/text_parser.h"
+#include "tb/resources/text_parser_stream.h"
 #include "tb/util/debug.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
@@ -143,50 +144,7 @@ const char* Node::GetValueStringRaw(const char* request, const char* def) {
   return n ? n->m_value.GetString() : def;
 }
 
-class FileParserStream : public ParserStream {
- public:
-  bool Read(const std::string& filename, ParserTarget* target) {
-    file_ = util::File::Open(filename, util::File::Mode::kRead);
-    if (!file_) {
-      return false;
-    }
-    Parser p;
-    auto status = p.Read(this, target);
-    return status == Parser::Status::kOk ? true : false;
-  }
-
-  size_t GetMoreData(char* buf, size_t buf_len) override {
-    return file_->Read(buf, 1, buf_len);
-  }
-
- private:
-  std::unique_ptr<util::File> file_;
-};
-
-class DataParserStream : public ParserStream {
- public:
-  bool Read(const char* data, size_t data_length, ParserTarget* target) {
-    m_data = data;
-    m_data_len =
-        data_length == std::string::npos ? std::strlen(data) : data_length;
-    Parser p;
-    auto status = p.Read(this, target);
-    return status == Parser::Status::kOk ? true : false;
-  }
-  size_t GetMoreData(char* buf, size_t buf_len) override {
-    size_t consume = std::min(buf_len, m_data_len);
-    memcpy(buf, m_data, consume);
-    m_data += consume;
-    m_data_len -= consume;
-    return consume;
-  }
-
- private:
-  const char* m_data = nullptr;
-  size_t m_data_len = 0;
-};
-
-class NodeTarget : public ParserTarget {
+class NodeTarget : public resources::TextParserTarget {
  public:
   NodeTarget(Node* root, const std::string& filename)
       : m_root_node(root), m_target_node(root), m_filename(filename) {}
@@ -277,7 +235,7 @@ bool Node::ReadFile(const std::string& filename, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();
   }
-  FileParserStream p;
+  resources::FileTextParserStream p;
   NodeTarget t(this, filename);
   if (p.Read(filename, &t)) {
     NodeRefTree::ResolveConditions(this);
@@ -294,7 +252,7 @@ void Node::ReadData(const char* data, size_t data_length, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();
   }
-  DataParserStream p;
+  resources::DataTextParserStream p;
   NodeTarget t(this, "{data}");
   p.Read(data, data_length, &t);
   NodeRefTree::ResolveConditions(this);

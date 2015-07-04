@@ -7,30 +7,22 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARSER_H
-#define TB_PARSER_H
+#ifndef TB_RESOURCES_TEXT_PARSER_H_
+#define TB_RESOURCES_TEXT_PARSER_H_
 
 #include <string>
 
 #include "tb/util/string_builder.h"
-
 #include "tb_value.h"
 
 namespace tb {
+namespace resources {
 
-// Unescapes backslash codes.
-// This is done in place using the string both as source and destination.
-void UnescapeString(char* str);
+class TextParserStream;
 
-// Checks if buf is pointing at a end quote.
-// It may need to iterate buf backwards toward buf_start to check if any
-// preceding backslashes make it a escaped quote (which should not be the end
-// quote).
-bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type);
-
-class ParserTarget {
+class TextParserTarget {
  public:
-  virtual ~ParserTarget() = default;
+  virtual ~TextParserTarget() = default;
   virtual void OnError(int line_nr, const std::string& error) = 0;
   virtual void OnComment(int line_nr, const char* comment) = 0;
   virtual void OnToken(int line_nr, const char* name, Value& value) = 0;
@@ -38,26 +30,20 @@ class ParserTarget {
   virtual void Leave() = 0;
 };
 
-class ParserStream {
- public:
-  virtual ~ParserStream() = default;
-  virtual size_t GetMoreData(char* buf, size_t buf_len) = 0;
-};
-
-class Parser {
+class TextParser {
  public:
   enum class Status {
     kOk,
     kOutOfMemory,
     kParseError,
   };
-  Parser() = default;
-  Status Read(ParserStream* stream, ParserTarget* target);
+  TextParser() = default;
+  Status Read(TextParserStream* stream, TextParserTarget* target);
 
  private:
-  void OnLine(char* line, ParserTarget* target);
-  void OnCompactLine(char* line, ParserTarget* target);
-  void OnMultiline(char* line, ParserTarget* target);
+  void OnLine(char* line, TextParserTarget* target);
+  void OnCompactLine(char* line, TextParserTarget* target);
+  void OnMultiline(char* line, TextParserTarget* target);
   void ConsumeValue(Value& dst_value, char*& line);
 
   int current_indent = 0;
@@ -68,6 +54,7 @@ class Parser {
   bool pending_multiline = false;
 };
 
+}  // namespace resources
 }  // namespace tb
 
-#endif  // TB_PARSER_H
+#endif  // TB_RESOURCES_TEXT_PARSER_H_

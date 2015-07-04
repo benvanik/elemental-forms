@@ -21,6 +21,8 @@
     <ClCompile Include="src\tb\resources\image_loader_stb.cc" />
     <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\resources\image_manager.cc" />
+    <ClCompile Include="src\tb\resources\text_parser.cc" />
+    <ClCompile Include="src\tb\resources\text_parser_stream.cc" />
     <ClCompile Include="src\tb\turbo_badger.cc" />
     <ClCompile Include="src\tb\tb_dimension.cpp" />
     <ClCompile Include="src\tb\tb_text_box.cpp" />
@@ -37,7 +39,6 @@
     <ClCompile Include="src\tb\tb_msg.cpp" />
     <ClCompile Include="src\tb\tb_node_ref_tree.cpp" />
     <ClCompile Include="src\tb\tb_node_tree.cpp" />
-    <ClCompile Include="src\tb\tb_parser.cpp" />
     <ClCompile Include="src\tb\tb_popup_window.cpp" />
     <ClCompile Include="src\tb\tb_renderer.cpp" />
     <ClCompile Include="src\tb\tb_renderer_batcher.cpp" />
@@ -100,8 +101,9 @@
     <ClInclude Include="src\tb\resources\element_factory.h" />
     <ClInclude Include="src\tb\resources\image_loader.h" />
     <ClInclude Include="src\tb\resources\image_manager.h" />
+    <ClInclude Include="src\tb\resources\text_parser.h" />
+    <ClInclude Include="src\tb\resources\text_parser_stream.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
-    <ClInclude Include="src\tb\tb_parser.h" />
     <ClInclude Include="src\tb\tb_renderer_batcher.h" />
     <ClInclude Include="src\tb\tb_renderer_gl.h" />
     <ClInclude Include="src\tb\tb_tooltips.h" />

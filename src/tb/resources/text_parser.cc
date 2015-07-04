@@ -7,15 +7,16 @@
  ******************************************************************************
  */
 
-#include "tb_parser.h"
-
 #include <cassert>
 #include <cctype>
 
+#include "tb/resources/text_parser.h"
+#include "tb/resources/text_parser_stream.h"
 #include "tb/util/string.h"
 #include "tb/util/utf8.h"
 
 namespace tb {
+namespace resources {
 
 bool is_hex(char c) {
   return ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
@@ -34,6 +35,8 @@ uint32_t parse_hex(char*& src, int max_count) {
   return hex;
 }
 
+// Unescapes backslash codes.
+// This is done in place using the string both as source and destination.
 void UnescapeString(char* str) {
   // Fast forward to any escape sequence.
   while (*str && *str != '\\') str++;
@@ -163,6 +166,10 @@ bool is_pending_multiline(const char* str) {
   return str[0] == '\\' && str[1] == 0;
 }
 
+// Checks if buf is pointing at a end quote.
+// It may need to iterate buf backwards toward buf_start to check if any
+// preceding backslashes make it a escaped quote (which should not be the end
+// quote).
 bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
   if (*buf != quote_type) {
     return false;
@@ -174,7 +181,8 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
   return !(num_backslashes & 1);
 }
 
-Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
+TextParser::Status TextParser::Read(TextParserStream* stream,
+                                    TextParserTarget* target) {
   StringBuilder line(1024);
   StringBuilder work(1024);
 
@@ -241,7 +249,7 @@ Parser::Status Parser::Read(ParserStream* stream, ParserTarget* target) {
   return Status::kOk;
 }
 
-void Parser::OnLine(char* line, ParserTarget* target) {
+void TextParser::OnLine(char* line, TextParserTarget* target) {
   if (is_space_or_comment(line)) {
     if (*line == '#') {
       target->OnComment(current_line_nr, line + 1);
@@ -325,7 +333,7 @@ void Parser::OnLine(char* line, ParserTarget* target) {
   }
 }
 
-void Parser::OnCompactLine(char* line, ParserTarget* target) {
+void TextParser::OnCompactLine(char* line, TextParserTarget* target) {
   target->Enter();
   while (*line) {
     // Consume any whitespace.
@@ -369,7 +377,7 @@ void Parser::OnCompactLine(char* line, ParserTarget* target) {
   target->Leave();
 }
 
-void Parser::OnMultiline(char* line, ParserTarget* target) {
+void TextParser::OnMultiline(char* line, TextParserTarget* target) {
   // Consume any whitespace.
   while (is_white_space(line)) {
     line++;
@@ -393,7 +401,7 @@ void Parser::OnMultiline(char* line, ParserTarget* target) {
   }
 }
 
-void Parser::ConsumeValue(Value& dst_value, char*& line) {
+void TextParser::ConsumeValue(Value& dst_value, char*& line) {
   // Find value (As quoted string, or as auto).
   char* value = line;
   if (*line == '\"' || *line == '\'') {
@@ -446,4 +454,5 @@ void Parser::ConsumeValue(Value& dst_value, char*& line) {
   }
 }
 
+}  // namespace resources
 }  // namespace tb
