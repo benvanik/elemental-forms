@@ -16,6 +16,7 @@ void RegisterBuiltinElementInflaters() {
   SelectInline::RegisterInflater();
   Layout::RegisterInflater();
   ScrollContainer::RegisterInflater();
+  SelectDropdown::RegisterInflater();
   SelectList::RegisterInflater();
   TabContainer::RegisterInflater();
   TextBox::RegisterInflater();
