@@ -9,22 +9,20 @@
 //
 // This file contains defines for the default configuration of Turbo Badger.
 // You may change these here, but to make upgrades easier it's better to create
-// a
-// copy of this file in a include path that is searched before Turbo Badger
-// during
-// build (F.ex the solution directory for Visual Studio).
+// a copy of this file in a include path that is searched before Turbo Badger
+// during build (F.ex the solution directory for Visual Studio).
 
-#ifndef TB_CONFIG_H
-#define TB_CONFIG_H
+#ifndef TB_CONFIG_H_
+#define TB_CONFIG_H_
 
-/** Enable for some handy runtime debugging, enabled by modifying
-        the various settings in g_tb_debug. A settings window can be
-        shown by calling ShowDebugInfoSettingsWindow. */
+// Enables for some handy runtime debugging, enabled by modifying the various
+// settings in g_tb_debug. A settings window can be shown by calling
+// ShowDebugInfoSettingsWindow.
 #define TB_RUNTIME_DEBUG_INFO
 
 #ifndef NDEBUG
-/** Enable compilation of unit tests. */
-//#define TB_UNIT_TESTING
+// Enables compilation of unit tests.
+// #define TB_UNIT_TESTING
 #endif
 
 /** Enable if the focus state should automatically be set on edit fields even
@@ -63,14 +61,6 @@
 // == Additional configuration of platform implementations
 // ========================
 
-/** Define for posix implementation of TBFile. */
-//#define TB_FILE_POSIX
-
-/** Defines for implementations of TBClipboard. */
-//#define TB_CLIPBOARD_DUMMY // Cross platform. Not integrating with the OS.
-//#define TB_CLIPBOARD_GLFW // Cross platform using glfw API.
-//#define TB_CLIPBOARD_WINDOWS
-
 /** Defines for implementations of TBSystem. */
 //#define TB_SYSTEM_LINUX
 //#define TB_SYSTEM_WINDOWS
@@ -85,29 +75,22 @@
 // ==========================
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
-#define TB_FILE_POSIX
 #define TB_TARGET_WINDOWS
-#define TB_CLIPBOARD_WINDOWS
 #define TB_SYSTEM_WINDOWS
 #endif
 
 #if defined(__linux) || defined(__linux__)
-#define TB_FILE_POSIX
 #define TB_TARGET_LINUX
 #define TB_SYSTEM_LINUX
-#define TB_CLIPBOARD_GLFW
 #endif
 
 #ifdef MACOSX
-#define TB_FILE_POSIX
 #define TB_TARGET_MACOSX
 #define TB_SYSTEM_LINUX
-#define TB_CLIPBOARD_GLFW
 #endif
 
 #if defined(ANDROID) || defined(__ANDROID__)
 #define TB_SYSTEM_ANDROID
-#define TB_CLIPBOARD_DUMMY
 #endif
 
-#endif  // TB_CONFIG_H
+#endif  // TB_CONFIG_H_

@@ -13,7 +13,6 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_renderer_gl.h"
 #include "tb_system.h"
-#include "tb_types.h"
 
 namespace tb {
 

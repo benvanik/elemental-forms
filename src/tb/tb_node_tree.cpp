@@ -12,12 +12,14 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 #include <string>
 
 #include "tb_node_ref_tree.h"
 #include "tb_system.h"
 #include "tb_language.h"
 
+#include "tb/util/file.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 
@@ -143,22 +145,21 @@ const char* Node::GetValueStringRaw(const char* request, const char* def) {
 class FileParserStream : public ParserStream {
  public:
   bool Read(const std::string& filename, ParserTarget* target) {
-    f = TBFile::Open(filename, TBFile::Mode::kRead);
-    if (!f) {
+    file_ = util::File::Open(filename, util::File::Mode::kRead);
+    if (!file_) {
       return false;
     }
     Parser p;
     auto status = p.Read(this, target);
-    delete f;
     return status == Parser::Status::kOk ? true : false;
   }
 
   size_t GetMoreData(char* buf, size_t buf_len) override {
-    return f->Read(buf, 1, buf_len);
+    return file_->Read(buf, 1, buf_len);
   }
 
  private:
-  TBFile* f = nullptr;
+  std::unique_ptr<util::File> file_;
 };
 
 class DataParserStream : public ParserStream {

@@ -24,7 +24,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     int changed_counter;
     DataListener() : changed_counter(0) {}
     virtual void OnDataChanged(NodeRefTree* dt, const char* request) {
-      changed_request.Set(request);
+      changed_request = request;
       changed_counter++;
     }
   };

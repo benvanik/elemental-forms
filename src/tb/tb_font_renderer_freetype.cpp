@@ -12,6 +12,8 @@
 #include "tb_renderer.h"
 #include "tb_system.h"
 
+#include "tb/util/file.h"
+
 #ifdef TB_FONT_RENDERER_FREETYPE
 
 #include <ft2build.h>
@@ -133,13 +135,12 @@ bool FreetypeFontRenderer::Load(const std::string& filename, int size) {
 
   m_face = new FreetypeFace();
 
-  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
-  if (!f) return false;
+  auto file = util::File::Open(filename, util::File::Mode::kRead);
+  if (!file) return false;
 
-  size_t ttf_buf_size = f->Size();
+  size_t ttf_buf_size = file->Size();
   m_face->ttf_buffer = new unsigned char[ttf_buf_size];
-  ttf_buf_size = f->Read(m_face->ttf_buffer, 1, ttf_buf_size);
-  delete f;
+  ttf_buf_size = file->Read(m_face->ttf_buffer, 1, ttf_buf_size);
 
   if (FT_New_Memory_Face(g_freetype, m_face->ttf_buffer, ttf_buf_size, 0,
                          &m_face->m_face))

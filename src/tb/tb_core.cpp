@@ -10,7 +10,7 @@
 #include "tb_core.h"
 
 #include "tb_animation.h"
-#include "tb_config.h"
+#include "tb/config.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
 #include "tb_language.h"

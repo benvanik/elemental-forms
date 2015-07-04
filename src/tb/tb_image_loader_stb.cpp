@@ -10,7 +10,8 @@
 #include <cstdint>
 
 #include "tb_bitmap_fragment.h"
-#include "tb_system.h"
+
+#include "tb/util/file.h"
 
 #ifdef TB_IMAGE_LOADER_STB
 
@@ -35,7 +36,7 @@ namespace tb {
 class StbiImageLoader : public ImageLoader {
  public:
   int width = 0, height = 0;
-  unsigned char* data = nullptr;
+  uint8_t* data = nullptr;
 
   StbiImageLoader() = default;
   ~StbiImageLoader() { stbi_image_free(data); }
@@ -47,32 +48,26 @@ class StbiImageLoader : public ImageLoader {
 
 ImageLoader* ImageLoader::CreateFromFile(const std::string& filename) {
   // Load directly from file.
-  TBFile* file = TBFile::Open(filename, TBFile::Mode::kRead);
+  auto file = util::File::Open(filename, util::File::Mode::kRead);
   if (!file) {
     return nullptr;
   }
   size_t size = file->Size();
-  unsigned char* data = new unsigned char[size];
-  size = file->Read(data, 1, size);
+  std::vector<uint8_t> buffer(size);
+  size = file->Read(buffer.data(), 1, size);
 
   int w, h, comp;
-  if (unsigned char* img_data =
-          stbi_load_from_memory(data, int(size), &w, &h, &comp, 4)) {
-    if (StbiImageLoader* img = new StbiImageLoader()) {
-      img->width = w;
-      img->height = h;
-      img->data = img_data;
-      delete[] data;
-      delete file;
-      return img;
-    } else {
-      stbi_image_free(img_data);
-    }
+  auto img_data =
+      stbi_load_from_memory(buffer.data(), int(size), &w, &h, &comp, 4);
+  if (!img_data) {
+    return nullptr;
   }
 
-  delete data;
-  delete file;
-  return nullptr;
+  StbiImageLoader* img = new StbiImageLoader();
+  img->width = w;
+  img->height = h;
+  img->data = img_data;
+  return img;
 }
 
 }  // namespace tb

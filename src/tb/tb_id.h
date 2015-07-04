@@ -16,8 +16,6 @@
 
 #include "tb/util/hash.h"
 
-#include "tb_types.h"
-
 namespace tb {
 
 // TBID is a wrapper for a uint32_t to be used as ID.

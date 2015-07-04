@@ -7,15 +7,15 @@
  ******************************************************************************
  */
 
-#ifndef TB_TYPES_H
-#define TB_TYPES_H
+#ifndef TB_TYPES_H_
+#define TB_TYPES_H_
 
 #include <algorithm>
 #include <cctype>
 #include <cstdarg>
 #include <cstring>
 
-#include "tb_config.h"
+#include "tb/config.h"
 
 namespace tb {
 
@@ -32,28 +32,19 @@ T ClampClipMax(const T& value, const T& min, const T& max) {
                        : ((value < min) ? min : value);
 }
 
-#define MAKE_ORDERED_ENUM_STRING_UTILS(Enum, ...)             \
-  \
-inline Enum                                                   \
-  from_string(const char* value, Enum default_value) {        \
-    \
-static const char* text[] = {__VA_ARGS__};                    \
-    \
-for(int i = 0; i < sizeof(text) / sizeof(const char*); ++i) { \
-      if (strcmp(value, text[i]) == 0) {                      \
-        return static_cast<Enum>(i);                          \
-      }                                                       \
-    \
-}                                                      \
-    \
-return default_value;                                         \
-  \
-}                                                        \
-  \
-inline const char*                                            \
-  to_string(Enum value) {                                     \
-    static const char* text[] = {__VA_ARGS__};                \
-    return text[int(value)];                                  \
+#define MAKE_ORDERED_ENUM_STRING_UTILS(Enum, ...)                  \
+  inline Enum from_string(const char* value, Enum default_value) { \
+    static const char* text[] = {__VA_ARGS__};                     \
+    for (int i = 0; i < sizeof(text) / sizeof(const char*); ++i) { \
+      if (std::strcmp(value, text[i]) == 0) {                      \
+        return static_cast<Enum>(i);                               \
+      }                                                            \
+    }                                                              \
+    return default_value;                                          \
+  }                                                                \
+  inline const char* to_string(Enum value) {                       \
+    static const char* text[] = {__VA_ARGS__};                     \
+    return text[int(value)];                                       \
   \
 }
 
@@ -95,4 +86,4 @@ inline void                                              \
 
 }  // namespace tb
 
-#endif  // TB_TYPES_H
+#endif  // TB_TYPES_H_

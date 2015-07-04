@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include "tb/util/clipboard.h"
+#include "tb/util/file.h"
 #include "tb/util/rect_region.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
@@ -191,7 +193,7 @@ void TextSelection::CorrectOrder() {
 
 void TextSelection::CopyToClipboard() {
   if (IsSelected()) {
-    TBClipboard::SetText(GetText());
+    util::Clipboard::SetText(GetText());
   }
 }
 
@@ -1646,8 +1648,8 @@ void StyleEdit::Copy() {
 }
 
 void StyleEdit::Paste() {
-  if (TBClipboard::HasText()) {
-    auto text = TBClipboard::GetText();
+  if (util::Clipboard::HasText()) {
+    auto text = util::Clipboard::GetText();
     InsertText(text, text.size());
     ScrollIfNeeded(true, true);
     listener->OnChange();
@@ -1795,21 +1797,15 @@ void StyleEdit::SetText(const char* text, size_t text_len, CaretPosition pos) {
 }
 
 bool StyleEdit::Load(const char* filename) {
-  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
-  if (!f) {
+  auto file = util::File::Open(filename, util::File::Mode::kRead);
+  if (!file) {
     return false;
   }
-  size_t num_bytes = f->Size();
-
-  char* str = new char[num_bytes + 1];
-  num_bytes = f->Read(str, 1, num_bytes);
+  size_t num_bytes = file->Size();
+  std::vector<char> str(num_bytes + 1);
+  num_bytes = file->Read(str.data(), 1, num_bytes);
   str[num_bytes] = 0;
-
-  delete f;
-
-  SetText(str);
-
-  delete[] str;
+  SetText(str.data());
   return true;
 }
 

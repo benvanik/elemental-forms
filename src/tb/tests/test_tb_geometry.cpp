@@ -8,7 +8,9 @@
  */
 
 #include "tb_test.h"
+
 #include "tb/rect.h"
+#include "tb/util/rect_region.h"
 
 #ifdef TB_UNIT_TESTING
 
@@ -16,7 +18,7 @@ using namespace tb;
 
 TB_TEST_GROUP(tb_geometry) {
   TB_TEST(RectRegion_include) {
-    RectRegion region;
+    util::RectRegion region;
 
     TB_VERIFY(region.IncludeRect(Rect(10, 10, 100, 100)));
     TB_VERIFY(region.IncludeRect(Rect(50, 50, 100, 100)));
@@ -27,7 +29,7 @@ TB_TEST_GROUP(tb_geometry) {
   }
 
   TB_TEST(RectRegion_include_adjecent_coalesce) {
-    RectRegion region;
+    util::RectRegion region;
 
     TB_VERIFY(region.IncludeRect(Rect(10, 10, 10, 10)));
 
@@ -53,7 +55,7 @@ TB_TEST_GROUP(tb_geometry) {
   }
 
   TB_TEST(RectRegion_include_overlap_coalesce) {
-    RectRegion region;
+    util::RectRegion region;
 
     TB_VERIFY(region.IncludeRect(Rect(10, 10, 10, 10)));
 
@@ -64,7 +66,7 @@ TB_TEST_GROUP(tb_geometry) {
   }
 
   TB_TEST(RectRegion_include_overlap_multi_coalesce) {
-    RectRegion region;
+    util::RectRegion region;
 
     TB_VERIFY(region.IncludeRect(Rect(10, 10, 10, 10)));
 
@@ -75,7 +77,7 @@ TB_TEST_GROUP(tb_geometry) {
   }
 
   TB_TEST(RectRegion_exclude) {
-    RectRegion region;
+    util::RectRegion region;
 
     TB_VERIFY(region.Set(Rect(100, 100, 100, 100)));
 

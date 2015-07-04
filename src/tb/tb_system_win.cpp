@@ -32,8 +32,6 @@ void TBDebugOut(const char* format, ...) {
 
 namespace tb {
 
-// == TBSystem ========================================
-
 uint64_t TBSystem::GetTimeMS() {
   FILETIME t;
   GetSystemTimeAsFileTime(&t);

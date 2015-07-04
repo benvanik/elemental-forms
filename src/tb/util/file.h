@@ -7,28 +7,36 @@
  ******************************************************************************
  */
 
-#ifndef TB_UTIL_STRING_H_
-#define TB_UTIL_STRING_H_
+#ifndef TB_UTIL_FILE_H_
+#define TB_UTIL_FILE_H_
 
-#include <cstdarg>
-#include <cstring>
+#include <memory>
 #include <string>
+
+#include "tb/config.h"
 
 namespace tb {
 namespace util {
 
-const char* stristr(const char* arg1, const char* arg2);
+// Porting interface for file access.
+class File {
+ public:
+  enum class Mode {
+    kRead,
+  };
 
-std::string format_string(const char* format, va_list args);
-inline std::string format_string(const char* format, ...) {
-  va_list va;
-  va_start(va, format);
-  auto result = format_string(format, va);
-  va_end(va);
-  return result;
-}
+  virtual ~File() = default;
+
+  static std::unique_ptr<File> Open(const std::string& filename, Mode mode);
+
+  virtual size_t Size() = 0;
+  virtual size_t Read(void* buf, size_t elemSize, size_t count) = 0;
+
+ protected:
+  File() = default;
+};
 
 }  // namespace util
 }  // namespace tb
 
-#endif  // TB_UTIL_STRING_H_
+#endif  // TB_UTIL_FILE_H_

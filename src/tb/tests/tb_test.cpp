@@ -7,9 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_test.h"
+#include <string>
 
 #include "tb_system.h"
+#include "tb_test.h"
 
 #ifdef TB_UNIT_TESTING
 // Reference at least one group in each test file, to force
@@ -45,13 +46,13 @@ const char* fail_text;
 TBTestGroup* g_test_groups = nullptr;
 
 std::string tb_get_test_file_name(const char* testpath, const char* filename) {
-  std::string str;
-  int test_path_len = strlen(testpath);
-  for (int i = test_path_len - 1;
-       i > 0 && testpath[i] != '/' && testpath[i] != '\\'; i--)
+  size_t test_path_len = std::strlen(testpath);
+  for (size_t i = test_path_len - 1;
+       i > 0 && testpath[i] != '/' && testpath[i] != '\\'; i--) {
     test_path_len = i;
-  str.Set(testpath, test_path_len);
-  str.Append(filename);
+  }
+  std::string str(testpath, test_path_len);
+  str.append(filename);
   return str;
 }
 
@@ -87,20 +88,16 @@ const char* CallAndOutput(TBTestGroup* test, TBCall* call) {
   call->exec();
 
   if (!fail_text) return fail_text;
-  std::string msg;
-  msg.SetFormatted(
+  TBDebugOut(
       "FAIL: \"%s/%s\":\n"
       "  %s(%d): \"%s\"\n",
       test->name, call->name(), fail_file, fail_line_nr, fail_text);
-  TBDebugOut(msg);
   return fail_text;
 }
 
 void OutputPass(TBTestGroup* test, const char* call_name) {
   if (!(test_settings & TB_TEST_VERBOSE)) return;
-  std::string msg;
-  msg.SetFormatted("PASS: \"%s/%s\"\n", test->name, call_name);
-  TBDebugOut(msg);
+  TBDebugOut("PASS: \"%s/%s\"\n", test->name, call_name);
 }
 
 int TBRunTests(uint32_t settings) {
@@ -118,9 +115,7 @@ int TBRunTests(uint32_t settings) {
       for (TBCall* call = group->calls.GetFirst(); call; call = call->GetNext())
         if (!group->IsSpecialTest(call)) num_tests_in_group++;
 
-      std::string msg;
-      msg.SetFormatted("  %d tests skipped.\n", num_tests_in_group);
-      TBDebugOut(msg);
+      TBDebugOut("  %d tests skipped.\n", num_tests_in_group);
 
       num_failed += num_tests_in_group;
       continue;
@@ -146,10 +141,7 @@ int TBRunTests(uint32_t settings) {
       CallAndOutput(group, group->shutdown);
   }
 
-  std::string msg;
-  msg.SetFormatted("Test results: %d passed, %d failed.\n", num_passed,
-                   num_failed);
-  TBDebugOut(msg);
+  TBDebugOut("Test results: %d passed, %d failed.\n", num_passed, num_failed);
   return num_failed;
 }
 

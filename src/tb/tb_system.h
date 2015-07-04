@@ -92,35 +92,6 @@ class TBSystem {
 #endif /* TB_TARGET_LINUX */
 };
 
-/** TBClipboard is a porting interface for the clipboard. */
-class TBClipboard {
- public:
-  /** Empty the contents of the clipboard. */
-  static void Empty();
-
-  /** Return true if the clipboard currently contains text. */
-  static bool HasText();
-
-  /** Set the text of the clipboard in UTF-8 format. */
-  static bool SetText(const std::string& text);
-
-  /** Get the text from the clipboard in UTF-8 format. */
-  static std::string GetText();
-};
-
-/** TBFile is a porting interface for file access. */
-class TBFile {
- public:
-  enum class Mode {
-    kRead,
-  };
-  static TBFile* Open(const std::string& filename, Mode mode);
-
-  virtual ~TBFile() {}
-  virtual size_t Size() = 0;
-  virtual size_t Read(void* buf, size_t elemSize, size_t count) = 0;
-};
-
 }  // namespace tb
 
 #endif  // TB_SYSTEM_H

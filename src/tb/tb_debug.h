@@ -10,13 +10,13 @@
 #ifndef TB_DEBUG_H
 #define TB_DEBUG_H
 
-#include "tb_types.h"
+#include "tb/config.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 #define TB_IF_DEBUG(debug) debug
 #else
 #define TB_IF_DEBUG(debug)
-#endif
+#endif  // TB_RUNTIME_DEBUG_INFO
 
 namespace tb {
 
@@ -61,7 +61,7 @@ void ShowDebugInfoSettingsWindow(class Element* root);
 
 #else  // TB_RUNTIME_DEBUG_INFO
 
-/** Show a window containing runtime debugging settings. */
+// Shows a window containing runtime debugging settings.
 #define ShowDebugInfoSettingsWindow(root) ((void)0)
 
 #define TB_DEBUG_SETTING(setting) false

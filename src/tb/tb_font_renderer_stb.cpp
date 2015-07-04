@@ -83,13 +83,12 @@ void SFontRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
 }
 
 bool SFontRenderer::Load(const char* filename, int size) {
-  TBFile* f = TBFile::Open(filename, TBFile::Mode::kRead);
-  if (!f) return false;
+  auto file = util::File::Open(filename, util::File::Mode::kRead);
+  if (!file) return false;
 
-  size_t ttf_buf_size = f->Size();
+  size_t ttf_buf_size = file->Size();
   ttf_buffer = new unsigned char[ttf_buf_size];
-  ttf_buf_size = f->Read(ttf_buffer, 1, ttf_buf_size);
-  delete f;
+  ttf_buf_size = file->Read(ttf_buffer, 1, ttf_buf_size);
 
   stbtt_InitFont(&font, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer, 0));
 

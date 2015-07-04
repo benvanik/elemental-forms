@@ -14,7 +14,6 @@
 #include <cstdlib>
 
 #include "tb_system.h"
-#include "tb_types.h"
 #include "tb_value.h"
 
 #include "tb/util/string.h"

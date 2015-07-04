@@ -94,8 +94,7 @@
 #include <cstdint>
 #include <string>
 
-#include "tb_types.h"
-
+#include "tb/types.h"
 #include "tb/util/link_list.h"
 
 namespace tb {
@@ -125,7 +124,7 @@ int TBRunTests(uint32_t settings = TB_TEST_VERBOSE);
 
 /** Verify that the strings are equal. */
 #define TB_VERIFY_STR(str1, str2) \
-  { TB_VERIFY(strcmp(str1, str2) == 0); }
+  { TB_VERIFY(std::string(str1).compare(str2) == 0); }
 
 /** End the test with a pass. */
 #define TB_PASS() return;

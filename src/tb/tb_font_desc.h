@@ -13,7 +13,6 @@
 #include <algorithm>
 
 #include "tb_id.h"
-#include "tb_types.h"
 
 namespace tb {
 

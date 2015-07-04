@@ -18,7 +18,6 @@
 #include "tb_font_desc.h"
 #include "tb_object.h"
 #include "tb_skin.h"
-#include "tb_types.h"
 #include "tb_widget_value.h"
 
 #include "tb/rect.h"

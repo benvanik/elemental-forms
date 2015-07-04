@@ -14,8 +14,6 @@
 #include <cstdint>
 #include <string>
 
-#include "tb_types.h"
-
 namespace tb {
 
 // Contains a 32bit color.

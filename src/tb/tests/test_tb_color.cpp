@@ -18,7 +18,7 @@ using namespace tb;
 TB_TEST_GROUP(tb_color) {
   TB_TEST(set_from_string_rrggbbaa) {
     Color col;
-    col.SetFromString("#11223344", 9);
+    col.reset("#11223344", 9);
     TB_VERIFY(col.r == 0x11);
     TB_VERIFY(col.g == 0x22);
     TB_VERIFY(col.b == 0x33);
@@ -26,7 +26,7 @@ TB_TEST_GROUP(tb_color) {
   }
   TB_TEST(set_from_string_rrggbb) {
     Color col;
-    col.SetFromString("#112233", 7);
+    col.reset("#112233", 7);
     TB_VERIFY(col.r == 0x11);
     TB_VERIFY(col.g == 0x22);
     TB_VERIFY(col.b == 0x33);
@@ -34,7 +34,7 @@ TB_TEST_GROUP(tb_color) {
   }
   TB_TEST(set_from_string_rgba) {
     Color col;
-    col.SetFromString("#1234", 5);
+    col.reset("#1234", 5);
     TB_VERIFY(col.r == 0x11);
     TB_VERIFY(col.g == 0x22);
     TB_VERIFY(col.b == 0x33);
@@ -42,7 +42,7 @@ TB_TEST_GROUP(tb_color) {
   }
   TB_TEST(set_from_string_rgb) {
     Color col;
-    col.SetFromString("#123", 4);
+    col.reset("#123", 4);
     TB_VERIFY(col.r == 0x11);
     TB_VERIFY(col.g == 0x22);
     TB_VERIFY(col.b == 0x33);
@@ -50,7 +50,7 @@ TB_TEST_GROUP(tb_color) {
   }
   TB_TEST(set_from_string_invalid) {
     Color col;
-    col.SetFromString("123", 3);
+    col.reset("123", 3);
     TB_VERIFY(col.r == 0x0);
     TB_VERIFY(col.g == 0x0);
     TB_VERIFY(col.b == 0x0);

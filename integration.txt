@@ -106,8 +106,8 @@ issue.
 TBSystem
 Needs to be implemented for timers & some settings.
 
-TBClipboard
+Clipboard
 Needs to be implemented for clipboard support.
 
-TBFile
+File
 Needs to be implemented for file loading.

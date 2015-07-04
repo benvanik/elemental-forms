@@ -7,28 +7,31 @@
  ******************************************************************************
  */
 
-#ifndef TB_UTIL_STRING_H_
-#define TB_UTIL_STRING_H_
+#ifndef TB_UTIL_CLIPBOARD_H_
+#define TB_UTIL_CLIPBOARD_H_
 
-#include <cstdarg>
-#include <cstring>
 #include <string>
 
 namespace tb {
 namespace util {
 
-const char* stristr(const char* arg1, const char* arg2);
+// A porting interface for the clipboard.
+class Clipboard {
+ public:
+  // Empties the contents of the clipboard.
+  static void Empty();
 
-std::string format_string(const char* format, va_list args);
-inline std::string format_string(const char* format, ...) {
-  va_list va;
-  va_start(va, format);
-  auto result = format_string(format, va);
-  va_end(va);
-  return result;
-}
+  // Returns true if the clipboard currently contains text.
+  static bool HasText();
+
+  // Gets the text from the clipboard in UTF-8 format.
+  static std::string GetText();
+
+  // Sets the text of the clipboard in UTF-8 format.
+  static bool SetText(const std::string& text);
+};
 
 }  // namespace util
 }  // namespace tb
 
-#endif  // TB_UTIL_STRING_H_
+#endif  // TB_UTIL_CLIPBOARD_H_

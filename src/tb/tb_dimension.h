@@ -13,7 +13,6 @@
 #include <string>
 
 #include "tb_debug.h"
-#include "tb_types.h"
 
 namespace tb {
 

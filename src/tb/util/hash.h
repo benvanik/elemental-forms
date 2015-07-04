@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-#include "tb_types.h"
+#include "tb/config.h"
 
 namespace tb {
 namespace util {
