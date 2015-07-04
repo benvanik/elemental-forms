@@ -24,24 +24,6 @@ namespace util {
 class TypedObject;
 }  // namespace util
 
-// Return true if the given string starts with a number.
-// Ex: 100, -.2, 1.0E-8, 5px will all return true.
-bool is_start_of_number(const char* str);
-
-// Returns true if the given string contains space that is not at the end of the
-// string.
-bool contains_non_trailing_space(const char* str);
-
-// Return true if the string can be represented as a number.
-// It ignores trailing white space.
-// Ex: 100, -.2 will return true.
-// Ex: 1.0E-8, 5px will return false.
-bool is_number_only(const char* str);
-
-// Return true if the given number string is a float number.
-// Should only be called when you've verified it's a number with is_number().
-bool is_number_float(const char* str);
-
 // ValueArray is an array of Value.
 class ValueArray {
  public:

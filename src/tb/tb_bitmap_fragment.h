@@ -18,15 +18,12 @@
 #include "tb/rect.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
+#include "tb/util/math.h"
 
 namespace tb {
 
 class Bitmap;
 class BitmapFragment;
-
-// Returns the nearest power of two from val.
-// F.ex 110 -> 128, 256->256, 257->512 etc.
-int GetNearestPowerOfTwo(int val);
 
 // A class used to load skin images. It can be implemented in any way the system
 // wants, but the system has to provide a image loader capable of handling all

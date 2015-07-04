@@ -20,10 +20,6 @@ namespace tb {
 
 class MessageHandler;
 
-// kNotSoon is returned from MessageHandler::GetNextMessageFireTime
-// and means that there is currently no more messages to process.
-constexpr uint64_t kNotSoon = -1;
-
 // Holds custom data to send with a posted message.
 class MessageData : public util::TypedObject {
  public:
@@ -76,6 +72,10 @@ class Message : public util::TBLinkOf<Message>, public MessageLink {
 // global (among all MessageHandlers).
 class MessageHandler {
  public:
+  // kNotSoon is returned from MessageHandler::GetNextMessageFireTime
+  // and means that there is currently no more messages to process.
+  static const uint64_t kNotSoon = -1;
+
   MessageHandler();
   virtual ~MessageHandler();
 
@@ -123,7 +123,7 @@ class MessageHandler {
   // If there's only delayed messages to process, it returns the time that the
   // earliest delayed message should be fired.
   // If there's no more messages to process at the moment, it returns
-  // kNotSoon (No call to ProcessMessages is needed). */
+  // MessageHandler::kNotSoon (no call to ProcessMessages is needed). */
   static uint64_t GetNextMessageFireTime();
 
  private:

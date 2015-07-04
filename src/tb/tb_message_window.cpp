@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb_message_window.h"
-
 #include <cassert>
 
-#include "tb_language.h"
+#include "tb_message_window.h"
 #include "tb_text_box.h"
 #include "tb_widgets_reader.h"
+
+#include "tb/util/string_table.h"
 
 namespace tb {
 
@@ -102,7 +102,7 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   if (!layout) return;
   Button* btn = new Button();
   btn->SetID(id);
-  btn->SetText(Language::get()->GetString(btn->GetID()));
+  btn->SetText(util::GetString(btn->GetID()));
   layout->AddChild(btn);
   if (focused) {
     btn->SetFocus(FocusReason::kUnknown);

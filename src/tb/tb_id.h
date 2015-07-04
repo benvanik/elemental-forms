@@ -51,7 +51,7 @@ class TBID {
 #ifdef TB_RUNTIME_DEBUG_INFO
   // This string is here to aid debugging (Only in debug builds!)
   // It should not to be used in your code!
-  friend class Language;
+  friend class StringTable;
   std::string debug_string;
 #endif  // TB_RUNTIME_DEBUG_INFO
 };

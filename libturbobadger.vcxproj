@@ -27,7 +27,6 @@
     <ClCompile Include="src\tb\tb_image_manager.cpp" />
     <ClCompile Include="src\tb\tb_image_widget.cpp" />
     <ClCompile Include="src\tb\tb_inline_select.cpp" />
-    <ClCompile Include="src\tb\tb_language.cpp" />
     <ClCompile Include="src\tb\tb_layout.cpp" />
     <ClCompile Include="src\tb\tb_menu_window.cpp" />
     <ClCompile Include="src\tb\tb_message_window.cpp" />
@@ -84,6 +83,7 @@
     <ClCompile Include="src\tb\util\rect_region.cc" />
     <ClCompile Include="src\tb\util\string.cc" />
     <ClCompile Include="src\tb\util\string_builder.cc" />
+    <ClCompile Include="src\tb\util\string_table.cc" />
     <ClCompile Include="src\tb\util\utf8.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +106,6 @@
     <ClInclude Include="src\tb\tb_font_renderer.h" />
     <ClInclude Include="src\tb\tb_id.h" />
     <ClInclude Include="src\tb\tb_inline_select.h" />
-    <ClInclude Include="src\tb\tb_language.h" />
     <ClInclude Include="src\tb\tb_layout.h" />
     <ClInclude Include="src\tb\tb_menu_window.h" />
     <ClInclude Include="src\tb\tb_message_window.h" />
@@ -141,11 +140,13 @@
     <ClInclude Include="src\tb\util\hash.h" />
     <ClInclude Include="src\tb\util\hash_table.h" />
     <ClInclude Include="src\tb\util\link_list.h" />
+    <ClInclude Include="src\tb\util\math.h" />
     <ClInclude Include="src\tb\util\metrics.h" />
     <ClInclude Include="src\tb\util\object.h" />
     <ClInclude Include="src\tb\util\rect_region.h" />
     <ClInclude Include="src\tb\util\string.h" />
     <ClInclude Include="src\tb\util\string_builder.h" />
+    <ClInclude Include="src\tb\util\string_table.h" />
     <ClInclude Include="src\tb\util\timer.h" />
     <ClInclude Include="src\tb\util\utf8.h" />
   </ItemGroup>

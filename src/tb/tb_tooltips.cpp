@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "tb_language.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {

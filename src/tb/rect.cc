@@ -10,7 +10,7 @@
 #include <cassert>
 
 #include "tb/rect.h"
-#include "tb/types.h"
+#include "tb/util/math.h"
 #include "tb/util/string.h"
 
 namespace tb {
@@ -32,10 +32,11 @@ bool Rect::intersects(const Rect& rect) const {
 }
 
 Rect Rect::MoveIn(const Rect& bounding_rect) const {
-  return Rect(
-      ClampClipMax(x, bounding_rect.x, bounding_rect.x + bounding_rect.w - w),
-      ClampClipMax(y, bounding_rect.y, bounding_rect.y + bounding_rect.h - h),
-      w, h);
+  return Rect(util::ClampClipMax(x, bounding_rect.x,
+                                 bounding_rect.x + bounding_rect.w - w),
+              util::ClampClipMax(y, bounding_rect.y,
+                                 bounding_rect.y + bounding_rect.h - h),
+              w, h);
 }
 
 Rect Rect::CenterIn(const Rect& bounding_rect) const {

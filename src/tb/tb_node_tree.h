@@ -10,7 +10,7 @@
 #ifndef TB_NODE_TREE_H
 #define TB_NODE_TREE_H
 
-#include "tb_parser.h"
+#include "tb/tb_value.h"
 
 #include "tb/types.h"
 #include "tb/util/link_list.h"

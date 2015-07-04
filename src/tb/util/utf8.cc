@@ -1,5 +1,7 @@
 #include "tb/util/utf8.h"
 
+namespace tb {
+namespace util {
 namespace utf8 {
 
 /** is c the start of a UTF-8 sequence? */
@@ -113,4 +115,6 @@ size_t count_characters(const char* str, size_t i_max) {
   return count;
 }
 
-};  // namespace utf8
+}  // namespace utf8
+}  // namespace util
+}  // namespace tb

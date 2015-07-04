@@ -15,6 +15,7 @@
 #include "tb_font_renderer.h"
 #include "tb_widgets_listener.h"
 
+#include "tb/util/math.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
@@ -442,7 +443,7 @@ void ScrollBar::SetLimits(double min, double max, double visible) {
 }
 
 void ScrollBar::SetValueDouble(double value) {
-  value = Clamp(value, m_min, m_max);
+  value = util::Clamp(value, m_min, m_max);
   if (value == m_value) {
     return;
   }
@@ -551,7 +552,7 @@ void Slider::SetLimits(double min, double max) {
 }
 
 void Slider::SetValueDouble(double value) {
-  value = Clamp(value, m_min, m_max);
+  value = util::Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
 
@@ -643,10 +644,12 @@ bool Mover::OnEvent(const ElementEvent& ev) {
     Rect rect = target->rect().Offset(dx, dy);
     if (target->GetParent()) {
       // Apply limit.
-      rect.x = Clamp(rect.x, -pointer_down_element_x,
-                     target->GetParent()->rect().w - pointer_down_element_x);
-      rect.y = Clamp(rect.y, -pointer_down_element_y,
-                     target->GetParent()->rect().h - pointer_down_element_y);
+      rect.x =
+          util::Clamp(rect.x, -pointer_down_element_x,
+                      target->GetParent()->rect().w - pointer_down_element_x);
+      rect.y =
+          util::Clamp(rect.y, -pointer_down_element_y,
+                      target->GetParent()->rect().h - pointer_down_element_y);
     }
     target->set_rect(rect);
     return true;

@@ -7,10 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_window.h"
-
 #include <algorithm>
 #include <cassert>
+
+#include "tb_window.h"
+
+#include "tb/util/math.h"
 
 namespace tb {
 
@@ -49,8 +51,8 @@ Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
     new_w = ps.min_w;
     new_h = ps.min_h;
   } else if (fit == ResizeFit::kCurrentOrNeeded) {
-    new_w = Clamp(rect().w, ps.min_w, ps.max_w);
-    new_h = Clamp(rect().h, ps.min_h, ps.max_h);
+    new_w = util::Clamp(rect().w, ps.min_w, ps.max_w);
+    new_h = util::Clamp(rect().h, ps.min_h, ps.max_h);
   }
   if (GetParent()) {
     new_w = std::min(new_w, GetParent()->rect().w);

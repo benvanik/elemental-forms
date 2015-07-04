@@ -12,7 +12,6 @@
 #include <algorithm>
 
 #include "tb_font_renderer.h"
-#include "tb_language.h"
 #include "tb_menu_window.h"
 #include "tb_select.h"
 #include "tb_skin_util.h"
@@ -21,6 +20,7 @@
 #include "tb_widgets_reader.h"
 
 #include "tb/util/metrics.h"
+#include "tb/util/string_table.h"
 
 namespace tb {
 
@@ -252,16 +252,16 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
     MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
     source->AddItem(std::make_unique<GenericStringItem>(
-        Language::get()->GetString(TBIDC("cut")), TBIDC("cut")));
+        util::GetString(TBIDC("cut")), TBIDC("cut")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        Language::get()->GetString(TBIDC("copy")), TBIDC("copy")));
+        util::GetString(TBIDC("copy")), TBIDC("copy")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        Language::get()->GetString(TBIDC("paste")), TBIDC("paste")));
+        util::GetString(TBIDC("paste")), TBIDC("paste")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        Language::get()->GetString(TBIDC("delete")), TBIDC("delete")));
+        util::GetString(TBIDC("delete")), TBIDC("delete")));
     source->AddItem(std::make_unique<GenericStringItem>("-"));
     source->AddItem(std::make_unique<GenericStringItem>(
-        Language::get()->GetString(TBIDC("selectall")), TBIDC("selectall")));
+        util::GetString(TBIDC("selectall")), TBIDC("selectall")));
     menu->Show(source, PopupAlignment(pos_in_root), -1);
     return true;
   }

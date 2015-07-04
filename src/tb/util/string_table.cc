@@ -2,21 +2,22 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #include "tb_node_tree.h"
-#include "tb_language.h"
 
 #include "tb/util/string.h"
+#include "tb/util/string_table.h"
 
 namespace tb {
+namespace util {
 
-std::unique_ptr<Language> Language::language_singleton_;
+std::unique_ptr<StringTable> StringTable::string_table_singleton_;
 
-bool Language::Load(const char* filename) {
+bool StringTable::Load(const char* filename) {
   // Read the file into a node tree (even though it's only a flat list).
   Node node;
   if (!node.ReadFile(filename)) {
@@ -33,9 +34,9 @@ bool Language::Load(const char* filename) {
   return true;
 }
 
-void Language::Clear() { table_.clear(); }
+void StringTable::Clear() { table_.clear(); }
 
-std::string Language::GetString(const TBID& id) {
+std::string StringTable::GetString(const TBID& id) {
   auto& it = table_.find(id);
   if (it != table_.end()) {
     return it->second;
@@ -47,4 +48,5 @@ std::string Language::GetString(const TBID& id) {
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 
+}  // namespace util
 }  // namespace tb

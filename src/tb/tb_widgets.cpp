@@ -22,6 +22,7 @@
 #include "tb_window.h"
 
 #include "tb/util/debug.h"
+#include "tb/util/math.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
@@ -214,7 +215,7 @@ void Element::SetAutoFocusState(bool on) {
 }
 
 void Element::SetOpacity(float opacity) {
-  opacity = Clamp(opacity, 0.f, 1.f);
+  opacity = util::Clamp(opacity, 0.f, 1.f);
   if (m_opacity == opacity) {
     return;
   }

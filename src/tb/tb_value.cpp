@@ -15,27 +15,15 @@
 #include <cstring>
 
 #include "tb/util/object.h"
+#include "tb/util/string.h"
 
 namespace tb {
 
 // FIX: ## Floating point string conversions might be locale dependant. Force
 // "." as decimal!
 
-char* next_token(char*& str, const char* delim) {
-  str += strspn(str, delim);
-  if (!*str) return nullptr;
-  char* token = str;
-  str += strcspn(str, delim);
-  if (*str) *str++ = '\0';
-  return token;
-}
-
-bool is_start_of_number(const char* str) {
-  if (*str == '-') str++;
-  if (*str == '.') str++;
-  return *str >= '0' && *str <= '9';
-}
-
+// Returns true if the given string contains space that is not at the end of the
+// string.
 bool contains_non_trailing_space(const char* str) {
   if (const char* p = strstr(str, " ")) {
     while (*p == ' ') p++;
@@ -44,6 +32,10 @@ bool contains_non_trailing_space(const char* str) {
   return false;
 }
 
+// Return true if the string can be represented as a number.
+// It ignores trailing white space.
+// Ex: 100, -.2 will return true.
+// Ex: 1.0E-8, 5px will return false.
 bool is_number_only(const char* s) {
   if (!s || *s == 0 || *s == ' ') return 0;
   char* p;
@@ -52,10 +44,21 @@ bool is_number_only(const char* s) {
   return *p == '\0';
 }
 
+// Return true if the given number string is a float number.
+// Should only be called when you've verified it's a number with is_number().
 bool is_number_float(const char* str) {
   while (*str)
     if (*str++ == '.') return true;
   return false;
+}
+
+char* next_token(char*& str, const char* delim) {
+  str += strspn(str, delim);
+  if (!*str) return nullptr;
+  char* token = str;
+  str += strcspn(str, delim);
+  if (*str) *str++ = '\0';
+  return token;
 }
 
 ValueArray::ValueArray() = default;
@@ -218,7 +221,8 @@ void Value::SetFromStringAuto(const char* str, Set set) {
     } else {
       SetInt(atoi(str));
     }
-  } else if (is_start_of_number(str) && contains_non_trailing_space(str)) {
+  } else if (util::is_start_of_number(str) &&
+             contains_non_trailing_space(str)) {
     // If the number has nontrailing space, we'll assume a list of numbers.
     // (example: "10 -4 3.5")
     SetNull();

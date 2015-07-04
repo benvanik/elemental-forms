@@ -204,7 +204,7 @@ bool TBBFRenderer::FindGlyphs() {
   size_t glyph_str_len = strlen(glyph_str);
   size_t i = 0;
   int x = 0;
-  while (UCS4 uc = utf8::decode_next(glyph_str, &i, glyph_str_len)) {
+  while (UCS4 uc = util::utf8::decode_next(glyph_str, &i, glyph_str_len)) {
     if (GLYPH* glyph = FindNext(uc, x)) {
       m_glyph_table.Add(uc, glyph);
       x = glyph->x + glyph->w + 1;

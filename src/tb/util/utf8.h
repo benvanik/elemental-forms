@@ -3,9 +3,11 @@
 
 #include <cstdint>
 
-typedef unsigned int UCS4;
-
+namespace tb {
+namespace util {
 namespace utf8 {
+
+typedef uint32_t UCS4;
 
 /** Decodes UTF-8 from a string input to a UCS4 character.
         @param src buffer in UTF-8 that should be decoded. If the buffer
@@ -57,5 +59,7 @@ void move_dec(const char* str, size_t* i);
 size_t count_characters(const char* str, size_t i_max);
 
 }  // namespace utf8
+}  // namespace util
+}  // namespace tb
 
 #endif  // TB_UTIL_UTF8_H_

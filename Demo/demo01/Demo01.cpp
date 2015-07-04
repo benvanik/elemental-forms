@@ -216,7 +216,7 @@ class EditWindow : public DemoWindow {
           StringBuilder buf;
           for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; cp++, i++) {
             char utf8[8];
-            int len = utf8::encode(cp, utf8);
+            int len = util::utf8::encode(cp, utf8);
             buf.Append(utf8, len);
             if (i % 64 == 63) buf.Append("\n", 1);
           }

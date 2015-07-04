@@ -23,6 +23,7 @@ namespace tb {
 
 class FontFace;
 class FontManager;
+using UCS4 = tb::util::utf8::UCS4;
 
 // Rendering info used during glyph rendering by FontRenderer.
 // It does not own the data pointers.

@@ -12,6 +12,7 @@
 #include <cassert>
 #include <cctype>
 
+#include "tb/util/string.h"
 #include "tb/util/utf8.h"
 
 namespace tb {
@@ -81,8 +82,8 @@ void UnescapeString(char* str) {
           // This should be safe. A utf-8 character can be at most 4 bytes,
           // and we have 4 bytes to use for \xXX and 6 for \uXXXX.
           src += 2;
-          if (UCS4 hex = parse_hex(src, src[1] == 'x' ? 2 : 4)) {
-            dst += utf8::encode(hex, dst);
+          if (auto hex = parse_hex(src, src[1] == 'x' ? 2 : 4)) {
+            dst += util::utf8::encode(hex, dst);
           }
           continue;
         }
@@ -300,7 +301,7 @@ void Parser::OnLine(char* line, ParserTarget* target) {
       // Check if the first argument is not a child but the value for this
       // token.
       if (*line == '[' || *line == '\"' || *line == '\'' ||
-          is_start_of_number(line) || is_start_of_color(line) ||
+          util::is_start_of_number(line) || is_start_of_color(line) ||
           is_start_of_reference(line)) {
         ConsumeValue(value, line);
 

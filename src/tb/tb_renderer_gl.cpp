@@ -14,6 +14,7 @@
 #include "tb_renderer_gl.h"
 
 #include "tb/util/debug.h"
+#include "tb/util/math.h"
 
 namespace tb {
 
@@ -52,8 +53,8 @@ BitmapGL::~BitmapGL() {
 }
 
 bool BitmapGL::Init(int width, int height, uint32_t* data) {
-  assert(width == GetNearestPowerOfTwo(width));
-  assert(height == GetNearestPowerOfTwo(height));
+  assert(width == util::GetNearestPowerOfTwo(width));
+  assert(height == util::GetNearestPowerOfTwo(height));
 
   m_w = width;
   m_h = height;

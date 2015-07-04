@@ -357,7 +357,8 @@ static void scroll_callback(GLFWwindow* window, double x, double y) {
                                                -(int)y, GetModifierKeys());
 }
 
-/** Reschedule the platform timer, or cancel it if fire_time is kNotSoon.
+/** Reschedule the platform timer, or cancel it if fire_time is
+   MessageHandler::kNotSoon.
         If fire_time is 0, it should be fired ASAP.
         If force is true, it will ask the platform to schedule it again, even if
         the fire_time is the same as last time. */
@@ -365,7 +366,7 @@ static void scroll_callback(GLFWwindow* window, double x, double y) {
 #ifndef TB_TARGET_LINUX
 static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
   static uint64_t set_fire_time = -1;
-  if (fire_time == kNotSoon) {
+  if (fire_time == MessageHandler::kNotSoon) {
     set_fire_time = -1;
     glfwKillTimer();
   } else if (fire_time != set_fire_time || force || fire_time == 0) {

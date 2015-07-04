@@ -7,11 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_popup_window.h"
-
 #include <algorithm>
 
+#include "tb_popup_window.h"
 #include "tb_widgets_listener.h"
+
+#include "tb/util/math.h"
 
 namespace tb {
 
@@ -37,7 +38,7 @@ Rect PopupAlignment::GetAlignedRect(Element* popup, Element* target) const {
     avoid_h = pos_offset.y;
     // Make sure it's moved into view horizontally.
     if (align == Align::kTop || align == Align::kBottom) {
-      x = Clamp(x, 0, root->rect().w - w);
+      x = util::Clamp(x, 0, root->rect().w - w);
     }
   } else {
     target->ConvertToRoot(x, y);

@@ -16,12 +16,13 @@
 #include <string>
 
 #include "tb_node_ref_tree.h"
-#include "tb_language.h"
+#include "tb_parser.h"
 
 #include "tb/util/debug.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
+#include "tb/util/string_table.h"
 
 namespace tb {
 
@@ -127,7 +128,7 @@ const char* Node::GetValueString(const char* request, const char* def) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
         static std::string temp;
-        temp = Language::get()->GetString(string + 1);
+        temp = util::GetString(string + 1);
         string = temp.c_str();
       }
       return string;

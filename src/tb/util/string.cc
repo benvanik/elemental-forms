@@ -30,6 +30,12 @@ const char* stristr(const char* arg1, const char* arg2) {
   return nullptr;
 }
 
+bool is_start_of_number(const char* str) {
+  if (*str == '-') str++;
+  if (*str == '.') str++;
+  return *str >= '0' && *str <= '9';
+}
+
 std::string format_string(const char* format, va_list args) {
   if (!format) {
     return "";

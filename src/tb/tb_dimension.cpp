@@ -63,7 +63,7 @@ int DimensionConverter::MmToPx(int mm) const {
 }
 
 int DimensionConverter::GetPxFromString(const char* str, int def_value) const {
-  if (!str || !is_start_of_number(str)) {
+  if (!str || !util::is_start_of_number(str)) {
     return def_value;
   }
   size_t len = strlen(str);

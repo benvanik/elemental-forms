@@ -456,9 +456,9 @@ bool Caret::Move(bool forward, bool word) {
     } else {
       size_t i = pos.ofs;
       if (forward) {
-        utf8::move_inc(pos.block->str.c_str(), &i, pos.block->str_len);
+        util::utf8::move_inc(pos.block->str.c_str(), &i, pos.block->str_len);
       } else {
-        utf8::move_dec(pos.block->str.c_str(), &i);
+        util::utf8::move_dec(pos.block->str.c_str(), &i);
       }
       pos.ofs = i;
     }
@@ -725,7 +725,7 @@ int32_t TextBlock::CalculateStringWidth(FontFace* font, const char* str,
   if (style_edit->packed.password_on) {
     // Convert the length in number or characters, since that's what matters for
     // password width.
-    len = utf8::count_characters(str, len);
+    len = util::utf8::count_characters(str, len);
     return font->GetStringWidth(special_char_password) * int(len);
   }
   return font->GetStringWidth(str, len);
@@ -747,7 +747,7 @@ int TextBlock::GetStartIndentation(FontFace* font,
   size_t i = 0;
   while (i < first_line_len) {
     const char* current_str = str.c_str() + i;
-    UCS4 uc = utf8::decode_next(str.c_str(), &i, first_line_len);
+    auto uc = util::utf8::decode_next(str.c_str(), &i, first_line_len);
     switch (uc) {
       case '\t':
         indentation += CalculateTabWidth(font, indentation);
@@ -1111,7 +1111,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
   }
   if (block->style_edit->packed.password_on) {
     int cw = block->CalculateStringWidth(font, special_char_password);
-    size_t num_char = utf8::count_characters(Str(), len);
+    size_t num_char = util::utf8::count_characters(Str(), len);
     for (size_t i = 0; i < num_char; i++) {
       listener->DrawString(int(x + i * cw), y, font, color,
                            special_char_password);
@@ -1186,7 +1186,7 @@ size_t TextFragment::GetCharOfs(FontFace* font, int32_t x) {
   size_t i = 0;
   while (i < len) {
     size_t pos = i;
-    utf8::move_inc(str, &i, len);
+    util::utf8::move_inc(str, &i, len);
     size_t last_char_len = i - pos;
     // Always measure from the beginning of the fragment because of eventual
     // kerning & text shaping etc.
@@ -1600,7 +1600,7 @@ bool StyleEdit::KeyDown(int key, SpecialKey special_key,
              (key && !any(modifierkeys & ModifierKeys::kCtrl)) &&
              special_key != SpecialKey::kEnter) {
     char utf8[8];
-    int len = utf8::encode(key, utf8);
+    int len = util::utf8::encode(key, utf8);
     InsertText(utf8, len);
   } else {
     handled = false;
@@ -1923,7 +1923,7 @@ UndoEvent* UndoRedoStack::Commit(StyleEdit* style_edit, size_t gofs, size_t len,
   // If we're inserting a single character, check if we want to append it to the
   // previous event.
   if (insert && !undos.empty()) {
-    size_t num_char = utf8::count_characters(text, len);
+    size_t num_char = util::utf8::count_characters(text, len);
     auto e = undos.back().get();
     if (num_char == 1 && e->insert && e->gofs + e->text.size() == gofs) {
       // Appending a space to other space(s) should append.

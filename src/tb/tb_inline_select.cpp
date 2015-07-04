@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_inline_select.h"
-
 #include <cassert>
 #include <cstdlib>
+
+#include "tb_inline_select.h"
 
 namespace tb {
 
@@ -56,7 +56,7 @@ void SelectInline::SetLimits(int min, int max) {
 }
 
 void SelectInline::SetValueInternal(int value, bool update_text) {
-  value = Clamp(value, m_min, m_max);
+  value = util::Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
 

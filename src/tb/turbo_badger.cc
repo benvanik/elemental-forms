@@ -11,7 +11,6 @@
 
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
-#include "tb_language.h"
 #include "tb_skin.h"
 #include "tb_tooltips.h"
 #include "tb_widget_animation.h"
@@ -20,6 +19,7 @@
 #include "tb/animation.h"
 #include "tb/config.h"
 #include "tb/turbo_badger.h"
+#include "tb/util/string_table.h"
 
 namespace tb {
 
@@ -28,8 +28,8 @@ bool Initialize(Renderer* renderer, const char* language_file) {
 
   Renderer::set(renderer);
 
-  Language::set(std::make_unique<Language>());
-  Language::get()->Load(language_file);
+  util::StringTable::set(std::make_unique<util::StringTable>());
+  util::StringTable::get()->Load(language_file);
   FontManager::set(std::make_unique<FontManager>());
   Skin::set(std::make_unique<Skin>());
   ElementReader::set(std::make_unique<ElementReader>());
@@ -54,7 +54,7 @@ void Shutdown() {
   ElementReader::set(nullptr);
   Skin::set(nullptr);
   FontManager::set(nullptr);
-  Language::set(nullptr);
+  util::StringTable::set(nullptr);
   Renderer::set(nullptr);
 }
 

@@ -19,6 +19,10 @@ namespace util {
 
 const char* stristr(const char* arg1, const char* arg2);
 
+// Return true if the given string starts with a number.
+// Ex: 100, -.2, 1.0E-8, 5px will all return true.
+bool is_start_of_number(const char* str);
+
 std::string format_string(const char* format, va_list args);
 inline std::string format_string(const char* format, ...) {
   va_list va;

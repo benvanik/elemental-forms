@@ -7,16 +7,15 @@
  ******************************************************************************
  */
 
-#include "tb_select.h"
-
 #include <algorithm>
+
+#include "tb_menu_window.h"
+#include "tb_select.h"
+#include "tb_widgets_listener.h"
 
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
-
-#include "tb_language.h"
-#include "tb_menu_window.h"
-#include "tb_widgets_listener.h"
+#include "tb/util/string_table.h"
 
 namespace tb {
 
@@ -162,7 +161,7 @@ void SelectList::ValidateList() {
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
     Element* element = new Label();
-    auto fmt = Language::get()->GetString(m_header_lng_string_id);
+    auto fmt = util::GetString(m_header_lng_string_id);
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
                                              m_source->GetNumItems()));
     element->SetSkinBg(TBIDC("SelectList.header"));
