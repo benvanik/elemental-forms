@@ -138,7 +138,7 @@ void Element::Die() {
 }
 
 Element* Element::GetElementByIDInternal(const TBID& id,
-                                         const tb_type_id_t type_id) {
+                                         const util::tb_type_id_t type_id) {
   if (m_id == id && (!type_id || IsOfTypeId(type_id))) {
     return this;
   }

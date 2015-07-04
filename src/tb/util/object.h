@@ -7,12 +7,11 @@
  ******************************************************************************
  */
 
-#ifndef TB_OBJECT_H
-#define TB_OBJECT_H
-
-#include "tb_core.h"
+#ifndef TB_UTIL_OBJECT_H_
+#define TB_UTIL_OBJECT_H_
 
 namespace tb {
+namespace util {
 
 typedef void* tb_type_id_t;
 
@@ -55,25 +54,27 @@ class TypedObject {
 // Returns the given object as the given type, or nullptr if it's not that type
 // or if the object is nullptr.
 template <class T>
-T* TBSafeCast(TypedObject* obj) {
+T* SafeCast(TypedObject* obj) {
   return obj ? obj->SafeCastTo<T>() : nullptr;
 }
 
 // Returns the given object as the given type, or nullptr if it's not that type
 // or if the object is nullptr.
 template <class T>
-const T* TBSafeCast(const TypedObject* obj) {
+const T* SafeCast(const TypedObject* obj) {
   return obj ? obj->SafeCastTo<T>() : nullptr;
 }
 
 // Implements the methods for safe typecasting without requiring RTTI.
-#define TBOBJECT_SUBCLASS(clazz, baseclazz)                                \
-  const char* GetClassName() const override { return #clazz; }             \
-  bool IsOfTypeId(const tb_type_id_t type_id) const override {             \
-    return GetTypeId<clazz>() == type_id ? true                            \
-                                         : baseclazz::IsOfTypeId(type_id); \
+#define TBOBJECT_SUBCLASS(clazz, baseclazz)                              \
+  const char* GetClassName() const override { return #clazz; }           \
+  bool IsOfTypeId(const tb::util::tb_type_id_t type_id) const override { \
+    return tb::util::TypedObject::GetTypeId<clazz>() == type_id          \
+               ? true                                                    \
+               : baseclazz::IsOfTypeId(type_id);                         \
   }
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_OBJECT_H
+#endif  // TB_UTIL_OBJECT_H_

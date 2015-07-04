@@ -8,11 +8,12 @@
  */
 
 #include "tb_test.h"
-#include "tb_object.h"
+#include "tb/util/object.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::util;
 
 TB_TEST_GROUP(tb_object) {
   class Car : public TypedObject {
@@ -35,21 +36,21 @@ TB_TEST_GROUP(tb_object) {
     Apple apple;
     Car car;
 
-    TB_VERIFY(TBSafeCast<TypedObject>(&fruit));
-    TB_VERIFY(TBSafeCast<TypedObject>(&apple));
-    TB_VERIFY(TBSafeCast<TypedObject>(&car));
+    TB_VERIFY(SafeCast<TypedObject>(&fruit));
+    TB_VERIFY(SafeCast<TypedObject>(&apple));
+    TB_VERIFY(SafeCast<TypedObject>(&car));
 
-    TB_VERIFY(TBSafeCast<Fruit>(&fruit));
-    TB_VERIFY(TBSafeCast<Fruit>(&apple));
-    TB_VERIFY(!TBSafeCast<Fruit>(&car));
+    TB_VERIFY(SafeCast<Fruit>(&fruit));
+    TB_VERIFY(SafeCast<Fruit>(&apple));
+    TB_VERIFY(!SafeCast<Fruit>(&car));
 
-    TB_VERIFY(!TBSafeCast<Apple>(&fruit));
-    TB_VERIFY(TBSafeCast<Apple>(&apple));
-    TB_VERIFY(!TBSafeCast<Apple>(&car));
+    TB_VERIFY(!SafeCast<Apple>(&fruit));
+    TB_VERIFY(SafeCast<Apple>(&apple));
+    TB_VERIFY(!SafeCast<Apple>(&car));
 
-    TB_VERIFY(!TBSafeCast<Car>(&fruit));
-    TB_VERIFY(!TBSafeCast<Car>(&apple));
-    TB_VERIFY(TBSafeCast<Car>(&car));
+    TB_VERIFY(!SafeCast<Car>(&fruit));
+    TB_VERIFY(!SafeCast<Car>(&apple));
+    TB_VERIFY(SafeCast<Car>(&car));
   }
 }
 

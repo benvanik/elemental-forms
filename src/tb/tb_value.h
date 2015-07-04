@@ -20,7 +20,9 @@
 namespace tb {
 
 class Value;
+namespace util {
 class TypedObject;
+}  // namespace util
 
 // Return true if the given string starts with a number.
 // Ex: 100, -.2, 1.0E-8, 5px will all return true.
@@ -89,7 +91,7 @@ class Value {
   Value(int value);
   Value(float value);
   Value(const char* value, Set set = Set::kNewCopy);
-  Value(TypedObject* object);
+  Value(util::TypedObject* object);
 
   ~Value();
 
@@ -115,7 +117,7 @@ class Value {
   }
 
   // Sets the passed in object. Takes the ownership of the object!
-  void SetObject(TypedObject* object);
+  void SetObject(util::TypedObject* object);
 
   // Sets the passed in array.
   void SetArray(ValueArray* arr, Set set);
@@ -127,7 +129,9 @@ class Value {
   int GetInt() const;
   float GetFloat() const;
   const char* GetString();
-  TypedObject* GetObject() const { return IsObject() ? val_obj : nullptr; }
+  util::TypedObject* GetObject() const {
+    return IsObject() ? val_obj : nullptr;
+  }
   ValueArray* GetArray() const { return IsArray() ? val_arr : nullptr; }
 
   Type GetType() const { return Type(m_packed.type); }
@@ -150,7 +154,7 @@ class Value {
     float val_float;
     int val_int;
     char* val_str;
-    TypedObject* val_obj;
+    util::TypedObject* val_obj;
     ValueArray* val_arr = nullptr;
   };
   union {

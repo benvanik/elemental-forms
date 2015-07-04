@@ -130,7 +130,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     // Always ignore activity in this window (or we might get endless
     // recursion).
     if (Window* window = element->GetParentWindow()) {
-      if (TBSafeCast<DebugSettingsWindow>(window)) {
+      if (SafeCast<DebugSettingsWindow>(window)) {
         return false;
       }
     }

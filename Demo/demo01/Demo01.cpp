@@ -289,7 +289,9 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
             GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
       for (Element* child = tc->GetTabLayout()->GetFirstChild(); child;
            child = child->GetNext()) {
-        if (Button* button = TBSafeCast<Button>(child)) button->SetAxis(axis);
+        if (Button* button = util::SafeCast<Button>(child)) {
+          button->SetAxis(axis);
+        }
       }
     }
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
@@ -343,7 +345,7 @@ ScrollContainerWindow::ScrollContainerWindow() {
 bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->GetID() == TBIDC("add img")) {
-      Button* button = TBSafeCast<Button>(ev.target);
+      Button* button = util::SafeCast<Button>(ev.target);
       SkinImage* skin_image = new SkinImage;
       skin_image->SetSkinBg(TBIDC("Icon16"));
       button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
@@ -444,16 +446,19 @@ void AnimationsWindow::Animate() {
   ElementAnimationManager::AbortAnimations(this);
 
   AnimationCurve curve = AnimationCurve::kSlowDown;
-  double duration = 500;
+  uint64_t duration = 500;
   bool fade = true;
 
-  if (SelectList* curve_select = GetElementByIDAndType<SelectList>("curve"))
+  if (SelectList* curve_select = GetElementByIDAndType<SelectList>("curve")) {
     curve = static_cast<AnimationCurve>(curve_select->GetValue());
+  }
   if (SelectInline* duration_select =
-          GetElementByIDAndType<SelectInline>("duration"))
-    duration = duration_select->GetValueDouble();
-  if (CheckBox* fade_check = GetElementByIDAndType<CheckBox>("fade"))
+          GetElementByIDAndType<SelectInline>("duration")) {
+    duration = uint64_t(duration_select->GetValueDouble());
+  }
+  if (CheckBox* fade_check = GetElementByIDAndType<CheckBox>("fade")) {
     fade = fade_check->GetValue() ? true : false;
+  }
 
   // Start move animation
   Animation* anim = new RectElementAnimation(
@@ -461,10 +466,8 @@ void AnimationsWindow::Animate() {
   AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {
-    if (Animation* anim =
-            new OpacityElementAnimation(this, kAlmostZeroOpacity, 1, false))
-      AnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown,
-                                       duration);
+    auto anim = new OpacityElementAnimation(this, kAlmostZeroOpacity, 1, false);
+    AnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown, duration);
   }
 }
 

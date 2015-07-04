@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\tb\rect.cc" />
-    <ClCompile Include="src\tb\tb_animation.cpp" />
+    <ClCompile Include="src\tb\animation.cc" />
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
     <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\tb_core.cpp" />
@@ -34,7 +34,6 @@
     <ClCompile Include="src\tb\tb_msg.cpp" />
     <ClCompile Include="src\tb\tb_node_ref_tree.cpp" />
     <ClCompile Include="src\tb\tb_node_tree.cpp" />
-    <ClCompile Include="src\tb\tb_object.cpp" />
     <ClCompile Include="src\tb\tb_parser.cpp" />
     <ClCompile Include="src\tb\tb_popup_window.cpp" />
     <ClCompile Include="src\tb\tb_renderer.cpp" />
@@ -89,8 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tb\rect.h" />
-    <ClInclude Include="src\tb\tb_animation.h" />
-    <ClInclude Include="src\tb\tb_animation_utils.h" />
+    <ClInclude Include="src\tb\animation.h" />
     <ClInclude Include="src\tb\tb_image_manager.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
     <ClInclude Include="src\tb\tb_parser.h" />
@@ -115,7 +113,6 @@
     <ClInclude Include="src\tb\tb_msg.h" />
     <ClInclude Include="src\tb\tb_node_ref_tree.h" />
     <ClInclude Include="src\tb\tb_node_tree.h" />
-    <ClInclude Include="src\tb\tb_object.h" />
     <ClInclude Include="src\tb\tb_popup_window.h" />
     <ClInclude Include="src\tb\tb_renderer.h" />
     <ClInclude Include="src\tb\tb_scroller.h" />
@@ -145,6 +142,7 @@
     <ClInclude Include="src\tb\util\hash_table.h" />
     <ClInclude Include="src\tb\util\link_list.h" />
     <ClInclude Include="src\tb\util\metrics.h" />
+    <ClInclude Include="src\tb\util\object.h" />
     <ClInclude Include="src\tb\util\rect_region.h" />
     <ClInclude Include="src\tb\util\string.h" />
     <ClInclude Include="src\tb\util\string_builder.h" />

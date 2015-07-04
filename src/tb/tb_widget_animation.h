@@ -10,7 +10,7 @@
 #ifndef TB_WIDGET_ANIMATION_H
 #define TB_WIDGET_ANIMATION_H
 
-#include "tb_animation.h"
+#include "tb/animation.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {
@@ -96,7 +96,7 @@ class ElementAnimationManager : public ElementListener {
   // This example will abort all opacity animations:
   // AbortAnimations(element,
   //     TypedObject::GetTypeId<OpacityElementAnimation>())
-  static void AbortAnimations(Element* element, tb_type_id_t type_id);
+  static void AbortAnimations(Element* element, util::tb_type_id_t type_id);
 
  private:
   void OnElementDelete(Element* element) override;

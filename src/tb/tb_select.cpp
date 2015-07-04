@@ -275,7 +275,7 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
       // That way events in submenus will reach the caller properly, and seem
       // like it was invoked on the top menu.
       Window* window = GetParentWindow();
-      while (MenuWindow* menu_win = TBSafeCast<MenuWindow>(window)) {
+      while (MenuWindow* menu_win = util::SafeCast<MenuWindow>(window)) {
         target_list = menu_win->GetList();
         window = menu_win->GetEventDestination()->GetParentWindow();
       }
@@ -404,7 +404,7 @@ void SelectDropdown::CloseWindow() {
 }
 
 MenuWindow* SelectDropdown::GetMenuIfOpen() const {
-  return TBSafeCast<MenuWindow>(m_window_pointer.Get());
+  return util::SafeCast<MenuWindow>(m_window_pointer.Get());
 }
 
 bool SelectDropdown::OnEvent(const ElementEvent& ev) {

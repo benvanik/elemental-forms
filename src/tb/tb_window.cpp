@@ -72,7 +72,7 @@ Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
   Element* sibling = GetParent()->GetLastChild();
   while (sibling && !other_window) {
     if (sibling != this) {
-      other_window = TBSafeCast<Window>(sibling);
+      other_window = util::SafeCast<Window>(sibling);
     }
     if (only_activable_windows && other_window &&
         !any(other_window->m_settings & WindowSettings::kCanActivate)) {

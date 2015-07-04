@@ -53,7 +53,7 @@ bool ElementSkinConditionContext::GetCondition(
     case SkinProperty::kAxis:
       return TBID(element->GetAxis() == Axis::kX ? "x" : "y") == info.value;
     case SkinProperty::kAlign:
-      if (TabContainer* tc = TBSafeCast<TabContainer>(element)) {
+      if (TabContainer* tc = util::SafeCast<TabContainer>(element)) {
         TBID element_align;
         if (tc->GetAlignment() == Align::kLeft) {
           element_align = TBIDC("left");

@@ -23,7 +23,7 @@ SectionHeader::SectionHeader() {
 bool SectionHeader::OnEvent(const ElementEvent& ev) {
   if (ev.target == this && ev.type == EventType::kChanged &&
       GetParent()->GetParent()) {
-    if (Section* section = TBSafeCast<Section>(GetParent()->GetParent())) {
+    if (Section* section = util::SafeCast<Section>(GetParent()->GetParent())) {
       section->GetContainer()->SetValue(GetValue());
 
       // Try to scroll the container into view when expanded.

@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include "tb_animation.h"
+#include "tb/animation.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
@@ -126,7 +126,7 @@ bool AnimationManager::HasAnimationsRunning() {
 // static
 void AnimationManager::StartAnimation(Animation* obj,
                                       AnimationCurve animation_curve,
-                                      double animation_duration,
+                                      uint64_t animation_duration,
                                       AnimationTime animation_time) {
   if (obj->IsAnimating()) {
     AbortAnimation(obj, false);
@@ -136,7 +136,7 @@ void AnimationManager::StartAnimation(Animation* obj,
   }
   obj->adjust_start_time = animation_time == AnimationTime::kFirstUpdate;
   obj->animation_start_time = util::GetTimeMS();
-  obj->animation_duration = uint64_t(std::max(animation_duration, 0.0));
+  obj->animation_duration = std::max(animation_duration, 0ull);
   obj->animation_curve = animation_curve;
   animating_objects.AddLast(obj);
   obj->InvokeOnAnimationStart();

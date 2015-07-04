@@ -16,12 +16,12 @@
 
 #include "tb_core.h"
 #include "tb_font_desc.h"
-#include "tb_object.h"
 #include "tb_skin.h"
 #include "tb_widget_value.h"
 
 #include "tb/rect.h"
 #include "tb/util/link_list.h"
+#include "tb/util/object.h"
 
 namespace tb {
 
@@ -130,9 +130,9 @@ enum class SpecialKey {
   kF12,
 };
 
-class ElementEvent : public TypedObject {
+class ElementEvent : public util::TypedObject {
  public:
-  TBOBJECT_SUBCLASS(ElementEvent, TypedObject);
+  TBOBJECT_SUBCLASS(ElementEvent, util::TypedObject);
 
   EventType type;
   // The element that invoked the event.
@@ -396,9 +396,9 @@ enum class HitStatus {
 //
 // NOTE: When you subclass a element, use the TBOBJECT_SUBCLASS macro to define
 // the type casting functions instead of implementing those manually.
-class Element : public TypedObject, public util::TBLinkOf<Element> {
+class Element : public util::TypedObject, public util::TBLinkOf<Element> {
  public:
-  TBOBJECT_SUBCLASS(Element, TypedObject);
+  TBOBJECT_SUBCLASS(Element, util::TypedObject);
 
   Element();
   virtual ~Element();
@@ -1205,7 +1205,7 @@ class Element : public TypedObject, public util::TBLinkOf<Element> {
   Scroller* FindStartedScroller();
   Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
   Element* GetElementByIDInternal(const TBID& id,
-                                  const tb_type_id_t type_id = nullptr);
+                                  const util::tb_type_id_t type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);
   void InvokeProcessInternal();
   static void SetHoveredElement(Element* element, bool touch);

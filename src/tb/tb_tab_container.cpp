@@ -15,7 +15,7 @@
 namespace tb {
 
 void TabLayout::OnChildAdded(Element* child) {
-  if (Button* button = TBSafeCast<Button>(child)) {
+  if (Button* button = util::SafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
     button->SetID(TBIDC("tab"));

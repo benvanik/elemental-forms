@@ -16,6 +16,8 @@
 
 namespace tb {
 
+using tb::util::SafeCast;
+
 util::TBLinkListOf<ElementAnimation> element_animations;
 
 inline float Lerp(float src, float dst, float progress) {
@@ -134,7 +136,7 @@ void ElementAnimationManager::AbortAnimations(Element* element) {
 }
 
 void ElementAnimationManager::AbortAnimations(Element* element,
-                                              tb_type_id_t type_id) {
+                                              util::tb_type_id_t type_id) {
   auto iter = element_animations.IterateForward();
   while (ElementAnimation* wao = iter.GetAndStep()) {
     if (wao->m_element == element) {
@@ -156,21 +158,21 @@ void ElementAnimationManager::OnElementDelete(Element* element) {
 
 bool ElementAnimationManager::OnElementDying(Element* element) {
   bool handled = false;
-  if (Window* window = TBSafeCast<Window>(element)) {
+  if (Window* window = SafeCast<Window>(element)) {
     // Fade out dying windows.
     auto anim =
         new OpacityElementAnimation(window, 1.f, kAlmostZeroOpacity, true);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
-  if (MessageWindow* window = TBSafeCast<MessageWindow>(element)) {
+  if (MessageWindow* window = SafeCast<MessageWindow>(element)) {
     // Move out dying message windows.
     auto anim = new RectElementAnimation(window, Rect(0, 50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaIn);
     AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
-  if (Dimmer* dimmer = TBSafeCast<Dimmer>(element)) {
+  if (Dimmer* dimmer = SafeCast<Dimmer>(element)) {
     // Fade out dying dim layers.
     auto anim =
         new OpacityElementAnimation(dimmer, 1.f, kAlmostZeroOpacity, true);
@@ -182,19 +184,19 @@ bool ElementAnimationManager::OnElementDying(Element* element) {
 
 void ElementAnimationManager::OnElementAdded(Element* parent,
                                              Element* element) {
-  if (Window* window = TBSafeCast<Window>(element)) {
+  if (Window* window = SafeCast<Window>(element)) {
     // Fade in new windows.
     auto anim =
         new OpacityElementAnimation(window, kAlmostZeroOpacity, 1.f, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
-  if (MessageWindow* window = TBSafeCast<MessageWindow>(element)) {
+  if (MessageWindow* window = SafeCast<MessageWindow>(element)) {
     // Move in new message windows.
     auto anim = new RectElementAnimation(window, Rect(0, -50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaOut);
     AnimationManager::StartAnimation(anim);
   }
-  if (Dimmer* dimmer = TBSafeCast<Dimmer>(element)) {
+  if (Dimmer* dimmer = SafeCast<Dimmer>(element)) {
     // Fade in dim layer.
     auto anim =
         new OpacityElementAnimation(dimmer, kAlmostZeroOpacity, 1.f, false);

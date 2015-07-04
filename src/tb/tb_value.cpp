@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "tb_object.h"
+#include "tb/util/object.h"
 
 namespace tb {
 
@@ -119,7 +119,7 @@ Value::Value(float value) { SetFloat(value); }
 
 Value::Value(const char* value, Set set) { SetString(value, set); }
 
-Value::Value(TypedObject* object) { SetObject(object); }
+Value::Value(util::TypedObject* object) { SetObject(object); }
 
 Value::~Value() { SetNull(); }
 
@@ -191,7 +191,7 @@ void Value::SetString(const char* val, Set set) {
   }
 }
 
-void Value::SetObject(TypedObject* object) {
+void Value::SetObject(util::TypedObject* object) {
   SetNull();
   SetType(Type::kObject);
   m_packed.allocated = true;

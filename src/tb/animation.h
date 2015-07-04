@@ -7,12 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_ANIMATION_H
-#define TB_ANIMATION_H
+#ifndef TB_ANIMATION_H_
+#define TB_ANIMATION_H_
 
-#include "tb_object.h"
+#include <cstdint>
 
 #include "tb/util/link_list.h"
+#include "tb/util/object.h"
 
 namespace tb {
 
@@ -68,10 +69,10 @@ class AnimationListener : public util::TBLinkOf<AnimationListener> {
 };
 
 // Base class for all animated objects.
-class Animation : public TypedObject, public util::TBLinkOf<Animation> {
+class Animation : public util::TypedObject, public util::TBLinkOf<Animation> {
  public:
   const static AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
-  const static int kDefaultDuration = 200;
+  const static uint64_t kDefaultDuration = 200;
 
   AnimationCurve animation_curve;
   uint64_t animation_start_time;
@@ -79,7 +80,7 @@ class Animation : public TypedObject, public util::TBLinkOf<Animation> {
   bool adjust_start_time;
 
  public:
-  TBOBJECT_SUBCLASS(Animation, TypedObject);
+  TBOBJECT_SUBCLASS(Animation, util::TypedObject);
 
   ~Animation() override = default;
 
@@ -134,7 +135,7 @@ class AnimationManager {
 
   static void StartAnimation(
       Animation* obj, AnimationCurve animation_curve = Animation::kDefaultCurve,
-      double animation_duration = Animation::kDefaultDuration,
+      uint64_t animation_duration = Animation::kDefaultDuration,
       AnimationTime animation_time = AnimationTime::kFirstUpdate);
 
   // Aborts the given animation.
@@ -170,6 +171,68 @@ class AnimationBlocker {
   ~AnimationBlocker() { AnimationManager::EndBlockAnimations(); }
 };
 
+// An animated float value.
+class FloatAnimation : public Animation {
+ public:
+  float src_val;
+  float dst_val;
+  float current_progress = 0;
+
+ public:
+  TBOBJECT_SUBCLASS(FloatAnimation, Animation);
+
+  FloatAnimation(float initial_value,
+                 AnimationCurve animation_curve = Animation::kDefaultCurve,
+                 uint64_t animation_duration = Animation::kDefaultDuration)
+      : src_val(initial_value), dst_val(initial_value) {
+    Animation::animation_curve = animation_curve;
+    Animation::animation_duration = animation_duration;
+  }
+
+  float GetValue() { return src_val + (dst_val - src_val) * current_progress; }
+  void SetValueAnimated(float value) {
+    src_val = GetValue();
+    dst_val = value;
+    AnimationManager::StartAnimation(this, animation_curve, animation_duration);
+  }
+  void SetValueImmediately(float value) {
+    AnimationManager::AbortAnimation(this, false);
+    src_val = dst_val = value;
+    OnAnimationUpdate(1.0f);
+  }
+
+  void OnAnimationStart() override { current_progress = 0; }
+  void OnAnimationUpdate(float progress) override {
+    current_progress = progress;
+  }
+  void OnAnimationStop(bool aborted) override {}
+};
+
+// Animates a external float value, which address is given in the constructor.
+class ExternalFloatAnimation : public FloatAnimation {
+ public:
+  float* target_value;
+
+ public:
+  TBOBJECT_SUBCLASS(ExternalFloatAnimation, Animation);
+
+  ExternalFloatAnimation(
+      float* target_value,
+      AnimationCurve animation_curve = Animation::kDefaultCurve,
+      uint64_t animation_duration = Animation::kDefaultDuration)
+      : FloatAnimation(*target_value, animation_curve, animation_duration),
+        target_value(target_value) {}
+
+  void OnAnimationStart() override {
+    FloatAnimation::OnAnimationStart();
+    *target_value = GetValue();
+  }
+  void OnAnimationUpdate(float progress) override {
+    FloatAnimation::OnAnimationUpdate(progress);
+    *target_value = GetValue();
+  }
+};
+
 }  // namespace tb
 
-#endif  // TB_ANIMATION_H
+#endif  // TB_ANIMATION_H_

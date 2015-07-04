@@ -220,7 +220,7 @@ void ResourceEditWindow::OnElementRemove(Element* parent, Element* child) {
 }
 
 bool ResourceEditWindow::OnDropFileEvent(const ElementEvent& ev) {
-  const ElementEventFileDrop* fd_event = TBSafeCast<ElementEventFileDrop>(&ev);
+  auto fd_event = util::SafeCast<ElementEventFileDrop>(&ev);
   if (fd_event->files.size() > 0) {
     Load(fd_event->files[0].c_str());
   }

@@ -12,10 +12,10 @@
 
 #include "tb_core.h"
 #include "tb_id.h"
-#include "tb_object.h"
 #include "tb_value.h"
 
 #include "tb/util/link_list.h"
+#include "tb/util/object.h"
 
 namespace tb {
 
@@ -26,7 +26,7 @@ class MessageHandler;
 constexpr uint64_t kNotSoon = -1;
 
 // Holds custom data to send with a posted message.
-class MessageData : public TypedObject {
+class MessageData : public util::TypedObject {
  public:
   MessageData() = default;
   MessageData(int v1, int v2) : v1(v1), v2(v2) {}

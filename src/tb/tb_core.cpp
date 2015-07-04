@@ -9,14 +9,15 @@
 
 #include "tb_core.h"
 
-#include "tb_animation.h"
-#include "tb/config.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
 #include "tb_language.h"
 #include "tb_skin.h"
 #include "tb_tooltips.h"
 #include "tb_widgets_reader.h"
+
+#include "tb/animation.h"
+#include "tb/config.h"
 
 namespace tb {
 
