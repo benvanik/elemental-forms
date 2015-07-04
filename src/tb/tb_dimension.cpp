@@ -14,11 +14,11 @@
 #include <cstdlib>
 
 #include "tb_system.h"
-#include "tb_string_builder.h"
 #include "tb_types.h"
 #include "tb_value.h"
 
 #include "tb/util/string.h"
+#include "tb/util/string_builder.h"
 
 namespace tb {
 

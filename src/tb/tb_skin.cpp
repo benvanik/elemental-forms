@@ -16,7 +16,8 @@
 
 #include "tb_node_tree.h"
 #include "tb_system.h"
-#include "tb_string_builder.h"
+
+#include "tb/util/string_builder.h"
 
 namespace tb {
 

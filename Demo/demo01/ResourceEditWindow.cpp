@@ -1,14 +1,15 @@
+#include <cstdio>
+
 #include "ResourceEditWindow.h"
 #include "tb_widgets_reader.h"
 #include "tb_message_window.h"
 #include "tb_system.h"
 #include "tb_select.h"
 #include "tb_text_box.h"
-#include "tb_string_builder.h"
 #include "tb_scroll_container.h"
-#include <stdio.h>
 
 #include "tb/util/string.h"
+#include "tb/util/string_builder.h"
 
 // == ResourceItem
 // ====================================================================================

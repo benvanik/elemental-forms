@@ -12,8 +12,7 @@
 #include <cassert>
 #include <cctype>
 
-#include "tb_string_builder.h"
-#include "utf8.h"
+#include "tb/util/utf8.h"
 
 namespace tb {
 

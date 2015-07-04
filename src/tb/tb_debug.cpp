@@ -15,7 +15,6 @@
 
 #include "tb_core.h"
 #include "tb_font_renderer.h"
-#include "tb_string_builder.h"
 #include "tb_text_box.h"
 #include "tb_widgets_reader.h"
 #include "tb_window.h"

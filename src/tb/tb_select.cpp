@@ -12,10 +12,10 @@
 #include <algorithm>
 
 #include "tb/util/string.h"
+#include "tb/util/string_builder.h"
 
 #include "tb_language.h"
 #include "tb_menu_window.h"
-#include "tb_string_builder.h"
 #include "tb_widgets_listener.h"
 
 namespace tb {

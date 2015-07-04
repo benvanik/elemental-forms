@@ -7,12 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_string_builder.h"
-
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
+
+#include "tb/util/string_builder.h"
 
 namespace tb {
 

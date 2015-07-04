@@ -13,13 +13,13 @@
 #include <cassert>
 
 #include "tb/util/rect_region.h"
+#include "tb/util/string_builder.h"
+#include "tb/util/utf8.h"
 
 #include "tb_font_renderer.h"
 #include "tb_style_edit_content.h"
 #include "tb_system.h"
-#include "tb_string_builder.h"
 #include "tb_widgets_common.h"
-#include "utf8.h"
 
 namespace tb {
 

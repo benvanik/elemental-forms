@@ -13,13 +13,13 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_widget_animation.h"
 #include "tb_node_tree.h"
-#include "tb_string_builder.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
-#include "utf8.h"
+#include "tb/util/utf8.h"
 #include "CodeTextBox\CodeTextBox.h"
 
 #include "tb/util/string.h"
+#include "tb/util/string_builder.h"
 
 static Application* application;
 

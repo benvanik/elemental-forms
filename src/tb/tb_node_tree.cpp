@@ -16,10 +16,10 @@
 
 #include "tb_node_ref_tree.h"
 #include "tb_system.h"
-#include "tb_string_builder.h"
 #include "tb_language.h"
 
 #include "tb/util/string.h"
+#include "tb/util/string_builder.h"
 
 namespace tb {
 

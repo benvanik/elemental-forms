@@ -8,7 +8,8 @@
  */
 
 #include "tb_test.h"
-#include "tb_string_builder.h"
+
+#include "tb/util/string_builder.h"
 
 #ifdef TB_UNIT_TESTING
 

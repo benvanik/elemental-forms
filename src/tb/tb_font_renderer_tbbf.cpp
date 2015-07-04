@@ -14,7 +14,6 @@
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
 #include "tb_system.h"
-#include "tb_string_builder.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 

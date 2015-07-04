@@ -12,7 +12,8 @@
 
 #include <string>
 
-#include "tb_string_builder.h"
+#include "tb/util/string_builder.h"
+
 #include "tb_value.h"
 
 namespace tb {

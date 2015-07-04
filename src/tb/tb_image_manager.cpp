@@ -10,10 +10,10 @@
 #include "tb_image_manager.h"
 
 #include "tb/util/hash.h"
+#include "tb/util/string_builder.h"
 
 #include "tb_skin.h"
 #include "tb_system.h"
-#include "tb_string_builder.h"
 
 namespace tb {
 

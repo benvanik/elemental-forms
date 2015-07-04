@@ -1,5 +1,5 @@
-#ifndef BASIC_UTF8_H
-#define BASIC_UTF8_H
+#ifndef TB_UTIL_UTF8_H_
+#define TB_UTIL_UTF8_H_
 
 #include <cstdint>
 
@@ -56,6 +56,6 @@ void move_dec(const char* str, size_t* i);
 */
 size_t count_characters(const char* str, size_t i_max);
 
-};  // namespace utf8
+}  // namespace utf8
 
-#endif  // BASIC_UTF8_H
+#endif  // TB_UTIL_UTF8_H_

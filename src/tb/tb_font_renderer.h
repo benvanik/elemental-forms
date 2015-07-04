@@ -14,8 +14,9 @@
 #include "tb_bitmap_fragment.h"
 #include "tb_font_desc.h"
 #include "tb_renderer.h"
-#include "tb_string_builder.h"
-#include "utf8.h"
+
+#include "tb/util/string_builder.h"
+#include "tb/util/utf8.h"
 
 namespace tb {
 
