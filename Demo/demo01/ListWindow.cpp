@@ -7,7 +7,7 @@
 AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
                                          AdvancedItemSource* source,
                                          SelectItemObserver* source_viewer,
-                                         int index)
+                                         size_t index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
   SetSkinBg(TBIDC("SelectItem"));
   SetLayoutDistribution(LayoutDistribution::kGravity);
@@ -41,22 +41,21 @@ bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
 
 // == AdvancedItemSource ======================================================
 
-bool AdvancedItemSource::Filter(int index, const char* filter) {
+bool AdvancedItemSource::Filter(size_t index, const std::string& filter) {
   // Override this method so we can return hits for our extra data too.
 
   if (SelectItemSource::Filter(index, filter)) return true;
 
   AdvancedItem* item = GetItem(index);
-  return tb::util::stristr(item->GetMale() ? "Male" : "Female", filter) ? true
-                                                                        : false;
+  return tb::util::stristr(item->GetMale() ? "Male" : "Female", filter.c_str())
+             ? true
+             : false;
 }
 
-Element* AdvancedItemSource::CreateItemElement(int index,
+Element* AdvancedItemSource::CreateItemElement(size_t index,
                                                SelectItemObserver* viewer) {
-  if (Layout* layout =
-          new AdvancedItemElement(GetItem(index), this, viewer, index))
-    return layout;
-  return nullptr;
+  auto layout = new AdvancedItemElement(GetItem(index), this, viewer, index);
+  return layout;
 }
 
 // == ListWindow ==============================================================

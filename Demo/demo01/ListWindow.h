@@ -10,14 +10,14 @@ class AdvancedItemSource;
 class ListWindow : public DemoWindow {
  public:
   ListWindow(SelectItemSource* source);
-  virtual bool OnEvent(const ElementEvent& ev);
+  bool OnEvent(const ElementEvent& ev) override;
 };
 
 /** Shows a list of items from a source of type AdvancedItemSource. */
 class AdvancedListWindow : public DemoWindow {
  public:
   AdvancedListWindow(AdvancedItemSource* source);
-  virtual bool OnEvent(const ElementEvent& ev);
+  bool OnEvent(const ElementEvent& ev) override;
 
  private:
   AdvancedItemSource* m_source;
@@ -42,8 +42,8 @@ class AdvancedItem : public GenericStringItem {
         the viewer is populated with the customized element for each item. */
 class AdvancedItemSource : public SelectItemSourceList<AdvancedItem> {
  public:
-  virtual bool Filter(int index, const char* filter);
-  virtual Element* CreateItemElement(int index, SelectItemObserver* viewer);
+  bool Filter(size_t index, const std::string& filter) override;
+  Element* CreateItemElement(size_t index, SelectItemObserver* viewer) override;
 };
 
 /** AdvancedItemElement is the element representing a AdvancedItem.
@@ -53,13 +53,13 @@ class AdvancedItemSource : public SelectItemSourceList<AdvancedItem> {
 class AdvancedItemElement : public Layout {
  public:
   AdvancedItemElement(AdvancedItem* item, AdvancedItemSource* source,
-                      SelectItemObserver* source_viewer, int index);
-  virtual bool OnEvent(const ElementEvent& ev);
+                      SelectItemObserver* source_viewer, size_t index);
+  bool OnEvent(const ElementEvent& ev) override;
 
  private:
   AdvancedItemSource* m_source;
   SelectItemObserver* m_source_viewer;
-  int m_index;
+  size_t m_index;
 };
 
 #endif  // LISTWINDOW_DEMO_H
