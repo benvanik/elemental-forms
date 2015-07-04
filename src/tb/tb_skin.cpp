@@ -71,7 +71,7 @@ bool Skin::LoadInternal(const char* skin_file) {
     return false;
   }
 
-  StringBuilder skin_path;
+  util::StringBuilder skin_path;
   skin_path.AppendPath(skin_file);
 
   if (node.GetNode("description")) {
@@ -176,7 +176,7 @@ bool Skin::ReloadBitmaps() {
 
 bool Skin::ReloadBitmapsInternal() {
   // Load all bitmap files into new bitmap fragments.
-  StringBuilder filename_dst_DPI;
+  util::StringBuilder filename_dst_DPI;
   bool success = true;
   util::HashTableIteratorOf<SkinElement> it(&m_elements);
   while (SkinElement* element = it.GetNextContent()) {

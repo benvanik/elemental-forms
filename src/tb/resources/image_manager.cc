@@ -101,7 +101,7 @@ Image ImageManager::GetImage(const char* filename) {
     // Load a fragment. Load a destination DPI bitmap if available.
     BitmapFragment* fragment = nullptr;
     if (Skin::get()->GetDimensionConverter()->NeedConversion()) {
-      StringBuilder filename_dst_DPI;
+      util::StringBuilder filename_dst_DPI;
       Skin::get()->GetDimensionConverter()->GetDstDPIFilename(
           filename, &filename_dst_DPI);
       fragment =

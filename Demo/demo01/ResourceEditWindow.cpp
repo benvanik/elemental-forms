@@ -56,7 +56,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
 
   auto file = util::File::Open(m_resource_filename, util::File::Mode::kRead);
   if (file) {
-    StringBuilder buffer(file->Size());
+    util::StringBuilder buffer(file->Size());
     size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
     m_source_text_box->SetText(buffer.GetData(), size_read);
   } else {

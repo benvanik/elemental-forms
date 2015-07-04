@@ -12,10 +12,12 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_font_renderer.h"
+#include "tb_widgets.h"
 #include "tb_widgets_listener.h"
 
 #include "tb/resources/element_factory.h"
+#include "tb/resources/font_face.h"
+#include "tb/resources/font_manager.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
 
@@ -33,7 +35,7 @@ int ElementString::GetHeight(Element* element) {
 
 void ElementString::Paint(Element* element, const Rect& rect,
                           const Color& color) {
-  FontFace* font = element->GetFont();
+  auto font = element->GetFont();
   int string_w = GetWidth(element);
 
   int x = rect.x;

@@ -9,11 +9,11 @@
 
 #include <cstdio>
 
+#include "tb/resources/font_manager.h"
 #include "tb/resources/image_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 
-#include "tb_font_renderer.h"
 #include "tb_text_box.h"
 #include "tb_window.h"
 
@@ -104,9 +104,9 @@ class DebugSettingsWindow : public Window, public ElementListener {
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawFontBitmapFragments)) {
       Element* element = Element::hovered_element ? Element::hovered_element
                                                   : Element::focused_element;
-      auto font_face = FontManager::get()->GetFontFace(
+      auto font_face = resources::FontManager::get()->GetFontFace(
           element ? element->GetCalculatedFontDescription()
-                  : FontManager::get()->GetDefaultFontDescription());
+                  : resources::FontManager::get()->GetDefaultFontDescription());
       font_face->Debug();
     }
 

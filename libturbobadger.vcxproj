@@ -18,6 +18,12 @@
     <ClCompile Include="src\tb\resources\bitmap_fragment_manager.cc" />
     <ClCompile Include="src\tb\resources\bitmap_fragment_map.cc" />
     <ClCompile Include="src\tb\resources\element_factory.cc" />
+    <ClCompile Include="src\tb\resources\font_effect.cc" />
+    <ClCompile Include="src\tb\resources\font_face.cc" />
+    <ClCompile Include="src\tb\resources\font_manager.cc" />
+    <ClCompile Include="src\tb\resources\font_renderer_freetype.cc" />
+    <ClCompile Include="src\tb\resources\font_renderer_stb.cc" />
+    <ClCompile Include="src\tb\resources\font_renderer_tbbf.cc" />
     <ClCompile Include="src\tb\resources\image_loader_stb.cc" />
     <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\resources\image_manager.cc" />
@@ -26,10 +32,6 @@
     <ClCompile Include="src\tb\turbo_badger.cc" />
     <ClCompile Include="src\tb\tb_dimension.cpp" />
     <ClCompile Include="src\tb\tb_text_box.cpp" />
-    <ClCompile Include="src\tb\tb_font_renderer.cpp" />
-    <ClCompile Include="src\tb\tb_font_renderer_freetype.cpp" />
-    <ClCompile Include="src\tb\tb_font_renderer_stb.cpp" />
-    <ClCompile Include="src\tb\tb_font_renderer_tbbf.cpp" />
     <ClCompile Include="src\tb\tb_id.cpp" />
     <ClCompile Include="src\tb\tb_image_widget.cpp" />
     <ClCompile Include="src\tb\tb_inline_select.cpp" />
@@ -99,6 +101,10 @@
     <ClInclude Include="src\tb\resources\bitmap_fragment_manager.h" />
     <ClInclude Include="src\tb\resources\bitmap_fragment_map.h" />
     <ClInclude Include="src\tb\resources\element_factory.h" />
+    <ClInclude Include="src\tb\resources\font_effect.h" />
+    <ClInclude Include="src\tb\resources\font_face.h" />
+    <ClInclude Include="src\tb\resources\font_manager.h" />
+    <ClInclude Include="src\tb\resources\font_renderer.h" />
     <ClInclude Include="src\tb\resources\image_loader.h" />
     <ClInclude Include="src\tb\resources\image_manager.h" />
     <ClInclude Include="src\tb\resources\text_parser.h" />
@@ -114,7 +120,6 @@
     <ClInclude Include="src\tb\tb_dimension.h" />
     <ClInclude Include="src\tb\tb_text_box.h" />
     <ClInclude Include="src\tb\tb_font_desc.h" />
-    <ClInclude Include="src\tb\tb_font_renderer.h" />
     <ClInclude Include="src\tb\tb_id.h" />
     <ClInclude Include="src\tb\tb_inline_select.h" />
     <ClInclude Include="src\tb\tb_layout.h" />

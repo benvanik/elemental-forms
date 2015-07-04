@@ -25,7 +25,9 @@ class StyleEdit;
 class TextFragment;
 class TextFragmentContent;
 class TextFragmentContentFactory;
-
+namespace resources {
+class FontFace;
+}  // namespace resources
 namespace util {
 class RectRegion;
 }  // namespace util
@@ -39,7 +41,7 @@ class StyleEditListener {
   virtual void OnChange() {}
   virtual bool OnEnter() { return false; }
   virtual void Invalidate(const Rect& rect) = 0;
-  virtual void DrawString(int32_t x, int32_t y, FontFace* font,
+  virtual void DrawString(int32_t x, int32_t y, resources::FontFace* font,
                           const Color& color, const char* str,
                           size_t len = std::string::npos) = 0;
   virtual void DrawRect(const Rect& rect, const Color& color) = 0;
@@ -174,7 +176,7 @@ class TextProps {
   void Pop();
 
   // Gets the font face from the current font description.
-  FontFace* GetFont();
+  resources::FontFace* GetFont();
 
  public:
   util::TBLinkListOf<Data> data_list;
@@ -220,11 +222,11 @@ class TextBlock : public util::TBLinkOf<TextBlock> {
   TextFragment* FindFragment(size_t ofs, bool prefer_first = false) const;
   TextFragment* FindFragment(int32_t x, int32_t y) const;
 
-  int32_t CalculateStringWidth(FontFace* font, const char* str,
+  int32_t CalculateStringWidth(resources::FontFace* font, const char* str,
                                size_t len = std::string::npos) const;
-  int32_t CalculateTabWidth(FontFace* font, int32_t xpos) const;
-  int32_t CalculateLineHeight(FontFace* font) const;
-  int32_t CalculateBaseline(FontFace* font) const;
+  int32_t CalculateTabWidth(resources::FontFace* font, int32_t xpos) const;
+  int32_t CalculateLineHeight(resources::FontFace* font) const;
+  int32_t CalculateBaseline(resources::FontFace* font) const;
 
   void Invalidate();
   void BuildSelectionRegion(int32_t translate_x, int32_t translate_y,
@@ -245,7 +247,8 @@ class TextBlock : public util::TBLinkOf<TextBlock> {
   size_t str_len = 0;
 
  private:
-  int GetStartIndentation(FontFace* font, size_t first_line_len) const;
+  int GetStartIndentation(resources::FontFace* font,
+                          size_t first_line_len) const;
 };
 
 // Event in the UndoRedoStack. Each insert or remove change is stored as a
@@ -305,21 +308,22 @@ class TextFragment : public util::TBLinkOf<TextFragment> {
   bool IsSpace() const;
   bool IsTab() const;
 
-  int32_t GetCharX(FontFace* font, size_t ofs);
-  size_t GetCharOfs(FontFace* font, int32_t x);
+  int32_t GetCharX(resources::FontFace* font, size_t ofs);
+  size_t GetCharOfs(resources::FontFace* font, int32_t x);
 
   // Gets the string width. Handles password mode, tab, linebreaks etc
   // automatically.
-  int32_t GetStringWidth(FontFace* font, const char* str, size_t len);
+  int32_t GetStringWidth(resources::FontFace* font, const char* str,
+                         size_t len);
 
   bool GetAllowBreakBefore() const;
   bool GetAllowBreakAfter() const;
 
   const char* Str() const { return block->str.c_str() + ofs; }
 
-  int32_t GetWidth(FontFace* font);
-  int32_t GetHeight(FontFace* font);
-  int32_t GetBaseline(FontFace* font);
+  int32_t GetWidth(resources::FontFace* font);
+  int32_t GetHeight(resources::FontFace* font);
+  int32_t GetBaseline(resources::FontFace* font);
 
  public:
   int16_t xpos = 0, ypos = 0;
@@ -441,7 +445,7 @@ class StyleEdit {
 
   /** DEPRECATED! This will be removed when using different fonts is properly
    * supported! */
-  FontFace* font = nullptr;
+  resources::FontFace* font = nullptr;
   FontDescription font_desc;
 
   TextAlign align = TextAlign::kLeft;

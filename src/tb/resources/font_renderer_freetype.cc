@@ -7,10 +7,8 @@
  ******************************************************************************
  */
 
-#include "tb_font_renderer.h"
-
 #include "tb_renderer.h"
-
+#include "tb/resources/font_renderer.h"
 #include "tb/util/file.h"
 
 #ifdef TB_FONT_RENDERER_FREETYPE
@@ -24,6 +22,7 @@ bool ft_initialized = false;
 static FT_Library g_freetype = nullptr;
 
 using namespace tb;
+using namespace tb::resources;
 
 /** Cache of truetype file data, so it isn't loaded multiple times for each font
  * size */

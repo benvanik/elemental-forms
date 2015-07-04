@@ -7,12 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_STRING_BUILDER_H
-#define TB_STRING_BUILDER_H
+#ifndef TB_UTIL_STRING_BUILDER_H_
+#define TB_UTIL_STRING_BUILDER_H_
 
 #include <string>
 
 namespace tb {
+namespace util {
 
 // Manages a buffer that will be deleted on destruction.
 // The buffer size can grow by calling Reserve or Append, but it
@@ -73,6 +74,7 @@ class StringBuilder {
   size_t m_append_pos = 0;
 };
 
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_STRING_BUILDER_H
+#endif  // TB_UTIL_STRING_BUILDER_H_

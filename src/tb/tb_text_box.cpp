@@ -9,7 +9,6 @@
 
 #include <algorithm>
 
-#include "tb_font_renderer.h"
 #include "tb_menu_window.h"
 #include "tb_select.h"
 #include "tb_skin_util.h"
@@ -18,6 +17,7 @@
 #include "tb_widget_skin_condition_context.h"
 
 #include "tb/resources/element_factory.h"
+#include "tb/resources/font_face.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
 
@@ -458,7 +458,7 @@ bool TextBox::OnEnter() { return false; }
 
 void TextBox::Invalidate(const Rect& rect) { Element::Invalidate(); }
 
-void TextBox::DrawString(int32_t x, int32_t y, FontFace* font,
+void TextBox::DrawString(int32_t x, int32_t y, resources::FontFace* font,
                          const Color& color, const char* str, size_t len) {
   font->DrawString(x, y, color, str, len);
 }
@@ -547,9 +547,10 @@ class TextFragmentContentElement : public TextFragmentContent {
   ~TextFragmentContentElement() override;
 
   void UpdatePos(int x, int y) override;
-  int32_t GetWidth(FontFace* font, TextFragment* fragment) override;
-  int32_t GetHeight(FontFace* font, TextFragment* fragment) override;
-  int32_t GetBaseline(FontFace* font, TextFragment* fragment) override;
+  int32_t GetWidth(resources::FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(resources::FontFace* font, TextFragment* fragment) override;
+  int32_t GetBaseline(resources::FontFace* font,
+                      TextFragment* fragment) override;
 
  private:
   Element* m_element;
@@ -571,19 +572,19 @@ void TextFragmentContentElement::UpdatePos(int x, int y) {
       {x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)});
 }
 
-int32_t TextFragmentContentElement::GetWidth(FontFace* font,
+int32_t TextFragmentContentElement::GetWidth(resources::FontFace* font,
                                              TextFragment* fragment) {
   return m_element->rect().w ? m_element->rect().w
                              : m_element->GetPreferredSize().pref_w;
 }
 
-int32_t TextFragmentContentElement::GetHeight(FontFace* font,
+int32_t TextFragmentContentElement::GetHeight(resources::FontFace* font,
                                               TextFragment* fragment) {
   return m_element->rect().h ? m_element->rect().h
                              : m_element->GetPreferredSize().pref_h;
 }
 
-int32_t TextFragmentContentElement::GetBaseline(FontFace* font,
+int32_t TextFragmentContentElement::GetBaseline(resources::FontFace* font,
                                                 TextFragment* fragment) {
   int height = GetHeight(font, fragment);
   return (height + fragment->block->CalculateBaseline(font)) / 2;

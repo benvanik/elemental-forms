@@ -183,8 +183,8 @@ bool IsEndQuote(const char* buf_start, const char* buf, const char quote_type) {
 
 TextParser::Status TextParser::Read(TextParserStream* stream,
                                     TextParserTarget* target) {
-  StringBuilder line(1024);
-  StringBuilder work(1024);
+  util::StringBuilder line(1024);
+  util::StringBuilder work(1024);
 
   current_indent = 0;
   current_line_nr = 1;

@@ -7,18 +7,17 @@
  ******************************************************************************
  */
 
-#include "tb_style_edit.h"
-
 #include <algorithm>
 #include <cassert>
 
+#include "tb/resources/font_manager.h"
 #include "tb/util/clipboard.h"
 #include "tb/util/file.h"
 #include "tb/util/rect_region.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
 
-#include "tb_font_renderer.h"
+#include "tb_style_edit.h"
 #include "tb_style_edit_content.h"
 #include "tb_widgets_common.h"
 
@@ -307,7 +306,7 @@ void TextSelection::RemoveContent() {
     start.block->RemoveContent(start.ofs, stop.ofs - start.ofs);
   } else {
     // Remove text in first block.
-    StringBuilder commit_string;
+    util::StringBuilder commit_string;
     size_t start_gofs = 0;
     if (!style_edit->undoredo.applying) {
       start_gofs = start.GetGlobalOffset(style_edit);
@@ -353,7 +352,7 @@ std::string TextSelection::GetText() const {
     return std::string(start.block->str.c_str() + start.ofs,
                        stop.ofs - start.ofs);
   } else {
-    StringBuilder buf;
+    util::StringBuilder buf;
     buf.Append(start.block->str.c_str() + start.ofs,
                start.block->str_len - start.ofs);
     TextBlock* block = start.block->GetNext();
@@ -595,8 +594,8 @@ void TextProps::Pop() {
   data = data_list.GetLast() ? data_list.GetLast() : &base_data;
 }
 
-FontFace* TextProps::GetFont() {
-  return FontManager::get()->GetFontFace(data->font_desc);
+resources::FontFace* TextProps::GetFont() {
+  return resources::FontManager::get()->GetFontFace(data->font_desc);
 }
 
 TextBlock::TextBlock(StyleEdit* style_edit)
@@ -714,14 +713,15 @@ void TextBlock::Merge() {
   }
 }
 
-int32_t TextBlock::CalculateTabWidth(FontFace* font, int32_t xpos) const {
+int32_t TextBlock::CalculateTabWidth(resources::FontFace* font,
+                                     int32_t xpos) const {
   int tabsize = font->GetStringWidth("x", 1) * TAB_SPACE;
   int p2 = int(xpos / tabsize) * tabsize + tabsize;
   return p2 - xpos;
 }
 
-int32_t TextBlock::CalculateStringWidth(FontFace* font, const char* str,
-                                        size_t len) const {
+int32_t TextBlock::CalculateStringWidth(resources::FontFace* font,
+                                        const char* str, size_t len) const {
   if (style_edit->packed.password_on) {
     // Convert the length in number or characters, since that's what matters for
     // password width.
@@ -731,15 +731,15 @@ int32_t TextBlock::CalculateStringWidth(FontFace* font, const char* str,
   return font->GetStringWidth(str, len);
 }
 
-int32_t TextBlock::CalculateLineHeight(FontFace* font) const {
+int32_t TextBlock::CalculateLineHeight(resources::FontFace* font) const {
   return font->height();
 }
 
-int32_t TextBlock::CalculateBaseline(FontFace* font) const {
+int32_t TextBlock::CalculateBaseline(resources::FontFace* font) const {
   return font->GetAscent();
 }
 
-int TextBlock::GetStartIndentation(FontFace* font,
+int TextBlock::GetStartIndentation(resources::FontFace* font,
                                    size_t first_line_len) const {
   // Lines beginning with whitespace or list points, should
   // indent to the same as the beginning when wrapped.
@@ -1068,7 +1068,7 @@ void TextFragment::BuildSelectionRegion(int32_t translate_x,
 
   int x = translate_x + xpos;
   int y = translate_y + ypos;
-  FontFace* font = props->GetFont();
+  auto font = props->GetFont();
 
   if (content) {
     // Selected embedded content should add to the foreground region.
@@ -1097,7 +1097,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
   int x = translate_x + xpos;
   int y = translate_y + ypos;
   Color color = props->data->text_color;
-  FontFace* font = props->GetFont();
+  auto font = props->GetFont();
 
   if (content) {
     content->Paint(this, translate_x, translate_y, props);
@@ -1144,24 +1144,24 @@ void TextFragment::Click(int button, ModifierKeys modifierkeys) {
   }
 }
 
-int32_t TextFragment::GetWidth(FontFace* font) {
+int32_t TextFragment::GetWidth(resources::FontFace* font) {
   if (content) return content->GetWidth(font, this);
   if (IsBreak()) return 0;
   if (IsTab()) return block->CalculateTabWidth(font, xpos);
   return block->CalculateStringWidth(font, block->str.c_str() + ofs, len);
 }
 
-int32_t TextFragment::GetHeight(FontFace* font) {
+int32_t TextFragment::GetHeight(resources::FontFace* font) {
   if (content) return content->GetHeight(font, this);
   return block->CalculateLineHeight(font);
 }
 
-int32_t TextFragment::GetBaseline(FontFace* font) {
+int32_t TextFragment::GetBaseline(resources::FontFace* font) {
   if (content) return content->GetBaseline(font, this);
   return block->CalculateBaseline(font);
 }
 
-int32_t TextFragment::GetCharX(FontFace* font, size_t ofs) {
+int32_t TextFragment::GetCharX(resources::FontFace* font, size_t ofs) {
   assert(ofs >= 0 && ofs <= len);
 
   if (IsEmbedded() || IsTab()) {
@@ -1174,7 +1174,7 @@ int32_t TextFragment::GetCharX(FontFace* font, size_t ofs) {
   return block->CalculateStringWidth(font, block->str.c_str() + this->ofs, ofs);
 }
 
-size_t TextFragment::GetCharOfs(FontFace* font, int32_t x) {
+size_t TextFragment::GetCharOfs(resources::FontFace* font, int32_t x) {
   if (IsEmbedded() || IsTab()) {
     return x > GetWidth(font) / 2 ? 1 : 0;
   }
@@ -1200,7 +1200,7 @@ size_t TextFragment::GetCharOfs(FontFace* font, int32_t x) {
   return len;
 }
 
-int32_t TextFragment::GetStringWidth(FontFace* font, const char* str,
+int32_t TextFragment::GetStringWidth(resources::FontFace* font, const char* str,
                                      size_t len) {
   if (IsTab()) {
     return len ? block->CalculateTabWidth(font, xpos) : 0;
@@ -1244,8 +1244,8 @@ StyleEdit::StyleEdit() {
   selection.style_edit = this;
   TMPDEBUG(packed.show_whitespace = true);
 
-  font_desc = FontManager::get()->GetDefaultFontDescription();
-  font = FontManager::get()->GetFontFace(font_desc);
+  font_desc = resources::FontManager::get()->GetDefaultFontDescription();
+  font = resources::FontManager::get()->GetFontFace(font_desc);
 
 #if WIN32
   packed.win_style_br = 1;
@@ -1275,7 +1275,7 @@ void StyleEdit::SetContentFactory(TextFragmentContentFactory* content_factory) {
 void StyleEdit::SetFont(const FontDescription& font_desc) {
   if (this->font_desc == font_desc) return;
   this->font_desc = font_desc;
-  font = FontManager::get()->GetFontFace(font_desc);
+  font = resources::FontManager::get()->GetFontFace(font_desc);
   Reformat(true);
 }
 

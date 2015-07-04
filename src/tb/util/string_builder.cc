@@ -15,6 +15,7 @@
 #include "tb/util/string_builder.h"
 
 namespace tb {
+namespace util {
 
 StringBuilder::StringBuilder() = default;
 
@@ -92,4 +93,5 @@ void StringBuilder::AppendPath(const std::string& full_path_and_filename) {
   m_append_pos--;
 }
 
+}  // namespace util
 }  // namespace tb

@@ -14,7 +14,7 @@ class CodeTextBox : public tb::TextBox {
   virtual void OnInflate(const tb::resources::InflateInfo& info);
 
  private:
-  virtual void DrawString(int32_t x, int32_t y, tb::FontFace* font,
+  virtual void DrawString(int32_t x, int32_t y, tb::resources::FontFace* font,
                           const tb::Color& color, const char* str, size_t len);
   virtual void OnBreak();
 

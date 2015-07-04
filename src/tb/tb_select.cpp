@@ -147,7 +147,7 @@ void SelectList::ValidateList() {
 
   // Create a sorted list of the items we should include using the current
   // filter.
-  StringBuilder sort_buf(m_source->GetNumItems() * sizeof(int));
+  util::StringBuilder sort_buf(m_source->GetNumItems() * sizeof(int));
   int* sorted_index = (int*)sort_buf.GetData();
 
   // Populate the sorted index list

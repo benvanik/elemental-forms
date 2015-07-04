@@ -25,7 +25,6 @@
 
 namespace tb {
 
-class FontFace;
 class GenericStringItemSource;
 class LongClickTimer;
 class Scroller;
@@ -33,6 +32,7 @@ class Element;
 class ElementListener;
 class Window;
 namespace resources {
+class FontFace;
 struct InflateInfo;
 }  // namespace resources
 
@@ -1125,7 +1125,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
 
   // Gets the FontFace for this element from the current font description
   // (calculated by GetCalculatedFontDescription).
-  FontFace* GetFont() const;
+  resources::FontFace* GetFont() const;
 
  private:
   friend class ElementListener;

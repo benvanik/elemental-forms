@@ -49,7 +49,7 @@ class TextParser {
   int current_indent = 0;
   int current_line_nr = 0;
   std::string multi_line_token;
-  StringBuilder multi_line_value;
+  util::StringBuilder multi_line_value;
   int multi_line_sub_level = 0;
   bool pending_multiline = false;
 };

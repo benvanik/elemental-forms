@@ -178,7 +178,7 @@ class NodeTarget : public resources::TextParserTarget {
   void IncludeFile(int line_nr, const char* filename) {
     // Read the included file into a new Node and then move all the children to
     // m_target_node.
-    StringBuilder include_filename;
+    util::StringBuilder include_filename;
     include_filename.AppendPath(m_filename);
     include_filename.AppendString(filename);
     Node content;

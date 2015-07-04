@@ -31,7 +31,7 @@ void DimensionConverter::SetDPI(int src_dpi, int dst_dpi) {
 }
 
 void DimensionConverter::GetDstDPIFilename(const std::string& filename,
-                                           StringBuilder* tempbuf) const {
+                                           util::StringBuilder* tempbuf) const {
   size_t dot_pos = 0;
   for (dot_pos = filename.size() - 1; dot_pos > 0; dot_pos--) {
     if (filename[dot_pos] == '.') break;

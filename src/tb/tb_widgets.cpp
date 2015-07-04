@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_font_renderer.h"
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
 #include "tb_scroller.h"
@@ -25,6 +24,7 @@
 #include "tb_value.h"
 
 #include "tb/resources/element_factory.h"
+#include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
@@ -1827,9 +1827,9 @@ bool Element::SetFontDescription(const FontDescription& font_desc) {
 
   // Set the font description only if we have a matching font, or succeed
   // creating one.
-  if (FontManager::get()->HasFontFace(font_desc)) {
+  if (resources::FontManager::get()->HasFontFace(font_desc)) {
     m_font_desc = font_desc;
-  } else if (FontManager::get()->CreateFontFace(font_desc)) {
+  } else if (resources::FontManager::get()->CreateFontFace(font_desc)) {
     m_font_desc = font_desc;
   } else {
     return false;
@@ -1858,11 +1858,12 @@ FontDescription Element::GetCalculatedFontDescription() const {
     }
     tmp = tmp->m_parent;
   }
-  return FontManager::get()->GetDefaultFontDescription();
+  return resources::FontManager::get()->GetDefaultFontDescription();
 }
 
-FontFace* Element::GetFont() const {
-  return FontManager::get()->GetFontFace(GetCalculatedFontDescription());
+resources::FontFace* Element::GetFont() const {
+  return resources::FontManager::get()->GetFontFace(
+      GetCalculatedFontDescription());
 }
 
 }  // namespace tb

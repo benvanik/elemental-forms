@@ -10,7 +10,6 @@
 #include "tb_widgets.h"
 #include "tb_msg.h"
 #include "tb_renderer_gl.h"
-#include "tb_font_renderer.h"
 #include "Application.h"
 
 #include "tb/turbo_badger.h"

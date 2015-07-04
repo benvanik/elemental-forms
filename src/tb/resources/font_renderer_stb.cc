@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb_font_renderer.h"
-
 #include "tb_renderer.h"
+#include "tb/resources/font_renderer.h"
 
 #ifdef TB_FONT_RENDERER_STB
 
 using namespace tb;
+using namespace tb::resources;
 
 #define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate
                                      // implementation

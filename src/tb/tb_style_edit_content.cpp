@@ -62,12 +62,12 @@ void TextFragmentContentHR::Paint(TextFragment* fragment, int32_t translate_x,
   listener->DrawRectFill(Rect(x, y, w, height_), props->data->text_color);
 }
 
-int32_t TextFragmentContentHR::GetWidth(FontFace* font,
+int32_t TextFragmentContentHR::GetWidth(resources::FontFace* font,
                                         TextFragment* fragment) {
   return std::max(fragment->block->style_edit->layout_width, 0);
 }
 
-int32_t TextFragmentContentHR::GetHeight(FontFace* font,
+int32_t TextFragmentContentHR::GetHeight(resources::FontFace* font,
                                          TextFragment* fragment) {
   return height_;
 }

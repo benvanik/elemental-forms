@@ -9,7 +9,6 @@
 
 #include <cassert>
 
-#include "tb_font_renderer.h"
 #include "tb_skin.h"
 #include "tb_tooltips.h"
 #include "tb_widget_animation.h"
@@ -17,6 +16,8 @@
 #include "tb/animation.h"
 #include "tb/config.h"
 #include "tb/resources/element_factory.h"
+#include "tb/resources/font_manager.h"
+#include "tb/resources/font_renderer.h"
 #include "tb/resources/image_manager.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/string_table.h"
@@ -33,7 +34,7 @@ bool Initialize(Renderer* renderer, const char* language_file) {
 
   util::StringTable::set(std::make_unique<util::StringTable>());
   util::StringTable::get()->Load(language_file);
-  FontManager::set(std::make_unique<FontManager>());
+  resources::FontManager::set(std::make_unique<resources::FontManager>());
   Skin::set(std::make_unique<Skin>());
   resources::ElementFactory::set(std::make_unique<resources::ElementFactory>());
   resources::ImageManager::set(std::make_unique<resources::ImageManager>());
@@ -60,7 +61,7 @@ void Shutdown() {
   resources::ImageManager::set(nullptr);
   resources::ElementFactory::set(nullptr);
   Skin::set(nullptr);
-  FontManager::set(nullptr);
+  resources::FontManager::set(nullptr);
   util::StringTable::set(nullptr);
   Renderer::set(nullptr);
 }

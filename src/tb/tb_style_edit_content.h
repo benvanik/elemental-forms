@@ -15,6 +15,9 @@
 namespace tb {
 
 class TextFragment;
+namespace resources {
+class FontFace;
+}  // namespace resources
 
 // Content for a non-text TextFragment.
 class TextFragmentContent {
@@ -29,11 +32,14 @@ class TextFragmentContent {
                      int32_t translate_y, TextProps* props) {}
   virtual void Click(TextFragment* fragment, int button,
                      ModifierKeys modifierkeys) {}
-  virtual int32_t GetWidth(FontFace* font, TextFragment* fragment) { return 0; }
-  virtual int32_t GetHeight(FontFace* font, TextFragment* fragment) {
+  virtual int32_t GetWidth(resources::FontFace* font, TextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetBaseline(FontFace* font, TextFragment* fragment) {
+  virtual int32_t GetHeight(resources::FontFace* font, TextFragment* fragment) {
+    return 0;
+  }
+  virtual int32_t GetBaseline(resources::FontFace* font,
+                              TextFragment* fragment) {
     return GetHeight(font, fragment);
   }
   virtual bool GetAllowBreakBefore() { return true; }
@@ -50,8 +56,8 @@ class TextFragmentContentHR : public TextFragmentContent {
 
   void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
              TextProps* props) override;
-  int32_t GetWidth(FontFace* font, TextFragment* fragment) override;
-  int32_t GetHeight(FontFace* font, TextFragment* fragment) override;
+  int32_t GetWidth(resources::FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(resources::FontFace* font, TextFragment* fragment) override;
 
  private:
   int32_t width_in_percent_;

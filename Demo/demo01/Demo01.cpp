@@ -11,9 +11,10 @@
 #include "tb_tab_container.h"
 #include "tb_widget_animation.h"
 #include "tb_node_tree.h"
-#include "tb_font_renderer.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/resources/font_manager.h"
+#include "tb/resources/font_renderer.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
@@ -195,7 +196,7 @@ class EditWindow : public DemoWindow {
         if (ev.ref_id == TBIDC("default font"))
           edit->SetFontDescription(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
-          FontDescription fd = FontManager::get()->GetDefaultFontDescription();
+          auto fd = resources::FontManager::get()->GetDefaultFontDescription();
           fd.SetSize(28);
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
@@ -211,7 +212,7 @@ class EditWindow : public DemoWindow {
           fd.SetID(TBIDC("Orange"));
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("CJK")) {
-          StringBuilder buf;
+          util::StringBuilder buf;
           for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; cp++, i++) {
             char utf8[8];
             int len = util::utf8::encode(cp, utf8);
@@ -807,17 +808,18 @@ int app_main() {
   void register_freetype_font_renderer();
   register_freetype_font_renderer();
 #endif
+  auto font_manager = resources::FontManager::get();
 
 // Add fonts we can use to the font manager.
 #if defined(TB_FONT_RENDERER_STB) || defined(TB_FONT_RENDERER_FREETYPE)
-  FontManager::get()->AddFontInfo("resources/vera.ttf", "Vera");
+  font_manager->AddFontInfo("resources/vera.ttf", "Vera");
 #endif
 #ifdef TB_FONT_RENDERER_TBBF
-  FontManager::get()->AddFontInfo(
+  font_manager->AddFontInfo(
       "resources/default_font/segoe_white_with_shadow.tb.txt", "Segoe");
-  FontManager::get()->AddFontInfo("Demo/fonts/neon.tb.txt", "Neon");
-  FontManager::get()->AddFontInfo("Demo/fonts/orangutang.tb.txt", "Orangutang");
-  FontManager::get()->AddFontInfo("Demo/fonts/orange.tb.txt", "Orange");
+  font_manager->AddFontInfo("Demo/fonts/neon.tb.txt", "Neon");
+  font_manager->AddFontInfo("Demo/fonts/orangutang.tb.txt", "Orangutang");
+  font_manager->AddFontInfo("Demo/fonts/orange.tb.txt", "Orange");
 #endif
 
   // Set the default font description for elements to one of the fonts we just
@@ -829,11 +831,11 @@ int app_main() {
   fd.SetID(TBIDC("Vera"));
 #endif
   fd.SetSize(Skin::get()->GetDimensionConverter()->DpToPx(14));
-  FontManager::get()->SetDefaultFontDescription(fd);
+  font_manager->SetDefaultFontDescription(fd);
 
   // Create the font now.
-  FontFace* font = FontManager::get()->CreateFontFace(
-      FontManager::get()->GetDefaultFontDescription());
+  auto font =
+      font_manager->CreateFontFace(font_manager->GetDefaultFontDescription());
 
   // Render some glyphs in one go now since we know we are going to use them. It
   // would work fine

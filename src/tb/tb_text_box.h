@@ -193,8 +193,8 @@ class TextBox : public Element,
   void OnChange() override;
   bool OnEnter() override;
   void Invalidate(const Rect& rect) override;
-  void DrawString(int32_t x, int32_t y, FontFace* font, const Color& color,
-                  const char* str, size_t len) override;
+  void DrawString(int32_t x, int32_t y, resources::FontFace* font,
+                  const Color& color, const char* str, size_t len) override;
   void DrawRect(const Rect& rect, const Color& color) override;
   void DrawRectFill(const Rect& rect, const Color& color) override;
   void DrawTextSelectionBg(const Rect& rect) override;

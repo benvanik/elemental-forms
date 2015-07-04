@@ -14,6 +14,7 @@
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::util;
 
 TB_TEST_GROUP(tb_string_builder) {
   TB_TEST(append_path_1) {

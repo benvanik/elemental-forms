@@ -9,15 +9,18 @@
 
 #include <algorithm>
 
-#include "tb_font_renderer.h"
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
 
+#include "tb/resources/font_face.h"
+#include "tb/resources/font_manager.h"
+#include "tb/resources/font_renderer.h"
 #include "tb/resources/image_loader.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 
 using namespace tb;
+using namespace tb::resources;
 
 struct GLYPH {
   int x, w;
@@ -181,7 +184,7 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   m_rgb = m_node.GetValueInt("info>rgb", 0);
 
   // Get the path for the bitmap file.
-  StringBuilder bitmap_filename;
+  util::StringBuilder bitmap_filename;
   bitmap_filename.AppendPath(filename);
 
   // Append the bitmap filename for the given size.
