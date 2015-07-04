@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -21,9 +21,9 @@ PreferredSize ImageElement::OnCalculatePreferredContentSize(
 
 void ImageElement::OnPaint(const PaintProps& paint_props) {
   if (BitmapFragment* fragment = m_image.GetBitmap()) {
-    g_renderer->DrawBitmap(GetPaddingRect(),
-                           Rect(0, 0, m_image.Width(), m_image.Height()),
-                           fragment);
+    Renderer::get()->DrawBitmap(GetPaddingRect(),
+                                Rect(0, 0, m_image.Width(), m_image.Height()),
+                                fragment);
   }
 }
 

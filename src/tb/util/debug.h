@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -34,6 +34,8 @@ namespace util {
 
 class DebugInfo {
  public:
+  static DebugInfo* get() { return &debug_info_singleton_; }
+
   DebugInfo();
 
   enum class Setting {
@@ -56,14 +58,16 @@ class DebugInfo {
     kSettingCount,
   };
   int settings[int(Setting::kSettingCount)] = {0};
-};
 
-extern DebugInfo g_tb_debug;
+ private:
+  static DebugInfo debug_info_singleton_;
+};
 
 // Shows a window containing runtime debugging settings.
 void ShowDebugInfoSettingsWindow(Element* root);
 
-#define TB_DEBUG_SETTING(setting) tb::util::g_tb_debug.settings[int(setting)]
+#define TB_DEBUG_SETTING(setting) \
+  tb::util::DebugInfo::get()->settings[int(setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \
   if (TB_DEBUG_SETTING(setting)) {         \
     code;                                  \

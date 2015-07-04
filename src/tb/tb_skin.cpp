@@ -3,11 +3,9 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
-
-#include "tb_skin.h"
 
 #include <algorithm>
 #include <cassert>
@@ -15,12 +13,15 @@
 #include <string>
 
 #include "tb_node_tree.h"
+#include "tb_skin.h"
 
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
+
+std::unique_ptr<Skin> Skin::skin_singleton_;
 
 SkinState StringToState(const char* state_str) {
   SkinState state = SkinState::kNone;
@@ -48,7 +49,7 @@ bool SkinCondition::GetCondition(SkinConditionContext& context) const {
 }
 
 Skin::Skin() {
-  g_renderer->AddListener(this);
+  Renderer::get()->AddListener(this);
 
   // Avoid filtering artifacts at edges when we draw fragments stretched.
   m_frag_manager.SetAddBorder(true);
@@ -215,7 +216,7 @@ bool Skin::ReloadBitmapsInternal() {
   return success;
 }
 
-Skin::~Skin() { g_renderer->RemoveListener(this); }
+Skin::~Skin() { Renderer::get()->RemoveListener(this); }
 
 SkinElement* Skin::GetSkinElement(const TBID& skin_id) const {
   if (!skin_id) return nullptr;
@@ -304,9 +305,9 @@ SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
   }
 
   // Paint ugly rectangles on invalid skin elements in debug builds.
-  TB_IF_DEBUG(if (paint_error_highlight) g_renderer->DrawRect(
+  TB_IF_DEBUG(if (paint_error_highlight) Renderer::get()->DrawRect(
       dst_rect.Expand(1, 1), Color(255, 205, 0)));
-  TB_IF_DEBUG(if (paint_error_highlight) g_renderer->DrawRect(
+  TB_IF_DEBUG(if (paint_error_highlight) Renderer::get()->DrawRect(
       dst_rect.Shrink(1, 1), Color(255, 0, 0)));
 
   element->is_painting = false;
@@ -368,7 +369,7 @@ Rect Skin::GetFlippedRect(const Rect& src_rect, SkinElement* element) const {
 
 void Skin::PaintElementBGColor(const Rect& dst_rect, SkinElement* element) {
   if (element->bg_color == 0) return;
-  g_renderer->DrawRectFill(dst_rect, element->bg_color);
+  Renderer::get()->DrawRectFill(dst_rect, element->bg_color);
 }
 
 void Skin::PaintElementImage(const Rect& dst_rect, SkinElement* element) {
@@ -379,13 +380,13 @@ void Skin::PaintElementImage(const Rect& dst_rect, SkinElement* element) {
              rect.y + element->img_ofs_y +
                  (rect.h - src_rect.h) * element->img_position_y / 100,
              src_rect.w, src_rect.h);
-  g_renderer->DrawBitmap(rect, GetFlippedRect(src_rect, element),
-                         element->bitmap);
+  Renderer::get()->DrawBitmap(rect, GetFlippedRect(src_rect, element),
+                              element->bitmap);
 }
 
 void Skin::PaintElementTile(const Rect& dst_rect, SkinElement* element) {
   Rect rect = dst_rect.Expand(element->expand, element->expand);
-  g_renderer->DrawBitmapTile(rect, element->bitmap->GetBitmap());
+  Renderer::get()->DrawBitmapTile(rect, element->bitmap->GetBitmap());
 }
 
 void Skin::PaintElementStretchImage(const Rect& dst_rect,
@@ -394,7 +395,7 @@ void Skin::PaintElementStretchImage(const Rect& dst_rect,
   Rect rect = dst_rect.Expand(element->expand, element->expand);
   Rect src_rect = GetFlippedRect(
       Rect(0, 0, element->bitmap->Width(), element->bitmap->Height()), element);
-  g_renderer->DrawBitmap(rect, src_rect, element->bitmap);
+  Renderer::get()->DrawBitmap(rect, src_rect, element->bitmap);
 }
 
 void Skin::PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
@@ -425,47 +426,47 @@ void Skin::PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
   }
 
   // Corners.
-  g_renderer->DrawBitmap(Rect(rect.x, rect.y, dst_cut_w, dst_cut_h),
-                         Rect(0, 0, cut, cut), element->bitmap);
-  g_renderer->DrawBitmap(
+  Renderer::get()->DrawBitmap(Rect(rect.x, rect.y, dst_cut_w, dst_cut_h),
+                              Rect(0, 0, cut, cut), element->bitmap);
+  Renderer::get()->DrawBitmap(
       Rect(rect.x + rect.w - dst_cut_w, rect.y, dst_cut_w, dst_cut_h),
       Rect(bw - cut, 0, cut, cut), element->bitmap);
-  g_renderer->DrawBitmap(
+  Renderer::get()->DrawBitmap(
       Rect(rect.x, rect.y + rect.h - dst_cut_h, dst_cut_w, dst_cut_h),
       Rect(0, bh - cut, cut, cut), element->bitmap);
-  g_renderer->DrawBitmap(
+  Renderer::get()->DrawBitmap(
       Rect(rect.x + rect.w - dst_cut_w, rect.y + rect.h - dst_cut_h, dst_cut_w,
            dst_cut_h),
       Rect(bw - cut, bh - cut, cut, cut), element->bitmap);
 
   // Left & right edge.
   if (has_left_right_edges) {
-    g_renderer->DrawBitmap(
+    Renderer::get()->DrawBitmap(
         Rect(rect.x, rect.y + dst_cut_h, dst_cut_w, rect.h - dst_cut_h * 2),
         Rect(0, cut, cut, bh - cut * 2), element->bitmap);
-    g_renderer->DrawBitmap(Rect(rect.x + rect.w - dst_cut_w, rect.y + dst_cut_h,
-                                dst_cut_w, rect.h - dst_cut_h * 2),
-                           Rect(bw - cut, cut, cut, bh - cut * 2),
-                           element->bitmap);
+    Renderer::get()->DrawBitmap(
+        Rect(rect.x + rect.w - dst_cut_w, rect.y + dst_cut_h, dst_cut_w,
+             rect.h - dst_cut_h * 2),
+        Rect(bw - cut, cut, cut, bh - cut * 2), element->bitmap);
   }
 
   // Top & bottom edge.
   if (has_top_bottom_edges) {
-    g_renderer->DrawBitmap(
+    Renderer::get()->DrawBitmap(
         Rect(rect.x + dst_cut_w, rect.y, rect.w - dst_cut_w * 2, dst_cut_h),
         Rect(cut, 0, bw - cut * 2, cut), element->bitmap);
-    g_renderer->DrawBitmap(Rect(rect.x + dst_cut_w, rect.y + rect.h - dst_cut_h,
-                                rect.w - dst_cut_w * 2, dst_cut_h),
-                           Rect(cut, bh - cut, bw - cut * 2, cut),
-                           element->bitmap);
+    Renderer::get()->DrawBitmap(
+        Rect(rect.x + dst_cut_w, rect.y + rect.h - dst_cut_h,
+             rect.w - dst_cut_w * 2, dst_cut_h),
+        Rect(cut, bh - cut, bw - cut * 2, cut), element->bitmap);
   }
 
   // Center.
   if (fill_center && has_top_bottom_edges && has_left_right_edges) {
-    g_renderer->DrawBitmap(Rect(rect.x + dst_cut_w, rect.y + dst_cut_h,
-                                rect.w - dst_cut_w * 2, rect.h - dst_cut_h * 2),
-                           Rect(cut, cut, bw - cut * 2, bh - cut * 2),
-                           element->bitmap);
+    Renderer::get()->DrawBitmap(
+        Rect(rect.x + dst_cut_w, rect.y + dst_cut_h, rect.w - dst_cut_w * 2,
+             rect.h - dst_cut_h * 2),
+        Rect(cut, cut, bw - cut * 2, bh - cut * 2), element->bitmap);
   }
 }
 

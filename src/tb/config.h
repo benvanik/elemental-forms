@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 //
@@ -16,7 +16,7 @@
 #define TB_CONFIG_H_
 
 // Enables for some handy runtime debugging, enabled by modifying the various
-// settings in g_tb_debug. A settings window can be shown by calling
+// settings in DebugInfo::get()-> A settings window can be shown by calling
 // ShowDebugInfoSettingsWindow.
 #define TB_RUNTIME_DEBUG_INFO
 

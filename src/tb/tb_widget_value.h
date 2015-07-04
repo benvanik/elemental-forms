@@ -3,14 +3,13 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_WIDGET_VALUE_H
 #define TB_WIDGET_VALUE_H
 
-#include "tb_core.h"
 #include "tb_id.h"
 #include "tb_value.h"
 
@@ -119,6 +118,8 @@ class ValueGroupListener : public util::TBLinkOf<ValueGroupListener> {
 // that listens to changes to any of the values.
 class ValueGroup {
  public:
+  static ValueGroup* get() { return &value_group_singleton_; }
+
   // Creates a ElementValue with the given name if it does not already exist.
   ElementValue* CreateValueIfNeeded(const TBID& name,
                                     Value::Type type = Value::Type::kInt);
@@ -142,12 +143,11 @@ class ValueGroup {
   friend class ElementValue;
   void InvokeOnValueChanged(const ElementValue* value);
 
+  static ValueGroup value_group_singleton_;
+
   util::HashTableAutoDeleteOf<ElementValue> m_values;
   util::TBLinkListOf<ValueGroupListener> m_listeners;
 };
-
-// The global value group.
-extern ValueGroup g_value_group;
 
 }  // namespace tb
 

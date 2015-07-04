@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -124,11 +124,13 @@ void RectElementAnimation::OnAnimationStop(bool aborted) {
 ElementAnimationManager elements_animation_manager;
 
 void ElementAnimationManager::Init() {
+  assert(!element_animations.HasLinks());
   ElementListener::AddGlobalListener(&elements_animation_manager);
 }
 
 void ElementAnimationManager::Shutdown() {
   ElementListener::RemoveGlobalListener(&elements_animation_manager);
+  assert(!element_animations.HasLinks());
 }
 
 void ElementAnimationManager::AbortAnimations(Element* element) {

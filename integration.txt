@@ -1,6 +1,6 @@
 ﻿// ================================================================================
 // ==      This file is a part of Turbo Badger. (C) 2011-2014, Emil Segerås      ==
-// ==                     See tb_core.h for more information.                    ==
+// ==                     See turbo_badger.h for more information.               ==
 // ================================================================================
 
 Turbo Badger Integration guide
@@ -43,9 +43,9 @@ and layout, since all that affect the rendering. This is done by calling:
 Before painting the root element (and all its children), you need to prepare
 the renderer to set up the correct matrix etc.
 
-	g_renderer->BeginPaint(window_width, window_height);
+	Renderer::get()->BeginPaint(window_width, window_height);
 	root->InvokePaint(Element::PaintProps())
-	g_renderer->EndPaint();
+	Renderer::get()->EndPaint();
 
 Message handling
 ----------------
@@ -73,9 +73,9 @@ is put to sleep in the background and the graphics context is lost.
 Turbo Badger implements a renderer listener to handle this in all places that needs
 it, so the only thing you need to do is to call:
 
-	g_renderer->InvokeContextLost(); // Forget all bitmaps
+	Renderer::get()->InvokeContextLost(); // Forget all bitmaps
 	...
-	g_renderer->InvokeContextRestored(); // Reload all bitmaps
+	Renderer::get()->InvokeContextRestored(); // Reload all bitmaps
 
 Font system
 -----------

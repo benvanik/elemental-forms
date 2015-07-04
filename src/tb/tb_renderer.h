@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -11,8 +11,6 @@
 #define TB_RENDERER_H
 
 #include <cstdint>
-
-#include "tb_core.h"
 
 #include "tb/color.h"
 #include "tb/rect.h"
@@ -59,7 +57,10 @@ class Bitmap {
 // A minimal interface for painting strings and bitmaps.
 class Renderer {
  public:
-  virtual ~Renderer() = default;
+  static Renderer* get() { return renderer_singleton_; }
+  static void set(Renderer* value) { renderer_singleton_ = value; }
+
+  virtual ~Renderer();
 
   // Should be called before invoking paint on any element.
   // render_target_w and render_target_h should be the size of the render target
@@ -167,6 +168,8 @@ class Renderer {
   virtual void EndBatchHint() {}
 
  private:
+  static Renderer* renderer_singleton_;
+
   util::TBLinkListOf<RendererListener> m_listeners;
 };
 

@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -13,6 +13,8 @@
 #include "tb/util/string.h"
 
 namespace tb {
+
+std::unique_ptr<Language> Language::language_singleton_;
 
 bool Language::Load(const char* filename) {
   // Read the file into a node tree (even though it's only a flat list).

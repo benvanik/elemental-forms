@@ -3,15 +3,16 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_IMAGE_MANAGER_H
 #define TB_IMAGE_MANAGER_H
 
+#include <memory>
+
 #include "tb_bitmap_fragment.h"
-#include "tb_core.h"
 #include "tb_renderer.h"
 
 #include "tb/util/hash_table.h"
@@ -87,6 +88,11 @@ class Image {
 // file.
 class ImageManager : private RendererListener {
  public:
+  static ImageManager* get() { return image_manager_singleton_.get(); }
+  static void set(std::unique_ptr<ImageManager> value) {
+    image_manager_singleton_ = std::move(value);
+  }
+
   ImageManager();
   ~ImageManager();
 
@@ -106,12 +112,11 @@ class ImageManager : private RendererListener {
   friend class ImageRep;
   void RemoveImageRep(ImageRep* image_rep);
 
+  static std::unique_ptr<ImageManager> image_manager_singleton_;
+
   BitmapFragmentManager m_frag_manager;
   util::HashTableOf<ImageRep> m_image_rep_hash;
 };
-
-// The global ImageManager.
-extern ImageManager* g_image_manager;
 
 }  // namespace tb
 

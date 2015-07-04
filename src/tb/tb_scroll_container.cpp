@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -78,14 +78,15 @@ void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
       sc->m_scrollbar_x.CanScrollPositive() ? 0 : fluff,
       sc->m_scrollbar_y.CanScrollPositive() ? 0 : fluff);
 
-  Rect old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
+  Rect old_clip_rect = Renderer::get()->SetClipRect(clip_rect, true);
 
-  TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutClipping,
-                      g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
+  TB_IF_DEBUG_SETTING(
+      util::DebugInfo::Setting::kLayoutClipping,
+      Renderer::get()->DrawRect(clip_rect, Color(255, 0, 0, 200)));
 
   Element::OnPaintChildren(paint_props);
 
-  g_renderer->SetClipRect(old_clip_rect, false);
+  Renderer::get()->SetClipRect(old_clip_rect, false);
 }
 
 void ScrollContainerRoot::GetChildTranslation(int& x, int& y) const {

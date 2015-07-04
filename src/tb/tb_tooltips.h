@@ -3,12 +3,14 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_TOOLTIPS_H
 #define TB_TOOLTIPS_H
+
+#include <memory>
 
 #include "tb_popup_window.h"
 #include "tb_text_box.h"
@@ -40,6 +42,11 @@ class TooltipWindow : public PopupWindow {
 // Implements logic for show/hide tooltips.
 class TooltipManager : private ElementListener, public MessageHandler {
  public:
+  static TooltipManager* get() { return tooltip_manager_singleton_.get(); }
+  static void set(std::unique_ptr<TooltipManager> value) {
+    tooltip_manager_singleton_ = std::move(value);
+  }
+
   TooltipManager();
   ~TooltipManager() override;
 
@@ -60,11 +67,11 @@ class TooltipManager : private ElementListener, public MessageHandler {
   void DeleteShowMessages();
   Element* GetTippedElement();
 
+  static std::unique_ptr<TooltipManager> tooltip_manager_singleton_;
+
   TooltipWindow* m_tooltip = nullptr;
   Element* m_last_tipped_element = nullptr;
 };
-
-extern TooltipManager* g_tooltip_mng;
 
 }  // namespace tb
 

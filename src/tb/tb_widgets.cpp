@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -59,7 +59,7 @@ class LongClickTimer : private MessageHandler {
 Element::PaintProps::PaintProps() {
   // Set the default properties, used for the root elements
   // calling InvokePaint. The base values for all inheritance.
-  text_color = g_tb_skin->GetDefaultTextColor();
+  text_color = Skin::get()->GetDefaultTextColor();
 }
 
 Element::Element() = default;
@@ -386,7 +386,7 @@ void Element::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
 SkinElement* Element::GetSkinBgElement() {
   ElementSkinConditionContext context(this);
   SkinState state = GetAutoState();
-  return g_tb_skin->GetSkinElementStrongOverride(
+  return Skin::get()->GetSkinElementStrongOverride(
       m_skin_bg, static_cast<SkinState>(state), context);
 }
 
@@ -757,9 +757,9 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   // Translate renderer with child translation.
   int child_translation_x, child_translation_y;
   GetChildTranslation(child_translation_x, child_translation_y);
-  g_renderer->Translate(child_translation_x, child_translation_y);
+  Renderer::get()->Translate(child_translation_x, child_translation_y);
 
-  Rect clip_rect = g_renderer->GetClipRect();
+  Rect clip_rect = Renderer::get()->GetClipRect();
 
   // Invoke paint on all children that are in the current visible rect.
   for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
@@ -777,17 +777,17 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
       if (skin_element && skin_element->HasOverlayElements()) {
         // Update the renderer with the elements opacity.
         SkinState state = child->GetAutoState();
-        float old_opacity = g_renderer->GetOpacity();
+        float old_opacity = Renderer::get()->GetOpacity();
         float opacity =
             old_opacity * child->CalculateOpacityInternal(state, skin_element);
         if (opacity > 0) {
-          g_renderer->SetOpacity(opacity);
+          Renderer::get()->SetOpacity(opacity);
 
           ElementSkinConditionContext context(child);
-          g_tb_skin->PaintSkinOverlay(child->m_rect, skin_element,
-                                      static_cast<SkinState>(state), context);
+          Skin::get()->PaintSkinOverlay(child->m_rect, skin_element,
+                                        static_cast<SkinState>(state), context);
 
-          g_renderer->SetOpacity(old_opacity);
+          Renderer::get()->SetOpacity(old_opacity);
         }
       }
     }
@@ -803,13 +803,13 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
         !skin_element->HasState(SkinState::kFocused, context)) {
       SkinState state = focused_element->GetAutoState();
       if (any(state & SkinState::kFocused)) {
-        g_tb_skin->PaintSkin(focused_element->m_rect, TBIDC("generic_focus"),
-                             static_cast<SkinState>(state), context);
+        Skin::get()->PaintSkin(focused_element->m_rect, TBIDC("generic_focus"),
+                               static_cast<SkinState>(state), context);
       }
     }
   }
 
-  g_renderer->Translate(-child_translation_x, -child_translation_y);
+  Renderer::get()->Translate(-child_translation_x, -child_translation_y);
 }
 
 void Element::OnResized(int old_w, int old_h) {
@@ -1115,7 +1115,7 @@ float Element::CalculateOpacityInternal(SkinState state,
     opacity *= skin_element->opacity;
   }
   if (any(state & SkinState::kDisabled)) {
-    opacity *= g_tb_skin->GetDefaultDisabledOpacity();
+    opacity *= Skin::get()->GetDefaultDisabledOpacity();
   }
   return opacity;
 }
@@ -1132,26 +1132,26 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
 
   // Multiply current opacity with element opacity, skin opacity and state
   // opacity.
-  float old_opacity = g_renderer->GetOpacity();
+  float old_opacity = Renderer::get()->GetOpacity();
   float opacity = old_opacity * CalculateOpacityInternal(state, skin_element);
   if (opacity == 0) return;
 
   // FIX: This does not give the correct result! Must use a new render target!
-  g_renderer->SetOpacity(opacity);
+  Renderer::get()->SetOpacity(opacity);
 
   int trns_x = m_rect.x, trns_y = m_rect.y;
-  g_renderer->Translate(trns_x, trns_y);
+  Renderer::get()->Translate(trns_x, trns_y);
 
   // Paint background skin.
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
   ElementSkinConditionContext context(this);
-  SkinElement* used_element = g_tb_skin->PaintSkin(
+  SkinElement* used_element = Skin::get()->PaintSkin(
       local_rect, skin_element, static_cast<SkinState>(state), context);
   assert(!!used_element == !!skin_element);
 
   TB_IF_DEBUG_SETTING(
       util::DebugInfo::Setting::kLayoutBounds,
-      g_renderer->DrawRect(local_rect, Color(255, 255, 255, 50)));
+      Renderer::get()->DrawRect(local_rect, Color(255, 255, 255, 50)));
 
   // Inherit properties from parent if not specified in the used skin for this
   // element.
@@ -1164,8 +1164,8 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   OnPaint(paint_props);
 
   if (used_element) {
-    g_renderer->Translate(used_element->content_ofs_x,
-                          used_element->content_ofs_y);
+    Renderer::get()->Translate(used_element->content_ofs_x,
+                               used_element->content_ofs_y);
   }
 
   // Paint children.
@@ -1179,23 +1179,24 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
     const uint64_t debug_time = 300;
     const uint64_t now = util::GetTimeMS();
     if (now < last_layout_time + debug_time) {
-      g_renderer->DrawRect(local_rect, Color(255, 30, 30, 200));
+      Renderer::get()->DrawRect(local_rect, Color(255, 30, 30, 200));
       Invalidate();
     }
     if (now < last_measure_time + debug_time) {
-      g_renderer->DrawRect(local_rect.Shrink(1, 1), Color(255, 255, 30, 200));
+      Renderer::get()->DrawRect(local_rect.Shrink(1, 1),
+                                Color(255, 255, 30, 200));
       Invalidate();
     }
   }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
   if (used_element) {
-    g_renderer->Translate(-used_element->content_ofs_x,
-                          -used_element->content_ofs_y);
+    Renderer::get()->Translate(-used_element->content_ofs_x,
+                               -used_element->content_ofs_y);
   }
 
-  g_renderer->Translate(-trns_x, -trns_y);
-  g_renderer->SetOpacity(old_opacity);
+  Renderer::get()->Translate(-trns_x, -trns_y);
+  Renderer::get()->SetOpacity(old_opacity);
 }
 
 bool Element::InvokeEvent(ElementEvent& ev) {
@@ -1627,9 +1628,9 @@ bool Element::SetFontDescription(const FontDescription& font_desc) {
 
   // Set the font description only if we have a matching font, or succeed
   // creating one.
-  if (g_font_manager->HasFontFace(font_desc)) {
+  if (FontManager::get()->HasFontFace(font_desc)) {
     m_font_desc = font_desc;
-  } else if (g_font_manager->CreateFontFace(font_desc)) {
+  } else if (FontManager::get()->CreateFontFace(font_desc)) {
     m_font_desc = font_desc;
   } else {
     return false;
@@ -1658,11 +1659,11 @@ FontDescription Element::GetCalculatedFontDescription() const {
     }
     tmp = tmp->m_parent;
   }
-  return g_font_manager->GetDefaultFontDescription();
+  return FontManager::get()->GetDefaultFontDescription();
 }
 
 FontFace* Element::GetFont() const {
-  return g_font_manager->GetFontFace(GetCalculatedFontDescription());
+  return FontManager::get()->GetFontFace(GetCalculatedFontDescription());
 }
 
 }  // namespace tb

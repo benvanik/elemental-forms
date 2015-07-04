@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -162,9 +162,9 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     TB_VERIFY(b = new CheckBox);
   }
 
-  TB_TEST(Setup) { g_value_group.AddListener(&listener); }
+  TB_TEST(Setup) { ValueGroup::get()->AddListener(&listener); }
 
-  TB_TEST(Cleanup) { g_value_group.RemoveListener(&listener); }
+  TB_TEST(Cleanup) { ValueGroup::get()->RemoveListener(&listener); }
 
   TB_TEST(Shutdown) {
     delete a;

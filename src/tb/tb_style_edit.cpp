@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -596,7 +596,7 @@ void TextProps::Pop() {
 }
 
 FontFace* TextProps::GetFont() {
-  return g_font_manager->GetFontFace(data->font_desc);
+  return FontManager::get()->GetFontFace(data->font_desc);
 }
 
 TextBlock::TextBlock(StyleEdit* style_edit)
@@ -1244,8 +1244,8 @@ StyleEdit::StyleEdit() {
   selection.style_edit = this;
   TMPDEBUG(packed.show_whitespace = true);
 
-  font_desc = g_font_manager->GetDefaultFontDescription();
-  font = g_font_manager->GetFontFace(font_desc);
+  font_desc = FontManager::get()->GetDefaultFontDescription();
+  font = FontManager::get()->GetFontFace(font_desc);
 
 #if WIN32
   packed.win_style_br = 1;
@@ -1275,7 +1275,7 @@ void StyleEdit::SetContentFactory(TextFragmentContentFactory* content_factory) {
 void StyleEdit::SetFont(const FontDescription& font_desc) {
   if (this->font_desc == font_desc) return;
   this->font_desc = font_desc;
-  font = g_font_manager->GetFontFace(font_desc);
+  font = FontManager::get()->GetFontFace(font_desc);
   Reformat(true);
 }
 

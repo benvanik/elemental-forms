@@ -3,12 +3,14 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_WIDGETS_READER_H
 #define TB_WIDGETS_READER_H
+
+#include <memory>
 
 #include "tb_widgets.h"
 
@@ -143,16 +145,18 @@ class ElementFactory : public util::TBLinkOf<ElementFactory> {
 // font>size			  Font size
 class ElementReader {
  public:
-  static ElementReader* Create();
+  static ElementReader* get() { return element_reader_singleton_.get(); }
+  static void set(std::unique_ptr<ElementReader> value) {
+    element_reader_singleton_ = std::move(value);
+  }
+
+  ElementReader();
   ~ElementReader();
 
   // Adds a element factory. Does not take ownership of the factory.
   // The easiest way to add factories for custom element types, is using the
   // TB_WIDGET_FACTORY macro that automatically register it during startup.
-  bool AddFactory(ElementFactory* wf) {
-    factories.AddLast(wf);
-    return true;
-  }
+  void AddFactory(ElementFactory* wf) { factories.AddLast(wf); }
   void RemoveFactory(ElementFactory* wf) { factories.Remove(wf); }
 
   // Sets the id from the given node.
@@ -164,9 +168,9 @@ class ElementReader {
   void LoadNodeTree(Element* target, Node* node);
 
  private:
-  bool Init();
   bool CreateElement(Element* target, Node* node);
 
+  static std::unique_ptr<ElementReader> element_reader_singleton_;
   util::TBLinkListOf<ElementFactory> factories;
 };
 

@@ -9,7 +9,7 @@ Layout: axis: y, distribution: available
 		Button: id: redo
 			SkinImage: skin: arrow.right
 		Button: text: Clear, id: clear
-			desc Click for <color #f44>remove</color> all text
+			tooltip Click for <color #f44>remove</color> all text
 		Layout
 			gravity left right
 			distribution-position right bottom

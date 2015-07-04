@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -252,16 +252,16 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
     MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->GetList()->GetDefaultSource();
     source->AddItem(std::make_unique<GenericStringItem>(
-        g_tb_lng->GetString(TBIDC("cut")), TBIDC("cut")));
+        Language::get()->GetString(TBIDC("cut")), TBIDC("cut")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        g_tb_lng->GetString(TBIDC("copy")), TBIDC("copy")));
+        Language::get()->GetString(TBIDC("copy")), TBIDC("copy")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        g_tb_lng->GetString(TBIDC("paste")), TBIDC("paste")));
+        Language::get()->GetString(TBIDC("paste")), TBIDC("paste")));
     source->AddItem(std::make_unique<GenericStringItem>(
-        g_tb_lng->GetString(TBIDC("delete")), TBIDC("delete")));
+        Language::get()->GetString(TBIDC("delete")), TBIDC("delete")));
     source->AddItem(std::make_unique<GenericStringItem>("-"));
     source->AddItem(std::make_unique<GenericStringItem>(
-        g_tb_lng->GetString(TBIDC("selectall")), TBIDC("selectall")));
+        Language::get()->GetString(TBIDC("selectall")), TBIDC("selectall")));
     menu->Show(source, PopupAlignment(pos_in_root), -1);
     return true;
   }
@@ -274,11 +274,11 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
   bool clip = m_scrollbar_x.CanScroll() || m_scrollbar_y.CanScroll();
   Rect old_clip;
   if (clip) {
-    old_clip = g_renderer->SetClipRect(visible_rect, true);
+    old_clip = Renderer::get()->SetClipRect(visible_rect, true);
   }
 
   int trans_x = visible_rect.x, trans_y = visible_rect.y;
-  g_renderer->Translate(trans_x, trans_y);
+  Renderer::get()->Translate(trans_x, trans_y);
 
   // Draw text content, caret etc.
   visible_rect.x = visible_rect.y = 0;
@@ -287,18 +287,18 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
 
   // If empty, draw placeholder text with some opacity.
   if (m_style_edit.empty()) {
-    float old_opacity = g_renderer->GetOpacity();
-    g_renderer->SetOpacity(old_opacity *
-                           g_tb_skin->GetDefaultPlaceholderOpacity());
+    float old_opacity = Renderer::get()->GetOpacity();
+    Renderer::get()->SetOpacity(old_opacity *
+                                Skin::get()->GetDefaultPlaceholderOpacity());
     Rect placeholder_rect(visible_rect.x, visible_rect.y, visible_rect.w,
                           GetFont()->height());
     m_placeholder.Paint(this, placeholder_rect, paint_props.text_color);
-    g_renderer->SetOpacity(old_opacity);
+    Renderer::get()->SetOpacity(old_opacity);
   }
-  g_renderer->Translate(-trans_x, -trans_y);
+  Renderer::get()->Translate(-trans_x, -trans_y);
 
   if (clip) {
-    g_renderer->SetClipRect(old_clip, false);
+    Renderer::get()->SetClipRect(old_clip, false);
   }
 }
 
@@ -438,23 +438,23 @@ void TextBox::DrawString(int32_t x, int32_t y, FontFace* font,
 }
 
 void TextBox::DrawRect(const Rect& rect, const Color& color) {
-  g_renderer->DrawRect(rect, color);
+  Renderer::get()->DrawRect(rect, color);
 }
 
 void TextBox::DrawRectFill(const Rect& rect, const Color& color) {
-  g_renderer->DrawRectFill(rect, color);
+  Renderer::get()->DrawRectFill(rect, color);
 }
 
 void TextBox::DrawTextSelectionBg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  g_tb_skin->PaintSkin(rect, TBIDC("TextBox.selection"),
-                       static_cast<SkinState>(GetAutoState()), context);
+  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                         static_cast<SkinState>(GetAutoState()), context);
 }
 
 void TextBox::DrawContentSelectionFg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  g_tb_skin->PaintSkin(rect, TBIDC("TextBox.selection"),
-                       static_cast<SkinState>(GetAutoState()), context);
+  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                         static_cast<SkinState>(GetAutoState()), context);
 }
 
 void TextBox::DrawCaret(const Rect& rect) {
@@ -495,9 +495,9 @@ void TextBoxScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
   // anyway.
   if (!GetFirstChild()) return;
   // Clip children.
-  Rect old_clip_rect = g_renderer->SetClipRect(GetPaddingRect(), true);
+  Rect old_clip_rect = Renderer::get()->SetClipRect(GetPaddingRect(), true);
   Element::OnPaintChildren(paint_props);
-  g_renderer->SetClipRect(old_clip_rect, false);
+  Renderer::get()->SetClipRect(old_clip_rect, false);
 }
 
 void TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
@@ -574,7 +574,7 @@ TextFragmentContent* TextBoxContentFactory::CreateFragmentContent(
     // Its size will adapt to the content.
     auto element = new Element();
     auto cw = new TextFragmentContentElement(text_box, element);
-    g_elements_reader->LoadData(element, text + 8, text_len - 9);
+    ElementReader::get()->LoadData(element, text + 8, text_len - 9);
     return cw;
   }
 

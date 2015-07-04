@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -12,6 +12,8 @@
 #include "tb_widgets.h"
 
 namespace tb {
+
+ValueGroup ValueGroup::value_group_singleton_;
 
 void ElementValueConnection::Connect(ElementValue* value, Element* element) {
   Disconnect();
@@ -73,7 +75,7 @@ void ElementValue::SetFromElement(Element* source_element) {
 
 void ElementValue::SyncToElements(Element* exclude_element) {
   // FIX: Assign group to each value. Currently we only have one global group.
-  g_value_group.InvokeOnValueChanged(this);
+  ValueGroup::get()->InvokeOnValueChanged(this);
 
   auto iter = m_connections.IterateForward();
   while (ElementValueConnection* connection = iter.GetAndStep()) {
@@ -124,8 +126,6 @@ void ElementValue::SetDouble(double value) {
   m_value.SetFloat(float(value));
   SyncToElements(nullptr);
 }
-
-/*extern*/ ValueGroup g_value_group;
 
 ElementValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
                                               Value::Type type) {

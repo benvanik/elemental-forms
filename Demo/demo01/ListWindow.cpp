@@ -14,8 +14,8 @@ AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
   SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
   SetPaintOverflowFadeout(false);
 
-  g_elements_reader->LoadFile(GetContentRoot(),
-                              "Demo/demo01/ui_resources/test_list_item.tb.txt");
+  ElementReader::get()->LoadFile(
+      GetContentRoot(), "Demo/demo01/ui_resources/test_list_item.tb.txt");
   CheckBox* checkbox = GetElementByIDAndType<CheckBox>(TBIDC("check"));
   Label* name = GetElementByIDAndType<Label>(TBIDC("name"));
   Label* info = GetElementByIDAndType<Label>(TBIDC("info"));

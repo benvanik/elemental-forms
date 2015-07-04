@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -344,7 +344,7 @@ bool BitmapFragmentMap::ValidateBitmap() {
       m_bitmap->SetData(m_bitmap_data);
     } else {
       m_bitmap =
-          g_renderer->CreateBitmap(m_bitmap_w, m_bitmap_h, m_bitmap_data);
+          Renderer::get()->CreateBitmap(m_bitmap_w, m_bitmap_h, m_bitmap_data);
     }
     m_need_update = false;
   }
@@ -432,7 +432,7 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
 
 void BitmapFragmentManager::FreeFragment(BitmapFragment* frag) {
   if (frag) {
-    g_renderer->FlushBitmapFragment(frag);
+    Renderer::get()->FlushBitmapFragment(frag);
 
     BitmapFragmentMap* map = frag->m_map;
     frag->m_map->FreeFragmentSpace(frag);
@@ -502,7 +502,7 @@ void BitmapFragmentManager::Debug() {
   int x = 0;
   for (auto& fragment_map : m_fragment_maps) {
     if (Bitmap* bitmap = fragment_map->GetBitmap()) {
-      g_renderer->DrawBitmap(
+      Renderer::get()->DrawBitmap(
           Rect(x, 0, fragment_map->m_bitmap_w, fragment_map->m_bitmap_h),
           Rect(0, 0, fragment_map->m_bitmap_w, fragment_map->m_bitmap_h),
           bitmap);

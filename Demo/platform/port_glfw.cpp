@@ -13,6 +13,7 @@
 #include "tb_font_renderer.h"
 #include "Application.h"
 
+#include "tb/turbo_badger.h"
 #include "tb/util/metrics.h"
 #include "tb/util/timer.h"
 
@@ -516,7 +517,7 @@ ApplicationBackendGLFW::~ApplicationBackendGLFW() {
   m_application->OnBackendDetached();
   m_application = nullptr;
 
-  tb_core_shutdown();
+  tb::Shutdown();
 
   glfwTerminate();
 

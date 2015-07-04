@@ -3,14 +3,15 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_FONT_RENDERER_H
 #define TB_FONT_RENDERER_H
 
-#include "tb_core.h"
+#include <memory>
+
 #include "tb_bitmap_fragment.h"
 #include "tb_font_desc.h"
 #include "tb_renderer.h"
@@ -21,6 +22,7 @@
 namespace tb {
 
 class FontFace;
+class FontManager;
 
 // Rendering info used during glyph rendering by FontRenderer.
 // It does not own the data pointers.
@@ -241,6 +243,11 @@ class FontInfo {
 // test font, no nullptr checks are needed.
 class FontManager {
  public:
+  static FontManager* get() { return font_manager_singleton_.get(); }
+  static void set(std::unique_ptr<FontManager> value) {
+    font_manager_singleton_ = std::move(value);
+  }
+
   FontManager();
   ~FontManager();
 
@@ -290,6 +297,8 @@ class FontManager {
   FontGlyphCache* GetGlyphCache() { return &m_glyph_cache; }
 
  private:
+  static std::unique_ptr<FontManager> font_manager_singleton_;
+
   util::HashTableAutoDeleteOf<FontInfo> m_font_info;
   util::HashTableAutoDeleteOf<FontFace> m_fonts;
   util::TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;

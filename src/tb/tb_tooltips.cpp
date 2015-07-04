@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -17,7 +17,7 @@
 
 namespace tb {
 
-tb::TooltipManager* tb::g_tooltip_mng = nullptr;
+std::unique_ptr<TooltipManager> TooltipManager::tooltip_manager_singleton_;
 
 namespace {
 
@@ -72,7 +72,7 @@ Rect TooltipWindow::GetAlignedRect(int x, int y) {
   x = pos.x + w > root->rect().w ? pos.x - w : pos.x;
   y = pos.y;
   if (pos.y + h > root->rect().h) {
-    y = pos.y - g_tooltip_mng->tooltip_point_offset_y - h;
+    y = pos.y - TooltipManager::get()->tooltip_point_offset_y - h;
   }
 
   return Rect(x, y, w, h);

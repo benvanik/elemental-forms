@@ -16,6 +16,7 @@
 #include "tb_image_manager.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/turbo_badger.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string.h"
@@ -53,7 +54,7 @@ void const_expr_test() {
 DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 
 bool DemoWindow::LoadResourceFile(const std::string& filename) {
-  // We could do g_elements_reader->LoadFile(this, filename) but we want
+  // We could do ElementReader::get()->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   if (!node.ReadFile(filename)) return false;
@@ -62,7 +63,7 @@ bool DemoWindow::LoadResourceFile(const std::string& filename) {
 }
 
 void DemoWindow::LoadResourceData(const char* data) {
-  // We could do g_elements_reader->LoadData(this, filename) but we want
+  // We could do ElementReader::get()->LoadData(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
   Node node;
   node.ReadData(data);
@@ -70,13 +71,13 @@ void DemoWindow::LoadResourceData(const char* data) {
 }
 
 void DemoWindow::LoadResource(Node& node) {
-  g_elements_reader->LoadNodeTree(this, &node);
+  ElementReader::get()->LoadNodeTree(this, &node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
   SetText(node.GetValueString("WindowInfo>title", ""));
 
   const Rect parent_rect(0, 0, GetParent()->rect().w, GetParent()->rect().h);
-  auto dc = g_tb_skin->GetDimensionConverter();
+  auto dc = Skin::get()->GetDimensionConverter();
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
@@ -196,7 +197,7 @@ class EditWindow : public DemoWindow {
         if (ev.ref_id == TBIDC("default font"))
           edit->SetFontDescription(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
-          FontDescription fd = g_font_manager->GetDefaultFontDescription();
+          FontDescription fd = FontManager::get()->GetDefaultFontDescription();
           fd.SetSize(28);
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
@@ -318,11 +319,11 @@ ConnectionWindow::ConnectionWindow() {
 bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetID() == TBIDC("reset-master-volume")) {
-    if (ElementValue* val = g_value_group.GetValue(TBIDC("master-volume")))
+    if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("master-volume")))
       val->SetInt(50);
   } else if (ev.type == EventType::kClick &&
              ev.target->GetID() == TBIDC("reset-user-name")) {
-    if (ElementValue* val = g_value_group.GetValue(TBIDC("user-name")))
+    if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("user-name")))
       val->SetText("");
   }
   return DemoWindow::OnEvent(ev);
@@ -554,7 +555,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
       uint64_t t1 = util::GetTimeMS();
-      for (int i = 0; i < reload_count; i++) g_tb_skin->ReloadBitmaps();
+      for (int i = 0; i < reload_count; i++) Skin::get()->ReloadBitmaps();
       uint64_t t2 = util::GetTimeMS();
 
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
@@ -564,8 +565,8 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
                         reload_count, (int)(t2 - t1)));
       return true;
     } else if (ev.target->GetID() == TBIDC("test context lost")) {
-      g_renderer->InvokeContextLost();
-      g_renderer->InvokeContextRestored();
+      Renderer::get()->InvokeContextLost();
+      Renderer::get()->InvokeContextRestored();
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Context lost & restore",
                     "Called InvokeContextLost and InvokeContextRestored.\n\n"
@@ -741,12 +742,12 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   // Application::RenderFrame(window_w, window_h);
 
   // Render
-  g_renderer->BeginPaint(window_w, window_h);
+  Renderer::get()->BeginPaint(window_w, window_h);
   GetRoot()->InvokePaint(Element::PaintProps());
 
 #if defined(TB_RUNTIME_DEBUG_INFO)
 // Enable to debug image manager fragments
-// g_image_manager->Debug();
+// ImageManager::get()->Debug();
 #endif
 
   frame_counter++;
@@ -763,7 +764,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   // Draw FPS
   ElementValue* continuous_repaint_val =
-      g_value_group.GetValue(TBIDC("continous-repaint"));
+      ValueGroup::get()->GetValue(TBIDC("continous-repaint"));
   bool continuous_repaint =
       continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;
 
@@ -775,7 +776,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   }
   GetRoot()->GetFont()->DrawString(5, 5, Color(255, 255, 255), str);
 
-  g_renderer->EndPaint();
+  Renderer::get()->EndPaint();
 
   // If we want continous updates or got animations running, reinvalidate
   // immediately
@@ -791,13 +792,13 @@ int app_main() {
       ApplicationBackend::Create(application, 1280, 700, "Demo");
   if (!application_backend) return 1;
 
-  tb_core_init(application_backend->GetRenderer(),
-               "resources/language/lng_en.tb.txt");
+  tb::Initialize(application_backend->GetRenderer(),
+                 "resources/language/lng_en.tb.txt");
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.
-  g_tb_skin->Load("resources/default_skin/skin.tb.txt",
-                  "Demo/demo01/skin/skin.tb.txt");
+  Skin::get()->Load("resources/default_skin/skin.tb.txt",
+                    "Demo/demo01/skin/skin.tb.txt");
 
 // Register font renderers.
 #ifdef TB_FONT_RENDERER_TBBF
@@ -815,14 +816,14 @@ int app_main() {
 
 // Add fonts we can use to the font manager.
 #if defined(TB_FONT_RENDERER_STB) || defined(TB_FONT_RENDERER_FREETYPE)
-  g_font_manager->AddFontInfo("resources/vera.ttf", "Vera");
+  FontManager::get()->AddFontInfo("resources/vera.ttf", "Vera");
 #endif
 #ifdef TB_FONT_RENDERER_TBBF
-  g_font_manager->AddFontInfo(
+  FontManager::get()->AddFontInfo(
       "resources/default_font/segoe_white_with_shadow.tb.txt", "Segoe");
-  g_font_manager->AddFontInfo("Demo/fonts/neon.tb.txt", "Neon");
-  g_font_manager->AddFontInfo("Demo/fonts/orangutang.tb.txt", "Orangutang");
-  g_font_manager->AddFontInfo("Demo/fonts/orange.tb.txt", "Orange");
+  FontManager::get()->AddFontInfo("Demo/fonts/neon.tb.txt", "Neon");
+  FontManager::get()->AddFontInfo("Demo/fonts/orangutang.tb.txt", "Orangutang");
+  FontManager::get()->AddFontInfo("Demo/fonts/orange.tb.txt", "Orange");
 #endif
 
   // Set the default font description for elements to one of the fonts we just
@@ -833,12 +834,12 @@ int app_main() {
 #else
   fd.SetID(TBIDC("Vera"));
 #endif
-  fd.SetSize(g_tb_skin->GetDimensionConverter()->DpToPx(14));
-  g_font_manager->SetDefaultFontDescription(fd);
+  fd.SetSize(Skin::get()->GetDimensionConverter()->DpToPx(14));
+  FontManager::get()->SetDefaultFontDescription(fd);
 
   // Create the font now.
-  FontFace* font = g_font_manager->CreateFontFace(
-      g_font_manager->GetDefaultFontDescription());
+  FontFace* font = FontManager::get()->CreateFontFace(
+      FontManager::get()->GetDefaultFontDescription());
 
   // Render some glyphs in one go now since we know we are going to use them. It
   // would work fine

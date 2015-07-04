@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -26,7 +26,7 @@ class ImageElement : public Element {
 
   void SetImage(const Image& image) { m_image = image; }
   void SetImage(const char* filename) {
-    m_image = g_image_manager->GetImage(filename);
+    m_image = ImageManager::get()->GetImage(filename);
   }
 
   PreferredSize OnCalculatePreferredContentSize(

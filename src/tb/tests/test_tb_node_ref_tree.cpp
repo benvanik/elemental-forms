@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -59,7 +59,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	skin: 'FireButtonSkin'\n");
 
     Element root;
-    g_elements_reader->LoadData(
+    ElementReader::get()->LoadData(
         &root, "Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
     Element* button = root.GetElementByID(TBIDC("fire"));
@@ -80,7 +80,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "bar_broken_tree: '@test_foo>foo_broken_tree'");
 
     Element root;
-    g_elements_reader->LoadData(
+    ElementReader::get()->LoadData(
         &root,
         "SelectInline: id: 'select', value: '@test_bar>bar_value'\n"
         "Button: id: 'button_circular', text: '@test_bar>bar_circular'\n"
@@ -121,9 +121,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	text: 'hello'\n");
 
     Element root;
-    g_elements_reader->LoadData(&root,
-                                "TextBox: id: 'edit'\n"
-                                "	@include @test_styles>VeryNice");
+    ElementReader::get()->LoadData(&root,
+                                   "TextBox: id: 'edit'\n"
+                                   "	@include @test_styles>VeryNice");
     TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
@@ -131,12 +131,12 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
   TB_TEST(reference_local_include) {
     Element root;
-    g_elements_reader->LoadData(&root,
-                                "SomeDeclarations\n"
-                                "	skin: 'SpecialSkin'\n"
-                                "	text: 'hello'\n"
-                                "TextBox: id: 'edit'\n"
-                                "	@include SomeDeclarations");
+    ElementReader::get()->LoadData(&root,
+                                   "SomeDeclarations\n"
+                                   "	skin: 'SpecialSkin'\n"
+                                   "	text: 'hello'\n"
+                                   "TextBox: id: 'edit'\n"
+                                   "	@include SomeDeclarations");
     TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
@@ -162,7 +162,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     Element root1, root2;
 
     // Inflate & check
-    g_elements_reader->LoadData(&root1, layout_str);
+    ElementReader::get()->LoadData(&root1, layout_str);
     Layout* layout1 = root1.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
@@ -172,7 +172,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     dt.SetValue("layout>landscape", Value(0));
 
     // Inflate & check
-    g_elements_reader->LoadData(&root2, layout_str);
+    ElementReader::get()->LoadData(&root2, layout_str);
     Layout* layout2 = root2.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);

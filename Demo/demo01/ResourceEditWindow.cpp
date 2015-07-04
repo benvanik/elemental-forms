@@ -28,7 +28,7 @@ ResourceEditWindow::ResourceEditWindow()
   // Register as global listener to intercept events in the build container
   ElementListener::AddGlobalListener(this);
 
-  g_elements_reader->LoadFile(
+  ElementReader::get()->LoadFile(
       this, "Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
@@ -80,8 +80,8 @@ void ResourceEditWindow::RefreshFromSource() {
   }
 
   // Create new elements from source
-  g_elements_reader->LoadData(m_build_container,
-                              m_source_text_box->GetText().c_str());
+  ElementReader::get()->LoadData(m_build_container,
+                                 m_source_text_box->GetText().c_str());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
@@ -157,8 +157,8 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
     // Create a window containing the current layout, resize and center it.
     Window* win = new Window();
     win->SetText("Test window");
-    g_elements_reader->LoadData(win->GetContentRoot(),
-                                m_source_text_box->GetText().c_str());
+    ElementReader::get()->LoadData(win->GetContentRoot(),
+                                   m_source_text_box->GetText().c_str());
     Rect bounds(0, 0, GetParent()->rect().w, GetParent()->rect().h);
     win->set_rect(
         win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -184,7 +184,7 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
                       selected_element->rect().h);
     selected_element->ConvertToRoot(element_rect.x, element_rect.y);
     ConvertFromRoot(element_rect.x, element_rect.y);
-    g_renderer->DrawRect(element_rect, Color(255, 205, 0));
+    Renderer::get()->DrawRect(element_rect, Color(255, 205, 0));
   }
 }
 

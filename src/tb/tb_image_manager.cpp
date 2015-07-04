@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -16,6 +16,8 @@
 #include "tb_skin.h"
 
 namespace tb {
+
+std::unique_ptr<ImageManager> ImageManager::image_manager_singleton_;
 
 ImageRep::ImageRep(ImageManager* image_manager, BitmapFragment* fragment,
                    uint32_t hash_key)
@@ -78,12 +80,10 @@ void Image::SetImageRep(ImageRep* image_rep) {
   }
 }
 
-ImageManager* g_image_manager = nullptr;
-
-ImageManager::ImageManager() { g_renderer->AddListener(this); }
+ImageManager::ImageManager() { Renderer::get()->AddListener(this); }
 
 ImageManager::~ImageManager() {
-  g_renderer->RemoveListener(this);
+  Renderer::get()->RemoveListener(this);
 
   // If there is ImageRep objects live, we must unset the fragment pointer
   // since the m_frag_manager is going to be destroyed very soon.
@@ -100,10 +100,10 @@ Image ImageManager::GetImage(const char* filename) {
   if (!image_rep) {
     // Load a fragment. Load a destination DPI bitmap if available.
     BitmapFragment* fragment = nullptr;
-    if (g_tb_skin->GetDimensionConverter()->NeedConversion()) {
+    if (Skin::get()->GetDimensionConverter()->NeedConversion()) {
       StringBuilder filename_dst_DPI;
-      g_tb_skin->GetDimensionConverter()->GetDstDPIFilename(filename,
-                                                            &filename_dst_DPI);
+      Skin::get()->GetDimensionConverter()->GetDstDPIFilename(
+          filename, &filename_dst_DPI);
       fragment =
           m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
     }

@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -21,6 +21,8 @@
 #include "tb_widgets_common.h"
 
 namespace tb {
+
+std::unique_ptr<ElementReader> ElementReader::element_reader_singleton_;
 
 TB_WIDGET_FACTORY(Element, Value::Type::kNull, ElementZ::kTop) {}
 void Element::OnInflate(const InflateInfo& info) {
@@ -61,9 +63,9 @@ void Element::OnInflate(const InflateInfo& info) {
     // If we already have a element value with this name, just connect to it and
     // the element will adjust its value to it. Otherwise create a new element
     // value, and give it the value we got from the resource.
-    if (ElementValue* value = g_value_group.GetValue(connection)) {
+    if (ElementValue* value = ValueGroup::get()->GetValue(connection)) {
       Connect(value);
-    } else if (ElementValue* value = g_value_group.CreateValueIfNeeded(
+    } else if (ElementValue* value = ValueGroup::get()->CreateValueIfNeeded(
                    connection, info.sync_type)) {
       value->SetFromElement(this);
       Connect(value);
@@ -100,7 +102,7 @@ void Element::OnInflate(const InflateInfo& info) {
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
     }
-    const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
+    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
       layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -145,7 +147,7 @@ void Element::OnInflate(const InflateInfo& info) {
   if (Node* font = info.node->GetNode("font")) {
     FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
-      int new_size = g_tb_skin->GetDimensionConverter()->GetPxFromString(
+      int new_size = Skin::get()->GetDimensionConverter()->GetPxFromString(
           size, fd.GetSize());
       fd.SetSize(new_size);
     }
@@ -158,7 +160,7 @@ void Element::OnInflate(const InflateInfo& info) {
   info.target->OnInflateChild(this);
 
   if (Node* rect_node = info.node->GetNode("rect")) {
-    const DimensionConverter* dc = g_tb_skin->GetDimensionConverter();
+    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
       set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
@@ -198,7 +200,7 @@ void TextBox::OnInflate(const InflateInfo& info) {
           : false);
   if (const char* virtual_width =
           info.node->GetValueString("virtual-width", nullptr)) {
-    SetVirtualWidth(g_tb_skin->GetDimensionConverter()->GetPxFromString(
+    SetVirtualWidth(Skin::get()->GetDimensionConverter()->GetPxFromString(
         virtual_width, GetVirtualWidth()));
   }
   if (const char* text = info.node->GetValueString("placeholder", nullptr)) {
@@ -213,7 +215,7 @@ void TextBox::OnInflate(const InflateInfo& info) {
 TB_WIDGET_FACTORY(Layout, Value::Type::kNull, ElementZ::kTop) {}
 void Layout::OnInflate(const InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
-    SetSpacing(g_tb_skin->GetDimensionConverter()->GetPxFromString(
+    SetSpacing(Skin::get()->GetDimensionConverter()->GetPxFromString(
         spacing, kSpacingFromSkin));
   }
   SetGravity(Gravity::kAll);
@@ -398,26 +400,14 @@ void ElementFactory::Register() {
   g_registered_factories = this;
 }
 
-ElementReader* ElementReader::Create() {
-  ElementReader* w_reader = new ElementReader();
-  if (!w_reader->Init()) {
-    delete w_reader;
-    return nullptr;
-  }
-  return w_reader;
-}
-
-bool ElementReader::Init() {
+ElementReader::ElementReader() {
   for (ElementFactory* wf = g_registered_factories; wf;
        wf = wf->next_registered_wf) {
-    if (!AddFactory(wf)) {
-      return false;
-    }
+    AddFactory(wf);
   }
-  return true;
 }
 
-ElementReader::~ElementReader() {}
+ElementReader::~ElementReader() = default;
 
 bool ElementReader::LoadFile(Element* target, const char* filename) {
   Node node;

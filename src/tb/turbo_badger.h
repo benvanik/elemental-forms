@@ -25,41 +25,24 @@ freely, subject to the following restrictions:
     distribution.
 */
 
-#ifndef TB_CORE_H
-#define TB_CORE_H
+#ifndef TB_TURBO_BADGER_H_
+#define TB_TURBO_BADGER_H_
 
 #include "tb/config.h"
-#include "tb/types.h"
+#include "tb/tb_renderer.h"
 
 namespace tb {
 
-// TODO(benvanik): remove all of these.
-
-class FontManager;
-extern FontManager* g_font_manager;
-
-class Language;
-extern Language* g_tb_lng;
-
-class Renderer;
-extern Renderer* g_renderer;
-
-class Skin;
-extern Skin* g_tb_skin;
-
-class ElementReader;
-extern ElementReader* g_elements_reader;
-
 // Initializes turbo badger. Call this before using any turbo badger API.
-bool tb_core_init(Renderer* renderer, const char* lng_file);
+bool Initialize(Renderer* renderer, const char* language_file);
 
 // Shuts down turbo badger. Call this after deleting the last element, to free
 // turbo badger internals.
-void tb_core_shutdown();
+void Shutdown();
 
 // Returns true if turbo badger is initialized.
-bool tb_core_is_initialized();
+bool is_initialized();
 
 }  // namespace tb
 
-#endif  // TB_CORE_H
+#endif  // TB_TURBO_BADGER_H_

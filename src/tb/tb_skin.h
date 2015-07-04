@@ -3,25 +3,28 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
 #ifndef TB_SKIN_H
 #define TB_SKIN_H
 
+#include <memory>
+
 #include "tb_bitmap_fragment.h"
-#include "tb_core.h"
 #include "tb_dimension.h"
 #include "tb_renderer.h"
 #include "tb_value.h"
 
+#include "tb/types.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
 
 namespace tb {
 
 class Node;
+class Skin;
 class SkinConditionContext;
 
 // Used for some values in SkinElement if they has not been specified in the
@@ -343,6 +346,11 @@ class SkinListener {
 // Skin contains a list of SkinElement.
 class Skin : private RendererListener {
  public:
+  static Skin* get() { return skin_singleton_.get(); }
+  static void set(std::unique_ptr<Skin> value) {
+    skin_singleton_ = std::move(value);
+  }
+
   Skin();
   ~Skin() override;
 
@@ -446,6 +454,8 @@ class Skin : private RendererListener {
 
  private:
   friend class SkinElement;
+
+  static std::unique_ptr<Skin> skin_singleton_;
 
   bool LoadInternal(const char* skin_file);
   bool ReloadBitmapsInternal();

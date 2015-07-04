@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -322,14 +322,14 @@ void ProgressSpinner::SetValue(int value) {
 
 void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
   if (IsRunning()) {
-    SkinElement* e = g_tb_skin->GetSkinElement(m_skin_fg);
+    SkinElement* e = Skin::get()->GetSkinElement(m_skin_fg);
     if (e && e->bitmap) {
       int size = e->bitmap->Height();
       int num_frames = e->bitmap->Width() / e->bitmap->Height();
       int current_frame = m_frame % num_frames;
-      g_renderer->DrawBitmap(GetPaddingRect(),
-                             Rect(current_frame * size, 0, size, size),
-                             e->bitmap);
+      Renderer::get()->DrawBitmap(GetPaddingRect(),
+                                  Rect(current_frame * size, 0, size, size),
+                                  e->bitmap);
     }
   }
 }

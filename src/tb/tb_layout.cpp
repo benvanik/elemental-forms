@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -193,7 +193,7 @@ int Layout::CalculateSpacing() {
     }
     assert(kSpacingFromSkin == kSkinValueNotSpecified);
     if (spacing == kSpacingFromSkin /*|| spacing == kSkinValueNotSpecified*/) {
-      spacing = g_tb_skin->GetDefaultSpacing();
+      spacing = Skin::get()->GetDefaultSpacing();
     }
   }
   return spacing;
@@ -418,10 +418,11 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
                            m_overflow_scroll == m_overflow ? fluff : 0);
     }
 
-    old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
+    old_clip_rect = Renderer::get()->SetClipRect(clip_rect, true);
 
-    TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutClipping,
-                        g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
+    TB_IF_DEBUG_SETTING(
+        util::DebugInfo::Setting::kLayoutClipping,
+        Renderer::get()->DrawRect(clip_rect, Color(255, 0, 0, 200)));
   }
 
   // Paint children.
@@ -444,7 +445,7 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
 
   // Restore clipping
   if (m_overflow) {
-    g_renderer->SetClipRect(old_clip_rect, false);
+    Renderer::get()->SetClipRect(old_clip_rect, false);
   }
 }
 

@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -127,7 +127,7 @@ const char* Node::GetValueString(const char* request, const char* def) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
         static std::string temp;
-        temp = g_tb_lng->GetString(string + 1);
+        temp = Language::get()->GetString(string + 1);
         string = temp.c_str();
       }
       return string;

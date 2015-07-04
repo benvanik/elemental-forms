@@ -3,7 +3,7 @@
 * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
 ******************************************************************************
 * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
-* See tb_core.h and LICENSE in the root for more information.                *
+* See turbo_badger.h and LICENSE in the root for more information. *
 ******************************************************************************
 */
 
@@ -22,7 +22,7 @@
 namespace tb {
 namespace util {
 
-DebugInfo g_tb_debug;
+DebugInfo DebugInfo::debug_info_singleton_;
 
 DebugInfo::DebugInfo() = default;
 
@@ -35,7 +35,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   DebugSettingsWindow(Element* root) {
     SetText("Debug settings");
-    g_elements_reader->LoadData(
+    ElementReader::get()->LoadData(
         this,
         "Layout: axis: y, distribution: available, position: left\n"
         "	Layout: id: 'container', axis: y, size: available\n"
@@ -68,7 +68,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     CheckBox* check = new CheckBox();
-    check->SetValue(g_tb_debug.settings[int(setting)]);
+    check->SetValue(DebugInfo::get()->settings[int(setting)]);
     check->data.SetInt(int(setting));
     check->SetID(TBIDC("check"));
 
@@ -81,8 +81,9 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   bool OnEvent(const ElementEvent& ev) override {
     if (ev.type == EventType::kClick && ev.target->GetID() == TBIDC("check")) {
-      // Update setting and invalidate
-      g_tb_debug.settings[ev.target->data.GetInt()] = ev.target->GetValue();
+      // Update setting and invalidate.
+      DebugInfo::get()->settings[ev.target->data.GetInt()] =
+          ev.target->GetValue();
       GetParentRoot()->Invalidate();
       return true;
     }
@@ -91,24 +92,24 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   void OnPaint(const PaintProps& paint_props) override {
     // Draw stuff to the right of the debug window.
-    g_renderer->Translate(rect().w, 0);
+    Renderer::get()->Translate(rect().w, 0);
 
     // Draw skin bitmap fragments.
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawSkinBitmapFragments)) {
-      g_tb_skin->Debug();
+      Skin::get()->Debug();
     }
 
     // Draw font glyph fragments (the font of the hovered element).
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawFontBitmapFragments)) {
       Element* element = Element::hovered_element ? Element::hovered_element
                                                   : Element::focused_element;
-      auto font_face = g_font_manager->GetFontFace(
+      auto font_face = FontManager::get()->GetFontFace(
           element ? element->GetCalculatedFontDescription()
-                  : g_font_manager->GetDefaultFontDescription());
+                  : FontManager::get()->GetDefaultFontDescription());
       font_face->Debug();
     }
 
-    g_renderer->Translate(-rect().w, 0);
+    Renderer::get()->Translate(-rect().w, 0);
   }
 
   std::string GetIDString(const TBID& id) {

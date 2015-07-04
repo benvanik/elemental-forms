@@ -3,17 +3,18 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
-#include "tb_font_renderer.h"
-
 #include <cmath>
 
+#include "tb_font_renderer.h"
 #include "tb_renderer.h"
 
 namespace tb {
+
+std::unique_ptr<FontManager> FontManager::font_manager_singleton_;
 
 void BlurGlyph(unsigned char* src, int srcw, int srch, int srcStride,
                unsigned char* dst, int dstw, int dsth, int dstStride,
@@ -115,10 +116,10 @@ FontGlyphCache::FontGlyphCache() {
   m_frag_manager.SetNumMapsLimit(1);
   m_frag_manager.SetDefaultMapSize(TB_GLYPH_CACHE_WIDTH, TB_GLYPH_CACHE_HEIGHT);
 
-  g_renderer->AddListener(this);
+  Renderer::get()->AddListener(this);
 }
 
-FontGlyphCache::~FontGlyphCache() { g_renderer->RemoveListener(this); }
+FontGlyphCache::~FontGlyphCache() { Renderer::get()->RemoveListener(this); }
 
 FontGlyph* FontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
   if (FontGlyph* glyph = m_glyphs.Get(hash_id)) {
@@ -337,7 +338,7 @@ void FontFace::DrawString(int x, int y, const Color& color, const char* str,
   }
 
   if (m_font_renderer) {
-    g_renderer->BeginBatchHint(Renderer::BatchHint::kDrawBitmapFragment);
+    Renderer::get()->BeginBatchHint(Renderer::BatchHint::kDrawBitmapFragment);
   }
 
   size_t i = 0;
@@ -350,22 +351,23 @@ void FontFace::DrawString(int x, int y, const Color& color, const char* str,
                       glyph->frag->Width(), glyph->frag->Height());
         Rect src_rect(0, 0, glyph->frag->Width(), glyph->frag->Height());
         if (glyph->has_rgb) {
-          g_renderer->DrawBitmap(dst_rect, src_rect, glyph->frag);
+          Renderer::get()->DrawBitmap(dst_rect, src_rect, glyph->frag);
         } else {
-          g_renderer->DrawBitmapColored(dst_rect, src_rect, color, glyph->frag);
+          Renderer::get()->DrawBitmapColored(dst_rect, src_rect, color,
+                                             glyph->frag);
         }
       }
       x += glyph->metrics.advance;
     } else if (!m_font_renderer) {
       // This is the test font. Use same glyph width as height and draw square.
-      g_renderer->DrawRect(Rect(x, y, m_metrics.height / 3, m_metrics.height),
-                           color);
+      Renderer::get()->DrawRect(
+          Rect(x, y, m_metrics.height / 3, m_metrics.height), color);
       x += m_metrics.height / 3 + 1;
     }
   }
 
   if (m_font_renderer) {
-    g_renderer->EndBatchHint();
+    Renderer::get()->EndBatchHint();
   }
 }
 

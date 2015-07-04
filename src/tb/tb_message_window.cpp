@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -48,7 +48,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "		SkinImage: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	Layout: distribution-position: right bottom, id: 3\n";
-  if (!g_elements_reader->LoadData(GetContentRoot(), source)) {
+  if (!ElementReader::get()->LoadData(GetContentRoot(), source)) {
     return false;
   }
 
@@ -102,7 +102,7 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   if (!layout) return;
   Button* btn = new Button();
   btn->SetID(id);
-  btn->SetText(g_tb_lng->GetString(btn->GetID()));
+  btn->SetText(Language::get()->GetString(btn->GetID()));
   layout->AddChild(btn);
   if (focused) {
     btn->SetFocus(FocusReason::kUnknown);

@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -14,12 +14,12 @@
 #include <string>
 #include <vector>
 
-#include "tb_core.h"
 #include "tb_font_desc.h"
 #include "tb_skin.h"
 #include "tb_widget_value.h"
 
 #include "tb/rect.h"
+#include "tb/types.h"
 #include "tb/util/link_list.h"
 #include "tb/util/object.h"
 

@@ -3,7 +3,7 @@
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
  * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
@@ -162,7 +162,7 @@ void SelectList::ValidateList() {
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
     Element* element = new Label();
-    auto fmt = g_tb_lng->GetString(m_header_lng_string_id);
+    auto fmt = Language::get()->GetString(m_header_lng_string_id);
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
                                              m_source->GetNumItems()));
     element->SetSkinBg(TBIDC("SelectList.header"));

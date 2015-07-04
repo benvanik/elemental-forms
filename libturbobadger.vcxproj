@@ -15,7 +15,7 @@
     <ClCompile Include="src\tb\animation.cc" />
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
     <ClCompile Include="src\tb\color.cc" />
-    <ClCompile Include="src\tb\tb_core.cpp" />
+    <ClCompile Include="src\tb\turbo_badger.cc" />
     <ClCompile Include="src\tb\tb_dimension.cpp" />
     <ClCompile Include="src\tb\tb_text_box.cpp" />
     <ClCompile Include="src\tb\tb_font_renderer.cpp" />
@@ -99,7 +99,7 @@
     <ClInclude Include="src\tb\tb_bitmap_fragment.h" />
     <ClInclude Include="src\tb\color.h" />
     <ClInclude Include="src\tb\config.h" />
-    <ClInclude Include="src\tb\tb_core.h" />
+    <ClInclude Include="src\tb\turbo_badger.h" />
     <ClInclude Include="src\tb\tb_dimension.h" />
     <ClInclude Include="src\tb\tb_text_box.h" />
     <ClInclude Include="src\tb\tb_font_desc.h" />
