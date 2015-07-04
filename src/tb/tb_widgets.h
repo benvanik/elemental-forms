@@ -15,9 +15,9 @@
 #include <vector>
 
 #include "tb_font_desc.h"
-#include "tb_skin.h"
 #include "tb_widget_value.h"
 
+#include "tb/resources/skin.h"
 #include "tb/rect.h"
 #include "tb/types.h"
 #include "tb/util/link_list.h"
@@ -488,22 +488,24 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
     return (T*)GetElementByIDInternal(id, GetTypeId<T>());
   }
 
+  using State = resources::SkinState;
+
   // Enables or disables the given state(s).
   // The state affects which skin state is used when drawing.
   // Some states are set automatically on interaction. See GetAutoState().
-  void SetState(SkinState state, bool on);
+  void SetState(State state, bool on);
 
   // Gets status of the given state(s).
   // Returns true if the given state combination is set.
-  bool GetState(SkinState state) const { return any(m_state & state); }
+  bool GetState(State state) const { return any(m_state & state); }
 
   // Sets the element state.
   // Like SetState but setting the entire state as given, instead of toggling
   // individual states. See SetState for more info on states.
-  void SetStateRaw(SkinState state);
+  void SetStateRaw(State state);
 
   // Gets the element state.
-  SkinState GetStateRaw() const { return m_state; }
+  State GetStateRaw() const { return m_state; }
 
   // Returns the current combined state for this element. It will also add some
   // automatic states, such as hovered (if the element is currently hovered), or
@@ -514,7 +516,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   //
   // RE SkinState::kFocused: may also be controlled by calling SetAutoFocusState
   // and the define TB_ALWAYS_SHOW_EDIT_FOCUS.
-  SkinState GetAutoState() const;
+  State GetAutoState() const;
 
   // Sets whether the state SkinState::kFocused should be set automatically for
   // the focused element.
@@ -603,7 +605,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   TBID GetSkinBg() const { return m_skin_bg; }
 
   // Returns the skin background element, or nullptr.
-  SkinElement* GetSkinBgElement();
+  resources::SkinElement* GetSkinBgElement();
 
   // Sets if this element is a group root.
   // Grouped elements (such as RadioButton) will toggle all other elements with
@@ -834,7 +836,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // This can be used to extend the skin conditions support with properties
   // specific to different elements.
   virtual bool GetCustomSkinCondition(
-      const SkinCondition::ConditionInfo& info) {
+      const resources::SkinCondition::ConditionInfo& info) {
     return false;
   }
 
@@ -1144,7 +1146,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // Opacity 0-1. See SetOpacity.
   float m_opacity = 1.0f;
   // The element state (excluding any auto states).
-  SkinState m_state = SkinState::kNone;
+  State m_state = State::kNone;
   Gravity m_gravity = Gravity::kDefault;
   FontDescription m_font_desc;
   PreferredSize m_cached_ps;    // Cached preferred size.
@@ -1233,8 +1235,8 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   void MaybeInvokeLongClickOrContextMenu(bool touch);
   // Returns the opacity for this element multiplied with its skin opacity and
   // state opacity.
-  float CalculateOpacityInternal(SkinState state,
-                                 SkinElement* skin_element) const;
+  float CalculateOpacityInternal(State state,
+                                 resources::SkinElement* skin_element) const;
 };
 
 }  // namespace tb

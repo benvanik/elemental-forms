@@ -101,7 +101,7 @@ void SimpleLayoutItemElement::OpenSubMenu() {
 
   // Open a new menu window for the submenu with this element as target.
   m_menu = new MenuWindow(this, TBIDC("submenu"));
-  SetState(SkinState::kSelected, true);
+  SetState(resources::SkinState::kSelected, true);
   m_menu->AddListener(this);
   m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);
 }
@@ -109,7 +109,7 @@ void SimpleLayoutItemElement::OpenSubMenu() {
 void SimpleLayoutItemElement::CloseSubMenu() {
   if (!m_menu) return;
 
-  SetState(SkinState::kSelected, false);
+  SetState(resources::SkinState::kSelected, false);
   m_menu->RemoveListener(this);
   if (!m_menu->GetIsDying()) {
     m_menu->Close();

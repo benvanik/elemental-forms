@@ -13,13 +13,13 @@
 #include <string>
 
 #include "tb_node_tree.h"
-#include "tb_skin.h"
-
+#include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
+namespace resources {
 
 std::unique_ptr<Skin> Skin::skin_singleton_;
 
@@ -775,4 +775,5 @@ void SkinElementStateList::Load(Node* n) {
   }
 }
 
+}  // namespace resources
 }  // namespace tb

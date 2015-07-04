@@ -171,7 +171,7 @@ void Button::SetText(const char* text) {
 
 void Button::SetValue(int value) {
   if (value == GetValue()) return;
-  SetState(SkinState::kPressed, value ? true : false);
+  SetState(Element::State::kPressed, value ? true : false);
 
   if (CanToggle()) {
     // Invoke a changed event.
@@ -184,7 +184,7 @@ void Button::SetValue(int value) {
   }
 }
 
-int Button::GetValue() { return GetState(SkinState::kPressed); }
+int Button::GetValue() { return GetState(Element::State::kPressed); }
 
 void Button::OnCaptureChanged(bool captured) {
   if (captured && m_auto_repeat_click) {
@@ -297,12 +297,13 @@ bool LabelContainer::OnEvent(const ElementEvent& ev) {
 
     // Sync our pressed state with the click target. Special case for when we're
     // just about to lose it ourself (pointer is being released).
-    bool pressed_state = any(ev.target->GetAutoState() & SkinState::kPressed);
+    bool pressed_state =
+        any(ev.target->GetAutoState() & Element::State::kPressed);
     if (ev.type == EventType::kPointerUp || ev.type == EventType::kClick) {
       pressed_state = false;
     }
 
-    click_target->SetState(SkinState::kPressed, pressed_state);
+    click_target->SetState(Element::State::kPressed, pressed_state);
 
     ElementEvent target_ev(ev.type, ev.target_x - click_target->rect().x,
                            ev.target_y - click_target->rect().y, ev.touch,
@@ -331,7 +332,7 @@ void Separator::RegisterInflater() {
 
 Separator::Separator() {
   SetSkinBg(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
-  SetState(SkinState::kDisabled, true);
+  SetState(Element::State::kDisabled, true);
 }
 
 void ProgressSpinner::RegisterInflater() {
@@ -366,7 +367,7 @@ void ProgressSpinner::SetValue(int value) {
 
 void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
   if (IsRunning()) {
-    SkinElement* e = Skin::get()->GetSkinElement(m_skin_fg);
+    auto e = resources::Skin::get()->GetSkinElement(m_skin_fg);
     if (e && e->bitmap) {
       int size = e->bitmap->Height();
       int num_frames = e->bitmap->Width() / e->bitmap->Height();
@@ -412,7 +413,7 @@ void BaseRadioCheckBox::SetValue(int value) {
   if (m_value == value) return;
   m_value = value;
 
-  SetState(SkinState::kSelected, value ? true : false);
+  SetState(Element::State::kSelected, value ? true : false);
 
   ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);

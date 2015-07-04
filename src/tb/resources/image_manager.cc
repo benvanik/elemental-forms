@@ -8,11 +8,10 @@
  */
 
 #include "tb/resources/image_manager.h"
+#include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/hash.h"
 #include "tb/util/string_builder.h"
-
-#include "tb_skin.h"
 
 namespace tb {
 namespace resources {

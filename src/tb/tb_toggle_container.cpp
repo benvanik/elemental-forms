@@ -128,7 +128,7 @@ void ToggleContainer::UpdateInternal() {
     case ToggleAction::kNothing:
       break;
     case ToggleAction::kEnabled:
-      SetState(SkinState::kDisabled, !on);
+      SetState(Element::State::kDisabled, !on);
       break;
     case ToggleAction::kOpacity:
       SetOpacity(on ? 1.f : 0);
@@ -136,7 +136,7 @@ void ToggleContainer::UpdateInternal() {
     case ToggleAction::kExpanded:
       SetVisibilility(on ? Visibility::kVisible : Visibility::kGone);
       // Also disable when collapsed so tab focus skips the children.
-      SetState(SkinState::kDisabled, !on);
+      SetState(Element::State::kDisabled, !on);
       break;
   };
 }

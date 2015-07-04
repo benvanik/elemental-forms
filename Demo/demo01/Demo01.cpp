@@ -76,7 +76,7 @@ void DemoWindow::LoadResource(Node& node) {
   SetText(node.GetValueString("WindowInfo>title", ""));
 
   const Rect parent_rect(0, 0, GetParent()->rect().w, GetParent()->rect().h);
-  auto dc = Skin::get()->GetDimensionConverter();
+  auto dc = resources::Skin::get()->GetDimensionConverter();
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
@@ -138,9 +138,11 @@ class EditWindow : public DemoWindow {
 
     if (TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"))) {
       if (Element* undo = GetElementByID("undo"))
-        undo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanUndo());
+        undo->SetState(Element::State::kDisabled,
+                       !edit->GetStyleEdit()->CanUndo());
       if (Element* redo = GetElementByID("redo"))
-        redo->SetState(SkinState::kDisabled, !edit->GetStyleEdit()->CanRedo());
+        redo->SetState(Element::State::kDisabled,
+                       !edit->GetStyleEdit()->CanRedo());
       if (Label* info = GetElementByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::util::format_string(
             "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOffset()));
@@ -554,7 +556,9 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
     } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
       uint64_t t1 = util::GetTimeMS();
-      for (int i = 0; i < reload_count; i++) Skin::get()->ReloadBitmaps();
+      for (int i = 0; i < reload_count; i++) {
+        resources::Skin::get()->ReloadBitmaps();
+      }
       uint64_t t2 = util::GetTimeMS();
 
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
@@ -792,8 +796,8 @@ int app_main() {
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.
-  Skin::get()->Load("resources/default_skin/skin.tb.txt",
-                    "Demo/demo01/skin/skin.tb.txt");
+  resources::Skin::get()->Load("resources/default_skin/skin.tb.txt",
+                               "Demo/demo01/skin/skin.tb.txt");
 
 // Register font renderers.
 #ifdef TB_FONT_RENDERER_TBBF
@@ -830,7 +834,7 @@ int app_main() {
 #else
   fd.SetID(TBIDC("Vera"));
 #endif
-  fd.SetSize(Skin::get()->GetDimensionConverter()->DpToPx(14));
+  fd.SetSize(resources::Skin::get()->GetDimensionConverter()->DpToPx(14));
   font_manager->SetDefaultFontDescription(fd);
 
   // Create the font now.

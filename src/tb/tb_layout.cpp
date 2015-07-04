@@ -34,7 +34,7 @@ Layout::Layout(Axis axis) : m_axis(axis) {
 
 void Layout::OnInflate(const resources::InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
-    SetSpacing(Skin::get()->GetDimensionConverter()->GetPxFromString(
+    SetSpacing(resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
         spacing, kSpacingFromSkin));
   }
   SetGravity(Gravity::kAll);
@@ -232,12 +232,12 @@ int Layout::CalculateSpacing() {
   // Get spacing from skin, if not specified.
   int spacing = m_spacing;
   if (spacing == kSpacingFromSkin) {
-    if (SkinElement* e = GetSkinBgElement()) {
-      spacing = e->spacing;
+    if (auto el = GetSkinBgElement()) {
+      spacing = el->spacing;
     }
-    assert(kSpacingFromSkin == kSkinValueNotSpecified);
+    assert(kSpacingFromSkin == resources::kSkinValueNotSpecified);
     if (spacing == kSpacingFromSkin /*|| spacing == kSkinValueNotSpecified*/) {
-      spacing = Skin::get()->GetDefaultSpacing();
+      spacing = resources::Skin::get()->GetDefaultSpacing();
     }
   }
   return spacing;

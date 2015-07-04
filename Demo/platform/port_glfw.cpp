@@ -6,7 +6,6 @@
 #include <string.h>
 #include <algorithm>
 
-#include "tb_skin.h"
 #include "tb_widgets.h"
 #include "tb_msg.h"
 #include "tb_renderer_gl.h"

@@ -7,9 +7,14 @@
  ******************************************************************************
  */
 
+#include "tb_renderer.h"
 #include "tb_skin_util.h"
+#include "tb/resources/skin.h"
 
 namespace tb {
+
+// TODO(benvanik): remove
+using resources::Skin;
 
 int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
   // Make it appear gradually.
@@ -21,7 +26,7 @@ int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
 
 void DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y, int left,
                      int top, int right, int bottom) {
-  if (SkinElement* skin = Skin::get()->GetSkinElement(skin_x)) {
+  if (auto skin = Skin::get()->GetSkinElement(skin_x)) {
     if (skin->bitmap) {
       int bw = skin->bitmap->Width();
       int bh = skin->bitmap->Height();
@@ -38,7 +43,7 @@ void DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y, int left,
       }
     }
   }
-  if (SkinElement* skin = Skin::get()->GetSkinElement(skin_y)) {
+  if (auto skin = Skin::get()->GetSkinElement(skin_y)) {
     if (skin->bitmap) {
       int bw = skin->bitmap->Width();
       int bh = skin->bitmap->Height();

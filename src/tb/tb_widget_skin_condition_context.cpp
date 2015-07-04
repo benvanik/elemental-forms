@@ -15,6 +15,10 @@
 
 namespace tb {
 
+using tb::resources::SkinCondition;
+using tb::resources::SkinProperty;
+using tb::resources::SkinTarget;
+
 bool ElementSkinConditionContext::GetCondition(
     SkinTarget target, const SkinCondition::ConditionInfo& info) {
   switch (target) {

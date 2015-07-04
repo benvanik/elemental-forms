@@ -88,8 +88,9 @@ void TextBox::OnInflate(const resources::InflateInfo& info) {
           : false);
   if (const char* virtual_width =
           info.node->GetValueString("virtual-width", nullptr)) {
-    SetVirtualWidth(Skin::get()->GetDimensionConverter()->GetPxFromString(
-        virtual_width, GetVirtualWidth()));
+    SetVirtualWidth(
+        resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
+            virtual_width, GetVirtualWidth()));
   }
   if (const char* text = info.node->GetValueString("placeholder", nullptr)) {
     SetPlaceholderText(text);
@@ -168,7 +169,8 @@ void TextBox::SetEditType(EditType type) {
   Element::Invalidate();
 }
 
-bool TextBox::GetCustomSkinCondition(const SkinCondition::ConditionInfo& info) {
+bool TextBox::GetCustomSkinCondition(
+    const resources::SkinCondition::ConditionInfo& info) {
   if (info.custom_prop == TBIDC("edit-type")) {
     switch (m_edit_type) {
       case EditType::kText:
@@ -314,8 +316,8 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
   // If empty, draw placeholder text with some opacity.
   if (m_style_edit.empty()) {
     float old_opacity = Renderer::get()->GetOpacity();
-    Renderer::get()->SetOpacity(old_opacity *
-                                Skin::get()->GetDefaultPlaceholderOpacity());
+    Renderer::get()->SetOpacity(
+        old_opacity * resources::Skin::get()->GetDefaultPlaceholderOpacity());
     Rect placeholder_rect(visible_rect.x, visible_rect.y, visible_rect.w,
                           GetFont()->height());
     m_placeholder.Paint(this, placeholder_rect, paint_props.text_color);
@@ -381,7 +383,7 @@ PreferredSize TextBox::OnCalculatePreferredContentSize(
       int layout_width = m_virtual_width;
       if (constraints.available_w != SizeConstraints::kNoRestriction) {
         layout_width = constraints.available_w;
-        if (SkinElement* bg_skin = GetSkinBgElement()) {
+        if (auto bg_skin = GetSkinBgElement()) {
           layout_width -= bg_skin->padding_left + bg_skin->padding_right;
         }
       }
@@ -473,14 +475,16 @@ void TextBox::DrawRectFill(const Rect& rect, const Color& color) {
 
 void TextBox::DrawTextSelectionBg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
-                         static_cast<SkinState>(GetAutoState()), context);
+  resources::Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                                    static_cast<Element::State>(GetAutoState()),
+                                    context);
 }
 
 void TextBox::DrawContentSelectionFg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
-                         static_cast<SkinState>(GetAutoState()), context);
+  resources::Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                                    static_cast<Element::State>(GetAutoState()),
+                                    context);
 }
 
 void TextBox::DrawCaret(const Rect& rect) {

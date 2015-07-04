@@ -10,7 +10,8 @@
 #ifndef TB_SKIN_UTIL_H
 #define TB_SKIN_UTIL_H
 
-#include "tb_skin.h"
+#include "tb/rect.h"
+#include "tb/tb_id.h"
 
 namespace tb {
 

@@ -64,7 +64,7 @@ class LongClickTimer : private MessageHandler {
 Element::PaintProps::PaintProps() {
   // Set the default properties, used for the root elements
   // calling InvokePaint. The base values for all inheritance.
-  text_color = Skin::get()->GetDefaultTextColor();
+  text_color = resources::Skin::get()->GetDefaultTextColor();
 }
 
 void Element::RegisterInflater() {
@@ -209,7 +209,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   }
   if (const char* state = info.node->GetValueString("state", nullptr)) {
     if (strstr(state, "disabled")) {
-      SetState(SkinState::kDisabled, true);
+      SetState(Element::State::kDisabled, true);
     }
   }
   if (const char* skin = info.node->GetValueString("skin", nullptr)) {
@@ -220,7 +220,8 @@ void Element::OnInflate(const resources::InflateInfo& info) {
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
     }
-    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
+    const DimensionConverter* dc =
+        resources::Skin::get()->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
       layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -265,8 +266,9 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   if (Node* font = info.node->GetNode("font")) {
     FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
-      int new_size = Skin::get()->GetDimensionConverter()->GetPxFromString(
-          size, fd.GetSize());
+      int new_size =
+          resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
+              size, fd.GetSize());
       fd.SetSize(new_size);
     }
     if (const char* name = font->GetValueString("name", nullptr)) {
@@ -278,7 +280,8 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   info.target->OnInflateChild(this);
 
   if (Node* rect_node = info.node->GetNode("rect")) {
-    const DimensionConverter* dc = Skin::get()->GetDimensionConverter();
+    const DimensionConverter* dc =
+        resources::Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.GetArrayLength() == 4) {
       set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
@@ -368,34 +371,34 @@ void Element::SetID(const TBID& id) {
   InvalidateSkinStates();
 }
 
-void Element::SetStateRaw(SkinState state) {
+void Element::SetStateRaw(Element::State state) {
   if (m_state == state) return;
   m_state = state;
   Invalidate();
   InvalidateSkinStates();
 }
 
-void Element::SetState(SkinState state, bool on) {
+void Element::SetState(Element::State state, bool on) {
   SetStateRaw(on ? m_state | state : m_state & ~state);
 }
 
-SkinState Element::GetAutoState() const {
-  SkinState state = m_state;
+Element::State Element::GetAutoState() const {
+  Element::State state = m_state;
   bool add_pressed_state =
       !cancel_click && this == captured_element && this == hovered_element;
   if (add_pressed_state) {
-    state |= SkinState::kPressed;
+    state |= Element::State::kPressed;
   }
   if (this == hovered_element &&
       (!m_packed.no_automatic_hover_state || add_pressed_state)) {
-    state |= SkinState::kHovered;
+    state |= Element::State::kHovered;
   }
   if (this == focused_element && show_focus_state) {
-    state |= SkinState::kFocused;
+    state |= Element::State::kFocused;
   }
 #ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
   else if (this == focused_element && IsOfType<TextBox>()) {
-    state |= SkinState::kFocused;
+    state |= Element::State::kFocused;
   }
 #endif  // TB_ALWAYS_SHOW_EDIT_FOCUS
   return state;
@@ -468,7 +471,7 @@ bool Element::GetVisibilityCombined() const {
 bool Element::GetDisabled() const {
   const Element* tmp = this;
   while (tmp) {
-    if (tmp->GetState(SkinState::kDisabled)) {
+    if (tmp->GetState(Element::State::kDisabled)) {
       return true;
     }
     tmp = tmp->m_parent;
@@ -582,11 +585,11 @@ void Element::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   }
 }
 
-SkinElement* Element::GetSkinBgElement() {
+resources::SkinElement* Element::GetSkinBgElement() {
   ElementSkinConditionContext context(this);
-  SkinState state = GetAutoState();
-  return Skin::get()->GetSkinElementStrongOverride(
-      m_skin_bg, static_cast<SkinState>(state), context);
+  Element::State state = GetAutoState();
+  return resources::Skin::get()->GetSkinElementStrongOverride(
+      m_skin_bg, static_cast<Element::State>(state), context);
 }
 
 Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
@@ -752,7 +755,7 @@ bool Element::SetFocus(FocusReason reason, InvokeInfo info) {
       // emulated click (by keyboard), so unset it before we unfocus it so it's
       // not stuck in pressed state.
       if (old->m_packed.has_key_pressed_state) {
-        old->SetState(SkinState::kPressed, false);
+        old->SetState(Element::State::kPressed, false);
         old->m_packed.has_key_pressed_state = false;
       }
       old->OnFocusChanged(false);
@@ -846,7 +849,7 @@ Element* Element::GetLastLeaf() const {
 
 bool Element::GetIsInteractable() const {
   return !(m_opacity == 0 || GetIgnoreInput() ||
-           GetState(SkinState::kDisabled) || GetIsDying() ||
+           GetState(Element::State::kDisabled) || GetIsDying() ||
            GetVisibility() != Visibility::kVisible);
 }
 
@@ -972,10 +975,10 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
     if (clip_rect.intersects(child->m_rect) &&
         child->GetVisibility() == Visibility::kVisible) {
-      SkinElement* skin_element = child->GetSkinBgElement();
+      auto skin_element = child->GetSkinBgElement();
       if (skin_element && skin_element->HasOverlayElements()) {
         // Update the renderer with the elements opacity.
-        SkinState state = child->GetAutoState();
+        Element::State state = child->GetAutoState();
         float old_opacity = Renderer::get()->GetOpacity();
         float opacity =
             old_opacity * child->CalculateOpacityInternal(state, skin_element);
@@ -983,8 +986,9 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
           Renderer::get()->SetOpacity(opacity);
 
           ElementSkinConditionContext context(child);
-          Skin::get()->PaintSkinOverlay(child->m_rect, skin_element,
-                                        static_cast<SkinState>(state), context);
+          resources::Skin::get()->PaintSkinOverlay(
+              child->m_rect, skin_element, static_cast<Element::State>(state),
+              context);
 
           Renderer::get()->SetOpacity(old_opacity);
         }
@@ -997,13 +1001,14 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   // painted.
   if (focused_element && focused_element->m_parent == this) {
     ElementSkinConditionContext context(focused_element);
-    SkinElement* skin_element = focused_element->GetSkinBgElement();
+    auto skin_element = focused_element->GetSkinBgElement();
     if (!skin_element ||
-        !skin_element->HasState(SkinState::kFocused, context)) {
-      SkinState state = focused_element->GetAutoState();
-      if (any(state & SkinState::kFocused)) {
-        Skin::get()->PaintSkin(focused_element->m_rect, TBIDC("generic_focus"),
-                               static_cast<SkinState>(state), context);
+        !skin_element->HasState(Element::State::kFocused, context)) {
+      Element::State state = focused_element->GetAutoState();
+      if (any(state & Element::State::kFocused)) {
+        resources::Skin::get()->PaintSkin(
+            focused_element->m_rect, TBIDC("generic_focus"),
+            static_cast<Element::State>(state), context);
       }
     }
   }
@@ -1063,7 +1068,7 @@ void Element::OnInflateChild(Element* child) {
 
 Rect Element::GetPaddingRect() {
   Rect padding_rect(0, 0, m_rect.w, m_rect.h);
-  if (SkinElement* e = GetSkinBgElement()) {
+  if (auto e = GetSkinBgElement()) {
     padding_rect.x += e->padding_left;
     padding_rect.y += e->padding_top;
     padding_rect.w -= e->padding_left + e->padding_right;
@@ -1087,7 +1092,7 @@ PreferredSize Element::OnCalculatePreferredContentSize(
   bool has_layouting_children = false;
   PreferredSize ps;
 
-  SkinElement* bg_skin = GetSkinBgElement();
+  auto bg_skin = GetSkinBgElement();
   int horizontal_padding =
       bg_skin ? bg_skin->padding_left + bg_skin->padding_right : 0;
   int vertical_padding =
@@ -1127,62 +1132,67 @@ PreferredSize Element::OnCalculatePreferredSize(
   assert(ps.pref_w >= ps.min_w);
   assert(ps.pref_h >= ps.min_h);
 
-  if (SkinElement* e = GetSkinBgElement()) {
-    // Override the elements preferences with skin attributes that has been
-    // specified.
-    // If not set by the element, calculate based on the intrinsic size of the
-    // skin.
-
-    const int skin_intrinsic_w = e->GetIntrinsicWidth();
-    if (e->GetPrefWidth() != kSkinValueNotSpecified) {
-      ps.pref_w = e->GetPrefWidth();
-    } else if (ps.pref_w == 0 && skin_intrinsic_w != kSkinValueNotSpecified) {
-      ps.pref_w = skin_intrinsic_w;
-    } else {
-      // Grow by padding to get the preferred size from preferred content size.
-      ps.min_w += e->padding_left + e->padding_right;
-      ps.pref_w += e->padding_left + e->padding_right;
-    }
-
-    const int skin_intrinsic_h = e->GetIntrinsicHeight();
-    if (e->GetPrefHeight() != kSkinValueNotSpecified) {
-      ps.pref_h = e->GetPrefHeight();
-    } else if (ps.pref_h == 0 && skin_intrinsic_h != kSkinValueNotSpecified) {
-      ps.pref_h = skin_intrinsic_h;
-    } else {
-      // Grow by padding to get the preferred size from preferred content size.
-      ps.min_h += e->padding_top + e->padding_bottom;
-      ps.pref_h += e->padding_top + e->padding_bottom;
-    }
-
-    if (e->GetMinWidth() != kSkinValueNotSpecified) {
-      ps.min_w = e->GetMinWidth();
-    } else {
-      ps.min_w = std::max(ps.min_w, e->GetIntrinsicMinWidth());
-    }
-
-    if (e->GetMinHeight() != kSkinValueNotSpecified) {
-      ps.min_h = e->GetMinHeight();
-    } else {
-      ps.min_h = std::max(ps.min_h, e->GetIntrinsicMinHeight());
-    }
-
-    if (e->GetMaxWidth() != kSkinValueNotSpecified) {
-      ps.max_w = e->GetMaxWidth();
-    } else {
-      ps.max_w += e->padding_left + e->padding_right;
-    }
-
-    if (e->GetMaxHeight() != kSkinValueNotSpecified) {
-      ps.max_h = e->GetMaxHeight();
-    } else {
-      ps.max_h += e->padding_top + e->padding_bottom;
-    }
-
-    // Sanitize results.
-    ps.pref_w = std::max(ps.pref_w, ps.min_w);
-    ps.pref_h = std::max(ps.pref_h, ps.min_h);
+  auto e = GetSkinBgElement();
+  if (!e) {
+    return ps;
   }
+
+  using resources::kSkinValueNotSpecified;
+
+  // Override the elements preferences with skin attributes that has been
+  // specified.
+  // If not set by the element, calculate based on the intrinsic size of the
+  // skin.
+  const int skin_intrinsic_w = e->GetIntrinsicWidth();
+  if (e->GetPrefWidth() != kSkinValueNotSpecified) {
+    ps.pref_w = e->GetPrefWidth();
+  } else if (ps.pref_w == 0 && skin_intrinsic_w != kSkinValueNotSpecified) {
+    ps.pref_w = skin_intrinsic_w;
+  } else {
+    // Grow by padding to get the preferred size from preferred content size.
+    ps.min_w += e->padding_left + e->padding_right;
+    ps.pref_w += e->padding_left + e->padding_right;
+  }
+
+  const int skin_intrinsic_h = e->GetIntrinsicHeight();
+  if (e->GetPrefHeight() != kSkinValueNotSpecified) {
+    ps.pref_h = e->GetPrefHeight();
+  } else if (ps.pref_h == 0 && skin_intrinsic_h != kSkinValueNotSpecified) {
+    ps.pref_h = skin_intrinsic_h;
+  } else {
+    // Grow by padding to get the preferred size from preferred content size.
+    ps.min_h += e->padding_top + e->padding_bottom;
+    ps.pref_h += e->padding_top + e->padding_bottom;
+  }
+
+  if (e->GetMinWidth() != kSkinValueNotSpecified) {
+    ps.min_w = e->GetMinWidth();
+  } else {
+    ps.min_w = std::max(ps.min_w, e->GetIntrinsicMinWidth());
+  }
+
+  if (e->GetMinHeight() != kSkinValueNotSpecified) {
+    ps.min_h = e->GetMinHeight();
+  } else {
+    ps.min_h = std::max(ps.min_h, e->GetIntrinsicMinHeight());
+  }
+
+  if (e->GetMaxWidth() != kSkinValueNotSpecified) {
+    ps.max_w = e->GetMaxWidth();
+  } else {
+    ps.max_w += e->padding_left + e->padding_right;
+  }
+
+  if (e->GetMaxHeight() != kSkinValueNotSpecified) {
+    ps.max_h = e->GetMaxHeight();
+  } else {
+    ps.max_h += e->padding_top + e->padding_bottom;
+  }
+
+  // Sanitize results.
+  ps.pref_w = std::max(ps.pref_w, ps.min_w);
+  ps.pref_h = std::max(ps.pref_h, ps.min_h);
+
   return ps;
 }
 
@@ -1272,7 +1282,7 @@ void Element::InvokeSkinUpdatesInternal(bool force_update) {
   // changed.
   // If that happens, call OnSkinChanged so the element can react to that, and
   // invalidate layout to apply new skin properties.
-  if (SkinElement* skin_elm = GetSkinBgElement()) {
+  if (auto skin_elm = GetSkinBgElement()) {
     if (skin_elm->id != m_skin_bg_expected) {
       OnSkinChanged();
       m_skin_bg_expected = skin_elm->id;
@@ -1307,14 +1317,14 @@ void Element::InvokeProcessStates(bool force_update) {
     child->InvokeProcessStates(true);
 }
 
-float Element::CalculateOpacityInternal(SkinState state,
-                                        SkinElement* skin_element) const {
+float Element::CalculateOpacityInternal(
+    Element::State state, resources::SkinElement* skin_element) const {
   float opacity = m_opacity;
   if (skin_element) {
     opacity *= skin_element->opacity;
   }
-  if (any(state & SkinState::kDisabled)) {
-    opacity *= Skin::get()->GetDefaultDisabledOpacity();
+  if (any(state & Element::State::kDisabled)) {
+    opacity *= resources::Skin::get()->GetDefaultDisabledOpacity();
   }
   return opacity;
 }
@@ -1326,8 +1336,8 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
     return;
   }
 
-  SkinState state = GetAutoState();
-  SkinElement* skin_element = GetSkinBgElement();
+  Element::State state = GetAutoState();
+  auto skin_element = GetSkinBgElement();
 
   // Multiply current opacity with element opacity, skin opacity and state
   // opacity.
@@ -1344,8 +1354,8 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   // Paint background skin.
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
   ElementSkinConditionContext context(this);
-  SkinElement* used_element = Skin::get()->PaintSkin(
-      local_rect, skin_element, static_cast<SkinState>(state), context);
+  auto used_element = resources::Skin::get()->PaintSkin(
+      local_rect, skin_element, static_cast<Element::State>(state), context);
   assert(!!used_element == !!skin_element);
 
   TB_IF_DEBUG_SETTING(
@@ -1672,7 +1682,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
       static bool check_pressed_state = true;
       static bool had_pressed_state = false;
       if (down && check_pressed_state) {
-        had_pressed_state = focused_element->GetState(SkinState::kPressed);
+        had_pressed_state = focused_element->GetState(Element::State::kPressed);
         check_pressed_state = false;
       }
       if (!down) {
@@ -1680,7 +1690,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
       }
 
       if (!had_pressed_state) {
-        focused_element->SetState(SkinState::kPressed, down);
+        focused_element->SetState(Element::State::kPressed, down);
         focused_element->m_packed.has_key_pressed_state = down;
       }
 
@@ -1755,7 +1765,7 @@ void Element::SetHoveredElement(Element* element, bool touch) {
   if (Element::hovered_element == element) {
     return;
   }
-  if (element && element->GetState(SkinState::kDisabled)) {
+  if (element && element->GetState(Element::State::kDisabled)) {
     return;
   }
 
@@ -1783,7 +1793,7 @@ void Element::SetCapturedElement(Element* element) {
   if (Element::captured_element == element) {
     return;
   }
-  if (element && element->GetState(SkinState::kDisabled)) {
+  if (element && element->GetState(Element::State::kDisabled)) {
     return;
   }
 

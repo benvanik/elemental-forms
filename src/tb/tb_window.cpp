@@ -67,7 +67,7 @@ void Window::ResizeToFitContent(ResizeFit fit) {
 
 void Window::Close() { Die(); }
 
-bool Window::IsActive() const { return GetState(SkinState::kSelected); }
+bool Window::IsActive() const { return GetState(Element::State::kSelected); }
 
 Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
   Window* other_window = nullptr;
@@ -132,8 +132,8 @@ void Window::Deactivate() {
 }
 
 void Window::SetWindowActiveState(bool active) {
-  SetState(SkinState::kSelected, active);
-  m_mover.SetState(SkinState::kSelected, active);
+  SetState(Element::State::kSelected, active);
+  m_mover.SetState(Element::State::kSelected, active);
 }
 
 void Window::SetSettings(WindowSettings settings) {
@@ -192,7 +192,7 @@ PreferredSize Window::OnCalculatePreferredSize(
   PreferredSize ps = OnCalculatePreferredContentSize(constraints);
 
   // Add window skin padding
-  if (SkinElement* e = GetSkinBgElement()) {
+  if (auto e = GetSkinBgElement()) {
     ps.min_w += e->padding_left + e->padding_right;
     ps.pref_w += e->padding_left + e->padding_right;
     ps.min_h += e->padding_top + e->padding_bottom;

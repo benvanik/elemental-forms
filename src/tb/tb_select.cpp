@@ -70,7 +70,7 @@ void SelectList::OnItemChanged(size_t index) {
 
   // Replace the old element representing the item, with a new one. Preserve its
   // state.
-  SkinState old_state = old_element->GetStateRaw();
+  auto old_state = old_element->GetStateRaw();
 
   if (Element* element = CreateAndAddItemAfter(index, old_element)) {
     element->SetStateRaw(old_state);
@@ -176,7 +176,7 @@ void SelectList::ValidateList() {
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
                                              m_source->GetNumItems()));
     element->SetSkinBg(TBIDC("SelectList.header"));
-    element->SetState(SkinState::kDisabled, true);
+    element->SetState(Element::State::kDisabled, true);
     element->SetGravity(Gravity::kAll);
     element->data.SetInt(-1);
     m_layout.GetContentRoot()->AddChild(element);
@@ -229,7 +229,7 @@ TBID SelectList::GetSelectedItemID() {
 
 void SelectList::SelectItem(size_t index, bool selected) {
   if (Element* element = GetItemElement(index)) {
-    element->SetState(SkinState::kSelected, selected);
+    element->SetState(Element::State::kSelected, selected);
   }
 }
 

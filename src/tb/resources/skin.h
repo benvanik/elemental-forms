@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_SKIN_H
-#define TB_SKIN_H
+#ifndef TB_RESOURCES_SKIN_H_
+#define TB_RESOURCES_SKIN_H_
 
 #include <memory>
 
@@ -23,13 +23,12 @@
 #include "tb/util/link_list.h"
 
 namespace tb {
-// TODO(benvanik): remove
-namespace {
-using tb::resources::BitmapFragment;
-using tb::resources::BitmapFragmentManager;
-}
-
 class Node;
+}  // namespace tb
+
+namespace tb {
+namespace resources {
+
 class Skin;
 class SkinConditionContext;
 
@@ -485,6 +484,7 @@ class Skin : private RendererListener {
   int16_t m_default_spacing = 0;
 };
 
+}  // namespace resources
 }  // namespace tb
 
-#endif  // TB_SKIN_H
+#endif  // TB_RESOURCES_SKIN_H_
