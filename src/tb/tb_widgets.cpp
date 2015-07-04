@@ -15,15 +15,14 @@
 #include "tb_font_renderer.h"
 #include "tb_renderer.h"
 #include "tb_scroller.h"
-#include "tb_system.h"
+#include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 #include "tb_widgets_common.h"
 #include "tb_widgets_listener.h"
 #include "tb_window.h"
 
-#ifdef TB_ALWAYS_SHOW_EDIT_FOCUS
-#include "tb_text_box.h"
-#endif  // TB_ALWAYS_SHOW_EDIT_FOCUS
+#include "tb/util/debug.h"
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -45,7 +44,7 @@ class LongClickTimer : private MessageHandler {
   LongClickTimer(Element* element, bool touch)
       : m_element(element), m_touch(touch) {
     PostMessageDelayed(TBIDC("LongClickTimer"), nullptr,
-                       TBSystem::GetLongClickDelayMS());
+                       util::GetLongClickDelayMS());
   }
   void OnMessageReceived(Message* msg) override {
     assert(msg->message == TBIDC("LongClickTimer"));
@@ -199,7 +198,7 @@ SkinState Element::GetAutoState() const {
   else if (this == focused_element && IsOfType<TextBox>()) {
     state |= SkinState::kFocused;
   }
-#endif
+#endif  // TB_ALWAYS_SHOW_EDIT_FOCUS
   return state;
 }
 
@@ -1011,8 +1010,8 @@ PreferredSize Element::GetPreferredSize(const SizeConstraints& in_constraints) {
   }
 
   // Measure and save to cache.
-  TB_IF_DEBUG_SETTING(Setting::kLayoutSizing,
-                      last_measure_time = TBSystem::GetTimeMS());
+  TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutSizing,
+                      last_measure_time = util::GetTimeMS());
   m_packed.is_cached_ps_valid = 1;
   m_cached_ps = OnCalculatePreferredSize(constraints);
   m_cached_sc = constraints;
@@ -1151,7 +1150,7 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   assert(!!used_element == !!skin_element);
 
   TB_IF_DEBUG_SETTING(
-      Setting::kLayoutBounds,
+      util::DebugInfo::Setting::kLayoutBounds,
       g_renderer->DrawRect(local_rect, Color(255, 255, 255, 50)));
 
   // Inherit properties from parent if not specified in the used skin for this
@@ -1173,12 +1172,12 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   OnPaintChildren(paint_props);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(Setting::kLayoutSizing)) {
+  if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutSizing)) {
     // Layout debug painting. Paint recently layouted elements with red and
     // recently measured elements with yellow.
     // Invalidate to keep repainting until we've timed out (so it's removed).
     const uint64_t debug_time = 300;
-    const uint64_t now = TBSystem::GetTimeMS();
+    const uint64_t now = util::GetTimeMS();
     if (now < last_layout_time + debug_time) {
       g_renderer->DrawRect(local_rect, Color(255, 30, 30, 200));
       Invalidate();
@@ -1388,7 +1387,7 @@ void Element::HandlePanningOnMove(int x, int y) {
   // Check pointer movement.
   const int dx = pointer_down_element_x - x;
   const int dy = pointer_down_element_y - y;
-  const int threshold = TBSystem::GetPanThreshold();
+  const int threshold = util::GetPanThreshold();
   const bool maybe_start_panning_x = std::abs(dx) >= threshold;
   const bool maybe_start_panning_y = std::abs(dy) >= threshold;
 

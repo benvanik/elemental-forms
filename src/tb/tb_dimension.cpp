@@ -13,9 +13,9 @@
 #include <cctype>
 #include <cstdlib>
 
-#include "tb_system.h"
 #include "tb_value.h"
 
+#include "tb/util/metrics.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 
@@ -59,7 +59,7 @@ int DimensionConverter::MmToPx(int mm) const {
   if (mm <= kInvalidDimension || mm == 0) {
     return mm;
   }
-  return int(mm * TBSystem::GetDPI() / 25.4f + 0.5f);
+  return int(mm * util::GetDPI() / 25.4f + 0.5f);
 }
 
 int DimensionConverter::GetPxFromString(const char* str, int def_value) const {

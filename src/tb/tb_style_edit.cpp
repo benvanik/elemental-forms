@@ -20,7 +20,6 @@
 
 #include "tb_font_renderer.h"
 #include "tb_style_edit_content.h"
-#include "tb_system.h"
 #include "tb_widgets_common.h"
 
 namespace tb {
@@ -1248,9 +1247,9 @@ StyleEdit::StyleEdit() {
   font_desc = g_font_manager->GetDefaultFontDescription();
   font = g_font_manager->GetFontFace(font_desc);
 
-#ifdef TB_TARGET_WINDOWS
+#if WIN32
   packed.win_style_br = 1;
-#endif
+#endif  // WIN32
   packed.selection_on = 1;
 
   Clear();

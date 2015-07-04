@@ -12,7 +12,6 @@
 #include <algorithm>
 
 #include "tb_renderer.h"
-#include "tb_system.h"
 
 namespace tb {
 

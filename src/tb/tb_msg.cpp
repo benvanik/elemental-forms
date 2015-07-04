@@ -11,7 +11,8 @@
 
 #include <cstddef>
 
-#include "tb_system.h"
+#include "tb/util/metrics.h"
+#include "tb/util/timer.h"
 
 namespace tb {
 
@@ -32,7 +33,7 @@ MessageHandler::~MessageHandler() { DeleteAllMessages(); }
 
 void MessageHandler::PostMessageDelayed(TBID message, MessageData* data,
                                         uint32_t delay_in_ms) {
-  PostMessageOnTime(message, data, TBSystem::GetTimeMS() + delay_in_ms);
+  PostMessageOnTime(message, data, util::GetTimeMS() + delay_in_ms);
 }
 
 void MessageHandler::PostMessageOnTime(TBID message, MessageData* data,
@@ -71,7 +72,7 @@ void MessageHandler::PostMessageOnTime(TBID message, MessageData* data,
   // changed and we have to reschedule the timer.
   if (!g_all_normal_messages.GetFirst() &&
       g_all_delayed_messages.GetFirst() == msg) {
-    TBSystem::RescheduleTimer(msg->fire_time_ms);
+    util::RescheduleTimer(msg->fire_time_ms);
   }
 }
 
@@ -83,7 +84,7 @@ void MessageHandler::PostMessage(TBID message, MessageData* data) {
   // If we added it and there was no messages, the next fire time has
   // changed and we have to rescedule the timer.
   if (g_all_normal_messages.GetFirst() == msg) {
-    TBSystem::RescheduleTimer(0);
+    util::RescheduleTimer(0);
   }
 }
 
@@ -113,7 +114,7 @@ void MessageHandler::DeleteMessage(Message* msg) {
 
   delete msg;
 
-  // Note: We could call TBSystem::RescheduleTimer if we think that deleting
+  // Note: We could call util::RescheduleTimer if we think that deleting
   // this message changed the time for the next message.
 }
 
@@ -128,7 +129,7 @@ void MessageHandler::ProcessMessages() {
   // Handle delayed messages.
   auto iter = g_all_delayed_messages.IterateForward();
   while (Message* msg = static_cast<Message*>(iter.GetAndStep())) {
-    if (TBSystem::GetTimeMS() >= msg->fire_time_ms) {
+    if (util::GetTimeMS() >= msg->fire_time_ms) {
       // Remove from global list.
       g_all_delayed_messages.Remove(msg);
       // Remove from local list.

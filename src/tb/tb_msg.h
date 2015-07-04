@@ -87,7 +87,7 @@ class MessageHandler {
                           uint32_t delay_in_ms);
 
   // Posts a message to the target at the given time (relative to
-  // TBSystem::GetTimeMS()).
+  // util::GetTimeMS()).
   // data may be nullptr if no extra data need to be sent. It will be deleted
   // automatically when the message is deleted.
   void PostMessageOnTime(TBID message, MessageData* data, uint64_t fire_time);

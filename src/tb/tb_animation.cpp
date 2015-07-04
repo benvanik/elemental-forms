@@ -7,11 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_animation.h"
-
 #include <algorithm>
 
-#include "tb_system.h"
+#include "tb_animation.h"
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -65,7 +64,7 @@ void AnimationManager::AbortAllAnimations() {
 
 // static
 void AnimationManager::Update() {
-  uint64_t time_now = TBSystem::GetTimeMS();
+  uint64_t time_now = util::GetTimeMS();
 
   auto iter = animating_objects.IterateForward();
   while (Animation* obj = iter.GetAndStep()) {
@@ -136,7 +135,7 @@ void AnimationManager::StartAnimation(Animation* obj,
     animation_duration = 0;
   }
   obj->adjust_start_time = animation_time == AnimationTime::kFirstUpdate;
-  obj->animation_start_time = TBSystem::GetTimeMS();
+  obj->animation_start_time = util::GetTimeMS();
   obj->animation_duration = uint64_t(std::max(animation_duration, 0.0));
   obj->animation_curve = animation_curve;
   animating_objects.AddLast(obj);

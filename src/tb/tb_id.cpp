@@ -9,6 +9,7 @@
 
 #include "tb_id.h"
 
+#include "tb/util/debug.h"
 #include "tb/util/hash.h"
 #include "tb/util/hash_table.h"
 
@@ -65,7 +66,7 @@ void TBID::Set(const char* string) {
 
 #else
 
-void TBID::Set(const char* string) { id = util::hash(string); }
+void TBID::Set(const char* string) { id_ = util::hash(string); }
 
 #endif  // TB_RUNTIME_DEBUG_INFO
 

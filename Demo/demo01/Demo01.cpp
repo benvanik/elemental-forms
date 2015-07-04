@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "tests/tb_test.h"
-#include "tb_system.h"
 #include "tb_inline_select.h"
 #include "tb_select.h"
 #include "tb_menu_window.h"
@@ -15,11 +14,13 @@
 #include "tb_node_tree.h"
 #include "tb_font_renderer.h"
 #include "tb_image_manager.h"
-#include "tb/util/utf8.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/util/debug.h"
+#include "tb/util/metrics.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
+#include "tb/util/utf8.h"
 
 static Application* application;
 
@@ -494,7 +495,7 @@ void MainWindow::OnMessageReceived(Message* msg) {
                   tb::util::format_string(
                       "Delayed message received!\n\n"
                       "It was received %d ms after its intended fire time.",
-                      (int)(TBSystem::GetTimeMS() - msg->GetFireTime())));
+                      int(util::GetTimeMS() - msg->GetFireTime())));
   }
 }
 
@@ -549,9 +550,9 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
       return true;
     } else if (ev.target->GetID() == TBIDC("reload skin bitmaps")) {
       int reload_count = 10;
-      uint64_t t1 = TBSystem::GetTimeMS();
+      uint64_t t1 = util::GetTimeMS();
       for (int i = 0; i < reload_count; i++) g_tb_skin->ReloadBitmaps();
-      uint64_t t2 = TBSystem::GetTimeMS();
+      uint64_t t2 = util::GetTimeMS();
 
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("GFX load performance",
@@ -606,7 +607,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
     } else if (ev.type == EventType::kClick &&
                ev.target->GetID() == TBIDC("debug settings")) {
 #ifdef TB_RUNTIME_DEBUG_INFO
-      ShowDebugInfoSettingsWindow(GetParentRoot());
+      util::ShowDebugInfoSettingsWindow(GetParentRoot());
 #else
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Debug settings",
@@ -749,7 +750,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   frame_counter_total++;
 
   // Update the FPS counter
-  uint64_t time = TBSystem::GetTimeMS();
+  uint64_t time = util::GetTimeMS();
   if (time > frame_counter_reset_time + 1000) {
     fps = (int)((frame_counter / double(time - frame_counter_reset_time)) *
                 1000.0);

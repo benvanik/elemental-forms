@@ -20,6 +20,7 @@
 
 namespace tb {
 
+class Element;
 class SelectItemSource;
 
 enum class Sort {

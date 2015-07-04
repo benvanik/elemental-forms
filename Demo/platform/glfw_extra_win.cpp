@@ -1,7 +1,6 @@
-#include "tb_system.h"
+#include "glfw_extra.h"
 
 #ifdef TB_TARGET_WINDOWS
-#include "glfw_extra.h"
 #include "tb_msg.h"
 #include "GLFW/glfw3native.h"
 

@@ -7,6 +7,21 @@
 #endif
 #include "GLFW/glfw3.h"
 
+#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
+#define TB_TARGET_WINDOWS
+#define TB_SYSTEM_WINDOWS
+#endif
+
+#if defined(__linux) || defined(__linux__)
+#define TB_TARGET_LINUX
+#define TB_SYSTEM_LINUX
+#endif
+
+#ifdef MACOSX
+#define TB_TARGET_MACOSX
+#define TB_SYSTEM_LINUX
+#endif
+
 /* Function pointer types */
 typedef void (*GLFWtimerfun)();
 

@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
+#include "tb_language.h"
 #include "tb_node_ref_tree.h"
 
-#include "tb_language.h"
-#include "tb_system.h"
+#include "tb/util/debug.h"
 
 namespace tb {
 

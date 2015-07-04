@@ -16,9 +16,9 @@
 #include <string>
 
 #include "tb_node_ref_tree.h"
-#include "tb_system.h"
 #include "tb_language.h"
 
+#include "tb/util/debug.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
@@ -189,9 +189,7 @@ class NodeTarget : public ParserTarget {
   NodeTarget(Node* root, const std::string& filename)
       : m_root_node(root), m_target_node(root), m_filename(filename) {}
   void OnError(int line_nr, const std::string& error) override {
-#ifdef TB_RUNTIME_DEBUG_INFO
     TBDebugOut("%s(%d):Parse error: %s\n", m_filename, line_nr, error.c_str());
-#endif  // TB_RUNTIME_DEBUG_INFO
   }
   void OnComment(int line_nr, const char* comment) override {}
   void OnToken(int line_nr, const char* name, Value& value) override {

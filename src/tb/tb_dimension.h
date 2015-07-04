@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "tb_debug.h"
+#include "tb/config.h"
 
 namespace tb {
 
@@ -32,7 +32,7 @@ constexpr int kDefaultDpi = 0;
 class DimensionConverter {
   int m_src_dpi = 100;  // The source DPI (Normally the base_dpi from skin).
   int m_dst_dpi = 100;  // The destination DPI (Normally the supported skin DPI
-                        // nearest to TBSystem::GetDPI).
+                        // nearest to util::GetDPI).
   std::string m_dst_dpi_str;  // The file suffix that should be used to load
                               // bitmaps in destinatin DPI.
  public:

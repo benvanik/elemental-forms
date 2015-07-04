@@ -1,27 +1,26 @@
 /**
- ******************************************************************************
- * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
- ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
- * See tb_core.h and LICENSE in the root for more information.                *
- ******************************************************************************
- */
-
-#include "tb_debug.h"
+******************************************************************************
+* xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+******************************************************************************
+* Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+* See tb_core.h and LICENSE in the root for more information.                *
+******************************************************************************
+*/
 
 #include <cstdio>
 
+#include "tb/util/debug.h"
 #include "tb/util/string.h"
 
-#include "tb_core.h"
 #include "tb_font_renderer.h"
 #include "tb_text_box.h"
 #include "tb_widgets_reader.h"
 #include "tb_window.h"
 
-namespace tb {
-
 #ifdef TB_RUNTIME_DEBUG_INFO
+
+namespace tb {
+namespace util {
 
 DebugInfo g_tb_debug;
 
@@ -95,12 +94,12 @@ class DebugSettingsWindow : public Window, public ElementListener {
     g_renderer->Translate(rect().w, 0);
 
     // Draw skin bitmap fragments.
-    if (TB_DEBUG_SETTING(Setting::kDrawSkinBitmapFragments)) {
+    if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawSkinBitmapFragments)) {
       g_tb_skin->Debug();
     }
 
     // Draw font glyph fragments (the font of the hovered element).
-    if (TB_DEBUG_SETTING(Setting::kDrawFontBitmapFragments)) {
+    if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawFontBitmapFragments)) {
       Element* element = Element::hovered_element ? Element::hovered_element
                                                   : Element::focused_element;
       auto font_face = g_font_manager->GetFontFace(
@@ -184,6 +183,7 @@ void ShowDebugInfoSettingsWindow(Element* root) {
   new DebugSettingsWindow(root);
 }
 
-#endif  // TB_RUNTIME_DEBUG_INFO
-
+}  // namespace util
 }  // namespace tb
+
+#endif  // TB_RUNTIME_DEBUG_INFO

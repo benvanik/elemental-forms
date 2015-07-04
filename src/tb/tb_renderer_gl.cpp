@@ -12,7 +12,8 @@
 
 #include "tb_bitmap_fragment.h"
 #include "tb_renderer_gl.h"
-#include "tb_system.h"
+
+#include "tb/util/debug.h"
 
 namespace tb {
 
@@ -72,7 +73,8 @@ void BitmapGL::SetData(uint32_t* data) {
   BindBitmap(this);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
-  TB_IF_DEBUG_SETTING(Setting::kDrawRenderBatches, dbg_bitmap_validations++);
+  TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches,
+                      dbg_bitmap_validations++);
 }
 
 RendererGL::RendererGL() = default;
@@ -109,7 +111,7 @@ void RendererGL::EndPaint() {
   RendererBatcher::EndPaint();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches))
+  if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches))
     TBDebugOut("Frame caused %d bitmap validations.\n", dbg_bitmap_validations);
 #endif  // TB_RUNTIME_DEBUG_INFO
 }

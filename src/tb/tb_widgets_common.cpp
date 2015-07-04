@@ -13,8 +13,9 @@
 #include <cassert>
 
 #include "tb_font_renderer.h"
-#include "tb_system.h"
 #include "tb_widgets_listener.h"
+
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -470,7 +471,7 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
     return true;
   } else if (ev.type == EventType::kWheel) {
     double old_val = m_value;
-    SetValueDouble(m_value + ev.delta_y * TBSystem::GetPixelsPerLine());
+    SetValueDouble(m_value + ev.delta_y * util::GetPixelsPerLine());
     return m_value != old_val;
   }
   return false;

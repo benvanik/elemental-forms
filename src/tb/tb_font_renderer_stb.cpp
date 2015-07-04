@@ -10,7 +10,6 @@
 #include "tb_font_renderer.h"
 
 #include "tb_renderer.h"
-#include "tb_system.h"
 
 #ifdef TB_FONT_RENDERER_STB
 

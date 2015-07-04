@@ -7,13 +7,14 @@
  ******************************************************************************
  */
 
-#include "tb_layout.h"
-
 #include <algorithm>
 #include <cassert>
 
+#include "tb_layout.h"
 #include "tb_skin_util.h"
-#include "tb_system.h"
+
+#include "tb/util/debug.h"
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -276,8 +277,8 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
     return;
   }
 
-  TB_IF_DEBUG_SETTING(Setting::kLayoutSizing,
-                      last_layout_time = TBSystem::GetTimeMS());
+  TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutSizing,
+                      last_layout_time = util::GetTimeMS());
 
   // Pre Layout step (calculate distribution position).
   int missing_space = std::max(total_preferred_w - layout_rect.w, 0);
@@ -389,7 +390,7 @@ bool Layout::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
-                      ev.delta_y * TBSystem::GetPixelsPerLine());
+                      ev.delta_y * util::GetPixelsPerLine());
     return m_overflow_scroll != old_scroll;
   }
   return false;
@@ -419,7 +420,7 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
 
     old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
-    TB_IF_DEBUG_SETTING(Setting::kLayoutClipping,
+    TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutClipping,
                         g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
   }
 

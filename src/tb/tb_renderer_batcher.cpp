@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
+#include "tb_bitmap_fragment.h"
 #include "tb_renderer_batcher.h"
 
-#include "tb_bitmap_fragment.h"
-#include "tb_system.h"
+#include "tb/util/debug.h"
 
 namespace tb {
 
@@ -44,7 +44,7 @@ void RendererBatcher::Batch::Flush(RendererBatcher* batch_renderer) {
   batch_renderer->RenderBatch(this);
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches)) {
+  if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches)) {
     // This assumes we're drawing triangles. Need to modify this
     // if we start using strips, fans or whatever.
     dbg_frame_triangle_count += vertex_count / 3;
@@ -98,7 +98,7 @@ void RendererBatcher::EndPaint() {
   FlushAllInternal();
 
 #ifdef TB_RUNTIME_DEBUG_INFO
-  if (TB_DEBUG_SETTING(Setting::kDrawRenderBatches)) {
+  if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawRenderBatches)) {
     TBDebugOut("Frame rendered using %d batches and a total of %d triangles.\n",
                batch.batch_id - dbg_begin_paint_batch_id,
                dbg_frame_triangle_count);

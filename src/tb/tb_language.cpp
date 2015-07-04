@@ -9,7 +9,6 @@
 
 #include "tb_node_tree.h"
 #include "tb_language.h"
-#include "tb_system.h"
 
 #include "tb/util/string.h"
 

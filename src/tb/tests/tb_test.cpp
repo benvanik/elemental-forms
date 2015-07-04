@@ -9,8 +9,8 @@
 
 #include <string>
 
-#include "tb_system.h"
 #include "tb_test.h"
+#include "tb/util/debug.h"
 
 #ifdef TB_UNIT_TESTING
 // Reference at least one group in each test file, to force

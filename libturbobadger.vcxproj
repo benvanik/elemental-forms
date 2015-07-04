@@ -16,7 +16,6 @@
     <ClCompile Include="src\tb\tb_bitmap_fragment.cpp" />
     <ClCompile Include="src\tb\color.cc" />
     <ClCompile Include="src\tb\tb_core.cpp" />
-    <ClCompile Include="src\tb\tb_debug.cpp" />
     <ClCompile Include="src\tb\tb_dimension.cpp" />
     <ClCompile Include="src\tb\tb_text_box.cpp" />
     <ClCompile Include="src\tb\tb_font_renderer.cpp" />
@@ -49,8 +48,6 @@
     <ClCompile Include="src\tb\tb_skin_util.cpp" />
     <ClCompile Include="src\tb\tb_style_edit.cpp" />
     <ClCompile Include="src\tb\tb_style_edit_content.cpp" />
-    <ClCompile Include="src\tb\tb_system_linux.cpp" />
-    <ClCompile Include="src\tb\tb_system_win.cpp" />
     <ClCompile Include="src\tb\tb_tab_container.cpp" />
     <ClCompile Include="src\tb\tb_toggle_container.cpp" />
     <ClCompile Include="src\tb\tb_tooltips.cpp" />
@@ -78,9 +75,13 @@
     <ClCompile Include="src\tb\tests\test_tb_test.cpp" />
     <ClCompile Include="src\tb\tests\test_tb_widget_value.cpp" />
     <ClCompile Include="src\tb\util\clipboard_win.cc" />
+    <ClCompile Include="src\tb\util\debug.cc" />
+    <ClCompile Include="src\tb\util\debug_posix.cc" />
+    <ClCompile Include="src\tb\util\debug_win.cc" />
     <ClCompile Include="src\tb\util\file_posix.cc" />
     <ClCompile Include="src\tb\util\hash_table.cc" />
     <ClCompile Include="src\tb\util\link_list.cc" />
+    <ClCompile Include="src\tb\util\metrics_win.cc" />
     <ClCompile Include="src\tb\util\rect_region.cc" />
     <ClCompile Include="src\tb\util\string.cc" />
     <ClCompile Include="src\tb\util\string_builder.cc" />
@@ -101,7 +102,6 @@
     <ClInclude Include="src\tb\color.h" />
     <ClInclude Include="src\tb\config.h" />
     <ClInclude Include="src\tb\tb_core.h" />
-    <ClInclude Include="src\tb\tb_debug.h" />
     <ClInclude Include="src\tb\tb_dimension.h" />
     <ClInclude Include="src\tb\tb_text_box.h" />
     <ClInclude Include="src\tb\tb_font_desc.h" />
@@ -126,7 +126,6 @@
     <ClInclude Include="src\tb\tb_skin_util.h" />
     <ClInclude Include="src\tb\tb_style_edit.h" />
     <ClInclude Include="src\tb\tb_style_edit_content.h" />
-    <ClInclude Include="src\tb\tb_system.h" />
     <ClInclude Include="src\tb\tb_tab_container.h" />
     <ClInclude Include="src\tb\tb_toggle_container.h" />
     <ClInclude Include="src\tb\types.h" />
@@ -140,13 +139,16 @@
     <ClInclude Include="src\tb\tb_window.h" />
     <ClInclude Include="src\tb\tests\tb_test.h" />
     <ClInclude Include="src\tb\util\clipboard.h" />
+    <ClInclude Include="src\tb\util\debug.h" />
     <ClInclude Include="src\tb\util\file.h" />
     <ClInclude Include="src\tb\util\hash.h" />
     <ClInclude Include="src\tb\util\hash_table.h" />
     <ClInclude Include="src\tb\util\link_list.h" />
+    <ClInclude Include="src\tb\util\metrics.h" />
     <ClInclude Include="src\tb\util\rect_region.h" />
     <ClInclude Include="src\tb\util\string.h" />
     <ClInclude Include="src\tb\util\string_builder.h" />
+    <ClInclude Include="src\tb\util\timer.h" />
     <ClInclude Include="src\tb\util\utf8.h" />
   </ItemGroup>
   <ItemGroup>

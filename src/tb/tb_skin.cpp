@@ -15,8 +15,9 @@
 #include <string>
 
 #include "tb_node_tree.h"
-#include "tb_system.h"
 
+#include "tb/util/debug.h"
+#include "tb/util/metrics.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
@@ -83,7 +84,7 @@ bool Skin::LoadInternal(const char* skin_file) {
       assert(supported_dpi_node->GetValue().IsArray() ||
              supported_dpi_node->GetValue().GetInt() == base_dpi);
       if (ValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
-        int screen_dpi = TBSystem::GetDPI();
+        int screen_dpi = util::GetDPI();
         int best_supported_dpi = 0;
         for (int i = 0; i < arr->GetLength(); i++) {
           int candidate_dpi = arr->GetValue(i)->GetInt();
@@ -168,9 +169,7 @@ bool Skin::ReloadBitmaps() {
     success = m_frag_manager.ValidateBitmaps();
   }
 
-#ifdef TB_RUNTIME_DEBUG_INFO
   TBDebugOut("Skin loaded using %dll bitmaps.\n", m_frag_manager.map_count());
-#endif  // TB_RUNTIME_DEBUG_INFO
   return success;
 }
 

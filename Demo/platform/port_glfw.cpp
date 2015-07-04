@@ -7,12 +7,14 @@
 #include <algorithm>
 
 #include "tb_skin.h"
-#include "tb_system.h"
 #include "tb_widgets.h"
 #include "tb_msg.h"
 #include "tb_renderer_gl.h"
 #include "tb_font_renderer.h"
 #include "Application.h"
+
+#include "tb/util/metrics.h"
+#include "tb/util/timer.h"
 
 #ifdef TB_TARGET_MACOSX
 #include <unistd.h>
@@ -314,7 +316,7 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
       static int last_y = 0;
       static int counter = 1;
 
-      uint64_t time = TBSystem::GetTimeMS();
+      uint64_t time = util::GetTimeMS();
       if (time < last_time + 600 && last_x == x && last_y == y)
         counter++;
       else
@@ -367,7 +369,7 @@ static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
     glfwKillTimer();
   } else if (fire_time != set_fire_time || force || fire_time == 0) {
     set_fire_time = fire_time;
-    auto now = tb::TBSystem::GetTimeMS();
+    auto now = tb::util::GetTimeMS();
     if (fire_time < now) {
       glfwRescheduleTimer(0);
     } else {
@@ -380,7 +382,7 @@ static void ReschedulePlatformTimer(uint64_t fire_time, bool force) {
 
 static void timer_callback() {
   uint64_t next_fire_time = MessageHandler::GetNextMessageFireTime();
-  uint64_t now = tb::TBSystem::GetTimeMS();
+  uint64_t now = tb::util::GetTimeMS();
   if (now < next_fire_time) {
     // We timed out *before* we were supposed to (the OS is not playing nice).
     // Calling ProcessMessages now won't achieve a thing so force a reschedule
@@ -394,12 +396,12 @@ static void timer_callback() {
   // If we still have things to do (because we didn't process all messages,
   // or because there are new messages), we need to rescedule, so call
   // RescheduleTimer.
-  TBSystem::RescheduleTimer(MessageHandler::GetNextMessageFireTime());
+  tb::util::RescheduleTimer(MessageHandler::GetNextMessageFireTime());
 }
 
 // This doesn't really belong here (it belongs in tb_system_[linux/windows].cpp.
 // This is here since the proper implementations has not yet been done.
-void TBSystem::RescheduleTimer(uint64_t fire_time) {
+void tb::util::RescheduleTimer(uint64_t fire_time) {
   ReschedulePlatformTimer(fire_time, false);
 }
 #endif /* TB_TARGET_LINUX */
@@ -524,8 +526,7 @@ ApplicationBackendGLFW::~ApplicationBackendGLFW() {
 void ApplicationBackendGLFW::Run() {
   do {
 #ifdef TB_TARGET_LINUX
-    TBSystem::PollEvents();
-
+    util::PollEvents();
 #endif
     glfwPollEvents();
 

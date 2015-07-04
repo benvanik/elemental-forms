@@ -13,7 +13,6 @@
 
 #include "tb_node_tree.h"
 #include "tb_renderer.h"
-#include "tb_system.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 

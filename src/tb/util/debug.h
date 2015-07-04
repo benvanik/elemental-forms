@@ -1,26 +1,36 @@
 /**
- ******************************************************************************
+******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See tb_core.h and LICENSE in the root for more information.                *
  ******************************************************************************
  */
 
-#ifndef TB_DEBUG_H
-#define TB_DEBUG_H
+#ifndef TB_UTIL_DEBUG_H_
+#define TB_UTIL_DEBUG_H_
+
+#include <string>
 
 #include "tb/config.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
+void TBDebugOut(const char* str, ...);
+inline void TBDebugOut(const std::string& str) { TBDebugOut(str.c_str()); }
 #define TB_IF_DEBUG(debug) debug
 #else
+#define TBDebugOut(str, ...) ((void)0)
 #define TB_IF_DEBUG(debug)
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-namespace tb {
-
 #ifdef TB_RUNTIME_DEBUG_INFO
+
+namespace tb {
+class Element;
+}  // namespace tb
+
+namespace tb {
+namespace util {
 
 class DebugInfo {
  public:
@@ -51,24 +61,21 @@ class DebugInfo {
 extern DebugInfo g_tb_debug;
 
 // Shows a window containing runtime debugging settings.
-void ShowDebugInfoSettingsWindow(class Element* root);
+void ShowDebugInfoSettingsWindow(Element* root);
 
-#define TB_DEBUG_SETTING(setting) g_tb_debug.settings[int(DebugInfo::setting)]
+#define TB_DEBUG_SETTING(setting) tb::util::g_tb_debug.settings[int(setting)]
 #define TB_IF_DEBUG_SETTING(setting, code) \
   if (TB_DEBUG_SETTING(setting)) {         \
     code;                                  \
   }
 
-#else  // TB_RUNTIME_DEBUG_INFO
-
-// Shows a window containing runtime debugging settings.
-#define ShowDebugInfoSettingsWindow(root) ((void)0)
-
-#define TB_DEBUG_SETTING(setting) false
-#define TB_IF_DEBUG_SETTING(setting, code)
-
-#endif  // TB_RUNTIME_DEBUG_INFO
-
+}  // namespace util
 }  // namespace tb
 
-#endif  // TB_DEBUG_H
+#else
+#define ShowDebugInfoSettingsWindow(root) ((void)0)
+#define TB_DEBUG_SETTING(setting) false
+#define TB_IF_DEBUG_SETTING(setting, code)
+#endif  // TB_RUNTIME_DEBUG_INFO
+
+#endif  // TB_UTIL_DEBUG_H_

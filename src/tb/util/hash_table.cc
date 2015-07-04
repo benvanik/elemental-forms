@@ -7,8 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_system.h"
-
+#include "tb/util/debug.h"
 #include "tb/util/hash_table.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"

@@ -17,9 +17,10 @@
 #include "tb_select.h"
 #include "tb_skin_util.h"
 #include "tb_style_edit_content.h"
-#include "tb_system.h"
 #include "tb_widget_skin_condition_context.h"
 #include "tb_widgets_reader.h"
+
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -199,7 +200,7 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kWheel &&
              ev.modifierkeys == ModifierKeys::kNone) {
     int old_val = m_scrollbar_y.GetValue();
-    m_scrollbar_y.SetValue(old_val + ev.delta_y * TBSystem::GetPixelsPerLine());
+    m_scrollbar_y.SetValue(old_val + ev.delta_y * util::GetPixelsPerLine());
     return m_scrollbar_y.GetValue() != old_val;
   } else if (ev.type == EventType::kPointerDown && ev.target == this) {
     Rect padding_rect = GetPaddingRect();

@@ -58,7 +58,7 @@ each time.
 
 If you have a event driven application that should only consume CPU when needed
 you can call MessageHandler::GetNextMessageFireTime() for scheduleing when to run
-ProcessMessage next. Also, TBSystem::RescheduleTimer will be called back if the time
+ProcessMessage next. Also, util::RescheduleTimer will be called back if the time
 it needs to run next is changed.
 
 Rendering

@@ -22,7 +22,7 @@
 
 #ifndef NDEBUG
 // Enables compilation of unit tests.
-// #define TB_UNIT_TESTING
+#define TB_UNIT_TESTING
 #endif
 
 /** Enable if the focus state should automatically be set on edit fields even
@@ -57,40 +57,5 @@
 
 /** The height of the font glyph cache. Must be a power of two. */
 #define TB_GLYPH_CACHE_HEIGHT 512
-
-// == Additional configuration of platform implementations
-// ========================
-
-/** Defines for implementations of TBSystem. */
-//#define TB_SYSTEM_LINUX
-//#define TB_SYSTEM_WINDOWS
-//#define TB_SYSTEM_ANDROID
-
-/** Defines for additional platform specific issues. */
-//#define TB_TARGET_WINDOWS
-//#define TB_TARGET_MACOSX
-//#define TB_TARGET_LINUX
-
-// == Setting some defaults for platform implementations
-// ==========================
-
-#if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)
-#define TB_TARGET_WINDOWS
-#define TB_SYSTEM_WINDOWS
-#endif
-
-#if defined(__linux) || defined(__linux__)
-#define TB_TARGET_LINUX
-#define TB_SYSTEM_LINUX
-#endif
-
-#ifdef MACOSX
-#define TB_TARGET_MACOSX
-#define TB_SYSTEM_LINUX
-#endif
-
-#if defined(ANDROID) || defined(__ANDROID__)
-#define TB_SYSTEM_ANDROID
-#endif
 
 #endif  // TB_CONFIG_H_

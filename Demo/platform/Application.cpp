@@ -2,7 +2,6 @@
 
 #include <cstdio>
 
-#include "tb_system.h"
 #include "tb_widget_animation.h"
 
 using namespace tb;

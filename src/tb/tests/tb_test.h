@@ -94,6 +94,7 @@
 #include <cstdint>
 #include <string>
 
+#include "tb/config.h"
 #include "tb/types.h"
 #include "tb/util/link_list.h"
 

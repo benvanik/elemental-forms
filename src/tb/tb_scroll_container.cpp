@@ -12,7 +12,8 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_system.h"
+#include "tb/util/debug.h"
+#include "tb/util/metrics.h"
 
 namespace tb {
 
@@ -79,7 +80,7 @@ void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
 
   Rect old_clip_rect = g_renderer->SetClipRect(clip_rect, true);
 
-  TB_IF_DEBUG_SETTING(Setting::kLayoutClipping,
+  TB_IF_DEBUG_SETTING(util::DebugInfo::Setting::kLayoutClipping,
                       g_renderer->DrawRect(clip_rect, Color(255, 0, 0, 200)));
 
   Element::OnPaintChildren(paint_props);
@@ -197,25 +198,25 @@ bool ScrollContainer::OnEvent(const ElementEvent& ev) {
              ev.modifierkeys == ModifierKeys::kNone) {
     double old_val_y = m_scrollbar_y.GetValueDouble();
     m_scrollbar_y.SetValueDouble(old_val_y +
-                                 ev.delta_y * TBSystem::GetPixelsPerLine());
+                                 ev.delta_y * util::GetPixelsPerLine());
     double old_val_x = m_scrollbar_x.GetValueDouble();
     m_scrollbar_x.SetValueDouble(old_val_x +
-                                 ev.delta_x * TBSystem::GetPixelsPerLine());
+                                 ev.delta_x * util::GetPixelsPerLine());
     return (m_scrollbar_x.GetValueDouble() != old_val_x ||
             m_scrollbar_y.GetValueDouble() != old_val_y);
   } else if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kLeft &&
         m_scrollbar_x.CanScrollNegative()) {
-      ScrollBySmooth(-TBSystem::GetPixelsPerLine(), 0);
+      ScrollBySmooth(-util::GetPixelsPerLine(), 0);
     } else if (ev.special_key == SpecialKey::kRight &&
                m_scrollbar_x.CanScrollPositive()) {
-      ScrollBySmooth(TBSystem::GetPixelsPerLine(), 0);
+      ScrollBySmooth(util::GetPixelsPerLine(), 0);
     } else if (ev.special_key == SpecialKey::kUp &&
                m_scrollbar_y.CanScrollNegative()) {
-      ScrollBySmooth(0, -TBSystem::GetPixelsPerLine());
+      ScrollBySmooth(0, -util::GetPixelsPerLine());
     } else if (ev.special_key == SpecialKey::kDown &&
                m_scrollbar_y.CanScrollPositive()) {
-      ScrollBySmooth(0, TBSystem::GetPixelsPerLine());
+      ScrollBySmooth(0, util::GetPixelsPerLine());
     } else if (ev.special_key == SpecialKey::kPageUp &&
                m_scrollbar_y.CanScrollNegative()) {
       ScrollBySmooth(0, -GetPaddingRect().h);

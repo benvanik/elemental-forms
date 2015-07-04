@@ -1,7 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include "tb_system.h"
+#include "tb/config.h"
+
 #include "tb_widget_animation.h"
 
 /** Called from the platform main function. */

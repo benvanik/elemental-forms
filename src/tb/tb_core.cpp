@@ -15,7 +15,6 @@
 #include "tb_image_manager.h"
 #include "tb_language.h"
 #include "tb_skin.h"
-#include "tb_system.h"
 #include "tb_tooltips.h"
 #include "tb_widgets_reader.h"
 
@@ -36,10 +35,6 @@ bool tb_core_init(Renderer* renderer, const char* lng_file) {
   g_elements_reader = ElementReader::Create();
   g_image_manager = new ImageManager();
 
-#ifdef TB_SYSTEM_LINUX
-  TBSystem::Init();
-#endif  // TB_SYSTEM_LINUX
-
   g_tooltip_mng = new TooltipManager();
 
   return true;
@@ -52,10 +47,6 @@ void tb_core_shutdown() {
   delete g_tb_skin;
   delete g_font_manager;
   delete g_tb_lng;
-
-#ifdef TB_SYSTEM_LINUX
-  TBSystem::Shutdown();
-#endif  // TB_SYSTEM_LINUX
 
   delete g_tooltip_mng;
 }
