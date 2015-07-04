@@ -79,13 +79,13 @@ int DimensionConverter::GetPxFromValue(Value* value, int def_value) const {
   if (!value) {
     return def_value;
   }
-  if (value->GetType() == Value::Type::kInt) {
-    return DpToPx(value->GetInt());
-  } else if (value->GetType() == Value::Type::kFloat) {
+  if (value->type() == Value::Type::kInt) {
+    return DpToPx(value->as_integer());
+  } else if (value->type() == Value::Type::kFloat) {
     // FIX: We might want float versions of all dimension functions.
-    return DpToPx((int)value->GetFloat());
+    return DpToPx((int)value->as_float());
   }
-  return GetPxFromString(value->GetString(), def_value);
+  return GetPxFromString(value->as_string(), def_value);
 }
 
 }  // namespace util

@@ -323,7 +323,7 @@ void TextParser::OnLine(char* line, TextParserTarget* target) {
     } else if (token[token_len]) {
       token[token_len] = 0;
       UnescapeString(line);
-      value.SetFromStringAuto(line, Value::Set::kAsStatic);
+      value.parse_string(line, Value::Set::kAsStatic);
     }
     target->OnToken(current_line_nr, token, value);
 
@@ -388,7 +388,7 @@ void TextParser::OnMultiline(char* line, TextParserTarget* target) {
 
   if (!pending_multiline) {
     // Ready with all lines.
-    value.SetString(multi_line_value.GetData(), Value::Set::kAsStatic);
+    value.set_string(multi_line_value.GetData(), Value::Set::kAsStatic);
     target->OnToken(current_line_nr, multi_line_token.c_str(), value);
 
     if (multi_line_sub_level) {
@@ -428,7 +428,7 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.SetString(value, Value::Set::kAsStatic);
+    dst_value.set_string(value, Value::Set::kAsStatic);
   } else {
     // Find next comma or end.
     while (*line != ',' && *line != 0) {
@@ -440,7 +440,7 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.SetFromStringAuto(value, Value::Set::kAsStatic);
+    dst_value.parse_string(value, Value::Set::kAsStatic);
   }
 
   // Check if we still have pending value data on the following line and set
@@ -450,7 +450,7 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
 
   // Append the multi line value to the buffer.
   if (continuing_multiline || pending_multiline) {
-    multi_line_value.AppendString(dst_value.GetString());
+    multi_line_value.AppendString(dst_value.as_string());
   }
 }
 

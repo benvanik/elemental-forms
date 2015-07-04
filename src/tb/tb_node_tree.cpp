@@ -111,20 +111,20 @@ Value& Node::GetValueFollowRef() {
 
 int Node::GetValueInt(const char* request, int def) {
   Node* n = GetNodeFollowRef(request);
-  return n ? n->m_value.GetInt() : def;
+  return n ? n->m_value.as_integer() : def;
 }
 
 float Node::GetValueFloat(const char* request, float def) {
   Node* n = GetNodeFollowRef(request);
-  return n ? n->m_value.GetFloat() : def;
+  return n ? n->m_value.as_float() : def;
 }
 
 const char* Node::GetValueString(const char* request, const char* def) {
   if (Node* node = GetNodeFollowRef(request)) {
     // We might have a language string. Those are not
     // looked up in GetNode/ResolveNode.
-    if (node->GetValue().IsString()) {
-      const char* string = node->GetValue().GetString();
+    if (node->GetValue().is_string()) {
+      const char* string = node->GetValue().as_string();
       if (*string == '@' && *Node::GetNextNodeSeparator(string) == 0) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
@@ -134,14 +134,14 @@ const char* Node::GetValueString(const char* request, const char* def) {
       }
       return string;
     }
-    return node->GetValue().GetString();
+    return node->GetValue().as_string();
   }
   return def;
 }
 
 const char* Node::GetValueStringRaw(const char* request, const char* def) {
   Node* n = GetNodeFollowRef(request);
-  return n ? n->m_value.GetString() : def;
+  return n ? n->m_value.as_string() : def;
 }
 
 class NodeTarget : public resources::TextParserTarget {
@@ -155,9 +155,9 @@ class NodeTarget : public resources::TextParserTarget {
   void OnToken(int line_nr, const char* name, Value& value) override {
     if (!m_target_node) return;
     if (strcmp(name, "@file") == 0) {
-      IncludeFile(line_nr, value.GetString());
+      IncludeFile(line_nr, value.as_string());
     } else if (strcmp(name, "@include") == 0) {
-      IncludeRef(line_nr, value.GetString());
+      IncludeRef(line_nr, value.as_string());
     } else {
       Node* n = Node::Create(name);
       n->TakeValue(value);
@@ -197,7 +197,7 @@ class NodeTarget : public resources::TextParserTarget {
     Node* refnode = nullptr;
     if (*refstr == '@') {
       Node tmp;
-      tmp.GetValue().SetString(refstr, Value::Set::kAsStatic);
+      tmp.GetValue().set_string(refstr, Value::Set::kAsStatic);
       refnode = NodeRefTree::FollowNodeRef(&tmp);
     } else {
       // Local look-up.

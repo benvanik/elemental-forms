@@ -42,9 +42,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     dt.SetValue("mainbar>visible", Value(42));
     TB_VERIFY_STR(dl.changed_request, "mainbar>visible");
 
-    TB_VERIFY_STR(dt.GetValue("mainbar>size").GetString(), "10mm");
-    TB_VERIFY_STR(dt.GetValue("mainbar>axis").GetString(), "x");
-    TB_VERIFY(dt.GetValue("mainbar>visible").GetInt() == 42);
+    TB_VERIFY_STR(dt.GetValue("mainbar>size").as_string(), "10mm");
+    TB_VERIFY_STR(dt.GetValue("mainbar>axis").as_string(), "x");
+    TB_VERIFY(dt.GetValue("mainbar>visible").as_integer() == 42);
 
     TB_VERIFY(dl.changed_counter == 3);
 
@@ -94,12 +94,12 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
-    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bar>bar_circular2")
-                  .GetType() == Value::Type::kNull);
+    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bar>bar_circular2").type() ==
+              Value::Type::kNull);
 
     // References tree is wrong
     TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
-                  .GetType() == Value::Type::kNull);
+                  .type() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
     Element* button_broken1 = root.GetElementByID(TBIDC("button_broken_node"));

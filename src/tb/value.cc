@@ -64,18 +64,6 @@ ValueArray::ValueArray() = default;
 
 ValueArray::~ValueArray() = default;
 
-Value* ValueArray::AddValue() {
-  list_.push_back(std::make_unique<Value>());
-  return list_.back().get();
-}
-
-Value* ValueArray::GetValue(size_t index) {
-  if (index >= 0 && index < list_.size()) {
-    return list_[index].get();
-  }
-  return nullptr;
-}
-
 ValueArray* ValueArray::Clone(ValueArray* source) {
   ValueArray* new_arr = new ValueArray();
   for (auto& it : source->list_) {
@@ -85,6 +73,18 @@ ValueArray* ValueArray::Clone(ValueArray* source) {
   return new_arr;
 }
 
+Value* ValueArray::AddValue() {
+  list_.push_back(std::make_unique<Value>());
+  return list_.back().get();
+}
+
+Value* ValueArray::at(size_t i) const {
+  if (i >= 0 && i < list_.size()) {
+    return list_[i].get();
+  }
+  return nullptr;
+}
+
 Value::Value() = default;
 
 Value::Value(const Value& value) { Copy(value); }
@@ -92,22 +92,22 @@ Value::Value(const Value& value) { Copy(value); }
 Value::Value(Type type) {
   switch (type) {
     case Type::kNull:
-      SetNull();
+      set_null();
       break;
     case Type::kString:
-      SetString("", Set::kAsStatic);
+      set_string("", Set::kAsStatic);
       break;
     case Type::kFloat:
-      SetFloat(0);
+      set_float(0);
       break;
     case Type::kInt:
-      SetInt(0);
+      set_integer(0);
       break;
     case Type::kObject:
-      SetObject(nullptr);
+      set_object(nullptr);
       break;
     case Type::kArray:
-      SetArray(new ValueArray(), Set::kTakeOwnership);
+      set_array(new ValueArray(), Set::kTakeOwnership);
       break;
     default:
       assert(!"Not implemented!");
@@ -115,131 +115,131 @@ Value::Value(Type type) {
   };
 }
 
-Value::Value(int value) { SetInt(value); }
+Value::Value(int value) { set_integer(value); }
 
-Value::Value(float value) { SetFloat(value); }
+Value::Value(float value) { set_float(value); }
 
-Value::Value(const char* value, Set set) { SetString(value, set); }
+Value::Value(const char* value, Set set) { set_string(value, set); }
 
-Value::Value(util::TypedObject* object) { SetObject(object); }
+Value::Value(util::TypedObject* object) { set_object(object); }
 
-Value::~Value() { SetNull(); }
+Value::~Value() { set_null(); }
 
 void Value::TakeOver(Value& source_value) {
-  if (Type(source_value.m_packed.type) == Type::kString) {
-    SetString(source_value.val_str, source_value.m_packed.allocated
-                                        ? Set::kTakeOwnership
-                                        : Set::kNewCopy);
-  } else if (source_value.GetType() == Type::kArray) {
-    SetArray(source_value.val_arr, source_value.m_packed.allocated
-                                       ? Set::kTakeOwnership
-                                       : Set::kNewCopy);
+  if (Type(source_value.packed_.type) == Type::kString) {
+    set_string(source_value.value_.string, source_value.packed_.allocated
+                                               ? Set::kTakeOwnership
+                                               : Set::kNewCopy);
+  } else if (source_value.type() == Type::kArray) {
+    set_array(source_value.value_.value_array, source_value.packed_.allocated
+                                                   ? Set::kTakeOwnership
+                                                   : Set::kNewCopy);
   } else {
     *this = source_value;
   }
-  source_value.SetType(Type::kNull);
+  source_value.set_type(Type::kNull);
 }
 
 void Value::Copy(const Value& source_value) {
-  if (source_value.GetType() == Type::kString) {
-    SetString(source_value.val_str, Set::kNewCopy);
-  } else if (source_value.GetType() == Type::kArray) {
-    SetArray(source_value.val_arr, Set::kNewCopy);
-  } else if (source_value.GetType() == Type::kObject) {
+  if (source_value.type() == Type::kString) {
+    set_string(source_value.value_.string, Set::kNewCopy);
+  } else if (source_value.type() == Type::kArray) {
+    set_array(source_value.value_.value_array, Set::kNewCopy);
+  } else if (source_value.type() == Type::kObject) {
     assert(!"We can't copy objects! The value will be nulled!");
-    SetObject(nullptr);
+    set_object(nullptr);
   } else {
-    SetNull();
+    set_null();
     std::memcpy(this, &source_value, sizeof(Value));
   }
 }
 
-void Value::SetNull() {
-  if (m_packed.allocated) {
-    if (GetType() == Type::kString) {
-      free(val_str);
-      val_str = nullptr;
-    } else if (GetType() == Type::kObject) {
-      delete val_obj;
-      val_obj = nullptr;
-    } else if (GetType() == Type::kArray) {
-      delete val_arr;
-      val_arr = nullptr;
+void Value::set_null() {
+  if (packed_.allocated) {
+    if (type() == Type::kString) {
+      free(value_.string);
+      value_.string = nullptr;
+    } else if (type() == Type::kObject) {
+      delete value_.object;
+      value_.object = nullptr;
+    } else if (type() == Type::kArray) {
+      delete value_.value_array;
+      value_.value_array = nullptr;
     }
   }
-  SetType(Type::kNull);
+  set_type(Type::kNull);
 }
 
-void Value::SetInt(int val) {
-  SetNull();
-  SetType(Type::kInt);
-  val_int = val;
+void Value::set_integer(int val) {
+  set_null();
+  set_type(Type::kInt);
+  value_.integer_number = val;
 }
 
-void Value::SetFloat(float val) {
-  SetNull();
-  SetType(Type::kFloat);
-  val_float = val;
+void Value::set_float(float val) {
+  set_null();
+  set_type(Type::kFloat);
+  value_.float_number = val;
 }
 
-void Value::SetString(const char* val, Set set) {
-  SetNull();
-  m_packed.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
+void Value::set_string(const char* val, Set set) {
+  set_null();
+  packed_.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
   if (set != Set::kNewCopy) {
-    val_str = const_cast<char*>(val);
-    SetType(Type::kString);
-  } else if ((val_str = strdup(val))) {
-    SetType(Type::kString);
+    value_.string = const_cast<char*>(val);
+    set_type(Type::kString);
+  } else if ((value_.string = strdup(val))) {
+    set_type(Type::kString);
   }
 }
 
-void Value::SetObject(util::TypedObject* object) {
-  SetNull();
-  SetType(Type::kObject);
-  m_packed.allocated = true;
-  val_obj = object;
+void Value::set_object(util::TypedObject* object) {
+  set_null();
+  set_type(Type::kObject);
+  packed_.allocated = true;
+  value_.object = object;
 }
 
-void Value::SetArray(ValueArray* arr, Set set) {
-  SetNull();
-  m_packed.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
+void Value::set_array(ValueArray* arr, Set set) {
+  set_null();
+  packed_.allocated = set == Set::kNewCopy || set == Set::kTakeOwnership;
   if (set != Set::kNewCopy) {
-    val_arr = arr;
-    SetType(Type::kArray);
-  } else if ((val_arr = ValueArray::Clone(arr))) {
-    SetType(Type::kArray);
+    value_.value_array = arr;
+    set_type(Type::kArray);
+  } else if ((value_.value_array = ValueArray::Clone(arr))) {
+    set_type(Type::kArray);
   }
 }
 
-void Value::SetFromStringAuto(const char* str, Set set) {
+void Value::parse_string(const char* str, Set set) {
   if (!str) {
-    SetNull();
+    set_null();
   } else if (is_number_only(str)) {
     if (is_number_float(str)) {
-      SetFloat((float)atof(str));
+      set_float((float)atof(str));
     } else {
-      SetInt(atoi(str));
+      set_integer(atoi(str));
     }
   } else if (util::is_start_of_number(str) &&
              contains_non_trailing_space(str)) {
     // If the number has nontrailing space, we'll assume a list of numbers.
     // (example: "10 -4 3.5")
-    SetNull();
+    set_null();
     ValueArray* arr = new ValueArray();
     std::string tmpstr = str;
     char* str_next = (char*)tmpstr.data();
     while (char* token = next_token(str_next, ", ")) {
       Value* new_val = arr->AddValue();
-      new_val->SetFromStringAuto(token, Set::kNewCopy);
+      new_val->parse_string(token, Set::kNewCopy);
     }
-    SetArray(arr, Set::kTakeOwnership);
+    set_array(arr, Set::kTakeOwnership);
   } else if (*str == '[') {
-    SetNull();
+    set_null();
     ValueArray* arr = new ValueArray();
     assert(!"not implemented! Split out the tokenizer code above!");
-    SetArray(arr, Set::kTakeOwnership);
+    set_array(arr, Set::kTakeOwnership);
   } else {
-    SetString(str, set);
+    set_string(str, set);
     return;
   }
   // We didn't set as string, so we might need to deal with the passed in string
@@ -247,41 +247,70 @@ void Value::SetFromStringAuto(const char* str, Set set) {
   if (set == Set::kTakeOwnership) {
     // Delete the passed in data.
     Value tmp;
-    tmp.SetString(str, Set::kTakeOwnership);
+    tmp.set_string(str, Set::kTakeOwnership);
   }
 }
 
-int Value::GetInt() const {
-  if (GetType() == Type::kString) {
-    return atoi(val_str);
-  } else if (GetType() == Type::kFloat) {
-    return (int)val_float;
+int Value::as_integer() const {
+  if (type() == Type::kString) {
+    return atoi(value_.string);
+  } else if (type() == Type::kFloat) {
+    return (int)value_.float_number;
   }
-  return GetType() == Type::kInt ? val_int : 0;
+  return type() == Type::kInt ? value_.integer_number : 0;
 }
 
-float Value::GetFloat() const {
-  if (GetType() == Type::kString) {
-    return (float)atof(val_str);
-  } else if (GetType() == Type::kInt) {
-    return (float)val_int;
+float Value::as_float() const {
+  if (type() == Type::kString) {
+    return (float)atof(value_.string);
+  } else if (type() == Type::kInt) {
+    return (float)value_.integer_number;
   }
-  return GetType() == Type::kFloat ? val_float : 0;
+  return type() == Type::kFloat ? value_.float_number : 0;
 }
 
-const char* Value::GetString() {
-  if (GetType() == Type::kInt) {
+const char* Value::as_string() {
+  if (type() == Type::kInt) {
     char tmp[32];
-    sprintf(tmp, "%d", val_int);
-    SetString(tmp, Set::kNewCopy);
-  } else if (GetType() == Type::kFloat) {
+    sprintf(tmp, "%d", value_.integer_number);
+    set_string(tmp, Set::kNewCopy);
+  } else if (type() == Type::kFloat) {
     char tmp[32];
-    sprintf(tmp, "%f", val_float);
-    SetString(tmp, Set::kNewCopy);
-  } else if (GetType() == Type::kObject) {
-    return val_obj ? val_obj->GetClassName() : "";
+    sprintf(tmp, "%f", value_.float_number);
+    set_string(tmp, Set::kNewCopy);
+  } else if (type() == Type::kObject) {
+    return value_.object ? value_.object->GetClassName() : "";
   }
-  return GetType() == Type::kString ? val_str : "";
+  return type() == Type::kString ? value_.string : "";
+}
+
+std::string Value::to_string() const {
+  switch (type()) {
+    case Type::kNull:
+      return "";
+    case Type::kString:
+      return value_.string;
+    case Type::kFloat:
+      return std::to_string(value_.float_number);
+    case Type::kInt:
+      return std::to_string(value_.integer_number);
+    case Type::kObject:
+      return value_.object ? value_.object->GetClassName() : "";
+    case Type::kArray: {
+      std::string result;
+      for (size_t i = 0; i < value_.value_array->size(); ++i) {
+        auto value = value_.value_array->at(i);
+        if (i) {
+          result += " " + value->to_string();
+        } else {
+          result += value->to_string();
+        }
+      }
+      return result;
+    }
+    default:
+      return "";
+  }
 }
 
 }  // namespace tb

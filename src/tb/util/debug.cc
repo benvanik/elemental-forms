@@ -70,7 +70,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     CheckBox* check = new CheckBox();
     check->SetValue(DebugInfo::get()->settings[int(setting)]);
-    check->data.SetInt(int(setting));
+    check->data.set_integer(int(setting));
     check->set_id(TBIDC("check"));
 
     LabelContainer* label = new LabelContainer();
@@ -83,7 +83,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
   bool OnEvent(const ElementEvent& ev) override {
     if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
       // Update setting and invalidate.
-      DebugInfo::get()->settings[ev.target->data.GetInt()] =
+      DebugInfo::get()->settings[ev.target->data.as_integer()] =
           ev.target->GetValue();
       GetParentRoot()->Invalidate();
       return true;

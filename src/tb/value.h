@@ -30,10 +30,13 @@ class ValueArray {
   ValueArray();
   ~ValueArray();
 
-  Value* AddValue();
-  Value* GetValue(size_t index);
   static ValueArray* Clone(ValueArray* source);
-  size_t GetLength() const { return list_.size(); }
+
+  Value* AddValue();
+
+  size_t size() const { return list_.size(); }
+  Value* at(size_t i) const;
+  inline Value* operator[](size_t i) const { return at(i); }
 
  private:
   std::vector<std::unique_ptr<Value>> list_;
@@ -88,41 +91,48 @@ class Value {
   // We can't copy objects.
   void Copy(const Value& source_value);
 
-  void SetNull();
-  void SetInt(int val);
-  void SetFloat(float val);
+  void reset() { set_null(); }
+  void set_null();
+  void set_integer(int val);
+  void set_float(float val);
 
   // Sets the passed in string.
-  void SetString(const char* val, Set set);
-  void SetString(const std::string& val) {
-    SetString(val.c_str(), Set::kNewCopy);
+  void set_string(const char* val, Set set);
+  void set_string(const std::string& val) {
+    set_string(val.c_str(), Set::kNewCopy);
   }
 
   // Sets the passed in object. Takes the ownership of the object!
-  void SetObject(util::TypedObject* object);
+  void set_object(util::TypedObject* object);
 
   // Sets the passed in array.
-  void SetArray(ValueArray* arr, Set set);
+  void set_array(ValueArray* arr, Set set);
 
   // Sets the value either as a string, number or array of numbers, depending of
   // the string syntax.
-  void SetFromStringAuto(const char* str, Set set);
+  void parse_string(const char* str, Set set);
 
-  int GetInt() const;
-  float GetFloat() const;
-  const char* GetString();
-  util::TypedObject* GetObject() const {
-    return IsObject() ? val_obj : nullptr;
+  int as_integer() const;
+  float as_float() const;
+  const char* as_string();
+  util::TypedObject* as_object() const {
+    return is_object() ? value_.object : nullptr;
   }
-  ValueArray* GetArray() const { return IsArray() ? val_arr : nullptr; }
+  ValueArray* as_array() const {
+    return is_array() ? value_.value_array : nullptr;
+  }
 
-  Type GetType() const { return Type(m_packed.type); }
-  bool IsString() const { return Type(m_packed.type) == Type::kString; }
-  bool IsFloat() const { return Type(m_packed.type) == Type::kFloat; }
-  bool IsInt() const { return Type(m_packed.type) == Type::kInt; }
-  bool IsObject() const { return Type(m_packed.type) == Type::kObject; }
-  bool IsArray() const { return Type(m_packed.type) == Type::kArray; }
-  size_t GetArrayLength() const { return IsArray() ? val_arr->GetLength() : 0; }
+  std::string to_string() const;
+
+  Type type() const { return Type(packed_.type); }
+  bool is_string() const { return Type(packed_.type) == Type::kString; }
+  bool is_float() const { return Type(packed_.type) == Type::kFloat; }
+  bool is_integer() const { return Type(packed_.type) == Type::kInt; }
+  bool is_object() const { return Type(packed_.type) == Type::kObject; }
+  bool is_array() const { return Type(packed_.type) == Type::kArray; }
+  size_t array_size() const {
+    return is_array() ? value_.value_array->size() : 0;
+  }
 
   const Value& operator=(const Value& val) {
     Copy(val);
@@ -130,21 +140,21 @@ class Value {
   }
 
  private:
-  void SetType(Type type) { m_packed.type = uint32_t(type); }
+  void set_type(Type type) { packed_.type = uint32_t(type); }
 
   union {
-    float val_float;
-    int val_int;
-    char* val_str;
-    util::TypedObject* val_obj;
-    ValueArray* val_arr = nullptr;
-  };
+    float float_number;
+    int integer_number;
+    char* string;
+    util::TypedObject* object;
+    ValueArray* value_array = nullptr;
+  } value_;
   union {
     struct {
       uint32_t type : 8;
       uint32_t allocated : 1;
-    } m_packed;
-    uint32_t m_packed_init = 0;
+    } packed_;
+    uint32_t packed_init_ = 0;
   };
 };
 

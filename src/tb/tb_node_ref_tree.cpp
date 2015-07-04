@@ -35,7 +35,7 @@ Value& NodeRefTree::GetValue(const char* request) {
 Value& NodeRefTree::GetValueFromTree(const char* request) {
   assert(*request == '@');
   Node tmp;
-  tmp.GetValue().SetString(request, Value::Set::kAsStatic);
+  tmp.GetValue().set_string(request, Value::Set::kAsStatic);
   Node* node = NodeRefTree::FollowNodeRef(&tmp);
   if (node != &tmp) {
     return node->GetValue();
@@ -81,9 +81,9 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
   uint32_t cycle_id = ++s_cycle_id;
   Node* start_node = node;
 
-  while (node->GetValue().IsString()) {
+  while (node->GetValue().is_string()) {
     // If not a reference at all, we're done.
-    const char* node_str = node->GetValue().GetString();
+    const char* node_str = node->GetValue().as_string();
     if (*node_str != '@') {
       break;
     }
@@ -116,7 +116,7 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
       TBDebugOut(
           "NodeRefTree::ResolveNode - No tree found for request \"%s\" from "
           "node \"%s\"\n",
-          node_str, node->GetValue().GetString());
+          node_str, node->GetValue().as_string());
       break;
     }
 
@@ -135,7 +135,7 @@ Node* NodeRefTree::FollowNodeRef(Node* node) {
       TBDebugOut(
           "NodeRefTree::ResolveNode - Reference loop detected on request "
           "\"%s\" from node \"%s\"\n",
-          node_str, node->GetValue().GetString());
+          node_str, node->GetValue().as_string());
       return start_node;
     }
   }
@@ -150,7 +150,7 @@ void NodeRefTree::ResolveConditions(Node* parent_node) {
     bool delete_node = false;
     bool move_children = false;
     if (strcmp(node->GetName(), "@if") == 0) {
-      condition_ret = node->GetValueFollowRef().GetInt() ? true : false;
+      condition_ret = node->GetValueFollowRef().as_integer() ? true : false;
       if (condition_ret) move_children = true;
       delete_node = true;
     } else if (strcmp(node->GetName(), "@else") == 0) {

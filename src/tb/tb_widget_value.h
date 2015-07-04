@@ -68,7 +68,7 @@ class ElementValue {
   TBID GetName() const { return m_name; }
 
   // Sets integer value and sync to connected elements.
-  void SetInt(int value);
+  void set_integer(int value);
 
   // Sets text value and sync to connected elements.
   void SetText(const char* text);
@@ -79,9 +79,9 @@ class ElementValue {
   // Sets the value from the given element. Using the current format type.
   void SetFromElement(Element* source_element);
 
-  int GetInt() { return m_value.GetInt(); }
-  std::string GetText() { return m_value.GetString(); }
-  double GetDouble() { return m_value.GetFloat(); }
+  int as_integer() { return m_value.as_integer(); }
+  std::string GetText() { return m_value.as_string(); }
+  double GetDouble() { return m_value.as_float(); }
   const Value& GetValue() const { return m_value; }
 
  private:

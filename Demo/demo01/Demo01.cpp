@@ -81,20 +81,20 @@ void DemoWindow::LoadResource(Node& node) {
 
   // Use specified size or adapt to the preferred content size.
   Node* tmp = node.GetNode("WindowInfo>size");
-  if (tmp && tmp->GetValue().GetArrayLength() == 2) {
+  if (tmp && tmp->GetValue().array_size() == 2) {
     window_rect.w = dc->GetPxFromString(
-        tmp->GetValue().GetArray()->GetValue(0)->GetString(), window_rect.w);
+        tmp->GetValue().as_array()->at(0)->as_string(), window_rect.w);
     window_rect.h = dc->GetPxFromString(
-        tmp->GetValue().GetArray()->GetValue(1)->GetString(), window_rect.h);
+        tmp->GetValue().as_array()->at(1)->as_string(), window_rect.h);
   }
 
   // Use the specified position or center in parent.
   tmp = node.GetNode("WindowInfo>position");
-  if (tmp && tmp->GetValue().GetArrayLength() == 2) {
+  if (tmp && tmp->GetValue().array_size() == 2) {
     window_rect.x = dc->GetPxFromString(
-        tmp->GetValue().GetArray()->GetValue(0)->GetString(), window_rect.x);
+        tmp->GetValue().as_array()->at(0)->as_string(), window_rect.x);
     window_rect.y = dc->GetPxFromString(
-        tmp->GetValue().GetArray()->GetValue(1)->GetString(), window_rect.y);
+        tmp->GetValue().as_array()->at(1)->as_string(), window_rect.y);
   } else
     window_rect = window_rect.CenterIn(parent_rect);
 
@@ -280,7 +280,7 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("set_align")) {
     if (TabContainer* tc =
             GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer")))
-      tc->SetAlignment(static_cast<Align>(ev.target->data.GetInt()));
+      tc->SetAlignment(static_cast<Align>(ev.target->data.as_integer()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("toggle_tab_axis")) {
@@ -320,7 +320,7 @@ bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->id() == TBIDC("reset-master-volume")) {
     if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("master-volume")))
-      val->SetInt(50);
+      val->set_integer(50);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("reset-user-name")) {
     if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("user-name")))
@@ -352,7 +352,7 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
       button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
       return true;
     } else if (ev.target->id() == TBIDC("new buttons")) {
-      for (int i = 0; i < ev.target->data.GetInt(); ++i) {
+      for (int i = 0; i < ev.target->data.as_integer(); ++i) {
         Button* button = new Button;
         button->set_id(TBIDC("remove button"));
         button->SetText(tb::util::format_string("Remove %d", i));
@@ -360,10 +360,10 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
       }
       return true;
     } else if (ev.target->id() == TBIDC("new buttons delayed")) {
-      for (int i = 0; i < ev.target->data.GetInt(); ++i) {
+      for (int i = 0; i < ev.target->data.as_integer(); ++i) {
         MessageData* data = new MessageData();
         data->id1 = ev.target->GetParent()->id();
-        data->v1.SetInt(i);
+        data->v1.set_integer(i);
         PostMessageDelayed(TBIDC("new button"), data, 100 + i * 500);
       }
       return true;
@@ -392,7 +392,7 @@ void ScrollContainerWindow::OnMessageReceived(Message* msg) {
       Button* button = new Button;
       button->set_id(TBIDC("remove button"));
       button->SetText(
-          tb::util::format_string("Remove %d", msg->data->v1.GetInt()));
+          tb::util::format_string("Remove %d", msg->data->v1.as_integer()));
       target->AddChild(button);
     }
   }
@@ -576,7 +576,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
       return true;
     } else if (ev.target->id() == TBIDC("test-layout")) {
       std::string resource_file("Demo/demo01/ui_resources/");
-      resource_file.append(ev.target->data.GetString());
+      resource_file.append(ev.target->data.as_string());
       new LayoutWindow(resource_file);
       return true;
     } else if (ev.target->id() == TBIDC("test-connections")) {
@@ -763,7 +763,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   ElementValue* continuous_repaint_val =
       ValueGroup::get()->GetValue(TBIDC("continous-repaint"));
   bool continuous_repaint =
-      continuous_repaint_val ? !!continuous_repaint_val->GetInt() : 0;
+      continuous_repaint_val ? !!continuous_repaint_val->as_integer() : 0;
 
   std::string str;
   if (continuous_repaint) {

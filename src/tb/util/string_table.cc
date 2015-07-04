@@ -27,7 +27,7 @@ bool StringTable::Load(const char* filename) {
   // Go through all nodes and add to the strings hash table.
   Node* n = node.GetFirstChild();
   while (n) {
-    const char* str = n->GetValue().GetString();
+    const char* str = n->GetValue().as_string();
     table_.emplace(TBID(n->GetName()), str);
     n = n->GetNext();
   }

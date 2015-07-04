@@ -163,8 +163,8 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   for (Node* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
     if (strcmp(n->GetName(), "size") == 0) {
       if (!size_node ||
-          std::abs(m_size - n->GetValue().GetInt()) <
-              std::abs(m_size - size_node->GetValue().GetInt()))
+          std::abs(m_size - n->GetValue().as_integer()) <
+              std::abs(m_size - size_node->GetValue().as_integer()))
         size_node = n;
     }
   }

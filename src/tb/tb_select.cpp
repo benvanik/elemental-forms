@@ -178,7 +178,7 @@ void SelectList::ValidateList() {
     element->SetSkinBg(TBIDC("SelectList.header"));
     element->SetState(Element::State::kDisabled, true);
     element->SetGravity(Gravity::kAll);
-    element->data.SetInt(-1);
+    element->data.set_integer(-1);
     m_layout.GetContentRoot()->AddChild(element);
   }
 
@@ -197,7 +197,7 @@ void SelectList::ValidateList() {
 Element* SelectList::CreateAndAddItemAfter(size_t index, Element* reference) {
   if (Element* element = m_source->CreateItemElement(index, this)) {
     // Use item data as element to index lookup.
-    element->data.SetInt(int(index));
+    element->data.set_integer(int(index));
     m_layout.GetContentRoot()->AddChildRelative(element, ElementZRel::kAfter,
                                                 reference);
     return element;
@@ -237,7 +237,7 @@ Element* SelectList::GetItemElement(size_t index) {
   if (index == -1) return nullptr;
   for (Element* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
        tmp = tmp->GetNext()) {
-    if (tmp->data.GetInt() == index) return tmp;
+    if (tmp->data.as_integer() == index) return tmp;
   }
   return nullptr;
 }
@@ -273,7 +273,7 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
     // still around.
     WeakElementPointer this_element(this);
 
-    size_t index = ev.target->data.GetInt();
+    size_t index = ev.target->data.as_integer();
     SetValue(int(index));
 
     // If we're still around, invoke the click event too.
@@ -347,7 +347,7 @@ bool SelectList::ChangeValue(SpecialKey key) {
   }
   // Select and focus what we found.
   if (current) {
-    SetValue(current->data.GetInt());
+    SetValue(current->data.as_integer());
     return true;
   }
   return false;

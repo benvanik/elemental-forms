@@ -114,10 +114,10 @@ void Element::LoadNodeTree(Node* node) {
 // Sets the id from the given node.
 void Element::SetIdFromNode(TBID& id, Node* node) {
   if (!node) return;
-  if (node->GetValue().IsString()) {
-    id.reset(node->GetValue().GetString());
+  if (node->GetValue().is_string()) {
+    id.reset(node->GetValue().as_string());
   } else {
-    id.reset(node->GetValue().GetInt());
+    id.reset(node->GetValue().as_integer());
   }
 }
 
@@ -281,11 +281,11 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   if (Node* rect_node = info.node->GetNode("rect")) {
     auto dc = resources::Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
-    if (val.GetArrayLength() == 4) {
-      set_rect({dc->GetPxFromValue(val.GetArray()->GetValue(0), 0),
-                dc->GetPxFromValue(val.GetArray()->GetValue(1), 0),
-                dc->GetPxFromValue(val.GetArray()->GetValue(2), 0),
-                dc->GetPxFromValue(val.GetArray()->GetValue(3), 0)});
+    if (val.array_size() == 4) {
+      set_rect({dc->GetPxFromValue(val.as_array()->at(0), 0),
+                dc->GetPxFromValue(val.as_array()->at(1), 0),
+                dc->GetPxFromValue(val.as_array()->at(2), 0),
+                dc->GetPxFromValue(val.as_array()->at(3), 0)});
     }
   }
 }

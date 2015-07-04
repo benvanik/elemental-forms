@@ -93,7 +93,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
 
   TB_TEST(connect) {
     // Set the initial value, no elements connected yet.
-    element_val.SetInt(42);
+    element_val.set_integer(42);
 
     // Connecting elements should give them the current value.
     a->Connect(&element_val);
@@ -107,7 +107,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
 
   TB_TEST(change_value) {
     // Changing the value should change all elements
-    element_val.SetInt(123);
+    element_val.set_integer(123);
 
     TB_VERIFY(a->GetValue() == 123);
     TB_VERIFY(b->GetValue() == 123);
@@ -129,7 +129,7 @@ TB_TEST_GROUP(tb_widget_value_int) {
     TB_VERIFY(b->GetValue() == 3);
 
     // The value itself should also have changed.
-    TB_VERIFY(element_val.GetInt() == 3);
+    TB_VERIFY(element_val.as_integer() == 3);
   }
 
   TB_TEST(Shutdown) {
@@ -173,10 +173,10 @@ TB_TEST_GROUP(tb_widget_value_listener) {
 
   TB_TEST(change_with_no_elements) {
     // Set the initial value, no elements connected yet.
-    element_val.SetInt(1);
+    element_val.set_integer(1);
 
     // The listener should have registered the change
-    TB_VERIFY(listener.val.GetInt() == 1);
+    TB_VERIFY(listener.val.as_integer() == 1);
     TB_VERIFY(listener.change_counter == 1);
   }
 
@@ -185,10 +185,10 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     b->Connect(&element_val);
 
     // Change the value to 0
-    element_val.SetInt(0);
+    element_val.set_integer(0);
 
     // The listener should have registered the change, once.
-    TB_VERIFY(listener.val.GetInt() == 0);
+    TB_VERIFY(listener.val.as_integer() == 0);
     TB_VERIFY(listener.change_counter == 2);
   }
 
@@ -197,7 +197,7 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     a->SetValue(1);
 
     // The listener should have registered the change, once.
-    TB_VERIFY(listener.val.GetInt() == 1);
+    TB_VERIFY(listener.val.as_integer() == 1);
     TB_VERIFY(listener.change_counter == 3);
   }
 }

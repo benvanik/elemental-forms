@@ -46,7 +46,7 @@ class TextFragmentContent {
   virtual bool GetAllowBreakAfter() { return true; }
 
   // Gets type of fragment content. All standard fragments return 0.
-  virtual uint32_t GetType() { return 0; }
+  virtual uint32_t type() { return 0; }
 };
 
 // A horizontal line for StyleEdit.

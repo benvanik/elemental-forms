@@ -82,13 +82,13 @@ bool Skin::LoadInternal(const char* skin_file) {
     int base_dpi = node.GetValueInt("description>base-dpi", 96);
     int supported_dpi = base_dpi;
     if (Node* supported_dpi_node = node.GetNode("description>supported-dpi")) {
-      assert(supported_dpi_node->GetValue().IsArray() ||
-             supported_dpi_node->GetValue().GetInt() == base_dpi);
-      if (ValueArray* arr = supported_dpi_node->GetValue().GetArray()) {
+      assert(supported_dpi_node->GetValue().is_array() ||
+             supported_dpi_node->GetValue().as_integer() == base_dpi);
+      if (ValueArray* arr = supported_dpi_node->GetValue().as_array()) {
         int screen_dpi = util::GetDPI();
         int best_supported_dpi = 0;
-        for (int i = 0; i < arr->GetLength(); ++i) {
-          int candidate_dpi = arr->GetValue(i)->GetInt();
+        for (size_t i = 0; i < arr->size(); ++i) {
+          int candidate_dpi = arr->at(i)->as_integer();
           if (!best_supported_dpi ||
               std::abs(candidate_dpi - screen_dpi) <
                   std::abs(best_supported_dpi - screen_dpi)) {
@@ -123,7 +123,7 @@ bool Skin::LoadInternal(const char* skin_file) {
       while (Node* clone = n->GetNode("clone")) {
         n->Remove(clone);
 
-        Node* clone_source = elements->GetNode(clone->GetValue().GetString());
+        Node* clone_source = elements->GetNode(clone->GetValue().as_string());
         if (clone_source) {
           n->CloneChildren(clone_source);
         }
@@ -631,16 +631,16 @@ void SkinElement::Load(Node* n, Skin* skin, const char* skin_path) {
 
   if (Node* padding_node = n->GetNode("padding")) {
     Value& val = padding_node->GetValue();
-    if (val.GetArrayLength() == 4) {
-      padding_top = dim_conv->GetPxFromValue(val.GetArray()->GetValue(0), 0);
-      padding_right = dim_conv->GetPxFromValue(val.GetArray()->GetValue(1), 0);
-      padding_bottom = dim_conv->GetPxFromValue(val.GetArray()->GetValue(2), 0);
-      padding_left = dim_conv->GetPxFromValue(val.GetArray()->GetValue(3), 0);
-    } else if (val.GetArrayLength() == 2) {
+    if (val.array_size() == 4) {
+      padding_top = dim_conv->GetPxFromValue(val.as_array()->at(0), 0);
+      padding_right = dim_conv->GetPxFromValue(val.as_array()->at(1), 0);
+      padding_bottom = dim_conv->GetPxFromValue(val.as_array()->at(2), 0);
+      padding_left = dim_conv->GetPxFromValue(val.as_array()->at(3), 0);
+    } else if (val.array_size() == 2) {
       padding_top = padding_bottom =
-          dim_conv->GetPxFromValue(val.GetArray()->GetValue(0), 0);
+          dim_conv->GetPxFromValue(val.as_array()->at(0), 0);
       padding_left = padding_right =
-          dim_conv->GetPxFromValue(val.GetArray()->GetValue(1), 0);
+          dim_conv->GetPxFromValue(val.as_array()->at(1), 0);
     } else {
       padding_top = padding_right = padding_bottom = padding_left =
           dim_conv->GetPxFromValue(&val, 0);
@@ -770,13 +770,13 @@ void SkinElementStateList::Load(Node* n) {
 
     // By default, a state element applies to all combinations of states.
     state->state = SkinState::kAll;
-    state->element_id.reset(element_node->GetValue().GetString());
+    state->element_id.reset(element_node->GetValue().as_string());
 
     // Loop through all nodes, read state and create all found conditions.
     for (Node* condition_node = element_node->GetFirstChild(); condition_node;
          condition_node = condition_node->GetNext()) {
       if (strcmp(condition_node->GetName(), "state") == 0) {
-        state->state = StringToState(condition_node->GetValue().GetString());
+        state->state = StringToState(condition_node->GetValue().as_string());
       } else if (strcmp(condition_node->GetName(), "condition") == 0) {
         auto target = from_string(condition_node->GetValueString("target", ""),
                                   SkinTarget::kThis);
@@ -794,11 +794,11 @@ void SkinElementStateList::Load(Node* n) {
           // convert the state string to the SkinState state combo.
           if (prop == SkinProperty::kState) {
             value.reset(
-                uint32_t(StringToState(value_n->GetValue().GetString())));
-          } else if (value_n->GetValue().IsString()) {
-            value.reset(value_n->GetValue().GetString());
+                uint32_t(StringToState(value_n->GetValue().as_string())));
+          } else if (value_n->GetValue().is_string()) {
+            value.reset(value_n->GetValue().as_string());
           } else {
-            value.reset(value_n->GetValue().GetInt());
+            value.reset(value_n->GetValue().as_integer());
           }
         }
 
