@@ -20,7 +20,8 @@
 #include "tb_tab_container.h"
 #include "tb_text_box.h"
 #include "tb_toggle_container.h"
-#include "tb_widgets.h"
 #include "tb_widgets_common.h"
+
+#include "tb/element.h"
 
 #endif  // TB_ELEMENTS_H_

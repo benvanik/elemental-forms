@@ -7,11 +7,10 @@
  ******************************************************************************
  */
 
+#include "tb/element.h"
 #include "tb/parsing/element_factory.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
-
-#include "tb_widgets.h"
 
 namespace tb {
 namespace parsing {

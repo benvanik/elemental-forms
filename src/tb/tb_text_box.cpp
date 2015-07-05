@@ -13,7 +13,6 @@
 #include "tb_select.h"
 #include "tb_style_edit_content.h"
 #include "tb_text_box.h"
-#include "tb_widget_skin_condition_context.h"
 
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"

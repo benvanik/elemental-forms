@@ -9,10 +9,10 @@
 
 #include "tb_message_window.h"
 #include "tb_window.h"
-#include "tb_widgets.h"
 #include "tb_widgets_common.h"
 
 #include "tb/animation_manager.h"
+#include "tb/element.h"
 #include "tb/element_animation.h"
 
 namespace tb {

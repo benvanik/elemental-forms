@@ -12,8 +12,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_widgets.h"
-
+#include "tb/element.h"
 #include "tb/element_listener.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"

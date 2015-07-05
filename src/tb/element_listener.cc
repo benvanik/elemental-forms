@@ -7,6 +7,7 @@
  ******************************************************************************
  */
 
+#include "tb/element.h"
 #include "tb/element_listener.h"
 
 namespace tb {

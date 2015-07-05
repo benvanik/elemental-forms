@@ -12,8 +12,8 @@
 
 #include "tb_layout.h"
 #include "tb_msg.h"
-#include "tb_widgets.h"
 
+#include "tb/element.h"
 #include "tb/types.h"
 
 namespace tb {

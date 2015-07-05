@@ -12,8 +12,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "tb_widgets.h"
-
+#include "tb/element.h"
 #include "tb/util/metrics.h"
 
 namespace tb {

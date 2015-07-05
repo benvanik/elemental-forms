@@ -6,10 +6,10 @@
 #include <string.h>
 #include <algorithm>
 
-#include "tb_widgets.h"
 #include "tb_msg.h"
 #include "Application.h"
 
+#include "tb/element.h"
 #include "tb/graphics/gles_1_renderer.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/metrics.h"

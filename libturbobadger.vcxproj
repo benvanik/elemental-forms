@@ -57,11 +57,10 @@
     <ClCompile Include="src\tb\tb_toggle_container.cpp" />
     <ClCompile Include="src\tb\tooltip_manager.cc" />
     <ClCompile Include="src\tb\value.cc" />
-    <ClCompile Include="src\tb\tb_widgets.cpp" />
+    <ClCompile Include="src\tb\element.cc" />
     <ClCompile Include="src\tb\tb_widgets_common.cpp" />
     <ClCompile Include="src\tb\element_listener.cc" />
     <ClCompile Include="src\tb\element_animation.cc" />
-    <ClCompile Include="src\tb\tb_widget_skin_condition_context.cpp" />
     <ClCompile Include="src\tb\element_value.cc" />
     <ClCompile Include="src\tb\tb_window.cpp" />
     <ClCompile Include="src\tb\tests\tb_test.cpp" />
@@ -98,6 +97,7 @@
     <ClInclude Include="src\tb\animation_manager.h" />
     <ClInclude Include="src\tb\elements.h" />
     <ClInclude Include="src\tb\element_animation_manager.h" />
+    <ClInclude Include="src\tb\element_event.h" />
     <ClInclude Include="src\tb\graphics\batching_renderer.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment_manager.h" />
@@ -144,10 +144,9 @@
     <ClInclude Include="src\tb\tb_toggle_container.h" />
     <ClInclude Include="src\tb\types.h" />
     <ClInclude Include="src\tb\value.h" />
-    <ClInclude Include="src\tb\tb_widgets.h" />
+    <ClInclude Include="src\tb\element.h" />
     <ClInclude Include="src\tb\tb_widgets_common.h" />
     <ClInclude Include="src\tb\element_listener.h" />
-    <ClInclude Include="src\tb\tb_widget_skin_condition_context.h" />
     <ClInclude Include="src\tb\element_value.h" />
     <ClInclude Include="src\tb\tb_window.h" />
     <ClInclude Include="src\tb\tests\tb_test.h" />

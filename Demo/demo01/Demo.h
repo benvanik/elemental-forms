@@ -1,7 +1,6 @@
 #ifndef DEMO_H
 #define DEMO_H
 
-#include "tb_widgets.h"
 #include "tb_widgets_common.h"
 #include "tb_message_window.h"
 #include "tb_msg.h"

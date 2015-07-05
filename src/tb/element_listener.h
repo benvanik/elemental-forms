@@ -10,13 +10,12 @@
 #ifndef TB_ELEMENT_LISTENER_H_
 #define TB_ELEMENT_LISTENER_H_
 
-#include "tb_widgets.h"
-
 #include "tb/util/link_list.h"
 
 namespace tb {
 
 class Element;
+class ElementEvent;
 
 // Should never be created or subclassed anywhere except in ElementListener.
 // It's only purpose is to add a extra typed link for ElementListener, since it

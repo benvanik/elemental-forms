@@ -10,7 +10,7 @@
 #ifndef TB_LAYOUT_H
 #define TB_LAYOUT_H
 
-#include "tb_widgets.h"
+#include "tb/element.h"
 #include "tb/types.h"
 
 namespace tb {

@@ -2,7 +2,7 @@
 #define APPLICATION_H
 
 #include "tb/config.h"
-#include "tb_widgets.h"
+#include "tb/element.h"
 
 /** Called from the platform main function. */
 int app_main();

@@ -10,8 +10,7 @@
 #ifndef TB_IMAGE_WIDGET_H
 #define TB_IMAGE_WIDGET_H
 
-#include "tb_widgets.h"
-
+#include "tb/element.h"
 #include "tb/graphics/image_manager.h"
 
 namespace tb {
