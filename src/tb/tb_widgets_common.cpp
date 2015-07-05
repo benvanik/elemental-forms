@@ -15,7 +15,7 @@
 #include "tb_widgets.h"
 #include "tb_widgets_listener.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/math.h"
@@ -79,7 +79,7 @@ void Label::RegisterInflater() {
 
 Label::Label() { SetSkinBg(TBIDC("Label"), InvokeInfo::kNoCallbacks); }
 
-void Label::OnInflate(const resources::InflateInfo& info) {
+void Label::OnInflate(const parsing::InflateInfo& info) {
   if (const char* text_align =
           info.node->GetValueString("text-align", nullptr)) {
     SetTextAlign(from_string(text_align, GetTextAlign()));
@@ -158,7 +158,7 @@ Button::~Button() {
   RemoveChild(&m_layout);
 }
 
-void Button::OnInflate(const resources::InflateInfo& info) {
+void Button::OnInflate(const parsing::InflateInfo& info) {
   SetToggleMode(info.node->GetValueInt("toggle-mode", GetToggleMode()) ? true
                                                                        : false);
   Element::OnInflate(info);
@@ -460,7 +460,7 @@ ScrollBar::ScrollBar()
 
 ScrollBar::~ScrollBar() { RemoveChild(&m_handle); }
 
-void ScrollBar::OnInflate(const resources::InflateInfo& info) {
+void ScrollBar::OnInflate(const parsing::InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
   SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
@@ -594,7 +594,7 @@ Slider::Slider()
 
 Slider::~Slider() { RemoveChild(&m_handle); }
 
-void Slider::OnInflate(const resources::InflateInfo& info) {
+void Slider::OnInflate(const parsing::InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   SetAxis(axis);
   SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);

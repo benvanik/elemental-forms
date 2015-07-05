@@ -10,11 +10,11 @@
 #include <algorithm>
 #include <string>
 
-#include "tb/resources/text_parser_stream.h"
+#include "tb/parsing/text_parser_stream.h"
 #include "tb/util/file.h"
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 bool FileTextParserStream::Read(const std::string& filename,
                                 TextParserTarget* target) {
@@ -48,5 +48,5 @@ size_t DataTextParserStream::GetMoreData(char* buf, size_t buf_len) {
   return consume;
 }
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb

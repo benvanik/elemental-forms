@@ -39,7 +39,7 @@ class SelectInline : public Element {
   void SetValue(int value) override { SetValueInternal(value, true); }
   int GetValue() override { return m_value; }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   void OnSkinChanged() override;
   bool OnEvent(const ElementEvent& ev) override;
 

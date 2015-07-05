@@ -77,7 +77,7 @@ class Label : public Element {
   void SetSqueezable(bool squeezable);
   bool GetSqueezable() { return m_squeezable; }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
   void OnFontChanged() override;
@@ -132,7 +132,7 @@ class Button : public Element, protected MessageHandler {
   void SetValue(int value) override;
   int GetValue() override;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
   bool OnEvent(const ElementEvent& ev) override;
@@ -346,7 +346,7 @@ class ScrollBar : public Element {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 
@@ -395,7 +395,7 @@ class Slider : public Element {
   void SetValue(int value) override { SetValueDouble(value); }
   int GetValue() override { return (int)GetValueDouble(); }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnResized(int old_w, int old_h) override;
 

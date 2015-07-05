@@ -31,9 +31,11 @@ class Scroller;
 class Element;
 class ElementListener;
 class Window;
+namespace parsing {
+struct InflateInfo;
+}  // namespace parsing
 namespace resources {
 class FontFace;
-struct InflateInfo;
 }  // namespace resources
 
 enum class Align {
@@ -412,7 +414,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   bool LoadData(std::string data) {
     return LoadData(data.c_str(), data.size());
   }
-  void LoadNodeTree(Node* node);
+  void LoadNodeTree(parsing::ParseNode* node);
 
   // Sets the rect for this element in its parent.
   // The rect is relative to the parent element. The skin may expand outside
@@ -821,7 +823,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // This will read generic element properties and add the element to the
   // hierarchy if it's not already added. If overridden, you must call the super
   // implementation.
-  virtual void OnInflate(const resources::InflateInfo& info);
+  virtual void OnInflate(const parsing::InflateInfo& info);
 
   // Gets hit status tests if this element should be hit at the given
   // coordinate.
@@ -1212,8 +1214,8 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   static bool show_focus_state;
 
  protected:
-  static void SetIdFromNode(TBID& id, Node* node);
-  static void ReadItemNodes(Node* parent_node,
+  static void SetIdFromNode(TBID& id, parsing::ParseNode* node);
+  static void ReadItemNodes(parsing::ParseNode* parent_node,
                             GenericStringItemSource* target_source);
 
  private:

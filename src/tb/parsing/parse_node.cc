@@ -7,18 +7,16 @@
  ******************************************************************************
  */
 
-#include "tb_node_tree.h"
-
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
 #include <memory>
 #include <string>
 
-#include "tb_node_ref_tree.h"
-
-#include "tb/resources/text_parser.h"
-#include "tb/resources/text_parser_stream.h"
+#include "tb/parsing/parse_node.h"
+#include "tb/parsing/parse_node_tree.h"
+#include "tb/parsing/text_parser.h"
+#include "tb/parsing/text_parser_stream.h"
 #include "tb/util/debug.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
@@ -26,19 +24,20 @@
 #include "tb/util/string_table.h"
 
 namespace tb {
+namespace parsing {
 
-Node::~Node() { Clear(); }
+ParseNode::~ParseNode() { Clear(); }
 
 // static
-Node* Node::Create(const char* name) {
-  Node* n = new Node();
+ParseNode* ParseNode::Create(const char* name) {
+  ParseNode* n = new ParseNode();
   n->m_name = strdup(name);
   return n;
 }
 
 // static
-Node* Node::Create(const char* name, size_t name_len) {
-  Node* n = new Node();
+ParseNode* ParseNode::Create(const char* name, size_t name_len) {
+  ParseNode* n = new ParseNode();
   n->m_name = (char*)malloc(name_len + 1);
   std::memcpy(n->m_name, name, name_len);
   n->m_name[name_len] = 0;
@@ -46,20 +45,20 @@ Node* Node::Create(const char* name, size_t name_len) {
 }
 
 // static
-const char* Node::GetNextNodeSeparator(const char* request) {
+const char* ParseNode::GetNextNodeSeparator(const char* request) {
   while (*request != 0 && *request != '>') {
     request++;
   }
   return request;
 }
 
-Node* Node::GetNode(const char* request, MissingPolicy mp) {
+ParseNode* ParseNode::GetNode(const char* request, MissingPolicy mp) {
   // Iterate one node deeper for each sub request (non recursive).
-  Node* n = this;
+  ParseNode* n = this;
   while (*request && n) {
     const char* nextend = GetNextNodeSeparator(request);
     size_t name_len = nextend - request;
-    Node* n_child = n->GetNodeInternal(request, name_len);
+    ParseNode* n_child = n->GetNodeInternal(request, name_len);
     if (!n_child && mp == MissingPolicy::kCreate) {
       n_child = n->Create(request, name_len);
       n->Add(n_child);
@@ -70,16 +69,16 @@ Node* Node::GetNode(const char* request, MissingPolicy mp) {
   return n;
 }
 
-Node* Node::GetNodeFollowRef(const char* request, MissingPolicy mp) {
-  Node* node = GetNode(request, mp);
+ParseNode* ParseNode::GetNodeFollowRef(const char* request, MissingPolicy mp) {
+  ParseNode* node = GetNode(request, mp);
   if (node) {
-    node = NodeRefTree::FollowNodeRef(node);
+    node = ParseNodeTree::FollowNodeRef(node);
   }
   return node;
 }
 
-Node* Node::GetNodeInternal(const char* name, size_t name_len) const {
-  for (Node* n = GetFirstChild(); n; n = n->GetNext()) {
+ParseNode* ParseNode::GetNodeInternal(const char* name, size_t name_len) const {
+  for (ParseNode* n = GetFirstChild(); n; n = n->GetNext()) {
     if (strncmp(n->m_name, name, name_len) == 0 && n->m_name[name_len] == 0) {
       return n;
     }
@@ -87,17 +86,17 @@ Node* Node::GetNodeInternal(const char* name, size_t name_len) const {
   return nullptr;
 }
 
-void Node::Clone(Node* source) {
-  Node* new_child = Create(source->m_name);
+void ParseNode::Clone(ParseNode* source) {
+  ParseNode* new_child = Create(source->m_name);
   new_child->m_value.Copy(source->m_value);
   Add(new_child);
   new_child->CloneChildren(source);
 }
 
-void Node::CloneChildren(Node* source) {
-  Node* item = source->GetFirstChild();
+void ParseNode::CloneChildren(ParseNode* source) {
+  ParseNode* item = source->GetFirstChild();
   while (item) {
-    Node* new_child = Create(item->m_name);
+    ParseNode* new_child = Create(item->m_name);
     new_child->m_value.Copy(item->m_value);
     Add(new_child);
     new_child->CloneChildren(item);
@@ -105,27 +104,27 @@ void Node::CloneChildren(Node* source) {
   }
 }
 
-Value& Node::GetValueFollowRef() {
-  return NodeRefTree::FollowNodeRef(this)->GetValue();
+Value& ParseNode::GetValueFollowRef() {
+  return ParseNodeTree::FollowNodeRef(this)->GetValue();
 }
 
-int Node::GetValueInt(const char* request, int def) {
-  Node* n = GetNodeFollowRef(request);
+int ParseNode::GetValueInt(const char* request, int def) {
+  ParseNode* n = GetNodeFollowRef(request);
   return n ? n->m_value.as_integer() : def;
 }
 
-float Node::GetValueFloat(const char* request, float def) {
-  Node* n = GetNodeFollowRef(request);
+float ParseNode::GetValueFloat(const char* request, float def) {
+  ParseNode* n = GetNodeFollowRef(request);
   return n ? n->m_value.as_float() : def;
 }
 
-const char* Node::GetValueString(const char* request, const char* def) {
-  if (Node* node = GetNodeFollowRef(request)) {
+const char* ParseNode::GetValueString(const char* request, const char* def) {
+  if (ParseNode* node = GetNodeFollowRef(request)) {
     // We might have a language string. Those are not
     // looked up in GetNode/ResolveNode.
     if (node->GetValue().is_string()) {
       const char* string = node->GetValue().as_string();
-      if (*string == '@' && *Node::GetNextNodeSeparator(string) == 0) {
+      if (*string == '@' && *ParseNode::GetNextNodeSeparator(string) == 0) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
         static std::string temp;
@@ -139,14 +138,14 @@ const char* Node::GetValueString(const char* request, const char* def) {
   return def;
 }
 
-const char* Node::GetValueStringRaw(const char* request, const char* def) {
-  Node* n = GetNodeFollowRef(request);
+const char* ParseNode::GetValueStringRaw(const char* request, const char* def) {
+  ParseNode* n = GetNodeFollowRef(request);
   return n ? n->m_value.as_string() : def;
 }
 
-class NodeTarget : public resources::TextParserTarget {
+class ParseNodeTarget : public TextParserTarget {
  public:
-  NodeTarget(Node* root, const std::string& filename)
+  ParseNodeTarget(ParseNode* root, const std::string& filename)
       : m_root_node(root), m_target_node(root), m_filename(filename) {}
   void OnError(int line_nr, const std::string& error) override {
     TBDebugOut("%s(%d):Parse error: %s\n", m_filename, line_nr, error.c_str());
@@ -159,7 +158,7 @@ class NodeTarget : public resources::TextParserTarget {
     } else if (strcmp(name, "@include") == 0) {
       IncludeRef(line_nr, value.as_string());
     } else {
-      Node* n = Node::Create(name);
+      ParseNode* n = ParseNode::Create(name);
       n->TakeValue(value);
       m_target_node->Add(n);
     }
@@ -176,14 +175,15 @@ class NodeTarget : public resources::TextParserTarget {
     }
   }
   void IncludeFile(int line_nr, const char* filename) {
-    // Read the included file into a new Node and then move all the children to
+    // Read the included file into a new ParseNode and then move all the
+    // children to
     // m_target_node.
     util::StringBuilder include_filename;
     include_filename.AppendPath(m_filename);
     include_filename.AppendString(filename);
-    Node content;
+    ParseNode content;
     if (content.ReadFile(include_filename.GetData())) {
-      while (Node* content_n = content.GetFirstChild()) {
+      while (ParseNode* content_n = content.GetFirstChild()) {
         content.Remove(content_n);
         m_target_node->Add(content_n);
       }
@@ -194,20 +194,20 @@ class NodeTarget : public resources::TextParserTarget {
     }
   }
   void IncludeRef(int line_nr, const char* refstr) {
-    Node* refnode = nullptr;
+    ParseNode* refnode = nullptr;
     if (*refstr == '@') {
-      Node tmp;
+      ParseNode tmp;
       tmp.GetValue().set_string(refstr, Value::Set::kAsStatic);
-      refnode = NodeRefTree::FollowNodeRef(&tmp);
+      refnode = ParseNodeTree::FollowNodeRef(&tmp);
     } else {
       // Local look-up.
       // NOTE: If we read to a target node that already contains
       //       nodes, we might look up nodes that's already there
       //       instead of new nodes.
-      refnode = m_root_node->GetNode(refstr, Node::MissingPolicy::kNull);
+      refnode = m_root_node->GetNode(refstr, ParseNode::MissingPolicy::kNull);
 
       // Detect cycles.
-      Node* cycle_detection = m_target_node;
+      ParseNode* cycle_detection = m_target_node;
       while (cycle_detection && refnode) {
         if (cycle_detection == refnode) {
           refnode = nullptr;  // We have a cycle, so just fail the inclusion.
@@ -224,44 +224,46 @@ class NodeTarget : public resources::TextParserTarget {
   }
 
  private:
-  Node* m_root_node;
-  Node* m_target_node;
+  ParseNode* m_root_node;
+  ParseNode* m_target_node;
   std::string m_filename;
 };
 
-void Node::TakeValue(Value& value) { m_value.TakeOver(value); }
+void ParseNode::TakeValue(Value& value) { m_value.TakeOver(value); }
 
-bool Node::ReadFile(const std::string& filename, ReadFlags flags) {
+bool ParseNode::ReadFile(const std::string& filename, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();
   }
-  resources::FileTextParserStream p;
-  NodeTarget t(this, filename);
+  FileTextParserStream p;
+  ParseNodeTarget t(this, filename);
   if (p.Read(filename, &t)) {
-    NodeRefTree::ResolveConditions(this);
+    ParseNodeTree::ResolveConditions(this);
     return true;
   }
   return false;
 }
 
-void Node::ReadData(const char* data, ReadFlags flags) {
+void ParseNode::ReadData(const char* data, ReadFlags flags) {
   ReadData(data, strlen(data), flags);
 }
 
-void Node::ReadData(const char* data, size_t data_length, ReadFlags flags) {
+void ParseNode::ReadData(const char* data, size_t data_length,
+                         ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();
   }
-  resources::DataTextParserStream p;
-  NodeTarget t(this, "{data}");
+  DataTextParserStream p;
+  ParseNodeTarget t(this, "{data}");
   p.Read(data, data_length, &t);
-  NodeRefTree::ResolveConditions(this);
+  ParseNodeTree::ResolveConditions(this);
 }
 
-void Node::Clear() {
+void ParseNode::Clear() {
   free(m_name);
   m_name = nullptr;
   m_children.DeleteAll();
 }
 
+}  // namespace parsing
 }  // namespace tb

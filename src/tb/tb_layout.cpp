@@ -12,7 +12,7 @@
 
 #include "tb_layout.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
@@ -34,7 +34,7 @@ Layout::Layout(Axis axis) : m_axis(axis) {
   m_packed.paint_overflow_fadeout = 1;
 }
 
-void Layout::OnInflate(const resources::InflateInfo& info) {
+void Layout::OnInflate(const parsing::InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
     SetSpacing(resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
         spacing, kSpacingFromSkin));

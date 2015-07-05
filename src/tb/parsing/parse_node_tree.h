@@ -7,28 +7,29 @@
  ******************************************************************************
  */
 
-#ifndef TB_NODE_REF_TREE_H
-#define TB_NODE_REF_TREE_H
-
-#include "tb_node_tree.h"
+#ifndef TB_PARSING_PARSE_NODE_TREE_H_
+#define TB_PARSING_PARSE_NODE_TREE_H_
 
 #include "tb/id.h"
+#include "tb/parsing/parse_node.h"
 #include "tb/util/link_list.h"
 
 namespace tb {
+namespace parsing {
 
-class Node;
-class NodeRefTreeListener;
+class ParseNode;
+class ParseNodeTreeListener;
 
-// A named Node.
-// Nodes under this node may be referenced from other nodes, either when
-// requesting a value (Node::GetValueFollowRef), or while parsing the node tree.
+// A named ParseNode.
+// ParseNodes under this node may be referenced from other nodes, either when
+// requesting a value (ParseNode::GetValueFollowRef), or while parsing the node
+// tree.
 // While parsing, the values can be used for branch conditions or branches of
 // nodes can be included.
-class NodeRefTree : public util::TBLinkOf<NodeRefTree> {
+class ParseNodeTree : public util::TBLinkOf<ParseNodeTree> {
  public:
-  NodeRefTree(const char* name);
-  virtual ~NodeRefTree();
+  ParseNodeTree(const char* name);
+  virtual ~ParseNodeTree();
 
   const std::string& GetName() const { return m_name; }
   const TBID& GetNameID() const { return m_name_id; }
@@ -38,12 +39,12 @@ class NodeRefTree : public util::TBLinkOf<NodeRefTree> {
   void ReadData(const char* data) { m_node.ReadData(data); }
 
   // Adds a listener that is invoked on changes in this tree.
-  void AddListener(NodeRefTreeListener* listener) {
+  void AddListener(ParseNodeTreeListener* listener) {
     m_listeners.AddLast(listener);
   }
 
   // Removes a change listener from this tree.
-  void RemoveListener(NodeRefTreeListener* listener) {
+  void RemoveListener(ParseNodeTreeListener* listener) {
     m_listeners.Remove(listener);
   }
 
@@ -61,38 +62,40 @@ class NodeRefTree : public util::TBLinkOf<NodeRefTree> {
 
   // Returns the tree with the given name, or nullptr if no matching tree
   // exists.
-  static NodeRefTree* GetRefTree(const char* name, size_t name_len);
+  static ParseNodeTree* GetRefTree(const char* name, size_t name_len);
 
-  /** Go through the tree of nodes recursively and include
-          or remove branches depending on any conditions. */
-  static void ResolveConditions(Node* parent_node);
+  // Goes through the tree of nodes recursively and include or remove branches
+  // depending on any conditions.
+  static void ResolveConditions(ParseNode* parent_node);
 
  private:
-  friend class Node;
-  friend class NodeTarget;
+  friend class ParseNode;
+  friend class ParseNodeTarget;
 
   // Follows any references to data trees and return the destination node.
   // If there's broken references, the node will be returned.
-  static Node* FollowNodeRef(Node* node);
+  static ParseNode* FollowNodeRef(ParseNode* node);
 
   void InvokeChangeListenersInternal(const char* request);
 
-  Node m_node;
+  ParseNode m_node;
   std::string m_name;
   TBID m_name_id;
-  util::TBLinkListOf<NodeRefTreeListener> m_listeners;
-  static util::TBLinkListOf<NodeRefTree> s_ref_trees;
+  util::TBLinkListOf<ParseNodeTreeListener> m_listeners;
+  static util::TBLinkListOf<ParseNodeTree> s_ref_trees;
 };
 
-// Receives OnDataChanged when the value of a node in a NodeRefTree is changed.
+// Receives OnDataChanged when the value of a node in a ParseNodeTree is
+// changed.
 // FIX: The listener can currently only listen to one tree.
-class NodeRefTreeListener : public util::TBLinkOf<NodeRefTreeListener> {
+class ParseNodeTreeListener : public util::TBLinkOf<ParseNodeTreeListener> {
  public:
   // Called when the value is changed for the given node in the given ref tree.
   // The request is without tree name.
-  virtual void OnDataChanged(NodeRefTree* rt, const char* request) = 0;
+  virtual void OnDataChanged(ParseNodeTree* rt, const char* request) = 0;
 };
 
+}  // namespace parsing
 }  // namespace tb
 
-#endif  // TB_NODE_REF_TREE_H
+#endif  // TB_PARSING_PARSE_NODE_TREE_H_

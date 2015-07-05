@@ -175,7 +175,7 @@ class TextBox : public Element,
   bool OnEvent(const ElementEvent& ev) override;
   void OnPaint(const PaintProps& paint_props) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   void OnAdded() override;
   void OnFontChanged() override;
   void OnFocusChanged(bool focused) override;

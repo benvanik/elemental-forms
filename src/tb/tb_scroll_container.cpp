@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
@@ -114,7 +114,7 @@ ScrollContainer::~ScrollContainer() {
   RemoveChild(&m_scrollbar_x);
 }
 
-void ScrollContainer::OnInflate(const resources::InflateInfo& info) {
+void ScrollContainer::OnInflate(const parsing::InflateInfo& info) {
   SetGravity(Gravity::kAll);
   SetAdaptContentSize(
       info.node->GetValueInt("adapt-content", GetAdaptContentSize()) ? true

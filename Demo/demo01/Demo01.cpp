@@ -10,9 +10,9 @@
 #include "tb_text_box.h"
 #include "tb_tab_container.h"
 #include "tb_widget_animation.h"
-#include "tb_node_tree.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/parsing/parse_node.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
 #include "tb/turbo_badger.h"
@@ -23,6 +23,7 @@
 #include "tb/util/utf8.h"
 
 using tb::graphics::Renderer;
+using tb::parsing::ParseNode;
 
 static Application* application;
 
@@ -57,7 +58,7 @@ DemoWindow::DemoWindow() { application->GetRoot()->AddChild(this); }
 bool DemoWindow::LoadResourceFile(const std::string& filename) {
   // We could do ElementFactory::get()->LoadFile(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
-  Node node;
+  ParseNode node;
   if (!node.ReadFile(filename)) return false;
   LoadResource(node);
   return true;
@@ -66,12 +67,12 @@ bool DemoWindow::LoadResourceFile(const std::string& filename) {
 void DemoWindow::LoadResourceData(const char* data) {
   // We could do ElementFactory::get()->LoadData(this, filename) but we want
   // some extra data we store under "WindowInfo", so read into node tree.
-  Node node;
+  ParseNode node;
   node.ReadData(data);
   LoadResource(node);
 }
 
-void DemoWindow::LoadResource(Node& node) {
+void DemoWindow::LoadResource(ParseNode& node) {
   this->LoadNodeTree(&node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
@@ -82,7 +83,7 @@ void DemoWindow::LoadResource(Node& node) {
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
-  Node* tmp = node.GetNode("WindowInfo>size");
+  ParseNode* tmp = node.GetNode("WindowInfo>size");
   if (tmp && tmp->GetValue().array_size() == 2) {
     window_rect.w = dc->GetPxFromString(
         tmp->GetValue().as_array()->at(0)->as_string(), window_rect.w);

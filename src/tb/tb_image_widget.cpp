@@ -8,9 +8,9 @@
  */
 
 #include "tb_image_widget.h"
-#include "tb_node_tree.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
+#include "tb/parsing/parse_node.h"
 
 namespace tb {
 
@@ -19,7 +19,7 @@ void ImageElement::RegisterInflater() {
                                ElementZ::kTop);
 }
 
-void ImageElement::OnInflate(const resources::InflateInfo& info) {
+void ImageElement::OnInflate(const parsing::InflateInfo& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr)) {
     SetImage(filename);
   }

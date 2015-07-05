@@ -52,7 +52,7 @@ class ToggleContainer : public Element {
   void SetValue(int value) override;
   int GetValue() override { return m_value; }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
 
  private:
   void UpdateInternal();

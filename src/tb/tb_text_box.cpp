@@ -15,7 +15,7 @@
 #include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/skin.h"
 #include "tb/util/metrics.h"
@@ -79,7 +79,7 @@ TextBox::~TextBox() {
   RemoveChild(&m_scrollbar_x);
 }
 
-void TextBox::OnInflate(const resources::InflateInfo& info) {
+void TextBox::OnInflate(const parsing::InflateInfo& info) {
   SetMultiline(info.node->GetValueInt("multiline", 0) ? true : false);
   SetStyling(info.node->GetValueInt("styling", 0) ? true : false);
   SetReadOnly(info.node->GetValueInt("readonly", 0) ? true : false);

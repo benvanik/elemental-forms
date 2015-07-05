@@ -15,7 +15,7 @@
 #include "tb/animation.h"
 #include "tb/config.h"
 #include "tb/graphics/image_manager.h"
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
 #include "tb/resources/skin.h"
@@ -38,7 +38,7 @@ bool Initialize(Renderer* renderer, const char* language_file) {
   util::StringTable::get()->Load(language_file);
   resources::FontManager::set(std::make_unique<resources::FontManager>());
   resources::Skin::set(std::make_unique<resources::Skin>());
-  resources::ElementFactory::set(std::make_unique<resources::ElementFactory>());
+  parsing::ElementFactory::set(std::make_unique<parsing::ElementFactory>());
   graphics::ImageManager::set(std::make_unique<graphics::ImageManager>());
   TooltipManager::set(std::make_unique<TooltipManager>());
 
@@ -61,13 +61,13 @@ void Shutdown() {
 
   TooltipManager::set(nullptr);
   graphics::ImageManager::set(nullptr);
-  resources::ElementFactory::set(nullptr);
+  parsing::ElementFactory::set(nullptr);
   resources::Skin::set(nullptr);
   resources::FontManager::set(nullptr);
   util::StringTable::set(nullptr);
   Renderer::set(nullptr);
 }
 
-bool is_initialized() { return resources::ElementFactory::get() != nullptr; }
+bool is_initialized() { return parsing::ElementFactory::get() != nullptr; }
 
 }  // namespace tb

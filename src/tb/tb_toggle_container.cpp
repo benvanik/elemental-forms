@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_node_tree.h"
 #include "tb_toggle_container.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
+#include "tb/parsing/parse_node.h"
 
 namespace tb {
 
@@ -90,7 +90,7 @@ ToggleContainer::ToggleContainer() {
   SetSkinBg(TBIDC("ToggleContainer"), InvokeInfo::kNoCallbacks);
 }
 
-void ToggleContainer::OnInflate(const resources::InflateInfo& info) {
+void ToggleContainer::OnInflate(const parsing::InflateInfo& info) {
   if (const char* toggle = info.node->GetValueString("toggle", nullptr)) {
     SetToggleAction(from_string(toggle, GetToggleAction()));
   }

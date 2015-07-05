@@ -2,7 +2,7 @@
 
 #include "CodeTextBox.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 
 using namespace tb;
 
@@ -13,7 +13,7 @@ void CodeTextBox::RegisterInflater() {
 
 CodeTextBox::CodeTextBox() : TextBox(), inComment(false) {}
 
-void CodeTextBox::OnInflate(const resources::InflateInfo& info) {
+void CodeTextBox::OnInflate(const parsing::InflateInfo& info) {
   TextBox::OnInflate(info);
 }
 

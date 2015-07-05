@@ -56,7 +56,7 @@ class TabContainer : public Element {
   // Returns the element that is the current page, or nullptr if none is active.
   Element* GetCurrentPageElement() const;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnProcess() override;
 

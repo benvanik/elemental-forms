@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "tb_node_tree.h"
+#include "tb/parsing/parse_node.h"
 #include "tb/value.h"
 
 namespace tb {
@@ -21,14 +21,14 @@ class Element;
 }  // namespace tb
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 class ElementInflater;
 class ElementFactory;
 
 // Contains info passed to Element::OnInflate during resource loading.
 struct InflateInfo {
-  InflateInfo(ElementFactory* reader, Element* target, Node* node,
+  InflateInfo(ElementFactory* reader, Element* target, ParseNode* node,
               Value::Type sync_type)
       : reader(reader), target(target), node(node), sync_type(sync_type) {}
 
@@ -36,12 +36,12 @@ struct InflateInfo {
   // The element that that will be parent to the inflated element.
   Element* target;
   // The node containing properties.
-  Node* node;
+  ParseNode* node;
   // The data type that should be synchronized through ElementValue.
   Value::Type sync_type;
 };
 
-// Creates a element from a Node.
+// Creates a element from a ParseNode.
 class ElementInflater {
  public:
   const char* name() const { return name_; }
@@ -78,35 +78,35 @@ class ElementInflater {
 //
 // On startup the inflator must be registered before elements of that type can
 // be inflated.
-#define TB_REGISTER_ELEMENT_INFLATER(classname, sync_type, add_child_z)      \
-  class classname##ElementInflater : public tb::resources::ElementInflater { \
-   public:                                                                   \
-    classname##ElementInflater()                                             \
-        : tb::resources::ElementInflater(#classname, sync_type) {}           \
-    tb::Element* Create(tb::resources::InflateInfo* info) override {         \
-      auto element = new classname();                                        \
-      element->GetContentRoot()->SetZInflate(add_child_z);                   \
-      return element;                                                        \
-    }                                                                        \
-  };                                                                         \
-  tb::resources::ElementFactory::get()->RegisterInflater(                    \
+#define TB_REGISTER_ELEMENT_INFLATER(classname, sync_type, add_child_z)    \
+  class classname##ElementInflater : public tb::parsing::ElementInflater { \
+   public:                                                                 \
+    classname##ElementInflater()                                           \
+        : tb::parsing::ElementInflater(#classname, sync_type) {}           \
+    tb::Element* Create(tb::parsing::InflateInfo* info) override {         \
+      auto element = new classname();                                      \
+      element->GetContentRoot()->SetZInflate(add_child_z);                 \
+      return element;                                                      \
+    }                                                                      \
+  };                                                                       \
+  tb::parsing::ElementFactory::get()->RegisterInflater(                    \
       std::make_unique<classname##ElementInflater>());
 
-// Parses a resource file (or buffer) into a Node tree and turn it into a
+// Parses a resource file (or buffer) into a ParseNode tree and turn it into a
 // hierarchy of elements.
 // It can create all types of elements that have a registered factory
 // (ElementInflater). All core elements have a factory by default, and you can
 // also add your own.
 //
-// Values may be looked up from any existing NodeRefTree using the syntax
+// Values may be looked up from any existing ParseNodeTree using the syntax
 // "@treename>noderequest". If treename is left out, the request will be looked
 // up in the same node tree. In addition to this, strings will be looked up from
 // the global Language by using the syntax "@stringid"
 //
-// Branches may be included or not depending on the value of a NodeRefTree
+// Branches may be included or not depending on the value of a ParseNodeTree
 // node, using "@if @treename>noderequest" and optionally a following "@else".
 //
-// Branches may be included from NodeRefTree using "@include
+// Branches may be included from ParseNodeTree using "@include
 // @treename>noderequest", or included from nodes specified previosly in the
 // same tree using "@include noderequest".
 //
@@ -162,16 +162,16 @@ class ElementFactory {
   bool LoadFile(Element* target, const char* filename);
   bool LoadData(Element* target, const char* data,
                 size_t data_length = std::string::npos);
-  void LoadNodeTree(Element* target, Node* node);
+  void LoadNodeTree(Element* target, ParseNode* node);
 
  private:
-  bool CreateElement(Element* target, Node* node);
+  bool CreateElement(Element* target, ParseNode* node);
 
   static std::unique_ptr<ElementFactory> element_reader_singleton_;
   std::vector<std::unique_ptr<ElementInflater>> inflaters_;
 };
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb
 
 #endif  // TB_RESOURCES_ELEMENT_FACTORY_H_

@@ -22,7 +22,9 @@
 #include "tb/value.h"
 
 namespace tb {
-class Node;
+namespace parsing {
+class ParseNode;
+}  // namespace parsing
 }  // namespace tb
 
 namespace tb {
@@ -200,7 +202,7 @@ class SkinElementStateList {
     return m_state_elements.GetFirst();
   }
 
-  void Load(Node* n);
+  void Load(parsing::ParseNode* n);
 
  private:
   util::TBLinkListOf<SkinElementState> m_state_elements;
@@ -334,17 +336,17 @@ class SkinElement {
     return m_overlay_elements.HasStateElements();
   }
 
-  void Load(Node* n, Skin* skin, const char* skin_path);
+  void Load(parsing::ParseNode* n, Skin* skin, const char* skin_path);
 };
 
 class SkinListener {
  public:
-  // Called when a skin element has been loaded from the given Node.
+  // Called when a skin element has been loaded from the given ParseNode.
   // NOTE: this may be called multiple times on elements that occur multiple
   // times in the skin or is overridden in an override skin.
   // This method can be used to f.ex feed custom properties into element->tag.
   virtual void OnSkinElementLoaded(Skin* skin, SkinElement* element,
-                                   Node* node) = 0;
+                                   parsing::ParseNode* node) = 0;
 };
 
 // Skin contains a list of SkinElement.
@@ -480,7 +482,7 @@ class Skin : private graphics::RendererListener {
   void PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
                               bool fill_center);
   Rect GetFlippedRect(const Rect& src_rect, SkinElement* element) const;
-  int GetPxFromNode(Node* node, int def_value) const;
+  int GetPxFromNode(parsing::ParseNode* node, int def_value) const;
 
   SkinListener* m_listener = nullptr;
   util::HashTableAutoDeleteOf<SkinElement> m_elements;

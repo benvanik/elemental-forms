@@ -10,13 +10,13 @@
 #include <cassert>
 #include <cctype>
 
-#include "tb/resources/text_parser.h"
-#include "tb/resources/text_parser_stream.h"
+#include "tb/parsing/text_parser.h"
+#include "tb/parsing/text_parser_stream.h"
 #include "tb/util/string.h"
 #include "tb/util/utf8.h"
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 bool is_hex(char c) {
   return ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
@@ -130,7 +130,7 @@ bool is_start_of_color(const char* str) {
 }
 
 // Returns true if the given string may be a node reference, such as language
-// strings or NodeRefTree references.
+// strings or ParseNodeTree references.
 bool is_start_of_reference(const char* str) {
   if (*str++ != '@') {
     return false;
@@ -454,5 +454,5 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
   }
 }
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb

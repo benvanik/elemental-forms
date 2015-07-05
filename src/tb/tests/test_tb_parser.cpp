@@ -8,14 +8,15 @@
  */
 
 #include "tb_test.h"
-#include "tb_node_tree.h"
+#include "tb/parsing/parse_node.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::parsing;
 
 TB_TEST_GROUP(tb_parser) {
-  Node node;
+  ParseNode node;
   TB_TEST(Init) {
     TB_VERIFY(node.ReadFile(TB_TEST_FILE("test_tb_parser.tb.txt")));
   }
@@ -129,7 +130,7 @@ TB_TEST_GROUP(tb_parser) {
   }
 
   TB_TEST(arrays_numbers) {
-    Node* arr_n = node.GetNode("arrays>numbers");
+    ParseNode* arr_n = node.GetNode("arrays>numbers");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().array_size() == 5);
     ValueArray* arr = arr_n->GetValue().as_array();
@@ -141,7 +142,7 @@ TB_TEST_GROUP(tb_parser) {
   }
 
   TB_TEST(arrays_dimensions) {
-    Node* arr_n = node.GetNode("arrays>dimensions");
+    ParseNode* arr_n = node.GetNode("arrays>dimensions");
     TB_VERIFY(arr_n);
     TB_VERIFY(arr_n->GetValue().array_size() == 2);
     ValueArray* arr = arr_n->GetValue().as_array();

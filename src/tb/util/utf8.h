@@ -52,7 +52,7 @@ void move_inc(const char* str, size_t* i, size_t i_max);
 void move_dec(const char* str, size_t* i);
 
 /** Count characters before null termination in a UTF-8 string.
-        Node: Does not include the null termination!
+        ParseNode: Does not include the null termination!
         @param str The UTF-8 string.
         @param i_max The last position (size of str).
 */

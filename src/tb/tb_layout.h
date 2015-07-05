@@ -133,7 +133,7 @@ class Layout : public Element {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;

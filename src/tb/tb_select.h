@@ -85,7 +85,7 @@ class SelectList : public Element, public SelectItemObserver {
   // Returns the scrollcontainer used in this list.
   ScrollContainer* GetScrollContainer() { return &m_container; }
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
@@ -146,7 +146,7 @@ class SelectDropdown : public Button, public SelectItemObserver {
   // Returns the menu window if it's open, or nullptr.
   MenuWindow* GetMenuIfOpen() const;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
 
   void OnSourceChanged() override;

@@ -11,7 +11,7 @@ class CodeTextBox : public tb::TextBox {
   enum SpecialStringTypes { Keyword, Variable };
   CodeTextBox();
 
-  virtual void OnInflate(const tb::resources::InflateInfo& info);
+  virtual void OnInflate(const tb::parsing::InflateInfo& info);
 
  private:
   virtual void DrawString(int32_t x, int32_t y, tb::resources::FontFace* font,

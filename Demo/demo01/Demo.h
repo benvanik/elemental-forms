@@ -24,7 +24,7 @@ class DemoWindow : public Window {
   DemoWindow();
   bool LoadResourceFile(const std::string& filename);
   void LoadResourceData(const char* data);
-  void LoadResource(Node& node);
+  void LoadResource(parsing::ParseNode& node);
 
   virtual bool OnEvent(const ElementEvent& ev);
 };

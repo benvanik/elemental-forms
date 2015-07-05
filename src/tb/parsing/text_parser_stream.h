@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_TEXT_PARSER_STREAM_H_
-#define TB_RESOURCES_TEXT_PARSER_STREAM_H_
+#ifndef TB_PARSING_TEXT_PARSER_STREAM_H_
+#define TB_PARSING_TEXT_PARSER_STREAM_H_
 
 #include <algorithm>
 #include <string>
 
-#include "tb/resources/text_parser.h"
+#include "tb/parsing/text_parser.h"
 
 namespace tb {
 namespace util {
@@ -22,7 +22,7 @@ class File;
 }  // namespace tb
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 class TextParserTarget;
 
@@ -51,7 +51,7 @@ class DataTextParserStream : public TextParserStream {
   size_t m_data_len = 0;
 };
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb
 
-#endif  // TB_RESOURCES_TEXT_PARSER_STREAM_H_
+#endif  // TB_PARSING_TEXT_PARSER_STREAM_H_

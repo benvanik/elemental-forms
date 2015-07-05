@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_TEXT_PARSER_H_
-#define TB_RESOURCES_TEXT_PARSER_H_
+#ifndef TB_PARSING_TEXT_PARSER_H_
+#define TB_PARSING_TEXT_PARSER_H_
 
 #include <string>
 
@@ -16,7 +16,7 @@
 #include "tb/value.h"
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 class TextParserStream;
 
@@ -54,7 +54,7 @@ class TextParser {
   bool pending_multiline = false;
 };
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb
 
-#endif  // TB_RESOURCES_TEXT_PARSER_H_
+#endif  // TB_PARSING_TEXT_PARSER_H_

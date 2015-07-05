@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_node_tree.h"
 #include "tb_scroller.h"
 #include "tb_select_item.h"
 #include "tb_text_box.h"
@@ -22,7 +21,8 @@
 #include "tb_window.h"
 
 #include "tb/graphics/renderer.h"
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
+#include "tb/parsing/parse_node.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
@@ -102,19 +102,19 @@ Element::~Element() {
 }
 
 bool Element::LoadFile(const char* filename) {
-  return resources::ElementFactory::get()->LoadFile(this, filename);
+  return parsing::ElementFactory::get()->LoadFile(this, filename);
 }
 
 bool Element::LoadData(const char* data, size_t data_length) {
-  return resources::ElementFactory::get()->LoadData(this, data, data_length);
+  return parsing::ElementFactory::get()->LoadData(this, data, data_length);
 }
 
-void Element::LoadNodeTree(Node* node) {
-  return resources::ElementFactory::get()->LoadNodeTree(this, node);
+void Element::LoadNodeTree(parsing::ParseNode* node) {
+  return parsing::ElementFactory::get()->LoadNodeTree(this, node);
 }
 
 // Sets the id from the given node.
-void Element::SetIdFromNode(TBID& id, Node* node) {
+void Element::SetIdFromNode(TBID& id, parsing::ParseNode* node) {
   if (!node) return;
   if (node->GetValue().is_string()) {
     id.reset(node->GetValue().as_string());
@@ -123,7 +123,7 @@ void Element::SetIdFromNode(TBID& id, Node* node) {
   }
 }
 
-void Element::ReadItemNodes(Node* parent_node,
+void Element::ReadItemNodes(parsing::ParseNode* parent_node,
                             GenericStringItemSource* target_source) {
   // If there is a items node, loop through all its children and add
   // items to the target item source.
@@ -145,7 +145,7 @@ void Element::ReadItemNodes(Node* parent_node,
   }
 }
 
-void Element::OnInflate(const resources::InflateInfo& info) {
+void Element::OnInflate(const parsing::InflateInfo& info) {
   Element::SetIdFromNode(id(), info.node->GetNode("id"));
   Element::SetIdFromNode(GetGroupID(), info.node->GetNode("group-id"));
 
@@ -155,7 +155,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
     SetValue(info.node->GetValueInt("value", 0));
   }
 
-  if (Node* data_node = info.node->GetNode("data")) {
+  if (auto data_node = info.node->GetNode("data")) {
     data.Copy(data_node->GetValue());
   }
 
@@ -217,7 +217,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   if (const char* skin = info.node->GetValueString("skin", nullptr)) {
     SetSkinBg(skin);
   }
-  if (Node* lp = info.node->GetNode("lp")) {
+  if (auto lp = info.node->GetNode("lp")) {
     LayoutParams layout_params;
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
@@ -264,7 +264,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
   if (!GetParent()) info.target->AddChild(this, info.target->GetZInflate());
 
   // Read the font now when the element is in the hiearchy so inheritance works.
-  if (Node* font = info.node->GetNode("font")) {
+  if (auto font = info.node->GetNode("font")) {
     FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
       int new_size =
@@ -280,7 +280,7 @@ void Element::OnInflate(const resources::InflateInfo& info) {
 
   info.target->OnInflateChild(this);
 
-  if (Node* rect_node = info.node->GetNode("rect")) {
+  if (auto rect_node = info.node->GetNode("rect")) {
     auto dc = resources::Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.array_size() == 4) {

@@ -7,8 +7,7 @@
  ******************************************************************************
  */
 
-#include "tb_node_tree.h"
-
+#include "tb/parsing/parse_node.h"
 #include "tb/util/string.h"
 #include "tb/util/string_table.h"
 
@@ -19,13 +18,13 @@ std::unique_ptr<StringTable> StringTable::string_table_singleton_;
 
 bool StringTable::Load(const char* filename) {
   // Read the file into a node tree (even though it's only a flat list).
-  Node node;
+  parsing::ParseNode node;
   if (!node.ReadFile(filename)) {
     return false;
   }
 
   // Go through all nodes and add to the strings hash table.
-  Node* n = node.GetFirstChild();
+  auto n = node.GetFirstChild();
   while (n) {
     const char* str = n->GetValue().as_string();
     table_.emplace(TBID(n->GetName()), str);

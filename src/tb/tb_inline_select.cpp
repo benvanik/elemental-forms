@@ -11,7 +11,7 @@
 #include <cstdlib>
 
 #include "tb_inline_select.h"
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/util/math.h"
 
 namespace tb {
@@ -54,7 +54,7 @@ SelectInline::~SelectInline() {
   RemoveChild(&m_layout);
 }
 
-void SelectInline::OnInflate(const resources::InflateInfo& info) {
+void SelectInline::OnInflate(const parsing::InflateInfo& info) {
   int min = info.node->GetValueInt("min", GetMinValue());
   int max = info.node->GetValueInt("max", GetMaxValue());
   SetLimits(min, max);

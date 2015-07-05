@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
+#include "tb/parsing/parse_node.h"
 
-#include "tb_node_tree.h"
 #include "tb_widgets.h"
 
 namespace tb {
-namespace resources {
+namespace parsing {
 
 std::unique_ptr<ElementFactory> ElementFactory::element_reader_singleton_;
 
@@ -23,7 +23,7 @@ void ElementFactory::RegisterInflater(
 }
 
 bool ElementFactory::LoadFile(Element* target, const char* filename) {
-  Node node;
+  ParseNode node;
   if (!node.ReadFile(filename)) {
     return false;
   }
@@ -33,20 +33,20 @@ bool ElementFactory::LoadFile(Element* target, const char* filename) {
 
 bool ElementFactory::LoadData(Element* target, const char* data,
                               size_t data_length) {
-  Node node;
+  ParseNode node;
   node.ReadData(data, data_length);
   LoadNodeTree(target, &node);
   return true;
 }
 
-void ElementFactory::LoadNodeTree(Element* target, Node* node) {
+void ElementFactory::LoadNodeTree(Element* target, ParseNode* node) {
   // Iterate through all nodes and create elements.
-  for (Node* child = node->GetFirstChild(); child; child = child->GetNext()) {
+  for (ParseNode* child = node->GetFirstChild(); child; child = child->GetNext()) {
     CreateElement(target, child);
   }
 }
 
-bool ElementFactory::CreateElement(Element* target, Node* node) {
+bool ElementFactory::CreateElement(Element* target, ParseNode* node) {
   // Find a element creator from the node name.
   ElementInflater* source_factory = nullptr;
   for (auto& inflater : inflaters_) {
@@ -75,7 +75,7 @@ bool ElementFactory::CreateElement(Element* target, Node* node) {
   assert(new_element->GetParent());
 
   // Iterate through all nodes and create elements.
-  for (Node* n = node->GetFirstChild(); n; n = n->GetNext()) {
+  for (ParseNode* n = node->GetFirstChild(); n; n = n->GetNext()) {
     CreateElement(new_element, n);
   }
 
@@ -86,5 +86,5 @@ bool ElementFactory::CreateElement(Element* target, Node* node) {
   return true;
 }
 
-}  // namespace resources
+}  // namespace parsing
 }  // namespace tb

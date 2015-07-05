@@ -8,17 +8,18 @@
  */
 
 #include "tb_test.h"
-#include "tb_node_tree.h"
+#include "tb/parsing/parse_node.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::parsing;
 
 TB_TEST_GROUP(tb_value) {
   TB_TEST(node_create_on_get) {
-    Node node;
+    ParseNode node;
     TB_VERIFY(node.GetNode("foo>bar>funky") == nullptr);
-    TB_VERIFY(node.GetNode("foo>bar>funky", Node::MissingPolicy::kCreate) !=
+    TB_VERIFY(node.GetNode("foo>bar>funky", ParseNode::MissingPolicy::kCreate) !=
               nullptr);
     TB_VERIFY(node.GetNode("foo>bar>funky") != nullptr);
   }

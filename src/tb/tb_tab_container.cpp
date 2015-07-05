@@ -12,7 +12,7 @@
 
 #include "tb_tab_container.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 
 namespace tb {
 
@@ -69,7 +69,7 @@ TabContainer::~TabContainer() {
   RemoveChild(&m_root_layout);
 }
 
-void TabContainer::OnInflate(const resources::InflateInfo& info) {
+void TabContainer::OnInflate(const parsing::InflateInfo& info) {
   Element::OnInflate(info);
 
   if (const char* align = info.node->GetValueString("align", nullptr)) {
@@ -77,22 +77,22 @@ void TabContainer::OnInflate(const resources::InflateInfo& info) {
   }
   // Allow additional attributes to be specified for the "tabs", "content" and
   // "root" layouts by calling OnInflate.
-  if (Node* tabs = info.node->GetNode("tabs")) {
+  if (auto tabs = info.node->GetNode("tabs")) {
     // Inflate the tabs elements into the tab layout.
     Layout* tab_layout = GetTabLayout();
     info.reader->LoadNodeTree(tab_layout, tabs);
 
-    resources::InflateInfo inflate_info(
+    parsing::InflateInfo inflate_info(
         info.reader, tab_layout->GetContentRoot(), tabs, Value::Type::kNull);
     tab_layout->OnInflate(inflate_info);
   }
-  if (Node* tabs = info.node->GetNode("content")) {
-    resources::InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
+  if (auto tabs = info.node->GetNode("content")) {
+    parsing::InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
                                         Value::Type::kNull);
     GetContentRoot()->OnInflate(inflate_info);
   }
-  if (Node* tabs = info.node->GetNode("root")) {
-    resources::InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
+  if (auto tabs = info.node->GetNode("root")) {
+    parsing::InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
                                         Value::Type::kNull);
     m_root_layout.OnInflate(inflate_info);
   }

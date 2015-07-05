@@ -9,10 +9,9 @@
 
 #include <algorithm>
 
-#include "tb_node_tree.h"
-
 #include "tb/graphics/image_loader.h"
 #include "tb/graphics/renderer.h"
+#include "tb/parsing/parse_node.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
@@ -20,6 +19,7 @@
 #ifdef TB_FONT_RENDERER_TBBF
 
 using namespace tb;
+using namespace tb::parsing;
 using namespace tb::resources;
 
 struct GLYPH {
@@ -106,7 +106,7 @@ class TBBFRenderer : public FontRenderer {
   virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
 
  private:
-  Node m_node;
+  ParseNode m_node;
   FontMetrics m_metrics;
   graphics::ImageLoader* m_img;
   int m_size;
@@ -159,8 +159,8 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   if (!m_node.ReadFile(filename)) return false;
 
   // Check for size nodes and get the one closest to the size we want.
-  Node* size_node = nullptr;
-  for (Node* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
+  ParseNode* size_node = nullptr;
+  for (ParseNode* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
     if (strcmp(n->GetName(), "size") == 0) {
       if (!size_node ||
           std::abs(m_size - n->GetValue().as_integer()) <

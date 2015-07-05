@@ -90,7 +90,7 @@ class ScrollContainer : public Element {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;

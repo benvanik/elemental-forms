@@ -34,7 +34,7 @@ class ImageElement : public Element {
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
-  void OnInflate(const resources::InflateInfo& info) override;
+  void OnInflate(const parsing::InflateInfo& info) override;
   void OnPaint(const PaintProps& paint_props) override;
 
  private:

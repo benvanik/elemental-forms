@@ -8,28 +8,31 @@
  */
 
 #include "tb_test.h"
-#include "tb_node_ref_tree.h"
 #include "tb_layout.h"
 #include "tb_text_box.h"
+
+#include "tb/parsing/parse_node.h"
+#include "tb/parsing/parse_node_tree.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::parsing;
 
 TB_TEST_GROUP(tb_node_ref_tree) {
-  class DataListener : public NodeRefTreeListener {
+  class DataListener : public ParseNodeTreeListener {
    public:
     std::string changed_request;
     int changed_counter;
     DataListener() : changed_counter(0) {}
-    virtual void OnDataChanged(NodeRefTree* dt, const char* request) {
+    virtual void OnDataChanged(ParseNodeTree* dt, const char* request) {
       changed_request = request;
       changed_counter++;
     }
   };
 
   TB_TEST(change_on_set) {
-    NodeRefTree dt("r");
+    ParseNodeTree dt("r");
     DataListener dl;
     dt.AddListener(&dl);
 
@@ -52,7 +55,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_value) {
-    NodeRefTree dt("test_styles");
+    ParseNodeTree dt("test_styles");
     dt.ReadData(
         "FireButton\n"
         "	skin: 'FireButtonSkin'\n");
@@ -65,11 +68,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_value_recurse) {
-    NodeRefTree dt1("test_foo");
+    ParseNodeTree dt1("test_foo");
     dt1.ReadData(
         "foo_value: 42\n"
         "foo_circular: '@test_bar>bar_circular'\n");
-    NodeRefTree dt2("test_bar");
+    ParseNodeTree dt2("test_bar");
     dt2.ReadData(
         "bar_value: '@test_foo>foo_value'\n"
         "bar_circular: '@test_foo>foo_circular'\n"
@@ -94,11 +97,11 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
-    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bar>bar_circular2").type() ==
+    TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bar>bar_circular2").type() ==
               Value::Type::kNull);
 
     // References tree is wrong
-    TB_VERIFY(NodeRefTree::GetValueFromTree("@test_bad_tree>does_not_exist")
+    TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bad_tree>does_not_exist")
                   .type() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
@@ -111,7 +114,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_include) {
-    NodeRefTree dt("test_styles");
+    ParseNodeTree dt("test_styles");
     dt.ReadData(
         "VeryNice\n"
         "	skin: 'SpecialSkin'\n"
@@ -140,7 +143,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
   }
 
   TB_TEST(reference_condition) {
-    NodeRefTree dt("test_settings");
+    ParseNodeTree dt("test_settings");
     dt.ReadData(
         "layout\n"
         "	landscape: 1\n");
@@ -176,8 +179,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);
   }
 
-  Node* GetChildNodeFromIndex(Node * parent, int index) {
-    Node* child = parent->GetFirstChild();
+  ParseNode* GetChildNodeFromIndex(ParseNode * parent, int index) {
+    ParseNode* child = parent->GetFirstChild();
     while (child && index-- > 0) child = child->GetNext();
     return child;
   }
@@ -193,10 +196,10 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "		B3\n"
         "		B4\n"
         "	B5\n";
-    Node node;
+    ParseNode node;
     node.ReadData(str);
 
-    Node* a = GetChildNodeFromIndex(&node, 0);
+    ParseNode* a = GetChildNodeFromIndex(&node, 0);
     TB_VERIFY_STR(a->GetName(), "A");
     TB_VERIFY_STR(GetChildNodeFromIndex(a, 0)->GetName(), "B1");
     TB_VERIFY_STR(

@@ -13,7 +13,7 @@
 #include "tb_select.h"
 #include "tb_widgets_listener.h"
 
-#include "tb/resources/element_factory.h"
+#include "tb/parsing/element_factory.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/string_table.h"
@@ -48,7 +48,7 @@ SelectList::~SelectList() {
   SetSource(nullptr);
 }
 
-void SelectList::OnInflate(const resources::InflateInfo& info) {
+void SelectList::OnInflate(const parsing::InflateInfo& info) {
   // Read items (if there is any) into the default source.
   Element::ReadItemNodes(info.node, GetDefaultSource());
   Element::OnInflate(info);
@@ -371,7 +371,7 @@ SelectDropdown::~SelectDropdown() {
   CloseWindow();
 }
 
-void SelectDropdown::OnInflate(const resources::InflateInfo& info) {
+void SelectDropdown::OnInflate(const parsing::InflateInfo& info) {
   // Read items (if there is any) into the default source.
   Element::ReadItemNodes(info.node, GetDefaultSource());
   Element::OnInflate(info);
