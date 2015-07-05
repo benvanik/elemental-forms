@@ -10,12 +10,11 @@
 #ifndef TB_EDITFIELD_H
 #define TB_EDITFIELD_H
 
-#include "tb_style_edit.h"
-
 #include "tb/element.h"
-#include "tb/message_handler.h"
 #include "tb/elements/label.h"
 #include "tb/elements/scroll_bar.h"
+#include "tb/message_handler.h"
+#include "tb/text/text_view.h"
 #include "tb/types.h"
 
 namespace tb {
@@ -40,7 +39,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
 // It may perform styling of text and contain custom embedded content, if
 // enabled by SetStyling(true). Disabled by default.
 class TextBox : public Element,
-                private StyleEditListener,
+                private text::TextViewListener,
                 public MessageHandler {
  public:
   TBOBJECT_SUBCLASS(TextBox, Element);
@@ -87,8 +86,8 @@ class TextBox : public Element,
   void SetVirtualWidth(int virtual_width);
   int GetVirtualWidth() const { return m_virtual_width; }
 
-  // Gets the StyleEdit object that contains more functions and settings.
-  StyleEdit* GetStyleEdit() { return &m_style_edit; }
+  // Gets the TextView object that contains more functions and settings.
+  text::TextView* GetTextView() { return &m_style_edit; }
 
   // Sets the edit type that is a hint for virtual keyboards about what the
   // content should be.
@@ -111,20 +110,20 @@ class TextBox : public Element,
   TextAlign GetTextAlign() { return m_style_edit.align; }
 
   void SetText(const char* text) override {
-    m_style_edit.SetText(text, CaretPosition::kBeginning);
+    m_style_edit.SetText(text, text::CaretPosition::kBeginning);
   }
   using Element::SetText;
   std::string GetText() override { return m_style_edit.GetText(); }
 
   // Sets the text and also specify if the caret should be positioned at the
   // beginning or end of the text.
-  void SetText(const char* text, CaretPosition pos) {
+  void SetText(const char* text, text::CaretPosition pos) {
     m_style_edit.SetText(text, pos);
   }
   // Sets the text of the given length and also specify if the caret should be
   // positioned at the beginning or end of the text.
   void SetText(const char* text, size_t text_len,
-               CaretPosition pos = CaretPosition::kBeginning) {
+               text::CaretPosition pos = text::CaretPosition::kBeginning) {
     m_style_edit.SetText(text, text_len, pos);
   }
 
@@ -183,12 +182,12 @@ class TextBox : public Element,
   //   <element Button: text: "Hello world!" id: "hello">
   // Example - Create a image from skin element "Icon48":
   //   <element IconBox: skin: "Icon48">
-  class TextBoxContentFactory : public TextFragmentContentFactory {
+  class TextBoxContentFactory : public text::TextFragmentContentFactory {
    public:
     class TextBox* text_box = nullptr;
     int GetContent(const char* text) override;
-    TextFragmentContent* CreateFragmentContent(const char* text,
-                                               size_t text_len) override;
+    text::TextFragmentContent* CreateFragmentContent(const char* text,
+                                                     size_t text_len) override;
   };
 
   void UpdateScrollbarVisibility(bool multiline);
@@ -214,7 +213,7 @@ class TextBox : public Element,
   EditType m_edit_type = EditType::kText;
   TextBoxScrollRoot m_root;
   TextBoxContentFactory m_content_factory;
-  StyleEdit m_style_edit;
+  text::TextView m_style_edit;
   bool m_adapt_to_content_size = false;
   int m_virtual_width = 250;
 };

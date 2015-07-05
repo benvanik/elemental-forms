@@ -82,7 +82,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   // FIX: It would be better to use adapt-to-content on the text_box to achieve
   // the most optimal size.
   // At least when we do full blown multi pass size checking.
-  rect.h += text_box->GetStyleEdit()->GetOverflowY();
+  rect.h += text_box->GetTextView()->GetOverflowY();
 
   // Create background dimmer.
   if (settings->dimmer) {

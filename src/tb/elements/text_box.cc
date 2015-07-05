@@ -7,12 +7,11 @@
  ******************************************************************************
  */
 
-#include "tb_style_edit_content.h"
-
 #include "tb/elements/menu_window.h"
 #include "tb/elements/text_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/text/font_face.h"
+#include "tb/text/text_fragment_content.h"
 #include "tb/skin.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
@@ -531,8 +530,8 @@ void TextBox::TextBoxScrollRoot::OnPaintChildren(
 
 void TextBox::TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
   TextBox* edit_field = static_cast<TextBox*>(GetParent());
-  x = -edit_field->GetStyleEdit()->scroll_x;
-  y = -edit_field->GetStyleEdit()->scroll_y;
+  x = -edit_field->GetTextView()->scroll_x;
+  y = -edit_field->GetTextView()->scroll_y;
 }
 
 HitStatus TextBox::TextBoxScrollRoot::GetHitStatus(int x, int y) {
@@ -544,16 +543,17 @@ HitStatus TextBox::TextBoxScrollRoot::GetHitStatus(int x, int y) {
   return HitStatus::kNoHit;
 }
 
-class TextFragmentContentElement : public TextFragmentContent {
+class TextFragmentContentElement : public text::TextFragmentContent {
  public:
   TextFragmentContentElement(Element* parent, Element* element);
   ~TextFragmentContentElement() override;
 
   void UpdatePos(int x, int y) override;
-  int32_t GetWidth(text::FontFace* font, TextFragment* fragment) override;
-  int32_t GetHeight(text::FontFace* font, TextFragment* fragment) override;
+  int32_t GetWidth(text::FontFace* font, text::TextFragment* fragment) override;
+  int32_t GetHeight(text::FontFace* font,
+                    text::TextFragment* fragment) override;
   int32_t GetBaseline(text::FontFace* font,
-                      TextFragment* fragment) override;
+                      text::TextFragment* fragment) override;
 
  private:
   Element* m_element;
@@ -576,19 +576,19 @@ void TextFragmentContentElement::UpdatePos(int x, int y) {
 }
 
 int32_t TextFragmentContentElement::GetWidth(text::FontFace* font,
-                                             TextFragment* fragment) {
+                                             text::TextFragment* fragment) {
   return m_element->rect().w ? m_element->rect().w
                              : m_element->GetPreferredSize().pref_w;
 }
 
 int32_t TextFragmentContentElement::GetHeight(text::FontFace* font,
-                                              TextFragment* fragment) {
+                                              text::TextFragment* fragment) {
   return m_element->rect().h ? m_element->rect().h
                              : m_element->GetPreferredSize().pref_h;
 }
 
 int32_t TextFragmentContentElement::GetBaseline(text::FontFace* font,
-                                                TextFragment* fragment) {
+                                                text::TextFragment* fragment) {
   int height = GetHeight(font, fragment);
   return (height + fragment->block->CalculateBaseline(font)) / 2;
 }
@@ -597,8 +597,9 @@ int TextBox::TextBoxContentFactory::GetContent(const char* text) {
   return TextFragmentContentFactory::GetContent(text);
 }
 
-TextFragmentContent* TextBox::TextBoxContentFactory::CreateFragmentContent(
-    const char* text, size_t text_len) {
+text::TextFragmentContent*
+TextBox::TextBoxContentFactory::CreateFragmentContent(const char* text,
+                                                      size_t text_len) {
   if (strncmp(text, "<element ", std::min(text_len, 8ull)) == 0) {
     // Create a wrapper for the generated element.
     // Its size will adapt to the content.

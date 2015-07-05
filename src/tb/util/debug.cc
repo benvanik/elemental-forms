@@ -170,7 +170,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     buf.AppendString("\n");
 
     // Append the line to the output textfield.
-    auto se = output->GetStyleEdit();
+    auto se = output->GetTextView();
     se->selection.SelectNothing();
     se->AppendText(buf.GetData(), std::string::npos, true);
     se->ScrollIfNeeded(false, true);

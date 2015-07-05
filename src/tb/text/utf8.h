@@ -1,10 +1,19 @@
-#ifndef TB_UTIL_UTF8_H_
-#define TB_UTIL_UTF8_H_
+/**
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
+ ******************************************************************************
+ */
+
+#ifndef TB_TEXT_UTF8_H_
+#define TB_TEXT_UTF8_H_
 
 #include <cstdint>
 
 namespace tb {
-namespace util {
+namespace text {
 namespace utf8 {
 
 typedef uint32_t UCS4;
@@ -59,7 +68,7 @@ void move_dec(const char* str, size_t* i);
 size_t count_characters(const char* str, size_t i_max);
 
 }  // namespace utf8
-}  // namespace util
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_UTIL_UTF8_H_
+#endif  // TB_TEXT_UTF8_H_

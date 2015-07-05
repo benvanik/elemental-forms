@@ -7,15 +7,10 @@
  ******************************************************************************
  */
 
-#include "tb_style_edit_content.h"
-
-#include <algorithm>
-#include <cassert>
-
-#include "tb_style_edit.h"
+#include "tb/text/text_fragment_content.h"
 
 namespace tb {
-namespace elements {
+namespace text {
 
 int TextFragmentContentFactory::GetContent(const char* text) {
   if (text[0] == '<') {
@@ -59,7 +54,7 @@ void TextFragmentContentHR::Paint(TextFragment* fragment, int32_t translate_x,
   int w = fragment->block->style_edit->layout_width * width_in_percent_ / 100;
   x += (fragment->block->style_edit->layout_width - w) / 2;
 
-  StyleEditListener* listener = fragment->block->style_edit->listener;
+  TextViewListener* listener = fragment->block->style_edit->listener;
   listener->DrawRectFill(Rect(x, y, w, height_), props->data->text_color);
 }
 
@@ -97,5 +92,5 @@ void TextFragmentContentStylePop::Paint(TextFragment* fragment,
   props->Pop();
 }
 
-}  // namespace elements
+}  // namespace text
 }  // namespace tb

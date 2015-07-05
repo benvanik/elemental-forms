@@ -12,8 +12,8 @@
 
 #include "tb/parsing/text_parser.h"
 #include "tb/parsing/text_parser_stream.h"
+#include "tb/text/utf8.h"
 #include "tb/util/string.h"
-#include "tb/util/utf8.h"
 
 namespace tb {
 namespace parsing {
@@ -86,7 +86,7 @@ void UnescapeString(char* str) {
           // and we have 4 bytes to use for \xXX and 6 for \uXXXX.
           src += 2;
           if (auto hex = parse_hex(src, src[1] == 'x' ? 2 : 4)) {
-            dst += util::utf8::encode(hex, dst);
+            dst += text::utf8::encode(hex, dst);
           }
           continue;
         }

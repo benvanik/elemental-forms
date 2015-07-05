@@ -1841,8 +1841,7 @@ FontDescription Element::GetCalculatedFontDescription() const {
 }
 
 text::FontFace* Element::GetFont() const {
-  return text::FontManager::get()->GetFontFace(
-      GetCalculatedFontDescription());
+  return text::FontManager::get()->GetFontFace(GetCalculatedFontDescription());
 }
 
 using tb::SkinCondition;

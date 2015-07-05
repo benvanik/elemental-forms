@@ -39,8 +39,9 @@
     <ClCompile Include="src\tb\elements\scroll_container.cc" />
     <ClCompile Include="src\tb\elements\list_box.cc" />
     <ClCompile Include="src\tb\list_item.cc" />
-    <ClCompile Include="src\tb\elements\tb_style_edit.cpp" />
-    <ClCompile Include="src\tb\elements\tb_style_edit_content.cpp" />
+    <ClCompile Include="src\tb\text\caret.cc" />
+    <ClCompile Include="src\tb\text\text_view.cc" />
+    <ClCompile Include="src\tb\text\text_fragment_content.cc" />
     <ClCompile Include="src\tb\elements\tab_container.cc" />
     <ClCompile Include="src\tb\elements\text_box.cc" />
     <ClCompile Include="src\tb\elements\group_box.cc" />
@@ -67,6 +68,9 @@
     <ClCompile Include="src\tb\skin.cc" />
     <ClCompile Include="src\tb\parsing\text_parser.cc" />
     <ClCompile Include="src\tb\parsing\text_parser_stream.cc" />
+    <ClCompile Include="src\tb\text\text_fragment.cc" />
+    <ClCompile Include="src\tb\text\text_selection.cc" />
+    <ClCompile Include="src\tb\text\undo_stack.cc" />
     <ClCompile Include="src\tb\turbo_badger.cc" />
     <ClCompile Include="src\tb\id.cc" />
     <ClCompile Include="src\tb\message_handler.cc" />
@@ -107,7 +111,7 @@
     <ClCompile Include="src\tb\util\string.cc" />
     <ClCompile Include="src\tb\util\string_builder.cc" />
     <ClCompile Include="src\tb\util\string_table.cc" />
-    <ClCompile Include="src\tb\util\utf8.cc" />
+    <ClCompile Include="src\tb\text\utf8.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tb\animation_manager.h" />
@@ -138,8 +142,9 @@
     <ClInclude Include="src\tb\elements\scroll_container.h" />
     <ClInclude Include="src\tb\elements\list_box.h" />
     <ClInclude Include="src\tb\list_item.h" />
-    <ClInclude Include="src\tb\elements\tb_style_edit.h" />
-    <ClInclude Include="src\tb\elements\tb_style_edit_content.h" />
+    <ClInclude Include="src\tb\text\caret.h" />
+    <ClInclude Include="src\tb\text\text_view.h" />
+    <ClInclude Include="src\tb\text\text_fragment_content.h" />
     <ClInclude Include="src\tb\elements\tab_container.h" />
     <ClInclude Include="src\tb\elements\text_box.h" />
     <ClInclude Include="src\tb\elements\group_box.h" />
@@ -166,6 +171,9 @@
     <ClInclude Include="src\tb\skin.h" />
     <ClInclude Include="src\tb\parsing\text_parser.h" />
     <ClInclude Include="src\tb\parsing\text_parser_stream.h" />
+    <ClInclude Include="src\tb\text\text_fragment.h" />
+    <ClInclude Include="src\tb\text\text_selection.h" />
+    <ClInclude Include="src\tb\text\undo_stack.h" />
     <ClInclude Include="src\tb\tooltip_manager.h" />
     <ClInclude Include="src\tb\element_animation.h" />
     <ClInclude Include="src\tb\color.h" />
@@ -199,7 +207,7 @@
     <ClInclude Include="src\tb\util\string_builder.h" />
     <ClInclude Include="src\tb\util\string_table.h" />
     <ClInclude Include="src\tb\util\timer.h" />
-    <ClInclude Include="src\tb\util\utf8.h" />
+    <ClInclude Include="src\tb\text\utf8.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="integration.txt" />

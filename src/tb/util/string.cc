@@ -58,5 +58,57 @@ std::string format_string(const char* format, va_list args) {
   }
 }
 
+bool is_space(int8_t c) {
+  switch (c) {
+    case ' ':
+      return true;
+  }
+  return false;
+}
+
+bool is_linebreak(int8_t c) {
+  switch (c) {
+    case '\n':
+    case '\r':
+    case 0:
+      return true;
+  }
+  return false;
+}
+
+bool is_wordbreak(int8_t c) {
+  switch (c) {
+    case 0:
+    case '\n':
+    case '\r':
+    case '-':
+    case '\t':
+    case '\"':
+    case '(':
+    case ')':
+    case '/':
+    case '\\':
+    case '*':
+    case '+':
+    case ',':
+    case '.':
+    case ';':
+    case ':':
+    case '>':
+    case '<':
+    case '&':
+    case '#':
+    case '!':
+    case '=':
+    case '[':
+    case ']':
+    case '{':
+    case '}':
+    case '^':
+      return true;
+  }
+  return is_space(c);
+}
+
 }  // namespace util
 }  // namespace tb

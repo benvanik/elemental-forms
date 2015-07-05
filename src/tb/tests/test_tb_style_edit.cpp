@@ -14,17 +14,18 @@
 
 using namespace tb;
 using namespace tb::elements;
+using namespace tb::text;
 
 TB_TEST_GROUP(tb_text_box) {
   TextBox* edit;
-  StyleEdit* sedit;
+  TextView* sedit;
 
   // == Setup & helpers =====================================================
 
   TB_TEST(Setup) {
     TB_VERIFY(edit = new TextBox());
     edit->SetMultiline(true);
-    sedit = edit->GetStyleEdit();
+    sedit = edit->GetTextView();
 
     /** Set a size so the layout code will be called and we can do some layout
      * tests. */
@@ -76,7 +77,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY(sedit->blocks.CountLinks() == 2);
   }
 
-  TB_TEST(settext_undoredo_ins) {
+  TB_TEST(settext_undo_stack_ins) {
     // 1 character insertions in sequence should be merged to word boundary.
     sedit->InsertText("O");
     sedit->InsertText("N");
@@ -108,7 +109,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "ONE ");
   }
 
-  TB_TEST(settext_undoredo_ins_scattered) {
+  TB_TEST(settext_undo_stack_ins_scattered) {
     sedit->InsertText("AAA");
     sedit->caret.SetGlobalOffset(2);
     sedit->InsertText(".");
@@ -127,7 +128,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "A.A.A");
   }
 
-  TB_TEST(settext_undoredo_ins_multiline) {
+  TB_TEST(settext_undo_stack_ins_multiline) {
     sedit->InsertText("ONE\nTWO");
     TB_VERIFY_STR(edit->GetText(), "ONE\nTWO");
 
@@ -137,7 +138,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "ONE\nTWO");
   }
 
-  TB_TEST(settext_undoredo_del) {
+  TB_TEST(settext_undo_stack_del) {
     sedit->InsertText("ONE TWO");
     sedit->selection.Select(3, 7);
     sedit->selection.RemoveContent();
@@ -149,7 +150,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "ONE");
   }
 
-  TB_TEST(settext_undoredo_ins_linebreak_1) {
+  TB_TEST(settext_undo_stack_ins_linebreak_1) {
     sedit->InsertText("ONETWO");
     sedit->caret.SetGlobalOffset(3);
     sedit->InsertText("\n");
@@ -161,7 +162,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "ONE\nTWO");
   }
 
-  TB_TEST(settext_undoredo_ins_linebreak_2) {
+  TB_TEST(settext_undo_stack_ins_linebreak_2) {
     // Inserting a linebreak at the end when we don't end
     // the line with a linebreak character must generate
     // one extra linebreak.
@@ -177,7 +178,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "");
   }
 
-  TB_TEST(settext_undoredo_ins_linebreak_3) {
+  TB_TEST(settext_undo_stack_ins_linebreak_3) {
     sedit->SetWindowsStyleBreak(false);
 
     sedit->InsertBreak();
@@ -192,7 +193,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "");
   }
 
-  TB_TEST(settext_undoredo_ins_linebreak_4) {
+  TB_TEST(settext_undo_stack_ins_linebreak_4) {
     sedit->InsertText("ONE");
     sedit->InsertBreak();
     TB_VERIFY_STR(edit->GetText(), "ONE\r\n\r\n");
@@ -204,7 +205,7 @@ TB_TEST_GROUP(tb_text_box) {
     TB_VERIFY_STR(edit->GetText(), "ONE\r\n\r\n");
   }
 
-  TB_TEST(settext_undoredo_bugfix1) {
+  TB_TEST(settext_undo_stack_bugfix1) {
     // Make sure we use the test dummy font (ID 0), so we're not dependant on
     // the available fonts & font backend in this test.
     FontDescription fd;

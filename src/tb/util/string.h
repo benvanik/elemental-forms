@@ -32,6 +32,10 @@ inline std::string format_string(const char* format, ...) {
   return result;
 }
 
+bool is_space(int8_t c);
+bool is_linebreak(int8_t c);
+bool is_wordbreak(int8_t c);
+
 }  // namespace util
 }  // namespace tb
 

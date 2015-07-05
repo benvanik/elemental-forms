@@ -13,6 +13,7 @@
 #include "tb/text/font_face.h"
 #include "tb/text/font_manager.h"
 #include "tb/text/font_renderer.h"
+#include "tb/text/utf8.h"
 
 namespace tb {
 namespace text {
@@ -65,7 +66,7 @@ bool FontFace::RenderGlyphs(const char* glyph_str, size_t glyph_str_len) {
   bool has_all_glyphs = true;
   size_t i = 0;
   while (glyph_str[i] && i < glyph_str_len) {
-    UCS4 cp = util::utf8::decode_next(glyph_str, &i, glyph_str_len);
+    UCS4 cp = utf8::decode_next(glyph_str, &i, glyph_str_len);
     if (!GetGlyph(cp, true)) {
       has_all_glyphs = false;
     }
@@ -159,7 +160,7 @@ void FontFace::DrawString(int x, int y, const Color& color, const char* str,
 
   size_t i = 0;
   while (str[i] && i < len) {
-    UCS4 cp = util::utf8::decode_next(str, &i, len);
+    UCS4 cp = utf8::decode_next(str, &i, len);
     if (cp == 0xFFFF) continue;
     if (FontGlyph* glyph = GetGlyph(cp, true)) {
       if (glyph->frag) {
@@ -191,7 +192,7 @@ int FontFace::GetStringWidth(const char* str, size_t len) {
   int width = 0;
   size_t i = 0;
   while (str[i] && i < len) {
-    UCS4 cp = util::utf8::decode_next(str, &i, len);
+    UCS4 cp = utf8::decode_next(str, &i, len);
     if (cp == 0xFFFF) {
       continue;
     }

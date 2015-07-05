@@ -13,12 +13,12 @@
 #include "tb/parsing/parse_node.h"
 #include "tb/text/font_manager.h"
 #include "tb/text/font_renderer.h"
+#include "tb/text/utf8.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
-#include "tb/util/utf8.h"
 
 using namespace tb::elements;
 using tb::graphics::Renderer;
@@ -141,13 +141,13 @@ class EditWindow : public DemoWindow {
     if (TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"))) {
       if (Element* undo = GetElementByID("undo"))
         undo->SetState(Element::State::kDisabled,
-                       !edit->GetStyleEdit()->CanUndo());
+                       !edit->GetTextView()->CanUndo());
       if (Element* redo = GetElementByID("redo"))
         redo->SetState(Element::State::kDisabled,
-                       !edit->GetStyleEdit()->CanRedo());
+                       !edit->GetTextView()->CanRedo());
       if (Label* info = GetElementByIDAndType<Label>(TBIDC("info"))) {
         info->SetText(tb::util::format_string(
-            "Caret ofs: %d", edit->GetStyleEdit()->caret.GetGlobalOffset()));
+            "Caret ofs: %d", edit->GetTextView()->caret.GetGlobalOffset()));
       }
     }
   }
@@ -160,10 +160,10 @@ class EditWindow : public DemoWindow {
         edit->SetText("");
         return true;
       } else if (ev.target->id() == TBIDC("undo")) {
-        edit->GetStyleEdit()->Undo();
+        edit->GetTextView()->Undo();
         return true;
       } else if (ev.target->id() == TBIDC("redo")) {
-        edit->GetStyleEdit()->Redo();
+        edit->GetTextView()->Redo();
         return true;
       } else if (ev.target->id() == TBIDC("menu")) {
         static GenericStringItemSource source;
@@ -219,11 +219,11 @@ class EditWindow : public DemoWindow {
           util::StringBuilder buf;
           for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; ++cp, ++i) {
             char utf8[8];
-            int len = util::utf8::encode(cp, utf8);
+            int len = text::utf8::encode(cp, utf8);
             buf.Append(utf8, len);
             if (i % 64 == 63) buf.Append("\n", 1);
           }
-          edit->GetStyleEdit()->SetText(buf.GetData(), buf.GetAppendPos());
+          edit->GetTextView()->SetText(buf.GetData(), buf.GetAppendPos());
         } else if (ev.ref_id == TBIDC("toggle wrapping"))
           edit->SetWrapping(!edit->GetWrapping());
         else if (ev.ref_id == TBIDC("align left"))

@@ -1,7 +1,16 @@
-#include "tb/util/utf8.h"
+/**
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
+ ******************************************************************************
+ */
+
+#include "tb/text/utf8.h"
 
 namespace tb {
-namespace util {
+namespace text {
 namespace utf8 {
 
 /** is c the start of a UTF-8 sequence? */
@@ -116,5 +125,5 @@ size_t count_characters(const char* str, size_t i_max) {
 }
 
 }  // namespace utf8
-}  // namespace util
+}  // namespace text
 }  // namespace tb

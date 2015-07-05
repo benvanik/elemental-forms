@@ -19,13 +19,13 @@
 #include "tb/graphics/renderer.h"
 #include "tb/text/font_face.h"
 #include "tb/text/font_renderer.h"
-#include "tb/util/utf8.h"
+#include "tb/text/utf8.h"
 
 namespace tb {
 namespace text {
 
 namespace {
-using UCS4 = tb::util::utf8::UCS4;
+using UCS4 = tb::text::utf8::UCS4;
 }  // namespace
 
 // Provides information about a font file associated with a font id.

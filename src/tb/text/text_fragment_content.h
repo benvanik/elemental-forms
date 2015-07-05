@@ -7,20 +7,15 @@
  ******************************************************************************
  */
 
-#ifndef TB_STYLE_EDIT_CONTENT_H
-#define TB_STYLE_EDIT_CONTENT_H
+#ifndef TB_TEXT_TEXT_FRAGMENT_CONTENT_H_
+#define TB_TEXT_TEXT_FRAGMENT_CONTENT_H_
 
-#include "tb_style_edit.h"
+#include "tb/text/text_view.h"
 
 namespace tb {
 namespace text {
+
 class FontFace;
-}  // namespace text
-}  // namespace tb
-
-namespace tb {
-namespace elements {
-
 class TextFragment;
 
 // Content for a non-text TextFragment.
@@ -36,12 +31,10 @@ class TextFragmentContent {
                      int32_t translate_y, TextProps* props) {}
   virtual void Click(TextFragment* fragment, int button,
                      ModifierKeys modifierkeys) {}
-  virtual int32_t GetWidth(tb::text::FontFace* font,
-                           TextFragment* fragment) {
+  virtual int32_t GetWidth(tb::text::FontFace* font, TextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetHeight(tb::text::FontFace* font,
-                            TextFragment* fragment) {
+  virtual int32_t GetHeight(tb::text::FontFace* font, TextFragment* fragment) {
     return 0;
   }
   virtual int32_t GetBaseline(tb::text::FontFace* font,
@@ -55,24 +48,22 @@ class TextFragmentContent {
   virtual uint32_t type() { return 0; }
 };
 
-// A horizontal line for StyleEdit.
+// A horizontal line for TextView.
 class TextFragmentContentHR : public TextFragmentContent {
  public:
   TextFragmentContentHR(int32_t width_in_percent, int32_t height);
 
   void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
              TextProps* props) override;
-  int32_t GetWidth(tb::text::FontFace* font,
-                   TextFragment* fragment) override;
-  int32_t GetHeight(tb::text::FontFace* font,
-                    TextFragment* fragment) override;
+  int32_t GetWidth(tb::text::FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(tb::text::FontFace* font, TextFragment* fragment) override;
 
  private:
   int32_t width_in_percent_;
   int32_t height_;
 };
 
-// Fragment content that enables underline in a StyleEdit.
+// Fragment content that enables underline in a TextView.
 class TextFragmentContentUnderline : public TextFragmentContent {
  public:
   TextFragmentContentUnderline() = default;
@@ -82,7 +73,7 @@ class TextFragmentContentUnderline : public TextFragmentContent {
   bool GetAllowBreakAfter() override { return false; }
 };
 
-// Fragment content that changes color in a StyleEdit.
+// Fragment content that changes color in a TextView.
 class TextFragmentContentTextColor : public TextFragmentContent {
  public:
   TextFragmentContentTextColor(const Color& color) : color(color) {}
@@ -94,7 +85,7 @@ class TextFragmentContentTextColor : public TextFragmentContent {
   Color color;
 };
 
-// Fragment content that ends a change of style in a StyleEdit.
+// Fragment content that ends a change of style in a TextView.
 class TextFragmentContentStylePop : public TextFragmentContent {
  public:
   void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
@@ -103,7 +94,7 @@ class TextFragmentContentStylePop : public TextFragmentContent {
   bool GetAllowBreakAfter() override { return true; }
 };
 
-}  // namespace elements
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_STYLE_EDIT_CONTENT_H
+#endif  // TB_TEXT_TEXT_FRAGMENT_CONTENT_H_

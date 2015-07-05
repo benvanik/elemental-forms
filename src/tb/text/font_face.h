@@ -15,9 +15,9 @@
 #include "tb/color.h"
 #include "tb/font_description.h"
 #include "tb/text/font_effect.h"
+#include "tb/text/utf8.h"
 #include "tb/util/link_list.h"
 #include "tb/util/string_builder.h"
-#include "tb/util/utf8.h"
 
 namespace tb {
 namespace graphics {
@@ -31,7 +31,7 @@ namespace text {
 class FontGlyphCache;
 class FontRenderer;
 namespace {
-using UCS4 = tb::util::utf8::UCS4;
+using UCS4 = tb::text::utf8::UCS4;
 }  // namespace
 
 // Rendering info used during glyph rendering by FontRenderer.

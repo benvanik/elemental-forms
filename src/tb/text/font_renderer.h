@@ -14,7 +14,7 @@
 
 #include "tb/font_description.h"
 #include "tb/graphics/renderer.h"
-#include "tb/util/utf8.h"
+#include "tb/text/utf8.h"
 
 namespace tb {
 namespace text {
@@ -25,7 +25,7 @@ class FontManager;
 class FontMetrics;
 class GlyphMetrics;
 namespace {
-using UCS4 = tb::util::utf8::UCS4;
+using UCS4 = tb::text::utf8::UCS4;
 }  // namespace
 
 // Renders glyphs from a font file.
