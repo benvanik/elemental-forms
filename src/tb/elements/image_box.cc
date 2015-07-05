@@ -7,32 +7,30 @@
  ******************************************************************************
  */
 
-#include "tb_image_widget.h"
-
+#include "tb/elements/image_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
 
 namespace tb {
 namespace elements {
 
-void ImageElement::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(ImageElement, Value::Type::kNull,
-                               ElementZ::kTop);
+void ImageBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ImageBox, Value::Type::kNull, ElementZ::kTop);
 }
 
-void ImageElement::OnInflate(const parsing::InflateInfo& info) {
+void ImageBox::OnInflate(const parsing::InflateInfo& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr)) {
     SetImage(filename);
   }
   Element::OnInflate(info);
 }
 
-PreferredSize ImageElement::OnCalculatePreferredContentSize(
+PreferredSize ImageBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   return PreferredSize(m_image.Width(), m_image.Height());
 }
 
-void ImageElement::OnPaint(const PaintProps& paint_props) {
+void ImageBox::OnPaint(const PaintProps& paint_props) {
   if (auto fragment = m_image.GetBitmap()) {
     graphics::Renderer::get()->DrawBitmap(
         GetPaddingRect(), Rect(0, 0, m_image.Width(), m_image.Height()),

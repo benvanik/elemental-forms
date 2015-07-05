@@ -1,8 +1,8 @@
 #ifndef DEMO_H
 #define DEMO_H
 
-#include "tb/elements/tb_scroller.h"
 #include "tb/elements/message_window.h"
+#include "tb/parts/scroller.h"
 #include "platform/Application.h"
 
 using namespace tb;
@@ -40,7 +40,7 @@ class ImageWindow : public DemoWindow {
   virtual bool OnEvent(const ElementEvent& ev);
 };
 
-class PageWindow : public DemoWindow, public elements::ScrollerSnapListener {
+class PageWindow : public DemoWindow, public parts::ScrollerSnapListener {
  public:
   PageWindow();
   virtual bool OnEvent(const ElementEvent& ev);

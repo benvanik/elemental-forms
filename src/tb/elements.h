@@ -15,6 +15,7 @@
 #include "tb/elements/button.h"
 #include "tb/elements/check_box.h"
 #include "tb/elements/drop_down_button.h"
+#include "tb/elements/image_box.h"
 #include "tb/elements/label.h"
 #include "tb/elements/label_container.h"
 #include "tb/elements/list_box.h"
@@ -28,12 +29,10 @@
 #include "tb/elements/skin_image.h"
 #include "tb/elements/slider.h"
 #include "tb/elements/spin_box.h"
+#include "tb/elements/tab_container.h"
 
-#include "tb/elements/tb_image_widget.h"
 #include "tb/elements/tb_layout.h"
 #include "tb/elements/tb_scroll_container.h"
-#include "tb/elements/tb_scroller.h"
-#include "tb/elements/tb_tab_container.h"
 #include "tb/elements/tb_text_box.h"
 #include "tb/elements/tb_toggle_container.h"
 

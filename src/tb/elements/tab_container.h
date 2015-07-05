@@ -7,24 +7,14 @@
  ******************************************************************************
  */
 
-#ifndef TB_TAB_CONTAINER_H
-#define TB_TAB_CONTAINER_H
+#ifndef TB_ELEMENTS_TAB_CONTAINER_H_
+#define TB_ELEMENTS_TAB_CONTAINER_H_
 
 #include "tb_layout.h"
+#include "tb/element.h"
 
 namespace tb {
 namespace elements {
-
-// A Layout used in TabContainer to apply some default properties on any
-// Button added to it.
-class TabLayout : public Layout {
- public:
-  TBOBJECT_SUBCLASS(TabLayout, Layout);
-
-  void OnChildAdded(Element* child) override;
-  PreferredSize OnCalculatePreferredContentSize(
-      const SizeConstraints& constraints) override;
-};
 
 // A container with tabs for multiple pages.
 class TabContainer : public Element {
@@ -65,6 +55,17 @@ class TabContainer : public Element {
   Layout* GetTabLayout() { return &m_tab_layout; }
 
  protected:
+  // A Layout used in TabContainer to apply some default properties on any
+  // Button added to it.
+  class TabLayout : public Layout {
+   public:
+    TBOBJECT_SUBCLASS(TabLayout, Layout);
+
+    void OnChildAdded(Element* child) override;
+    PreferredSize OnCalculatePreferredContentSize(
+        const SizeConstraints& constraints) override;
+  };
+
   Layout m_root_layout;
   TabLayout m_tab_layout;
   Element m_content_root;
@@ -76,4 +77,4 @@ class TabContainer : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_TAB_CONTAINER_H
+#endif  // TB_ELEMENTS_TAB_CONTAINER_H_

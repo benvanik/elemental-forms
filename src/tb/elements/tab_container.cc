@@ -10,15 +10,14 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_tab_container.h"
-
 #include "tb/elements/button.h"
+#include "tb/elements/tab_container.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {
 namespace elements {
 
-void TabLayout::OnChildAdded(Element* child) {
+void TabContainer::TabLayout::OnChildAdded(Element* child) {
   if (auto button = util::SafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
@@ -26,7 +25,7 @@ void TabLayout::OnChildAdded(Element* child) {
   }
 }
 
-PreferredSize TabLayout::OnCalculatePreferredContentSize(
+PreferredSize TabContainer::TabLayout::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = Layout::OnCalculatePreferredContentSize(constraints);
   // Make sure the number of tabs doesn't grow parents.

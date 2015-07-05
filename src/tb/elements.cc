@@ -19,7 +19,7 @@ namespace tb {
 void RegisterBuiltinElementInflaters() {
   using namespace tb::elements;
 
-  ImageElement::RegisterInflater();
+  ImageBox::RegisterInflater();
   SpinBox::RegisterInflater();
   Layout::RegisterInflater();
   ScrollContainer::RegisterInflater();

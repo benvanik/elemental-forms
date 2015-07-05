@@ -109,5 +109,5 @@ Section
 ToggleContainer
 	toggle enabled, opacity, expanded
 	invert <bool>
-ImageElement
+ImageBox
 	filename <string>

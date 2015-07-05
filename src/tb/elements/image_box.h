@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_IMAGE_WIDGET_H
-#define TB_IMAGE_WIDGET_H
+#ifndef TB_ELEMENTS_IMAGE_BOX_H_
+#define TB_ELEMENTS_IMAGE_BOX_H_
 
 #include "tb/element.h"
 #include "tb/graphics/image_manager.h"
@@ -19,12 +19,12 @@ namespace elements {
 // A element showing a image loaded by ImageManager, constrained in size to its
 // skin.
 // If you need to show a image from the skin, you can use SkinImage.
-class ImageElement : public Element {
+class ImageBox : public Element {
  public:
-  TBOBJECT_SUBCLASS(ImageElement, Element);
+  TBOBJECT_SUBCLASS(ImageBox, Element);
   static void RegisterInflater();
 
-  ImageElement() = default;
+  ImageBox() = default;
 
   void SetImage(const graphics::Image& image) { m_image = image; }
   void SetImage(const char* filename) {
@@ -44,4 +44,4 @@ class ImageElement : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_IMAGE_WIDGET_H
+#endif  // TB_ELEMENTS_IMAGE_BOX_H_

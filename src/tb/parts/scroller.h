@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_SCROLLER_H
-#define TB_SCROLLER_H
+#ifndef TB_PARTS_SCROLLER_H_
+#define TB_PARTS_SCROLLER_H_
 
 #include "tb/message_handler.h"
 
@@ -17,7 +17,7 @@ class Element;
 }  // namespace tb
 
 namespace tb {
-namespace elements {
+namespace parts {
 
 // Does the calculations of time, speed and distance that decides how the slow
 // down of a scroll will happen.
@@ -136,7 +136,7 @@ class Scroller : private MessageHandler {
   int m_expected_scroll_y = 0;
 };
 
-}  // namespace elements
+}  // namespace parts
 }  // namespace tb
 
-#endif  // TB_SCROLLER_H
+#endif  // TB_PARTS_SCROLLER_H_

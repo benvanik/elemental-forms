@@ -7,16 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_scroller.h"
-
-#include <algorithm>
-#include <cmath>
-
 #include "tb/element.h"
+#include "tb/parts/scroller.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
-namespace elements {
+namespace parts {
 
 constexpr uint32_t kPanTargetFps = 60;
 constexpr uint32_t kPanMessageDelayMillis =
@@ -353,5 +349,5 @@ void Scroller::OnMessageReceived(Message* msg) {
   }
 }
 
-}  // namespace elements
+}  // namespace parts
 }  // namespace tb

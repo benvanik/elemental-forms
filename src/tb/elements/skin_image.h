@@ -17,7 +17,7 @@ namespace elements {
 
 // A element showing a skin element, constrained in size to its skin.
 // If you need to load and show images dynamically (i.e. not always loaded as
-// the skin), you can use ImageElement.
+// the skin), you can use ImageBox.
 class SkinImage : public Element {
  public:
   TBOBJECT_SUBCLASS(SkinImage, Element);

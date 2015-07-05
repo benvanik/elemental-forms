@@ -10,16 +10,16 @@
 #include <algorithm>
 #include <cassert>
 
-#include "elements/tb_scroller.h"
 #include "elements/tb_select_item.h"
-#include "elements/tb_tab_container.h"
 #include "elements/tb_text_box.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
+#include "tb/elements/tab_container.h"
 #include "tb/graphics/renderer.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
+#include "tb/parts/scroller.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
@@ -582,7 +582,7 @@ Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-elements::Scroller* Element::FindStartedScroller() {
+parts::Scroller* Element::FindStartedScroller() {
   Element* candidate = this;
   while (candidate) {
     if (candidate->m_scroller && candidate->m_scroller->IsStarted()) {
@@ -593,7 +593,7 @@ elements::Scroller* Element::FindStartedScroller() {
   return nullptr;
 }
 
-elements::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
+parts::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
   if (auto scroller = FindStartedScroller()) return scroller;
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
@@ -603,9 +603,9 @@ elements::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-elements::Scroller* Element::GetScroller() {
+parts::Scroller* Element::GetScroller() {
   if (!m_scroller) {
-    m_scroller = new elements::Scroller(this);
+    m_scroller = new parts::Scroller(this);
   }
   return m_scroller;
 }
