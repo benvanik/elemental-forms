@@ -8,10 +8,11 @@
  */
 
 #include "tb/element.h"
-#include "tb/parts/scroller.h"
+#include "tb/elements/parts/scroller.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
+namespace elements {
 namespace parts {
 
 constexpr uint32_t kPanTargetFps = 60;
@@ -350,4 +351,5 @@ void Scroller::OnMessageReceived(Message* msg) {
 }
 
 }  // namespace parts
+}  // namespace elements
 }  // namespace tb

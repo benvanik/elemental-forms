@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARTS_RESIZER_H_
-#define TB_PARTS_RESIZER_H_
+#ifndef TB_ELEMENTS_RESIZER_H_
+#define TB_ELEMENTS_RESIZER_H_
 
 #include "tb/element.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
 // A lower right corner resize grip.
 // It will resize its parent element.
@@ -28,7 +28,7 @@ class Resizer : public Element {
   bool OnEvent(const ElementEvent& ev) override;
 };
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb
 
-#endif  // TB_PARTS_RESIZER_H_
+#endif  // TB_ELEMENTS_RESIZER_H_

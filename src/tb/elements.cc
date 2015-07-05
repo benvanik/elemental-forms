@@ -9,10 +9,6 @@
 
 #include "tb/elements.h"
 
-#include "tb/parts/dimmer.h"
-#include "tb/parts/mover.h"
-#include "tb/parts/resizer.h"
-
 namespace tb {
 
 void RegisterBuiltinElementInflaters() {
@@ -40,10 +36,9 @@ void RegisterBuiltinElementInflaters() {
   RadioButton::RegisterInflater();
   ScrollBar::RegisterInflater();
   Slider::RegisterInflater();
-
-  parts::Mover::RegisterInflater();
-  parts::Resizer::RegisterInflater();
-  parts::Dimmer::RegisterInflater();
+  Mover::RegisterInflater();
+  Resizer::RegisterInflater();
+  Dimmer::RegisterInflater();
 }
 
 }  // namespace tb

@@ -2,7 +2,7 @@
 #define DEMO_H
 
 #include "tb/elements/message_window.h"
-#include "tb/parts/scroller.h"
+#include "tb/elements/parts/scroller.h"
 #include "platform/Application.h"
 
 using namespace tb;
@@ -40,7 +40,8 @@ class ImageWindow : public DemoWindow {
   virtual bool OnEvent(const ElementEvent& ev);
 };
 
-class PageWindow : public DemoWindow, public parts::ScrollerSnapListener {
+class PageWindow : public DemoWindow,
+                   public elements::parts::ScrollerSnapListener {
  public:
   PageWindow();
   virtual bool OnEvent(const ElementEvent& ev);

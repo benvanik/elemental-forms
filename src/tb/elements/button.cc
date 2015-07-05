@@ -9,8 +9,8 @@
 
 #include "tb/element_listener.h"
 #include "tb/elements/button.h"
+#include "tb/elements/parts/toggle_button_base.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/parts/toggle_button_base.h"
 
 namespace tb {
 namespace elements {

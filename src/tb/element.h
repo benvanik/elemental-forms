@@ -31,12 +31,14 @@ class ElementListener;
 class GenericStringItemSource;
 class LongClickTimer;
 class Window;
-namespace parsing {
-struct InflateInfo;
-}  // namespace parsing
+namespace elements {
 namespace parts {
 class Scroller;
 }  // namespace parts
+}  // namespace elements
+namespace parsing {
+struct InflateInfo;
+}  // namespace parsing
 namespace text {
 class FontFace;
 }  // namespace text
@@ -797,7 +799,7 @@ class Element : public util::TypedObject,
   void ScrollIntoView(const Rect& rect);
 
   // Returns the Scroller set up for this element, creating it if needed.
-  parts::Scroller* scroller();
+  elements::parts::Scroller* scroller();
 
   virtual Axis axis() const { return Axis::kX; }
   // Sets along which axis the content should layout.
@@ -1016,7 +1018,7 @@ class Element : public util::TypedObject,
   PreferredSize m_cached_ps;    // Cached preferred size.
   SizeConstraints m_cached_sc;  // Cached size constraints.
   std::unique_ptr<LayoutParams> m_layout_params;
-  std::unique_ptr<parts::Scroller> m_scroller;
+  std::unique_ptr<elements::parts::Scroller> m_scroller;
   std::unique_ptr<LongClickTimer> m_long_click_timer;
   std::string m_tooltip_str;
   union {
@@ -1081,8 +1083,8 @@ class Element : public util::TypedObject,
   // Returns this element or the nearest parent that is scrollable in the given
   // axis, or nullptr if there is none.
   Element* FindScrollableElement(bool scroll_x, bool scroll_y);
-  parts::Scroller* FindStartedScroller();
-  parts::Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
+  elements::parts::Scroller* FindStartedScroller();
+  elements::parts::Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
   Element* GetElementByIdInternal(const TBID& id,
                                   const util::tb_type_id_t type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);

@@ -7,14 +7,11 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-#include <cassert>
-
+#include "tb/elements/resizer.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/parts/resizer.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
 void Resizer::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Resizer, Value::Type::kNull, ElementZ::kTop);
@@ -53,5 +50,5 @@ bool Resizer::OnEvent(const ElementEvent& ev) {
   return true;
 }
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb

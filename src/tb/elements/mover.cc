@@ -7,15 +7,12 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-#include <cassert>
-
+#include "tb/elements/mover.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/parts/mover.h"
 #include "tb/util/math.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
 void Mover::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Mover, Value::Type::kNull, ElementZ::kTop);
@@ -45,5 +42,5 @@ bool Mover::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb

@@ -11,13 +11,13 @@
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
+#include "tb/elements/parts/scroller.h"
 #include "tb/elements/tab_container.h"
 #include "tb/elements/text_box.h"
 #include "tb/graphics/renderer.h"
 #include "tb/list_item.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
-#include "tb/parts/scroller.h"
 #include "tb/text/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
@@ -581,7 +581,7 @@ Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-parts::Scroller* Element::FindStartedScroller() {
+elements::parts::Scroller* Element::FindStartedScroller() {
   Element* candidate = this;
   while (candidate) {
     if (candidate->m_scroller && candidate->m_scroller->is_started()) {
@@ -592,7 +592,8 @@ parts::Scroller* Element::FindStartedScroller() {
   return nullptr;
 }
 
-parts::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
+elements::parts::Scroller* Element::GetReadyScroller(bool scroll_x,
+                                                     bool scroll_y) {
   if (auto scroller = FindStartedScroller()) return scroller;
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
@@ -602,9 +603,9 @@ parts::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-parts::Scroller* Element::scroller() {
+elements::parts::Scroller* Element::scroller() {
   if (!m_scroller) {
-    m_scroller = std::make_unique<parts::Scroller>(this);
+    m_scroller = std::make_unique<elements::parts::Scroller>(this);
   }
   return m_scroller.get();
 }

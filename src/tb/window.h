@@ -13,8 +13,8 @@
 #include "tb/element_listener.h"
 #include "tb/elements/button.h"
 #include "tb/elements/label.h"
-#include "tb/parts/mover.h"
-#include "tb/parts/resizer.h"
+#include "tb/elements/mover.h"
+#include "tb/elements/resizer.h"
 
 namespace tb {
 
@@ -113,8 +113,8 @@ class Window : public Element {
   void SetWindowActiveState(bool active);
   void Deactivate();
 
-  parts::Mover m_mover;
-  parts::Resizer m_resizer;
+  elements::Mover m_mover;
+  elements::Resizer m_resizer;
   elements::Label m_textfield;
   elements::Button m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;

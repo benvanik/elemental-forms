@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARTS_DIMMER_H_
-#define TB_PARTS_DIMMER_H_
+#ifndef TB_ELEMENTS_DIMMER_H_
+#define TB_ELEMENTS_DIMMER_H_
 
 #include "tb/element.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
 // Dims elements in the background and blocks input.
 class Dimmer : public Element {
@@ -26,7 +26,7 @@ class Dimmer : public Element {
   void OnAdded() override;
 };
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb
 
-#endif  // TB_PARTS_DIMMER_H_
+#endif  // TB_ELEMENTS_DIMMER_H_

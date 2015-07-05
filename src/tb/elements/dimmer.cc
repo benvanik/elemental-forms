@@ -7,14 +7,11 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-#include <cassert>
-
+#include "tb/elements/dimmer.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/parts/dimmer.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
 void Dimmer::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Dimmer, Value::Type::kNull, ElementZ::kTop);
@@ -29,5 +26,5 @@ void Dimmer::OnAdded() {
   set_rect({0, 0, parent()->rect().w, parent()->rect().h});
 }
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb

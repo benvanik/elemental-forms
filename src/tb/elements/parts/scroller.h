@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARTS_SCROLLER_H_
-#define TB_PARTS_SCROLLER_H_
+#ifndef TB_ELEMENTS_PARTS_SCROLLER_H_
+#define TB_ELEMENTS_PARTS_SCROLLER_H_
 
 #include "tb/message_handler.h"
 
@@ -17,6 +17,7 @@ class Element;
 }  // namespace tb
 
 namespace tb {
+namespace elements {
 namespace parts {
 
 // Does the calculations of time, speed and distance that decides how the slow
@@ -137,6 +138,7 @@ class Scroller : private MessageHandler {
 };
 
 }  // namespace parts
+}  // namespace elements
 }  // namespace tb
 
-#endif  // TB_PARTS_SCROLLER_H_
+#endif  // TB_ELEMENTS_PARTS_SCROLLER_H_

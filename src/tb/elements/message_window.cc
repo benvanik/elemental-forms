@@ -9,10 +9,10 @@
 
 #include <cassert>
 
+#include "tb/elements/dimmer.h"
 #include "tb/elements/icon_box.h"
 #include "tb/elements/message_window.h"
 #include "tb/elements/text_box.h"
-#include "tb/parts/dimmer.h"
 #include "tb/util/string_table.h"
 
 namespace tb {
@@ -86,7 +86,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   // Create background dimmer.
   if (settings->dimmer) {
-    auto dimmer = new parts::Dimmer();
+    auto dimmer = new Dimmer();
     root->AddChild(dimmer);
     m_dimmer.reset(dimmer);
   }

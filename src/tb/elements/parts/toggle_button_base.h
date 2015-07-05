@@ -7,12 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARTS_TOGGLE_BUTTON_BASE_H_
-#define TB_PARTS_TOGGLE_BUTTON_BASE_H_
+#ifndef TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
+#define TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
 
 #include "tb/element.h"
 
 namespace tb {
+namespace elements {
 namespace parts {
 
 // Shared functionality for CheckBox and RadioButton.
@@ -38,6 +39,7 @@ class BaseRadioCheckBox : public Element {
 };
 
 }  // namespace parts
+}  // namespace elements
 }  // namespace tb
 
-#endif  // TB_PARTS_TOGGLE_BUTTON_BASE_H_
+#endif  // TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
