@@ -11,10 +11,10 @@
 #define TB_GRAPHICS_BITMAP_FRAGMENT_MANAGER_H_
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "tb/id.h"
-#include "tb/util/hash_table.h"
 
 namespace tb {
 namespace graphics {
@@ -97,7 +97,7 @@ class BitmapFragmentManager {
 
  private:
   std::vector<std::unique_ptr<BitmapFragmentMap>> m_fragment_maps;
-  util::HashTableOf<BitmapFragment> m_fragments;
+  std::unordered_map<uint32_t, std::unique_ptr<BitmapFragment>> m_fragments;
   int m_num_maps_limit = 0;
   bool m_add_border = false;
   int m_default_map_w = 512;

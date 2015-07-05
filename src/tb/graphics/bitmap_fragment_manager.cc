@@ -22,28 +22,26 @@ namespace graphics {
 
 BitmapFragmentManager::BitmapFragmentManager() = default;
 
-BitmapFragmentManager::~BitmapFragmentManager() { Clear(); }
+BitmapFragmentManager::~BitmapFragmentManager() = default;
 
 BitmapFragment* BitmapFragmentManager::GetFragmentFromFile(
     const std::string& filename, bool dedicated_map) {
   TBID id(filename);
 
-  // If we already have a fragment for this filename, return that
-  BitmapFragment* frag = m_fragments.Get(id);
-  if (frag) {
-    return frag;
+  // If we already have a fragment for this filename, return that.
+  auto& it = m_fragments.find(id);
+  if (it != m_fragments.end()) {
+    return it->second.get();
   }
 
-  // Load the file
-  ImageLoader* img = ImageLoader::CreateFromFile(filename);
+  // Load the file.
+  auto img = ImageLoader::CreateFromFile(filename);
   if (!img) {
     return nullptr;
   }
 
-  frag = CreateNewFragment(id, dedicated_map, img->Width(), img->Height(),
+  return CreateNewFragment(id, dedicated_map, img->Width(), img->Height(),
                            img->Width(), img->Data());
-  delete img;
-  return frag;
 }
 
 BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
@@ -53,15 +51,15 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
                                                          uint32_t* data) {
   assert(!GetFragment(id));
 
-  BitmapFragment* frag = nullptr;
+  std::unique_ptr<BitmapFragment> fragment;
 
   // Create a fragment in any of the fragment maps. Doing it in the reverse
   // order would be faster since it's most likely to succeed, but we want to
   // maximize the amount of fragments per map, so do it in the creation order.
   if (!dedicated_map) {
     for (auto& fragment_map : m_fragment_maps) {
-      if ((frag = fragment_map->CreateNewFragment(data_w, data_h, data_stride,
-                                                  data, m_add_border))) {
+      if ((fragment = fragment_map->CreateNewFragment(
+               data_w, data_h, data_stride, data, m_add_border))) {
         break;
       }
     }
@@ -70,25 +68,26 @@ BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,
   // know it will fit.
   bool allow_another_map =
       m_num_maps_limit == 0 || m_fragment_maps.size() < m_num_maps_limit;
-  if (!frag && allow_another_map) {
+  if (!fragment && allow_another_map) {
     int po2w = util::GetNearestPowerOfTwo(std::max(data_w, m_default_map_w));
     int po2h = util::GetNearestPowerOfTwo(std::max(data_h, m_default_map_h));
     if (dedicated_map) {
       po2w = util::GetNearestPowerOfTwo(data_w);
       po2h = util::GetNearestPowerOfTwo(data_h);
     }
-    auto fm = std::make_unique<BitmapFragmentMap>();
-    if (fm->Init(po2w, po2h)) {
-      frag = fm->CreateNewFragment(data_w, data_h, data_stride, data,
-                                   m_add_border);
-      m_fragment_maps.push_back(std::move(fm));
+    auto fragment_map = std::make_unique<BitmapFragmentMap>();
+    if (fragment_map->Init(po2w, po2h)) {
+      fragment = fragment_map->CreateNewFragment(data_w, data_h, data_stride,
+                                                 data, m_add_border);
+      m_fragment_maps.push_back(std::move(fragment_map));
     }
   }
   // Finally, add the new fragment to the hash.
-  if (frag) {
-    m_fragments.Add(id, frag);
-    frag->m_id = id;
-    return frag;
+  if (fragment) {
+    fragment->m_id = id;
+    auto fragment_ptr = fragment.get();
+    m_fragments.emplace(id, std::move(fragment));
+    return fragment_ptr;
   }
   return nullptr;
 }
@@ -99,7 +98,7 @@ void BitmapFragmentManager::FreeFragment(BitmapFragment* frag) {
 
     BitmapFragmentMap* map = frag->m_map;
     frag->m_map->FreeFragmentSpace(frag);
-    m_fragments.Delete(frag->m_id);
+    m_fragments.erase(frag->m_id);
 
     // If the map is now empty, delete it.
     if (map->m_allocated_pixels == 0) {
@@ -115,12 +114,13 @@ void BitmapFragmentManager::FreeFragment(BitmapFragment* frag) {
 }
 
 BitmapFragment* BitmapFragmentManager::GetFragment(const TBID& id) const {
-  return m_fragments.Get(id);
+  auto& it = m_fragments.find(id);
+  return it != m_fragments.end() ? it->second.get() : nullptr;
 }
 
 void BitmapFragmentManager::Clear() {
   m_fragment_maps.clear();
-  m_fragments.DeleteAll();
+  m_fragments.clear();
 }
 
 bool BitmapFragmentManager::ValidateBitmaps() {

@@ -47,7 +47,8 @@ class StbiImageLoader : public ImageLoader {
   uint32_t* Data() override { return (uint32_t*)data; }
 };
 
-ImageLoader* ImageLoader::CreateFromFile(const std::string& filename) {
+std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
+    const std::string& filename) {
   // Load directly from file.
   auto file = util::File::Open(filename, util::File::Mode::kRead);
   if (!file) {
@@ -64,11 +65,11 @@ ImageLoader* ImageLoader::CreateFromFile(const std::string& filename) {
     return nullptr;
   }
 
-  StbiImageLoader* img = new StbiImageLoader();
+  auto img = std::make_unique<StbiImageLoader>();
   img->width = w;
   img->height = h;
   img->data = img_data;
-  return img;
+  return std::unique_ptr<ImageLoader>(img.release());
 }
 
 }  // namespace graphics

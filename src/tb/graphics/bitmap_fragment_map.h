@@ -37,8 +37,10 @@ class BitmapFragmentMap {
   // Creates a new fragment with the given size and data in this map.
   // Returns nullptr if there is not enough room in this map or on any other
   // fail.
-  BitmapFragment* CreateNewFragment(int frag_w, int frag_h, int data_stride,
-                                    uint32_t* frag_data, bool add_border);
+  std::unique_ptr<BitmapFragment> CreateNewFragment(int frag_w, int frag_h,
+                                                    int data_stride,
+                                                    uint32_t* frag_data,
+                                                    bool add_border);
 
   // Frees up the space used by the given fragment, so that other fragments can
   // take its place.

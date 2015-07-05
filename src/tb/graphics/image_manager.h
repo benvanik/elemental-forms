@@ -11,10 +11,10 @@
 #define TB_GRAPHICS_IMAGE_MANAGER_H_
 
 #include <memory>
+#include <unordered_map>
 
 #include "tb/graphics/bitmap_fragment_manager.h"
 #include "tb/graphics/renderer.h"
-#include "tb/util/hash_table.h"
 
 namespace tb {
 namespace graphics {
@@ -115,7 +115,7 @@ class ImageManager : private RendererListener {
   static std::unique_ptr<ImageManager> image_manager_singleton_;
 
   BitmapFragmentManager m_frag_manager;
-  util::HashTableOf<ImageRep> m_image_rep_hash;
+  std::unordered_map<uint32_t, ImageRep*> m_image_rep_hash;
 };
 
 }  // namespace graphics

@@ -86,36 +86,37 @@ ImageManager::~ImageManager() {
 
   // If there is ImageRep objects live, we must unset the fragment pointer
   // since the m_frag_manager is going to be destroyed very soon.
-  util::HashTableIteratorOf<ImageRep> it(&m_image_rep_hash);
-  while (ImageRep* image_rep = it.GetNextContent()) {
-    image_rep->fragment = nullptr;
-    image_rep->image_manager = nullptr;
+  for (auto& it : m_image_rep_hash) {
+    it.second->fragment = nullptr;
+    it.second->image_manager = nullptr;
   }
 }
 
 Image ImageManager::GetImage(const char* filename) {
   uint32_t hash_key = util::hash(filename);
-  ImageRep* image_rep = m_image_rep_hash.Get(hash_key);
-  if (!image_rep) {
-    // Load a fragment. Load a destination DPI bitmap if available.
-    BitmapFragment* fragment = nullptr;
-    auto dimension_converter = Skin::get()->GetDimensionConverter();
-    if (dimension_converter->NeedConversion()) {
-      util::StringBuilder filename_dst_DPI;
-      dimension_converter->GetDstDPIFilename(filename, &filename_dst_DPI);
-      fragment =
-          m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
-    }
-    if (!fragment) {
-      fragment = m_frag_manager.GetFragmentFromFile(filename, false);
-    }
-    if (fragment) {
-      image_rep = new ImageRep(this, fragment, hash_key);
-      m_image_rep_hash.Add(hash_key, image_rep);
-    }
-    TBDebugOut(image_rep ? "ImageManager - Loaded new image.\n"
-                         : "ImageManager - Loading image failed.\n");
+  auto& it = m_image_rep_hash.find(hash_key);
+  if (it != m_image_rep_hash.end()) {
+    return it->second;
   }
+
+  // Load a fragment. Load a destination DPI bitmap if available.
+  BitmapFragment* fragment = nullptr;
+  auto dimension_converter = Skin::get()->GetDimensionConverter();
+  if (dimension_converter->NeedConversion()) {
+    util::StringBuilder filename_dst_DPI;
+    dimension_converter->GetDstDPIFilename(filename, &filename_dst_DPI);
+    fragment =
+        m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
+  }
+  if (!fragment) {
+    fragment = m_frag_manager.GetFragmentFromFile(filename, false);
+  }
+  if (!fragment) {
+    TBDebugOut("ImageManager - Loading image failed: %s\n", filename);
+    return Image(nullptr);
+  }
+  ImageRep* image_rep = new ImageRep(this, fragment, hash_key);
+  m_image_rep_hash.emplace(hash_key, image_rep);
   return Image(image_rep);
 }
 
@@ -125,7 +126,7 @@ void ImageManager::RemoveImageRep(ImageRep* image_rep) {
     m_frag_manager.FreeFragment(image_rep->fragment);
     image_rep->fragment = nullptr;
   }
-  m_image_rep_hash.Remove(image_rep->hash_key);
+  m_image_rep_hash.erase(image_rep->hash_key);
   image_rep->image_manager = nullptr;
   TBDebugOut("ImageManager - Removed image.\n");
 }

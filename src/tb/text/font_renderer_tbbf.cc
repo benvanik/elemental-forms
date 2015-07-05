@@ -8,6 +8,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 
 #include "tb/graphics/image_loader.h"
 #include "tb/graphics/renderer.h"
@@ -109,7 +110,7 @@ class TBBFRenderer : public FontRenderer {
  private:
   ParseNode m_node;
   FontMetrics m_metrics;
-  graphics::ImageLoader* m_img;
+  std::unique_ptr<graphics::ImageLoader> m_img;
   int m_size;
   int m_x_ofs;
   int m_advance_delta;
@@ -119,14 +120,9 @@ class TBBFRenderer : public FontRenderer {
 };
 
 TBBFRenderer::TBBFRenderer()
-    : m_img(nullptr),
-      m_size(0),
-      m_x_ofs(0),
-      m_advance_delta(0),
-      m_space_advance(0),
-      m_rgb(0) {}
+    : m_size(0), m_x_ofs(0), m_advance_delta(0), m_space_advance(0), m_rgb(0) {}
 
-TBBFRenderer::~TBBFRenderer() { delete m_img; }
+TBBFRenderer::~TBBFRenderer() = default;
 
 FontMetrics TBBFRenderer::GetMetrics() { return m_metrics; }
 

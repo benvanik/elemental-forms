@@ -20,6 +20,7 @@
 #include "tb/text/font_face.h"
 #include "tb/text/font_renderer.h"
 #include "tb/text/utf8.h"
+#include "tb/util/hash_table.h"
 
 namespace tb {
 namespace text {

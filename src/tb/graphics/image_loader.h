@@ -23,7 +23,8 @@ class ImageLoader {
  public:
   // The system must implement this function and create an implementation of the
   // ImageLoader interface.
-  static ImageLoader* CreateFromFile(const std::string& filename);
+  static std::unique_ptr<ImageLoader> CreateFromFile(
+      const std::string& filename);
 
   virtual ~ImageLoader() = default;
 

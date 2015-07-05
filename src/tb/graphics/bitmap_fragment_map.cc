@@ -32,10 +32,9 @@ BitmapFragmentMap::~BitmapFragmentMap() {
   delete[] m_bitmap_data;
 }
 
-BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
-                                                     int data_stride,
-                                                     uint32_t* frag_data,
-                                                     bool add_border) {
+std::unique_ptr<BitmapFragment> BitmapFragmentMap::CreateNewFragment(
+    int frag_w, int frag_h, int data_stride, uint32_t* frag_data,
+    bool add_border) {
   // Finding available space works like this:
   // The map size is sliced up horizontally in rows (initially just one row
   // covering
@@ -109,20 +108,21 @@ BitmapFragment* BitmapFragmentMap::CreateNewFragment(int frag_w, int frag_h,
     best_row->height = needed_h;
   }
   // Allocate the fragment and copy the fragment data into the map data.
-  if (auto space = best_row->AllocSpace(needed_w)) {
-    BitmapFragment* frag = new BitmapFragment();
-    frag->m_map = this;
-    frag->m_row = best_row;
-    frag->m_space = space;
-    frag->m_rect.reset(space->x + border, best_row->y + border, frag_w, frag_h);
-    frag->m_row_height = best_row->height;
-    frag->m_batch_id = 0xffffffff;
-    CopyData(frag, data_stride, frag_data, border);
-    m_need_update = true;
-    m_allocated_pixels += frag->m_space->width * frag->m_row->height;
-    return frag;
+  auto space = best_row->AllocSpace(needed_w);
+  if (!space) {
+    return nullptr;
   }
-  return nullptr;
+  auto frag = std::make_unique<BitmapFragment>();
+  frag->m_map = this;
+  frag->m_row = best_row;
+  frag->m_space = space;
+  frag->m_rect.reset(space->x + border, best_row->y + border, frag_w, frag_h);
+  frag->m_row_height = best_row->height;
+  frag->m_batch_id = 0xffffffff;
+  CopyData(frag.get(), data_stride, frag_data, border);
+  m_need_update = true;
+  m_allocated_pixels += frag->m_space->width * frag->m_row->height;
+  return frag;
 }
 
 void BitmapFragmentMap::FreeFragmentSpace(BitmapFragment* frag) {
