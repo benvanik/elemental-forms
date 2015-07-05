@@ -15,7 +15,7 @@
 #include "tb/util/string.h"
 #include "tb/window.h"
 
-#include "tb_text_box.h"
+#include "tb/elements/tb_text_box.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 
@@ -31,7 +31,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
  public:
   TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
 
-  TextBox* output;
+  elements::TextBox* output;
 
   DebugSettingsWindow(Element* root) {
     SetText("Debug settings");
@@ -54,7 +54,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     AddCheckbox(DebugInfo::Setting::kDrawImageBitmapFragments,
                 "Render image bitmap fragments");
 
-    output = GetElementByIDAndType<TextBox>(TBIDC("output"));
+    output = GetElementByIDAndType<elements::TextBox>(TBIDC("output"));
 
     Rect bounds(0, 0, root->rect().w, root->rect().h);
     set_rect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -68,12 +68,12 @@ class DebugSettingsWindow : public Window, public ElementListener {
   ~DebugSettingsWindow() { ElementListener::RemoveGlobalListener(this); }
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
-    CheckBox* check = new CheckBox();
+    auto check = new elements::CheckBox();
     check->SetValue(DebugInfo::get()->settings[int(setting)]);
     check->data.set_integer(int(setting));
     check->set_id(TBIDC("check"));
 
-    LabelContainer* label = new LabelContainer();
+    auto label = new elements::LabelContainer();
     label->SetText(str);
     label->GetContentRoot()->AddChild(check, ElementZ::kBottom);
 
@@ -169,7 +169,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     buf.AppendString("\n");
 
     // Append the line to the output textfield.
-    StyleEdit* se = output->GetStyleEdit();
+    auto se = output->GetStyleEdit();
     se->selection.SelectNothing();
     se->AppendText(buf.GetData(), std::string::npos, true);
     se->ScrollIfNeeded(false, true);

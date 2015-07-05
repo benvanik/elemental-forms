@@ -2,6 +2,8 @@
 
 #include "tb/util/string.h"
 
+using namespace tb::elements;
+
 // == AdvancedItemElement ======================================================
 
 AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,

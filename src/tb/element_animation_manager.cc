@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb_widgets_common.h"
+#include "elements/tb_widgets_common.h"
 
 #include "tb/animation_manager.h"
 #include "tb/element.h"
 #include "tb/element_animation.h"
 #include "tb/element_animation_manager.h"
-#include "tb/message_window.h"
+#include "tb/elements/message_window.h"
 #include "tb/window.h"
 
 namespace tb {
@@ -67,14 +67,14 @@ bool ElementAnimationManager::OnElementDying(Element* element) {
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
-  if (MessageWindow* window = SafeCast<MessageWindow>(element)) {
+  if (auto window = SafeCast<elements::MessageWindow>(element)) {
     // Move out dying message windows.
     auto anim = new RectElementAnimation(window, Rect(0, 50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaIn);
     AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
-  if (Dimmer* dimmer = SafeCast<Dimmer>(element)) {
+  if (auto dimmer = SafeCast<elements::Dimmer>(element)) {
     // Fade out dying dim layers.
     auto anim = new OpacityElementAnimation(
         dimmer, 1.f, ElementAnimation::kAlmostZeroOpacity, true);
@@ -92,13 +92,13 @@ void ElementAnimationManager::OnElementAdded(Element* parent,
         window, ElementAnimation::kAlmostZeroOpacity, 1.f, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
-  if (MessageWindow* window = SafeCast<MessageWindow>(element)) {
+  if (auto window = SafeCast<elements::MessageWindow>(element)) {
     // Move in new message windows.
     auto anim = new RectElementAnimation(window, Rect(0, -50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaOut);
     AnimationManager::StartAnimation(anim);
   }
-  if (Dimmer* dimmer = SafeCast<Dimmer>(element)) {
+  if (auto dimmer = SafeCast<elements::Dimmer>(element)) {
     // Fade in dim layer.
     auto anim = new OpacityElementAnimation(
         dimmer, ElementAnimation::kAlmostZeroOpacity, 1.f, false);

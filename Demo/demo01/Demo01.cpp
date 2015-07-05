@@ -4,16 +4,16 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "tests/tb_test.h"
-#include "tb_inline_select.h"
-#include "tb_select.h"
-#include "tb_text_box.h"
-#include "tb_tab_container.h"
+#include "elements/tb_inline_select.h"
+#include "elements/tb_select.h"
+#include "elements/tb_text_box.h"
+#include "elements/tb_tab_container.h"
 #include "CodeTextBox\CodeTextBox.h"
 
 #include "tb/animation_manager.h"
 #include "tb/element_animation.h"
 #include "tb/element_animation_manager.h"
-#include "tb/menu_window.h"
+#include "tb/elements/menu_window.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
@@ -24,6 +24,7 @@
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
 
+using namespace tb::elements;
 using tb::graphics::Renderer;
 using tb::parsing::ParseNode;
 

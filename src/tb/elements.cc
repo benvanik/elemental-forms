@@ -12,6 +12,8 @@
 namespace tb {
 
 void RegisterBuiltinElementInflaters() {
+  using namespace tb::elements;
+
   ImageElement::RegisterInflater();
   SelectInline::RegisterInflater();
   Layout::RegisterInflater();

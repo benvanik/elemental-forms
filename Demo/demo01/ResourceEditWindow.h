@@ -1,16 +1,16 @@
 #ifndef ResourceEditWindow_H
 #define ResourceEditWindow_H
 
-#include "tb_select.h"
-#include "tb_widgets_common.h"
-#include "tb_text_box.h"
+#include "tb/elements/tb_select.h"
+#include "tb/elements/tb_widgets_common.h"
+#include "tb/elements/tb_text_box.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
 
 using namespace tb;
 
-class ResourceItem : public GenericStringItem {
+class ResourceItem : public tb::elements::GenericStringItem {
  public:
   ResourceItem(Element* element, const std::string& str);
   Element* GetElement() { return m_element; }
@@ -57,11 +57,11 @@ class ResourceEditWindow : public Window,
   virtual void OnElementRemove(Element* parent, Element* child);
 
  private:
-  SelectList* m_element_list;
-  SelectItemSourceList<ResourceItem> m_element_list_source;
-  ScrollContainer* m_scroll_container;
+  elements::SelectList* m_element_list;
+  elements::SelectItemSourceList<ResourceItem> m_element_list_source;
+  elements::ScrollContainer* m_scroll_container;
   Element* m_build_container;
-  TextBox* m_source_text_box;
+  elements::TextBox* m_source_text_box;
   std::string m_resource_filename;
   WeakElementPointer m_selected_element;
   void AddElementListItemsRecursive(Element* element, int depth);

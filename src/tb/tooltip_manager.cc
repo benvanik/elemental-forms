@@ -10,9 +10,9 @@
 #include <algorithm>
 #include <cmath>
 
-#include "tb_text_box.h"
+#include "elements/tb_text_box.h"
 
-#include "tb/popup_window.h"
+#include "tb/elements/popup_window.h"
 #include "tb/tooltip_manager.h"
 
 namespace tb {
@@ -35,9 +35,9 @@ class TTMsgParam : public util::TypedObject {
 
 // Implements functionality of tooltip popups, based on PopupWindow and
 // contains TextBox as content viewer.
-class TooltipWindow : public PopupWindow {
+class TooltipWindow : public elements::PopupWindow {
  public:
-  TBOBJECT_SUBCLASS(TooltipWindow, PopupWindow);
+  TBOBJECT_SUBCLASS(TooltipWindow, elements::PopupWindow);
 
   TooltipWindow(Element* target);
   ~TooltipWindow() override;
@@ -49,7 +49,7 @@ class TooltipWindow : public PopupWindow {
  private:
   Rect GetAlignedRect(int x, int y);
 
-  TextBox m_content;
+  elements::TextBox m_content;
   int m_offset_x = 0;
   int m_offset_y = 0;
 };

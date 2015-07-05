@@ -10,7 +10,7 @@
 #ifndef TB_WINDOW_H_
 #define TB_WINDOW_H_
 
-#include "tb_widgets_common.h"
+#include "elements/tb_widgets_common.h"
 #include "tb/element_listener.h"
 
 namespace tb {
@@ -110,10 +110,10 @@ class Window : public Element {
   void SetWindowActiveState(bool active);
   void Deactivate();
 
-  Mover m_mover;
-  Resizer m_resizer;
-  Label m_textfield;
-  Button m_close_button;
+  elements::Mover m_mover;
+  elements::Resizer m_resizer;
+  elements::Label m_textfield;
+  elements::Button m_close_button;
   WindowSettings m_settings = WindowSettings::kDefault;
   WeakElementPointer m_last_focus;
 };

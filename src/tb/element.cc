@@ -10,11 +10,11 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_scroller.h"
-#include "tb_select_item.h"
-#include "tb_tab_container.h"
-#include "tb_text_box.h"
-#include "tb_widgets_common.h"
+#include "elements/tb_scroller.h"
+#include "elements/tb_select_item.h"
+#include "elements/tb_tab_container.h"
+#include "elements/tb_text_box.h"
+#include "elements/tb_widgets_common.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
@@ -119,28 +119,6 @@ void Element::SetIdFromNode(TBID& id, parsing::ParseNode* node) {
     id.reset(node->GetValue().as_string());
   } else {
     id.reset(node->GetValue().as_integer());
-  }
-}
-
-void Element::ReadItemNodes(parsing::ParseNode* parent_node,
-                            GenericStringItemSource* target_source) {
-  // If there is a items node, loop through all its children and add
-  // items to the target item source.
-  auto items_node = parent_node->GetNode("items");
-  if (!items_node) {
-    return;
-  }
-  for (auto node = items_node->GetFirstChild(); node; node = node->GetNext()) {
-    if (std::strcmp(node->GetName(), "item") != 0) {
-      continue;
-    }
-    const char* text = node->GetValueString("text", "");
-    TBID item_id;
-    if (auto id_node = node->GetNode("id")) {
-      Element::SetIdFromNode(item_id, id_node);
-    }
-    auto item = std::make_unique<GenericStringItem>(text, item_id);
-    target_source->AddItem(std::move(item));
   }
 }
 
@@ -605,7 +583,7 @@ Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-Scroller* Element::FindStartedScroller() {
+elements::Scroller* Element::FindStartedScroller() {
   Element* candidate = this;
   while (candidate) {
     if (candidate->m_scroller && candidate->m_scroller->IsStarted()) {
@@ -616,8 +594,8 @@ Scroller* Element::FindStartedScroller() {
   return nullptr;
 }
 
-Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
-  if (Scroller* scroller = FindStartedScroller()) return scroller;
+elements::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
+  if (auto scroller = FindStartedScroller()) return scroller;
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
   if (Element* scrollable_element = FindScrollableElement(scroll_x, scroll_y)) {
@@ -626,9 +604,9 @@ Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
   return nullptr;
 }
 
-Scroller* Element::GetScroller() {
+elements::Scroller* Element::GetScroller() {
   if (!m_scroller) {
-    m_scroller = new Scroller(this);
+    m_scroller = new elements::Scroller(this);
   }
   return m_scroller;
 }
@@ -637,7 +615,7 @@ void Element::ScrollToSmooth(int x, int y) {
   ScrollInfo info = GetScrollInfo();
   int dx = x - info.x;
   int dy = y - info.y;
-  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0)) {
+  if (auto scroller = GetReadyScroller(dx != 0, dy != 0)) {
     scroller->OnScrollBy(dx, dy, false);
   }
 }
@@ -651,7 +629,7 @@ void Element::ScrollBySmooth(int dx, int dy) {
   // dy = y - info.y;
   if (!dx && !dy) return;
 
-  if (Scroller* scroller = GetReadyScroller(dx != 0, dy != 0)) {
+  if (auto scroller = GetReadyScroller(dx != 0, dy != 0)) {
     scroller->OnScrollBy(dx, dy, true);
   }
 }
@@ -1622,7 +1600,7 @@ void Element::HandlePanningOnMove(int x, int y) {
     }
 
     // Get any active scroller and feed it with pan actions.
-    Scroller* scroller = captured_element->GetReadyScroller(dx != 0, dy != 0);
+    auto scroller = captured_element->GetReadyScroller(dx != 0, dy != 0);
     if (!scroller) {
       return;
     }
@@ -1801,7 +1779,7 @@ void Element::SetCapturedElement(Element* element) {
     // Stop panning when capture change (most likely changing to nullptr because
     // of InvokePointerUp).
     // Notify any active scroller so it may begin scrolling.
-    if (Scroller* scroller = Element::captured_element->FindStartedScroller()) {
+    if (auto scroller = Element::captured_element->FindStartedScroller()) {
       if (Element::captured_element->m_packed.is_panning) {
         scroller->OnPanReleased();
       } else {
@@ -1918,7 +1896,7 @@ bool ElementSkinConditionContext::GetCondition(
     case SkinProperty::kAxis:
       return TBID(element->GetAxis() == Axis::kX ? "x" : "y") == info.value;
     case SkinProperty::kAlign:
-      if (auto tc = util::SafeCast<TabContainer>(element)) {
+      if (auto tc = util::SafeCast<elements::TabContainer>(element)) {
         TBID element_align;
         if (tc->GetAlignment() == Align::kLeft) {
           element_align = TBIDC("left");

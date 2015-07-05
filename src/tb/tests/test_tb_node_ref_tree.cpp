@@ -8,8 +8,8 @@
  */
 
 #include "tb_test.h"
-#include "tb_layout.h"
-#include "tb_text_box.h"
+#include "elements/tb_layout.h"
+#include "elements/tb_text_box.h"
 
 #include "tb/parsing/parse_node.h"
 #include "tb/parsing/parse_node_tree.h"
@@ -17,6 +17,7 @@
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::elements;
 using namespace tb::parsing;
 
 TB_TEST_GROUP(tb_node_ref_tree) {
@@ -124,7 +125,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     root.LoadData(
         "TextBox: id: 'edit'\n"
         "	@include @test_styles>VeryNice");
-    TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
+    auto edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }
@@ -137,7 +138,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	text: 'hello'\n"
         "TextBox: id: 'edit'\n"
         "	@include SomeDeclarations");
-    TextBox* edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
+    auto edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->GetText(), "hello");
   }
@@ -163,7 +164,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root1.LoadData(layout_str);
-    Layout* layout1 = root1.GetElementByIDAndType<Layout>(TBIDC("layout"));
+    auto layout1 = root1.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
     TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
@@ -173,7 +174,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root2.LoadData(layout_str);
-    Layout* layout2 = root2.GetElementByIDAndType<Layout>(TBIDC("layout"));
+    auto layout2 = root2.GetElementByIDAndType<Layout>(TBIDC("layout"));
     TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);

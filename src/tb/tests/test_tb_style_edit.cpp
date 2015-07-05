@@ -8,11 +8,12 @@
  */
 
 #include "tb_test.h"
-#include "tb_text_box.h"
+#include "elements/tb_text_box.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::elements;
 
 TB_TEST_GROUP(tb_text_box) {
   TextBox* edit;

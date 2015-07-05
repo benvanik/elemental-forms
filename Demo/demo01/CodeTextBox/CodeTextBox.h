@@ -1,10 +1,10 @@
 #pragma once
 
-#include "tb_text_box.h"
+#include "tb/elements/tb_text_box.h"
 
 #include <vector>
 
-class CodeTextBox : public tb::TextBox {
+class CodeTextBox : public tb::elements::TextBox {
  public:
   static void RegisterInflater();
 

@@ -1,14 +1,16 @@
 #include <cstdio>
 
 #include "ResourceEditWindow.h"
-#include "tb_select.h"
-#include "tb_text_box.h"
-#include "tb_scroll_container.h"
+#include "elements/tb_select.h"
+#include "elements/tb_text_box.h"
+#include "elements/tb_scroll_container.h"
 
-#include "tb/message_window.h"
+#include "tb/elements/message_window.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
+
+using namespace tb::elements;
 
 // == ResourceItem
 // ====================================================================================

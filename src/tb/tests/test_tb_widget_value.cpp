@@ -8,15 +8,16 @@
  */
 
 #include "tb_test.h"
-#include "tb_text_box.h"
-#include "tb_widgets_common.h"
-#include "tb_select.h"
-#include "tb_inline_select.h"
+#include "elements/tb_text_box.h"
+#include "elements/tb_widgets_common.h"
+#include "elements/tb_select.h"
+#include "elements/tb_inline_select.h"
 #include "tb/element_value.h"
 
 #ifdef TB_UNIT_TESTING
 
 using namespace tb;
+using namespace tb::elements;
 
 TB_TEST_GROUP(tb_widget_value_text) {
   ElementValue element_val(TBIDC("test value text"));
