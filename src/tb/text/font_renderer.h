@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_FONT_RENDERER_H_
-#define TB_RESOURCES_FONT_RENDERER_H_
+#ifndef TB_TEXT_FONT_RENDERER_H_
+#define TB_TEXT_FONT_RENDERER_H_
 
 #include <string>
 
@@ -17,7 +17,7 @@
 #include "tb/util/utf8.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 class FontFace;
 class FontGlyphData;
@@ -45,7 +45,7 @@ class FontRenderer : public util::TBLinkOf<FontRenderer> {
   virtual FontMetrics GetMetrics() = 0;
 };
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_RESOURCES_FONT_RENDERER_H_
+#endif  // TB_TEXT_FONT_RENDERER_H_

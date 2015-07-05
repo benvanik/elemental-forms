@@ -9,11 +9,11 @@
 
 #include <memory>
 
-#include "tb/resources/font_manager.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_manager.h"
+#include "tb/text/font_renderer.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 using graphics::Renderer;
 
@@ -181,5 +181,5 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
   return nullptr;
 }
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb

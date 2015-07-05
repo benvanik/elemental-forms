@@ -14,8 +14,8 @@
 #include "tb/element_animation_manager.h"
 #include "tb/graphics/image_manager.h"
 #include "tb/parsing/element_factory.h"
-#include "tb/resources/font_manager.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_manager.h"
+#include "tb/text/font_renderer.h"
 #include "tb/skin.h"
 #include "tb/tooltip_manager.h"
 #include "tb/turbo_badger.h"
@@ -35,7 +35,7 @@ bool Initialize(Renderer* renderer, const char* language_file) {
 
   util::StringTable::set(std::make_unique<util::StringTable>());
   util::StringTable::get()->Load(language_file);
-  resources::FontManager::set(std::make_unique<resources::FontManager>());
+  text::FontManager::set(std::make_unique<text::FontManager>());
   Skin::set(std::make_unique<Skin>());
   parsing::ElementFactory::set(std::make_unique<parsing::ElementFactory>());
   graphics::ImageManager::set(std::make_unique<graphics::ImageManager>());
@@ -62,7 +62,7 @@ void Shutdown() {
   graphics::ImageManager::set(nullptr);
   parsing::ElementFactory::set(nullptr);
   Skin::set(nullptr);
-  resources::FontManager::set(nullptr);
+  text::FontManager::set(nullptr);
   util::StringTable::set(nullptr);
   Renderer::set(nullptr);
 }

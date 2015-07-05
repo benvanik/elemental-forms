@@ -10,12 +10,12 @@
 #include <cmath>
 #include <memory>
 
-#include "tb/resources/font_face.h"
-#include "tb/resources/font_manager.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_face.h"
+#include "tb/text/font_manager.h"
+#include "tb/text/font_renderer.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 using graphics::Renderer;
 
@@ -209,5 +209,5 @@ int FontFace::GetStringWidth(const char* str, size_t len) {
 void FontFace::Debug() { m_glyph_cache->Debug(); }
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb

@@ -196,7 +196,7 @@ class TextBox : public Element,
   void OnChange() override;
   bool OnEnter() override;
   void Invalidate(const Rect& rect) override;
-  void DrawString(int32_t x, int32_t y, tb::resources::FontFace* font,
+  void DrawString(int32_t x, int32_t y, tb::text::FontFace* font,
                   const Color& color, const char* str, size_t len) override;
   void DrawRect(const Rect& rect, const Color& color) override;
   void DrawRectFill(const Rect& rect, const Color& color) override;

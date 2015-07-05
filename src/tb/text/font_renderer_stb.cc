@@ -8,7 +8,7 @@
  */
 
 #include "tb/graphics/renderer.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_renderer.h"
 
 #ifdef TB_FONT_RENDERER_STB
 

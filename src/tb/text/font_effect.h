@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_FONT_EFFECT_H_
-#define TB_RESOURCES_FONT_EFFECT_H_
+#ifndef TB_TEXT_FONT_EFFECT_H_
+#define TB_TEXT_FONT_EFFECT_H_
 
 #include "tb/util/string_builder.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 class FontGlyphData;
 class GlyphMetrics;
@@ -40,7 +40,7 @@ class FontEffect {
   util::StringBuilder m_blur_temp;
 };
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_RESOURCES_FONT_EFFECT_H_
+#endif  // TB_TEXT_FONT_EFFECT_H_

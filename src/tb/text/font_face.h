@@ -1,20 +1,20 @@
 /**
-******************************************************************************
-* xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
-******************************************************************************
-* Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
-* See turbo_badger.h and LICENSE in the root for more information.           *
-******************************************************************************
-*/
+ ******************************************************************************
+ * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
+ ******************************************************************************
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
+ * See turbo_badger.h and LICENSE in the root for more information.           *
+ ******************************************************************************
+ */
 
-#ifndef TB_RESOURCES_FONT_FACE_H_
-#define TB_RESOURCES_FONT_FACE_H_
+#ifndef TB_TEXT_FONT_FACE_H_
+#define TB_TEXT_FONT_FACE_H_
 
 #include <memory>
 
 #include "tb/color.h"
 #include "tb/font_description.h"
-#include "tb/resources/font_effect.h"
+#include "tb/text/font_effect.h"
 #include "tb/util/link_list.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/utf8.h"
@@ -26,7 +26,7 @@ class BitmapFragment;
 }  // namespace tb
 
 namespace tb {
-namespace resources {
+namespace text {
 
 class FontGlyphCache;
 class FontRenderer;
@@ -148,7 +148,7 @@ class FontFace {
   Color m_bgColor;
 };
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_RESOURCES_FONT_FACE_H_
+#endif  // TB_TEXT_FONT_FACE_H_

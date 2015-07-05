@@ -12,15 +12,15 @@
 #include "tb/graphics/image_loader.h"
 #include "tb/graphics/renderer.h"
 #include "tb/parsing/parse_node.h"
-#include "tb/resources/font_face.h"
-#include "tb/resources/font_manager.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_face.h"
+#include "tb/text/font_manager.h"
+#include "tb/text/font_renderer.h"
 
 #ifdef TB_FONT_RENDERER_TBBF
 
 using namespace tb;
 using namespace tb::parsing;
-using namespace tb::resources;
+using namespace tb::text;
 
 struct GLYPH {
   int x, w;

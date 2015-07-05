@@ -9,11 +9,11 @@
 
 #include <cassert>
 
-#include "tb/resources/font_effect.h"
-#include "tb/resources/font_face.h"
+#include "tb/text/font_effect.h"
+#include "tb/text/font_face.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 void BlurGlyph(unsigned char* src, int srcw, int srch, int srcStride,
                unsigned char* dst, int dstw, int dsth, int dstStride,
@@ -107,5 +107,5 @@ FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
   return effect_glyph_data;
 }
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb

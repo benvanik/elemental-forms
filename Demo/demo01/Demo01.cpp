@@ -11,8 +11,8 @@
 #include "tb/element_animation_manager.h"
 #include "tb/elements.h"
 #include "tb/parsing/parse_node.h"
-#include "tb/resources/font_manager.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_manager.h"
+#include "tb/text/font_renderer.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
@@ -200,7 +200,7 @@ class EditWindow : public DemoWindow {
         if (ev.ref_id == TBIDC("default font"))
           edit->SetFontDescription(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
-          auto fd = resources::FontManager::get()->GetDefaultFontDescription();
+          auto fd = text::FontManager::get()->GetDefaultFontDescription();
           fd.SetSize(28);
           edit->SetFontDescription(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
@@ -816,7 +816,7 @@ int app_main() {
   void register_freetype_font_renderer();
   register_freetype_font_renderer();
 #endif
-  auto font_manager = resources::FontManager::get();
+  auto font_manager = text::FontManager::get();
 
 // Add fonts we can use to the font manager.
 #if defined(TB_FONT_RENDERER_STB) || defined(TB_FONT_RENDERER_FREETYPE)

@@ -12,7 +12,7 @@
 #include "tb/elements/menu_window.h"
 #include "tb/elements/text_box.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/resources/font_face.h"
+#include "tb/text/font_face.h"
 #include "tb/skin.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
@@ -460,7 +460,7 @@ bool TextBox::OnEnter() { return false; }
 
 void TextBox::Invalidate(const Rect& rect) { Element::Invalidate(); }
 
-void TextBox::DrawString(int32_t x, int32_t y, resources::FontFace* font,
+void TextBox::DrawString(int32_t x, int32_t y, text::FontFace* font,
                          const Color& color, const char* str, size_t len) {
   font->DrawString(x, y, color, str, len);
 }
@@ -550,9 +550,9 @@ class TextFragmentContentElement : public TextFragmentContent {
   ~TextFragmentContentElement() override;
 
   void UpdatePos(int x, int y) override;
-  int32_t GetWidth(resources::FontFace* font, TextFragment* fragment) override;
-  int32_t GetHeight(resources::FontFace* font, TextFragment* fragment) override;
-  int32_t GetBaseline(resources::FontFace* font,
+  int32_t GetWidth(text::FontFace* font, TextFragment* fragment) override;
+  int32_t GetHeight(text::FontFace* font, TextFragment* fragment) override;
+  int32_t GetBaseline(text::FontFace* font,
                       TextFragment* fragment) override;
 
  private:
@@ -575,19 +575,19 @@ void TextFragmentContentElement::UpdatePos(int x, int y) {
       {x, y, GetWidth(nullptr, nullptr), GetHeight(nullptr, nullptr)});
 }
 
-int32_t TextFragmentContentElement::GetWidth(resources::FontFace* font,
+int32_t TextFragmentContentElement::GetWidth(text::FontFace* font,
                                              TextFragment* fragment) {
   return m_element->rect().w ? m_element->rect().w
                              : m_element->GetPreferredSize().pref_w;
 }
 
-int32_t TextFragmentContentElement::GetHeight(resources::FontFace* font,
+int32_t TextFragmentContentElement::GetHeight(text::FontFace* font,
                                               TextFragment* fragment) {
   return m_element->rect().h ? m_element->rect().h
                              : m_element->GetPreferredSize().pref_h;
 }
 
-int32_t TextFragmentContentElement::GetBaseline(resources::FontFace* font,
+int32_t TextFragmentContentElement::GetBaseline(text::FontFace* font,
                                                 TextFragment* fragment) {
   int height = GetHeight(font, fragment);
   return (height + fragment->block->CalculateBaseline(font)) / 2;

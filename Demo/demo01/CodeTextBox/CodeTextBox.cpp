@@ -18,7 +18,7 @@ void CodeTextBox::OnInflate(const parsing::InflateInfo& info) {
   TextBox::OnInflate(info);
 }
 
-void CodeTextBox::DrawString(int32_t x, int32_t y, resources::FontFace* font,
+void CodeTextBox::DrawString(int32_t x, int32_t y, text::FontFace* font,
                              const Color& color, const char* str, size_t len) {
   Color finalColor(color);
   StringHasColorOverride(str, len, finalColor);

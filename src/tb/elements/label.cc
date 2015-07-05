@@ -9,7 +9,7 @@
 
 #include "tb/elements/label.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/resources/font_face.h"
+#include "tb/text/font_face.h"
 
 namespace tb {
 namespace elements {

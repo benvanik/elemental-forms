@@ -13,7 +13,7 @@
 #include "tb/elements/label_container.h"
 #include "tb/elements/text_box.h"
 #include "tb/graphics/image_manager.h"
-#include "tb/resources/font_manager.h"
+#include "tb/text/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 #include "tb/window.h"
@@ -105,9 +105,9 @@ class DebugSettingsWindow : public Window, public ElementListener {
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawFontBitmapFragments)) {
       Element* element = Element::hovered_element ? Element::hovered_element
                                                   : Element::focused_element;
-      auto font_face = resources::FontManager::get()->GetFontFace(
+      auto font_face = text::FontManager::get()->GetFontFace(
           element ? element->GetCalculatedFontDescription()
-                  : resources::FontManager::get()->GetDefaultFontDescription());
+                  : text::FontManager::get()->GetDefaultFontDescription());
       font_face->Debug();
     }
 

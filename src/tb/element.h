@@ -36,9 +36,9 @@ struct InflateInfo;
 namespace parts {
 class Scroller;
 }  // namespace parts
-namespace resources {
+namespace text {
 class FontFace;
-}  // namespace resources
+}  // namespace text
 
 enum class Align {
   kLeft,
@@ -986,7 +986,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
 
   // Gets the FontFace for this element from the current font description
   // (calculated by GetCalculatedFontDescription).
-  resources::FontFace* GetFont() const;
+  text::FontFace* GetFont() const;
 
  private:
   friend class ElementListener;

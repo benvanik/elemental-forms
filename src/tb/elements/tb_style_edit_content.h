@@ -13,9 +13,9 @@
 #include "tb_style_edit.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 class FontFace;
-}  // namespace resources
+}  // namespace text
 }  // namespace tb
 
 namespace tb {
@@ -36,15 +36,15 @@ class TextFragmentContent {
                      int32_t translate_y, TextProps* props) {}
   virtual void Click(TextFragment* fragment, int button,
                      ModifierKeys modifierkeys) {}
-  virtual int32_t GetWidth(tb::resources::FontFace* font,
+  virtual int32_t GetWidth(tb::text::FontFace* font,
                            TextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetHeight(tb::resources::FontFace* font,
+  virtual int32_t GetHeight(tb::text::FontFace* font,
                             TextFragment* fragment) {
     return 0;
   }
-  virtual int32_t GetBaseline(tb::resources::FontFace* font,
+  virtual int32_t GetBaseline(tb::text::FontFace* font,
                               TextFragment* fragment) {
     return GetHeight(font, fragment);
   }
@@ -62,9 +62,9 @@ class TextFragmentContentHR : public TextFragmentContent {
 
   void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
              TextProps* props) override;
-  int32_t GetWidth(tb::resources::FontFace* font,
+  int32_t GetWidth(tb::text::FontFace* font,
                    TextFragment* fragment) override;
-  int32_t GetHeight(tb::resources::FontFace* font,
+  int32_t GetHeight(tb::text::FontFace* font,
                     TextFragment* fragment) override;
 
  private:

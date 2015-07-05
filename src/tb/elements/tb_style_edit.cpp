@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb/resources/font_manager.h"
+#include "tb/text/font_manager.h"
 #include "tb/util/clipboard.h"
 #include "tb/util/file.h"
 #include "tb/util/rect_region.h"
@@ -594,8 +594,8 @@ void TextProps::Pop() {
   data = data_list.GetLast() ? data_list.GetLast() : &base_data;
 }
 
-tb::resources::FontFace* TextProps::GetFont() {
-  return tb::resources::FontManager::get()->GetFontFace(data->font_desc);
+tb::text::FontFace* TextProps::GetFont() {
+  return tb::text::FontManager::get()->GetFontFace(data->font_desc);
 }
 
 TextBlock::TextBlock(StyleEdit* style_edit)
@@ -713,14 +713,14 @@ void TextBlock::Merge() {
   }
 }
 
-int32_t TextBlock::CalculateTabWidth(tb::resources::FontFace* font,
+int32_t TextBlock::CalculateTabWidth(tb::text::FontFace* font,
                                      int32_t xpos) const {
   int tabsize = font->GetStringWidth("x", 1) * TAB_SPACE;
   int p2 = int(xpos / tabsize) * tabsize + tabsize;
   return p2 - xpos;
 }
 
-int32_t TextBlock::CalculateStringWidth(tb::resources::FontFace* font,
+int32_t TextBlock::CalculateStringWidth(tb::text::FontFace* font,
                                         const char* str, size_t len) const {
   if (style_edit->packed.password_on) {
     // Convert the length in number or characters, since that's what matters for
@@ -731,15 +731,15 @@ int32_t TextBlock::CalculateStringWidth(tb::resources::FontFace* font,
   return font->GetStringWidth(str, len);
 }
 
-int32_t TextBlock::CalculateLineHeight(tb::resources::FontFace* font) const {
+int32_t TextBlock::CalculateLineHeight(tb::text::FontFace* font) const {
   return font->height();
 }
 
-int32_t TextBlock::CalculateBaseline(tb::resources::FontFace* font) const {
+int32_t TextBlock::CalculateBaseline(tb::text::FontFace* font) const {
   return font->GetAscent();
 }
 
-int TextBlock::GetStartIndentation(tb::resources::FontFace* font,
+int TextBlock::GetStartIndentation(tb::text::FontFace* font,
                                    size_t first_line_len) const {
   // Lines beginning with whitespace or list points, should
   // indent to the same as the beginning when wrapped.
@@ -1144,24 +1144,24 @@ void TextFragment::Click(int button, ModifierKeys modifierkeys) {
   }
 }
 
-int32_t TextFragment::GetWidth(tb::resources::FontFace* font) {
+int32_t TextFragment::GetWidth(tb::text::FontFace* font) {
   if (content) return content->GetWidth(font, this);
   if (IsBreak()) return 0;
   if (IsTab()) return block->CalculateTabWidth(font, xpos);
   return block->CalculateStringWidth(font, block->str.c_str() + ofs, len);
 }
 
-int32_t TextFragment::GetHeight(tb::resources::FontFace* font) {
+int32_t TextFragment::GetHeight(tb::text::FontFace* font) {
   if (content) return content->GetHeight(font, this);
   return block->CalculateLineHeight(font);
 }
 
-int32_t TextFragment::GetBaseline(tb::resources::FontFace* font) {
+int32_t TextFragment::GetBaseline(tb::text::FontFace* font) {
   if (content) return content->GetBaseline(font, this);
   return block->CalculateBaseline(font);
 }
 
-int32_t TextFragment::GetCharX(tb::resources::FontFace* font, size_t ofs) {
+int32_t TextFragment::GetCharX(tb::text::FontFace* font, size_t ofs) {
   assert(ofs >= 0 && ofs <= len);
 
   if (IsEmbedded() || IsTab()) {
@@ -1174,7 +1174,7 @@ int32_t TextFragment::GetCharX(tb::resources::FontFace* font, size_t ofs) {
   return block->CalculateStringWidth(font, block->str.c_str() + this->ofs, ofs);
 }
 
-size_t TextFragment::GetCharOfs(tb::resources::FontFace* font, int32_t x) {
+size_t TextFragment::GetCharOfs(tb::text::FontFace* font, int32_t x) {
   if (IsEmbedded() || IsTab()) {
     return x > GetWidth(font) / 2 ? 1 : 0;
   }
@@ -1200,7 +1200,7 @@ size_t TextFragment::GetCharOfs(tb::resources::FontFace* font, int32_t x) {
   return len;
 }
 
-int32_t TextFragment::GetStringWidth(tb::resources::FontFace* font,
+int32_t TextFragment::GetStringWidth(tb::text::FontFace* font,
                                      const char* str, size_t len) {
   if (IsTab()) {
     return len ? block->CalculateTabWidth(font, xpos) : 0;
@@ -1244,8 +1244,8 @@ StyleEdit::StyleEdit() {
   selection.style_edit = this;
   TMPDEBUG(packed.show_whitespace = true);
 
-  font_desc = tb::resources::FontManager::get()->GetDefaultFontDescription();
-  font = tb::resources::FontManager::get()->GetFontFace(font_desc);
+  font_desc = tb::text::FontManager::get()->GetDefaultFontDescription();
+  font = tb::text::FontManager::get()->GetFontFace(font_desc);
 
 #if WIN32
   packed.win_style_br = 1;
@@ -1275,7 +1275,7 @@ void StyleEdit::SetContentFactory(TextFragmentContentFactory* content_factory) {
 void StyleEdit::SetFont(const FontDescription& font_desc) {
   if (this->font_desc == font_desc) return;
   this->font_desc = font_desc;
-  font = tb::resources::FontManager::get()->GetFontFace(font_desc);
+  font = tb::text::FontManager::get()->GetFontFace(font_desc);
   Reformat(true);
 }
 

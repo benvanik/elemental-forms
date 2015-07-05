@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_FONT_MANAGER_H_
-#define TB_RESOURCES_FONT_MANAGER_H_
+#ifndef TB_TEXT_FONT_MANAGER_H_
+#define TB_TEXT_FONT_MANAGER_H_
 
 #include <memory>
 #include <string>
@@ -17,12 +17,12 @@
 #include "tb/graphics/bitmap_fragment.h"
 #include "tb/graphics/bitmap_fragment_manager.h"
 #include "tb/graphics/renderer.h"
-#include "tb/resources/font_face.h"
-#include "tb/resources/font_renderer.h"
+#include "tb/text/font_face.h"
+#include "tb/text/font_renderer.h"
 #include "tb/util/utf8.h"
 
 namespace tb {
-namespace resources {
+namespace text {
 
 namespace {
 using UCS4 = tb::util::utf8::UCS4;
@@ -158,7 +158,7 @@ class FontManager {
   FontDescription m_test_font_desc;
 };
 
-}  // namespace resources
+}  // namespace text
 }  // namespace tb
 
-#endif  // TB_RESOURCES_FONT_MANAGER_H_
+#endif  // TB_TEXT_FONT_MANAGER_H_
