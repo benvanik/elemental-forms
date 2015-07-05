@@ -9,16 +9,15 @@
 
 #include <cassert>
 
-#include "tb_tooltips.h"
-#include "tb_widget_animation.h"
-
-#include "tb/animation.h"
+#include "tb/animation_manager.h"
 #include "tb/config.h"
+#include "tb/element_animation_manager.h"
 #include "tb/graphics/image_manager.h"
 #include "tb/parsing/element_factory.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
 #include "tb/resources/skin.h"
+#include "tb/tooltip_manager.h"
 #include "tb/turbo_badger.h"
 #include "tb/util/string_table.h"
 

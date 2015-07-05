@@ -7,12 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_tooltips.h"
-
 #include <algorithm>
 #include <cmath>
 
-#include "tb_widgets_listener.h"
+#include "tb_popup_window.h"
+#include "tb_text_box.h"
+#include "tb/tooltip_manager.h"
 
 namespace tb {
 
@@ -31,6 +31,27 @@ class TTMsgParam : public util::TypedObject {
 };
 
 }  // namespace
+
+// Implements functionality of tooltip popups, based on PopupWindow and
+// contains TextBox as content viewer.
+class TooltipWindow : public PopupWindow {
+ public:
+  TBOBJECT_SUBCLASS(TooltipWindow, PopupWindow);
+
+  TooltipWindow(Element* target);
+  ~TooltipWindow() override;
+
+  bool Show(int mouse_x, int mouse_y);
+
+  Point GetOffsetPoint() const { return Point(m_offset_x, m_offset_y); }
+
+ private:
+  Rect GetAlignedRect(int x, int y);
+
+  TextBox m_content;
+  int m_offset_x = 0;
+  int m_offset_y = 0;
+};
 
 TooltipWindow::TooltipWindow(Element* target) : PopupWindow(target) {
   SetSkinBg("", InvokeInfo::kNoCallbacks);

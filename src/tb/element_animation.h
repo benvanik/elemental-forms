@@ -7,19 +7,15 @@
  ******************************************************************************
  */
 
-#ifndef TB_WIDGET_ANIMATION_H
-#define TB_WIDGET_ANIMATION_H
+#ifndef TB_ELEMENT_ANIMATION_H_
+#define TB_ELEMENT_ANIMATION_H_
 
 #include "tb/animation.h"
-#include "tb_widgets_listener.h"
+#include "tb/rect.h"
 
 namespace tb {
 
-// Don't use 0.0 for opacity animations since that may break focus code.
-// At the moment a window should appear and start fading in from opacity 0,
-// it would also attempt setting the focus to it, but if opacity is 0 it will
-// think focus should not be set in that window and fail.
-constexpr float kAlmostZeroOpacity = 0.001f;
+class Element;
 
 // Base class for element animations. This animation object will be deleted
 // automatically if the element is deleted.
@@ -27,6 +23,12 @@ class ElementAnimation : public Animation,
                          public util::TBLinkOf<ElementAnimation> {
  public:
   TBOBJECT_SUBCLASS(ElementAnimation, Animation);
+
+  // Don't use 0.0 for opacity animations since that may break focus code.
+  // At the moment a window should appear and start fading in from opacity 0,
+  // it would also attempt setting the focus to it, but if opacity is 0 it will
+  // think focus should not be set in that window and fail.
+  static const float kAlmostZeroOpacity;
 
   ElementAnimation(Element* element);
   ~ElementAnimation() override;
@@ -83,28 +85,6 @@ class RectElementAnimation : public ElementAnimation {
   Mode m_mode;
 };
 
-class ElementAnimationManager : public ElementListener {
- public:
-  static void Init();
-  static void Shutdown();
-
-  // Aborts all animations that are running for the given element.
-  static void AbortAnimations(Element* element);
-
-  // Abort all animations matching the given type that are running for the given
-  // element.
-  // This example will abort all opacity animations:
-  // AbortAnimations(element,
-  //     TypedObject::GetTypeId<OpacityElementAnimation>())
-  static void AbortAnimations(Element* element, util::tb_type_id_t type_id);
-
- private:
-  void OnElementDelete(Element* element) override;
-  bool OnElementDying(Element* element) override;
-  void OnElementAdded(Element* parent, Element* child) override;
-  void OnElementRemove(Element* parent, Element* child) override;
-};
-
 }  // namespace tb
 
-#endif  // TB_WIDGET_ANIMATION_H
+#endif  // TB_ELEMENT_ANIMATION_H_

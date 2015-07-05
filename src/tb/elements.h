@@ -23,10 +23,4 @@
 #include "tb_widgets.h"
 #include "tb_widgets_common.h"
 
-namespace tb {
-
-//
-
-}  // namespace tb
-
 #endif  // TB_ELEMENTS_H_

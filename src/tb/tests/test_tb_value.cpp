@@ -19,8 +19,8 @@ TB_TEST_GROUP(tb_value) {
   TB_TEST(node_create_on_get) {
     ParseNode node;
     TB_VERIFY(node.GetNode("foo>bar>funky") == nullptr);
-    TB_VERIFY(node.GetNode("foo>bar>funky", ParseNode::MissingPolicy::kCreate) !=
-              nullptr);
+    TB_VERIFY(node.GetNode("foo>bar>funky",
+                           ParseNode::MissingPolicy::kCreate) != nullptr);
     TB_VERIFY(node.GetNode("foo>bar>funky") != nullptr);
   }
 

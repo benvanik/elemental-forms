@@ -10,7 +10,7 @@
 #ifndef TB_MESSAGE_WINDOW_H
 #define TB_MESSAGE_WINDOW_H
 
-#include "tb_widgets_listener.h"
+#include "tb/element_listener.h"
 #include "tb_window.h"
 
 namespace tb {

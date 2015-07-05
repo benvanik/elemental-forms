@@ -45,7 +45,8 @@ Value& ParseNodeTree::GetValueFromTree(const char* request) {
 }
 
 void ParseNodeTree::SetValue(const char* request, const Value& value) {
-  if (ParseNode* node = m_node.GetNode(request, ParseNode::MissingPolicy::kCreate)) {
+  if (ParseNode* node =
+          m_node.GetNode(request, ParseNode::MissingPolicy::kCreate)) {
     // FIX: Only invoke the listener if it really changed.
     node->GetValue().Copy(value);
     InvokeChangeListenersInternal(request);
@@ -111,7 +112,8 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
     // the right node tree.
     else if (ParseNodeTree* rt =
                  ParseNodeTree::GetRefTree(name_start, name_end - name_start)) {
-      next_node = rt->m_node.GetNode(name_end + 1, ParseNode::MissingPolicy::kNull);
+      next_node =
+          rt->m_node.GetNode(name_end + 1, ParseNode::MissingPolicy::kNull);
     } else {
       TBDebugOut(
           "ParseNodeTree::ResolveNode - No tree found for request \"%s\" from "
@@ -122,7 +124,8 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
 
     if (!next_node) {
       TBDebugOut(
-          "ParseNodeTree::ResolveNode - ParseNode not found on request \"%s\"\n",
+          "ParseNodeTree::ResolveNode - ParseNode not found on request "
+          "\"%s\"\n",
           node_str);
       break;
     }

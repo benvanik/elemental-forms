@@ -14,8 +14,7 @@
 #include <string>
 #include <vector>
 
-#include "tb_widget_value.h"
-
+#include "tb/element_value.h"
 #include "tb/font_description.h"
 #include "tb/rect.h"
 #include "tb/resources/skin.h"

@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_WIDGET_VALUE_H
-#define TB_WIDGET_VALUE_H
+#ifndef TB_ELEMENT_VALUE_H_
+#define TB_ELEMENT_VALUE_H_
 
 #include "tb/id.h"
 #include "tb/util/hash_table.h"
@@ -17,9 +17,9 @@
 
 namespace tb {
 
-class ValueGroup;
 class Element;
 class ElementValue;
+class ElementValueGroup;
 
 // Maintains a connection between Element and ElementValue.
 class ElementValueConnection : public util::TBLinkOf<ElementValueConnection> {
@@ -45,7 +45,7 @@ class ElementValueConnection : public util::TBLinkOf<ElementValueConnection> {
 
 // Stores a Value that will be synchronized with all elements connected to it.
 // It has a TBID name, that can be used to identify this value within its
-// ValueGroup.
+// ElementValueGroup.
 //
 // It will synchronize with elements when any of the connected elements change
 // and triggers the EventType::kChanged event, and when the value is changed
@@ -96,11 +96,13 @@ class ElementValue {
   bool m_syncing = false;
 };
 
-// Listener that will be notified when any of the values in a ValueGroup is
+// Listener that will be notified when any of the values in a ElementValueGroup
+// is
 // changed.
-class ValueGroupListener : public util::TBLinkOf<ValueGroupListener> {
+class ElementValueGroupListener
+    : public util::TBLinkOf<ElementValueGroupListener> {
  public:
-  virtual ~ValueGroupListener() {
+  virtual ~ElementValueGroupListener() {
     if (linklist) {
       linklist->Remove(this);
     }
@@ -108,16 +110,16 @@ class ValueGroupListener : public util::TBLinkOf<ValueGroupListener> {
 
   // Called when a value has changed and all elements connected to it has been
   // updated.
-  virtual void OnValueChanged(const ValueGroup* group,
+  virtual void OnValueChanged(const ElementValueGroup* group,
                               const ElementValue* value) = 0;
 };
 
-// ValueGroup is a collection of element values (ElementValue) that can be
-// fetched by name (using a TBID). It also keeps a list of ValueGroupListener
-// that listens to changes to any of the values.
-class ValueGroup {
+// ElementValueGroup is a collection of element values (ElementValue) that can
+// be fetched by name (using a TBID). It also keeps a list of
+// ElementValueGroupListener that listens to changes to any of the values.
+class ElementValueGroup {
  public:
-  static ValueGroup* get() { return &value_group_singleton_; }
+  static ElementValueGroup* get() { return &value_group_singleton_; }
 
   // Creates a ElementValue with the given name if it does not already exist.
   ElementValue* CreateValueIfNeeded(const TBID& name,
@@ -129,12 +131,12 @@ class ValueGroup {
   // Adds a listener to this group.
   // It will be removed automatically when deleted, but can also be removed by
   // RemoveListener.
-  void AddListener(ValueGroupListener* listener) {
+  void AddListener(ElementValueGroupListener* listener) {
     m_listeners.AddLast(listener);
   }
 
   // Removes a listener from this group.
-  void RemoveListener(ValueGroupListener* listener) {
+  void RemoveListener(ElementValueGroupListener* listener) {
     m_listeners.Remove(listener);
   }
 
@@ -142,12 +144,12 @@ class ValueGroup {
   friend class ElementValue;
   void InvokeOnValueChanged(const ElementValue* value);
 
-  static ValueGroup value_group_singleton_;
+  static ElementValueGroup value_group_singleton_;
 
   util::HashTableAutoDeleteOf<ElementValue> m_values;
-  util::TBLinkListOf<ValueGroupListener> m_listeners;
+  util::TBLinkListOf<ElementValueGroupListener> m_listeners;
 };
 
 }  // namespace tb
 
-#endif  // TB_WIDGET_VALUE_H
+#endif  // TB_ELEMENT_VALUE_H_

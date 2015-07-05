@@ -45,7 +45,8 @@ bool ElementFactory::LoadData(Element* target, const char* data,
 
 void ElementFactory::LoadNodeTree(Element* target, ParseNode* node) {
   // Iterate through all nodes and create elements.
-  for (ParseNode* child = node->GetFirstChild(); child; child = child->GetNext()) {
+  for (ParseNode* child = node->GetFirstChild(); child;
+       child = child->GetNext()) {
     CreateElement(target, child);
   }
 }

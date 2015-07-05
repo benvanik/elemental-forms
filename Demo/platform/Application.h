@@ -2,8 +2,7 @@
 #define APPLICATION_H
 
 #include "tb/config.h"
-
-#include "tb_widget_animation.h"
+#include "tb_widgets.h"
 
 /** Called from the platform main function. */
 int app_main();

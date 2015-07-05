@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\tb\animation_manager.cc" />
     <ClCompile Include="src\tb\elements.cc" />
+    <ClCompile Include="src\tb\element_animation_manager.cc" />
     <ClCompile Include="src\tb\graphics\batching_renderer.cc" />
     <ClCompile Include="src\tb\graphics\bitmap_fragment.cc" />
     <ClCompile Include="src\tb\graphics\bitmap_fragment_manager.cc" />
@@ -53,14 +55,14 @@
     <ClCompile Include="src\tb\tb_style_edit_content.cpp" />
     <ClCompile Include="src\tb\tb_tab_container.cpp" />
     <ClCompile Include="src\tb\tb_toggle_container.cpp" />
-    <ClCompile Include="src\tb\tb_tooltips.cpp" />
+    <ClCompile Include="src\tb\tooltip_manager.cc" />
     <ClCompile Include="src\tb\value.cc" />
     <ClCompile Include="src\tb\tb_widgets.cpp" />
     <ClCompile Include="src\tb\tb_widgets_common.cpp" />
-    <ClCompile Include="src\tb\tb_widgets_listener.cpp" />
-    <ClCompile Include="src\tb\tb_widget_animation.cpp" />
+    <ClCompile Include="src\tb\element_listener.cc" />
+    <ClCompile Include="src\tb\element_animation.cc" />
     <ClCompile Include="src\tb\tb_widget_skin_condition_context.cpp" />
-    <ClCompile Include="src\tb\tb_widget_value.cpp" />
+    <ClCompile Include="src\tb\element_value.cc" />
     <ClCompile Include="src\tb\tb_window.cpp" />
     <ClCompile Include="src\tb\tests\tb_test.cpp" />
     <ClCompile Include="src\tb\tests\test_tb_color.cpp" />
@@ -93,7 +95,9 @@
     <ClCompile Include="src\tb\util\utf8.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\tb\animation_manager.h" />
     <ClInclude Include="src\tb\elements.h" />
+    <ClInclude Include="src\tb\element_animation_manager.h" />
     <ClInclude Include="src\tb\graphics\batching_renderer.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment_manager.h" />
@@ -114,8 +118,8 @@
     <ClInclude Include="src\tb\parsing\text_parser.h" />
     <ClInclude Include="src\tb\parsing\text_parser_stream.h" />
     <ClInclude Include="src\tb\tb_image_widget.h" />
-    <ClInclude Include="src\tb\tb_tooltips.h" />
-    <ClInclude Include="src\tb\tb_widget_animation.h" />
+    <ClInclude Include="src\tb\tooltip_manager.h" />
+    <ClInclude Include="src\tb\element_animation.h" />
     <ClInclude Include="src\tb\color.h" />
     <ClInclude Include="src\tb\config.h" />
     <ClInclude Include="src\tb\turbo_badger.h" />
@@ -142,9 +146,9 @@
     <ClInclude Include="src\tb\value.h" />
     <ClInclude Include="src\tb\tb_widgets.h" />
     <ClInclude Include="src\tb\tb_widgets_common.h" />
-    <ClInclude Include="src\tb\tb_widgets_listener.h" />
+    <ClInclude Include="src\tb\element_listener.h" />
     <ClInclude Include="src\tb\tb_widget_skin_condition_context.h" />
-    <ClInclude Include="src\tb\tb_widget_value.h" />
+    <ClInclude Include="src\tb\element_value.h" />
     <ClInclude Include="src\tb\tb_window.h" />
     <ClInclude Include="src\tb\tests\tb_test.h" />
     <ClInclude Include="src\tb\util\clipboard.h" />

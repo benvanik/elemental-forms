@@ -82,18 +82,18 @@ void TabContainer::OnInflate(const parsing::InflateInfo& info) {
     Layout* tab_layout = GetTabLayout();
     info.reader->LoadNodeTree(tab_layout, tabs);
 
-    parsing::InflateInfo inflate_info(
-        info.reader, tab_layout->GetContentRoot(), tabs, Value::Type::kNull);
+    parsing::InflateInfo inflate_info(info.reader, tab_layout->GetContentRoot(),
+                                      tabs, Value::Type::kNull);
     tab_layout->OnInflate(inflate_info);
   }
   if (auto tabs = info.node->GetNode("content")) {
     parsing::InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
-                                        Value::Type::kNull);
+                                      Value::Type::kNull);
     GetContentRoot()->OnInflate(inflate_info);
   }
   if (auto tabs = info.node->GetNode("root")) {
     parsing::InflateInfo inflate_info(info.reader, &m_root_layout, tabs,
-                                        Value::Type::kNull);
+                                      Value::Type::kNull);
     m_root_layout.OnInflate(inflate_info);
   }
 }

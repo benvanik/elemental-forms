@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_WIDGETSLISTENER_H
-#define TB_WIDGETSLISTENER_H
+#ifndef TB_ELEMENT_LISTENER_H_
+#define TB_ELEMENT_LISTENER_H_
 
 #include "tb_widgets.h"
 
@@ -104,4 +104,4 @@ class WeakElementPointer : private ElementListener {
 
 }  // namespace tb
 
-#endif  // TB_WIDGETSLISTENER_H
+#endif  // TB_ELEMENT_LISTENER_H_

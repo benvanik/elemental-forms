@@ -7,13 +7,12 @@
  ******************************************************************************
  */
 
-#include "tb_widget_value.h"
-
 #include "tb_widgets.h"
+#include "tb/element_value.h"
 
 namespace tb {
 
-ValueGroup ValueGroup::value_group_singleton_;
+ElementValueGroup ElementValueGroup::value_group_singleton_;
 
 void ElementValueConnection::Connect(ElementValue* value, Element* element) {
   Disconnect();
@@ -75,7 +74,7 @@ void ElementValue::SetFromElement(Element* source_element) {
 
 void ElementValue::SyncToElements(Element* exclude_element) {
   // FIX: Assign group to each value. Currently we only have one global group.
-  ValueGroup::get()->InvokeOnValueChanged(this);
+  ElementValueGroup::get()->InvokeOnValueChanged(this);
 
   auto iter = m_connections.IterateForward();
   while (ElementValueConnection* connection = iter.GetAndStep()) {
@@ -127,8 +126,8 @@ void ElementValue::SetDouble(double value) {
   SyncToElements(nullptr);
 }
 
-ElementValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
-                                              Value::Type type) {
+ElementValue* ElementValueGroup::CreateValueIfNeeded(const TBID& name,
+                                                     Value::Type type) {
   if (ElementValue* val = GetValue(name)) {
     return val;
   }
@@ -137,9 +136,9 @@ ElementValue* ValueGroup::CreateValueIfNeeded(const TBID& name,
   return val;
 }
 
-void ValueGroup::InvokeOnValueChanged(const ElementValue* value) {
+void ElementValueGroup::InvokeOnValueChanged(const ElementValue* value) {
   auto iter = m_listeners.IterateForward();
-  while (ValueGroupListener* listener = iter.GetAndStep()) {
+  while (ElementValueGroupListener* listener = iter.GetAndStep()) {
     listener->OnValueChanged(this, value);
   }
 }

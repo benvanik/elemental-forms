@@ -120,57 +120,6 @@ class Animation : public util::TypedObject, public util::TBLinkOf<Animation> {
   void InvokeOnAnimationStop(bool aborted);
 };
 
-// System class that manages all animated object.
-class AnimationManager {
- private:
-  static util::TBLinkListOf<Animation> animating_objects;
-  static int block_animations_counter;
-
- public:
-  // Updates all running animations.
-  static void Update();
-
-  // Returns true if there is running animations.
-  static bool HasAnimationsRunning();
-
-  static void StartAnimation(
-      Animation* obj, AnimationCurve animation_curve = Animation::kDefaultCurve,
-      uint64_t animation_duration = Animation::kDefaultDuration,
-      AnimationTime animation_time = AnimationTime::kFirstUpdate);
-
-  // Aborts the given animation.
-  // If delete_animation is true, the animation will be deleted in this call
-  // after running callbacks and listeners callbacks. In rare situations, you
-  // might want to keep the animation around and delete it later (or start it
-  // again).
-  static void AbortAnimation(Animation* obj, bool delete_animation);
-
-  // Aborts and deletes all animations.
-  static void AbortAllAnimations();
-
-  // Returns true if new animations are blocked.
-  static bool IsAnimationsBlocked();
-
-  // Begins a period of blocking new animations. End the period with
-  // EndBlockAnimations.
-  // If StartAnimation is called during the blocked period, the animation object
-  // will finish the next animation update as it completed normally.
-  static void BeginBlockAnimations();
-
-  // Ends a period of blocking new animations that was started with
-  // BeginBlockAnimations.
-  static void EndBlockAnimations();
-};
-
-// Blocks new animations during its lifetime.
-// It's convenient to put on the stack to block new animations within a scope of
-// code.
-class AnimationBlocker {
- public:
-  AnimationBlocker() { AnimationManager::BeginBlockAnimations(); }
-  ~AnimationBlocker() { AnimationManager::EndBlockAnimations(); }
-};
-
 // An animated float value.
 class FloatAnimation : public Animation {
  public:
@@ -190,16 +139,8 @@ class FloatAnimation : public Animation {
   }
 
   float GetValue() { return src_val + (dst_val - src_val) * current_progress; }
-  void SetValueAnimated(float value) {
-    src_val = GetValue();
-    dst_val = value;
-    AnimationManager::StartAnimation(this, animation_curve, animation_duration);
-  }
-  void SetValueImmediately(float value) {
-    AnimationManager::AbortAnimation(this, false);
-    src_val = dst_val = value;
-    OnAnimationUpdate(1.0f);
-  }
+  void SetValueAnimated(float value);
+  void SetValueImmediately(float value);
 
   void OnAnimationStart() override { current_progress = 0; }
   void OnAnimationUpdate(float progress) override {

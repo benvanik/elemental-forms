@@ -12,7 +12,7 @@
 #include "tb_widgets_common.h"
 #include "tb_select.h"
 #include "tb_inline_select.h"
-#include "tb_widget_value.h"
+#include "tb/element_value.h"
 
 #ifdef TB_UNIT_TESTING
 
@@ -144,12 +144,12 @@ TB_TEST_GROUP(tb_widget_value_listener) {
   CheckBox* a, *b;
 
   /** Listen to changes and update val to any changed value. */
-  class MyListener : public ValueGroupListener {
+  class MyListener : public ElementValueGroupListener {
    public:
     int change_counter;
     Value val;
     MyListener() : change_counter(0) {}
-    virtual void OnValueChanged(const ValueGroup* group,
+    virtual void OnValueChanged(const ElementValueGroup* group,
                                 const ElementValue* value) {
       val = value->GetValue();
       change_counter++;
@@ -162,9 +162,9 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     TB_VERIFY(b = new CheckBox);
   }
 
-  TB_TEST(Setup) { ValueGroup::get()->AddListener(&listener); }
+  TB_TEST(Setup) { ElementValueGroup::get()->AddListener(&listener); }
 
-  TB_TEST(Cleanup) { ValueGroup::get()->RemoveListener(&listener); }
+  TB_TEST(Cleanup) { ElementValueGroup::get()->RemoveListener(&listener); }
 
   TB_TEST(Shutdown) {
     delete a;

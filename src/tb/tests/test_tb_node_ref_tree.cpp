@@ -97,8 +97,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
-    TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bar>bar_circular2").type() ==
-              Value::Type::kNull);
+    TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bar>bar_circular2")
+                  .type() == Value::Type::kNull);
 
     // References tree is wrong
     TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bad_tree>does_not_exist")

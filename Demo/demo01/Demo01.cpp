@@ -9,9 +9,11 @@
 #include "tb_menu_window.h"
 #include "tb_text_box.h"
 #include "tb_tab_container.h"
-#include "tb_widget_animation.h"
 #include "CodeTextBox\CodeTextBox.h"
 
+#include "tb/animation_manager.h"
+#include "tb/element_animation.h"
+#include "tb/element_animation_manager.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/resources/font_manager.h"
 #include "tb/resources/font_renderer.h"
@@ -322,11 +324,13 @@ ConnectionWindow::ConnectionWindow() {
 bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->id() == TBIDC("reset-master-volume")) {
-    if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("master-volume")))
+    if (ElementValue* val =
+            ElementValueGroup::get()->GetValue(TBIDC("master-volume")))
       val->set_integer(50);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("reset-user-name")) {
-    if (ElementValue* val = ValueGroup::get()->GetValue(TBIDC("user-name")))
+    if (ElementValue* val =
+            ElementValueGroup::get()->GetValue(TBIDC("user-name")))
       val->SetText("");
   }
   return DemoWindow::OnEvent(ev);
@@ -470,7 +474,8 @@ void AnimationsWindow::Animate() {
   AnimationManager::StartAnimation(anim, curve, duration);
   // Start fade animation
   if (fade) {
-    auto anim = new OpacityElementAnimation(this, kAlmostZeroOpacity, 1, false);
+    auto anim = new OpacityElementAnimation(
+        this, ElementAnimation::kAlmostZeroOpacity, 1, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kSlowDown, duration);
   }
 }
@@ -764,7 +769,7 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
 
   // Draw FPS
   ElementValue* continuous_repaint_val =
-      ValueGroup::get()->GetValue(TBIDC("continous-repaint"));
+      ElementValueGroup::get()->GetValue(TBIDC("continous-repaint"));
   bool continuous_repaint =
       continuous_repaint_val ? !!continuous_repaint_val->as_integer() : 0;
 

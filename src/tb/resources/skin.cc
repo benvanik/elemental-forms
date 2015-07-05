@@ -84,7 +84,8 @@ bool Skin::LoadInternal(const char* skin_file) {
     // closer to the screen DPI, all such dimensions will be scaled.
     int base_dpi = node.GetValueInt("description>base-dpi", 96);
     int supported_dpi = base_dpi;
-    if (ParseNode* supported_dpi_node = node.GetNode("description>supported-dpi")) {
+    if (ParseNode* supported_dpi_node =
+            node.GetNode("description>supported-dpi")) {
       assert(supported_dpi_node->GetValue().is_array() ||
              supported_dpi_node->GetValue().as_integer() == base_dpi);
       if (ValueArray* arr = supported_dpi_node->GetValue().as_array()) {
@@ -126,7 +127,8 @@ bool Skin::LoadInternal(const char* skin_file) {
       while (ParseNode* clone = n->GetNode("clone")) {
         n->Remove(clone);
 
-        ParseNode* clone_source = elements->GetNode(clone->GetValue().as_string());
+        ParseNode* clone_source =
+            elements->GetNode(clone->GetValue().as_string());
         if (clone_source) {
           n->CloneChildren(clone_source);
         }
@@ -776,8 +778,8 @@ void SkinElementStateList::Load(ParseNode* n) {
     state->element_id.reset(element_node->GetValue().as_string());
 
     // Loop through all nodes, read state and create all found conditions.
-    for (ParseNode* condition_node = element_node->GetFirstChild(); condition_node;
-         condition_node = condition_node->GetNext()) {
+    for (ParseNode* condition_node = element_node->GetFirstChild();
+         condition_node; condition_node = condition_node->GetNext()) {
       if (strcmp(condition_node->GetName(), "state") == 0) {
         state->state = StringToState(condition_node->GetValue().as_string());
       } else if (strcmp(condition_node->GetName(), "condition") == 0) {

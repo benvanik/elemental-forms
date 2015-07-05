@@ -2,6 +2,8 @@
 
 #include <cstdio>
 
+#include "tb/animation_manager.h"
+
 using namespace tb;
 
 void Application::Run() { m_backend->Run(); }

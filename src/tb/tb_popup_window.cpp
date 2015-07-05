@@ -10,7 +10,6 @@
 #include <algorithm>
 
 #include "tb_popup_window.h"
-#include "tb_widgets_listener.h"
 
 #include "tb/util/math.h"
 

@@ -110,7 +110,8 @@ class ParseNode : public util::TBLinkOf<ParseNode> {
   // nodes, depending on the miss policy. It can find nodes in children as well.
   // Names are separated by a ">".
   // Ex: GetNode("dishes>pizza>special>batman")
-  ParseNode* GetNode(const char* request, MissingPolicy mp = MissingPolicy::kNull);
+  ParseNode* GetNode(const char* request,
+                     MissingPolicy mp = MissingPolicy::kNull);
 
   const char* GetName() const { return m_name; }
 
@@ -152,7 +153,7 @@ class ParseNode : public util::TBLinkOf<ParseNode> {
   friend class ParseNodeTree;
 
   ParseNode* GetNodeFollowRef(const char* request,
-                         MissingPolicy mp = MissingPolicy::kNull);
+                              MissingPolicy mp = MissingPolicy::kNull);
   ParseNode* GetNodeInternal(const char* name, size_t name_len) const;
   static ParseNode* Create(const char* name, size_t name_len);
 

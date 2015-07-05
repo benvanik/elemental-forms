@@ -13,8 +13,8 @@
 #include <cassert>
 
 #include "tb_widgets.h"
-#include "tb_widgets_listener.h"
 
+#include "tb/element_listener.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/font_manager.h"

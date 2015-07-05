@@ -17,9 +17,9 @@
 #include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 #include "tb_widgets_common.h"
-#include "tb_widgets_listener.h"
 #include "tb_window.h"
 
+#include "tb/element_listener.h"
 #include "tb/graphics/renderer.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
@@ -183,10 +183,11 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
     // If we already have a element value with this name, just connect to it and
     // the element will adjust its value to it. Otherwise create a new element
     // value, and give it the value we got from the resource.
-    if (ElementValue* value = ValueGroup::get()->GetValue(connection)) {
+    if (ElementValue* value = ElementValueGroup::get()->GetValue(connection)) {
       Connect(value);
-    } else if (ElementValue* value = ValueGroup::get()->CreateValueIfNeeded(
-                   connection, info.sync_type)) {
+    } else if (ElementValue* value =
+                   ElementValueGroup::get()->CreateValueIfNeeded(
+                       connection, info.sync_type)) {
       value->SetFromElement(this);
       Connect(value);
     }

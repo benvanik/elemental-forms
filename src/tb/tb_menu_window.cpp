@@ -8,8 +8,7 @@
  */
 
 #include "tb_menu_window.h"
-
-#include "tb_widgets_listener.h"
+#include "tb/element_listener.h"
 
 namespace tb {
 
