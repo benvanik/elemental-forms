@@ -11,8 +11,8 @@
 #define TB_ELEMENTS_DROP_DOWN_BUTTON_H_
 
 #include "tb/element.h"
+#include "tb/elements/icon_box.h"
 #include "tb/elements/list_item.h"
-#include "tb/elements/skin_image.h"
 #include "tb/window.h"
 
 namespace tb {
@@ -66,7 +66,7 @@ class DropDownButton : public Button, public ListItemObserver {
 
  protected:
   GenericStringItemSource m_default_source;
-  SkinImage m_arrow;
+  IconBox m_arrow;
   int m_value = -1;
   WeakElementPointer m_window_pointer;  // Dropdown window, if opened.
 };

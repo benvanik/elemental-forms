@@ -7,19 +7,17 @@
  ******************************************************************************
  */
 
-#include <cassert>
-
-#include "tb/elements/skin_image.h"
+#include "tb/elements/icon_box.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {
 namespace elements {
 
-void SkinImage::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(SkinImage, Value::Type::kNull, ElementZ::kTop);
+void IconBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(IconBox, Value::Type::kNull, ElementZ::kTop);
 }
 
-PreferredSize SkinImage::OnCalculatePreferredSize(
+PreferredSize IconBox::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
   // FIX: Make it stretched proportionally if shrunk.

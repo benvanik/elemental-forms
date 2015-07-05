@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
+#include "tb/elements/icon_box.h"
 #include "tb/elements/layout_box.h"
 #include "tb/elements/list_item.h"
 #include "tb/elements/menu_window.h"
-#include "tb/elements/skin_image.h"
 #include "tb/elements/separator.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/util/debug.h"
@@ -20,9 +20,9 @@ namespace tb {
 namespace elements {
 
 // SimpleBoxItemElement is a item containing a layout with the following:
-// - SkinImage showing the item image.
+// - IconBox showing the item image.
 // - Label showing the item string.
-// - SkinImage showing the arrow for items with a submenu.
+// - IconBox showing the arrow for items with a submenu.
 // It also handles submenu events.
 class SimpleBoxItemElement : public LayoutBox, private ElementListener {
  public:
@@ -38,8 +38,8 @@ class SimpleBoxItemElement : public LayoutBox, private ElementListener {
 
   ListItemSource* m_source = nullptr;
   Label m_textfield;
-  SkinImage m_image;
-  SkinImage m_image_arrow;
+  IconBox m_image;
+  IconBox m_image_arrow;
   MenuWindow* m_menu = nullptr;  // Points to the submenu window if opened.
 };
 

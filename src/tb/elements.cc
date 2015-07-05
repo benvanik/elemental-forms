@@ -33,7 +33,7 @@ void RegisterBuiltinElementInflaters() {
   Label::RegisterInflater();
   Button::RegisterInflater();
   LabelContainer::RegisterInflater();
-  SkinImage::RegisterInflater();
+  IconBox::RegisterInflater();
   Separator::RegisterInflater();
   ProgressSpinner::RegisterInflater();
   CheckBox::RegisterInflater();

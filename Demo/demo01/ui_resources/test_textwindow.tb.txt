@@ -5,9 +5,9 @@ WindowInfo
 LayoutBox: axis: y, distribution: available
 	LayoutBox: distribution: gravity
 		Button: id: undo
-			SkinImage: skin: arrow.left
+			IconBox: skin: arrow.left
 		Button: id: redo
-			SkinImage: skin: arrow.right
+			IconBox: skin: arrow.right
 		Button: text: Clear, id: clear
 			tooltip Click for <color #f44>remove</color> all text
 		LayoutBox
@@ -15,7 +15,7 @@ LayoutBox: axis: y, distribution: available
 			distribution-position right bottom
 			Label: id: info
 			Button: id: menu
-				SkinImage: skin: arrow.down
+				IconBox: skin: arrow.down
 				Label: text: Menu
 				skin Button.flat
 	TextBox: multiline: 1, styling: 1, gravity: all, id: text_box, autofocus: 1
@@ -31,6 +31,6 @@ LayoutBox: axis: y, distribution: available
 				" • Keyboard navigation using tab.\n" \
 				" • <u>Underline</u>, <color #f44>Red</color>, <color #6f6>Green</color>, <color #aaf>Blue</color>\n\n" \
 				"<color #0794f8>Good to know</color>\n" \
-				" • The text element handles styling and embedded content (Example: <element SkinImage: skin: 'Icon16'> <element Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text elements for now.\n" \
+				" • The text element handles styling and embedded content (Example: <element IconBox: skin: 'Icon16'> <element Button: text: 'Nice!'>), but does not handle editing of those fully. Those features are only ment for read-only text elements for now.\n" \
 				" • You can emulate touch input by holding down shift, ctrl or alt. Touch input behaves differently in some elements (f.ex long click to open context menu in textfields), and only invoke movement when down.\n" \
 				" • All resources are UTF-8.\n"

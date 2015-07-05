@@ -100,7 +100,7 @@ DropDownButton
 			id <id>
 CheckBox
 RadioButton
-SkinImage
+IconBox
 Separator
 ProgressSpinner
 Box

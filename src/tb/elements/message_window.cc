@@ -9,8 +9,8 @@
 
 #include <cassert>
 
+#include "tb/elements/icon_box.h"
 #include "tb/elements/message_window.h"
-#include "tb/elements/skin_image.h"
 #include "tb/elements/text_box.h"
 #include "tb/parts/dimmer.h"
 #include "tb/util/string_table.h"
@@ -46,7 +46,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   const char* source =
       "LayoutBox: axis: y, distribution: available\n"
       "	LayoutBox: distribution: available, size: available\n"
-      "		SkinImage: id: 2\n"
+      "		IconBox: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	LayoutBox: distribution-position: right bottom, id: 3\n";
   if (!GetContentRoot()->LoadData(source)) {
@@ -55,7 +55,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   SetText(title);
 
-  GetElementByIDAndType<SkinImage>(2)->SetSkinBg(settings->icon_skin);
+  GetElementByIDAndType<IconBox>(2)->SetSkinBg(settings->icon_skin);
 
   TextBox* text_box = GetElementByIDAndType<TextBox>(1);
   text_box->SetStyling(settings->styling);

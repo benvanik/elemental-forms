@@ -222,7 +222,7 @@ class GenericStringItem {
     return *this;
   }
 
-  void SetSkinImage(const TBID& image) { skin_image = image; }
+  void SetIconBox(const TBID& image) { skin_image = image; }
 
  public:
   std::string str;

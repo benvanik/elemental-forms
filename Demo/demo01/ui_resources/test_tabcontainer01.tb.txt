@@ -8,7 +8,7 @@ TabContainer
 		Button: text: "Tab with long text"
 		Button: text: "Skin"
 		Button: text: "Spinner"
-			SkinImage: skin: Icon16
+			IconBox: skin: Icon16
 		Button: text: code
 	LayoutBox: axis: y
 		Label: text: "Tab alignment:"

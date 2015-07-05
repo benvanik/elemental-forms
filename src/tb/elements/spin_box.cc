@@ -7,10 +7,7 @@
  ******************************************************************************
  */
 
-#include <cassert>
-#include <cstdlib>
-
-#include "tb/elements/skin_image.h"
+#include "tb/elements/icon_box.h"
 #include "tb/elements/spin_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/math.h"
@@ -36,8 +33,8 @@ SpinBox::SpinBox() {
   m_layout.SetSpacing(0);
   m_buttons[0].SetSkinBg(TBIDC("Button.flat"));
   m_buttons[1].SetSkinBg(TBIDC("Button.flat"));
-  m_buttons[0].GetContentRoot()->AddChild(new SkinImage(TBIDC("arrow.left")));
-  m_buttons[1].GetContentRoot()->AddChild(new SkinImage(TBIDC("arrow.right")));
+  m_buttons[0].GetContentRoot()->AddChild(new IconBox(TBIDC("arrow.left")));
+  m_buttons[1].GetContentRoot()->AddChild(new IconBox(TBIDC("arrow.right")));
   m_buttons[0].SetIsFocusable(false);
   m_buttons[1].SetIsFocusable(false);
   m_buttons[0].set_id(TBIDC("dec"));

@@ -182,7 +182,7 @@ class TextBox : public Element,
   // Example - Create a button with id "hello":
   //   <element Button: text: "Hello world!" id: "hello">
   // Example - Create a image from skin element "Icon48":
-  //   <element SkinImage: skin: "Icon48">
+  //   <element IconBox: skin: "Icon48">
   class TextBoxContentFactory : public TextFragmentContentFactory {
    public:
     class TextBox* text_box = nullptr;

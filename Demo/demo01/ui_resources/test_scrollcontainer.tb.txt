@@ -20,18 +20,18 @@ LayoutBox
 				Button
 					text: "Segoe 28"
 					font: size: 28px
-			Label: text: Button containing SkinImage:
+			Label: text: Button containing IconBox:
 			LayoutBox
 				Button
 					text Click for image!
 					id add img
-					SkinImage
+					IconBox
 						skin Icon16
 				Button
 					axis y
 					text Click for image!
 					id add img
-					SkinImage
+					IconBox
 						skin Icon16
 			Label: text: "Button containing TextBox:"
 			LayoutBox
@@ -54,9 +54,9 @@ LayoutBox
 				RadioButton
 				CheckBox
 					value 1
-				SkinImage
+				IconBox
 					skin Icon16
-				SkinImage
+				IconBox
 					skin Icon48
 				Button
 				Button: toggle-mode: 1

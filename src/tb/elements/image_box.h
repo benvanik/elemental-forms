@@ -18,7 +18,7 @@ namespace elements {
 
 // A element showing a image loaded by ImageManager, constrained in size to its
 // skin.
-// If you need to show a image from the skin, you can use SkinImage.
+// If you need to show a image from the skin, you can use IconBox.
 class ImageBox : public Element {
  public:
   TBOBJECT_SUBCLASS(ImageBox, Element);

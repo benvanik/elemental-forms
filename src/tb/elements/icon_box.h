@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_ELEMENTS_SKIN_IMAGE_H_
-#define TB_ELEMENTS_SKIN_IMAGE_H_
+#ifndef TB_ELEMENTS_ICON_BOX_H_
+#define TB_ELEMENTS_ICON_BOX_H_
 
 #include "tb/element.h"
 
@@ -18,13 +18,13 @@ namespace elements {
 // A element showing a skin element, constrained in size to its skin.
 // If you need to load and show images dynamically (i.e. not always loaded as
 // the skin), you can use ImageBox.
-class SkinImage : public Element {
+class IconBox : public Element {
  public:
-  TBOBJECT_SUBCLASS(SkinImage, Element);
+  TBOBJECT_SUBCLASS(IconBox, Element);
   static void RegisterInflater();
 
-  SkinImage() = default;
-  SkinImage(const TBID& skin_bg) { SetSkinBg(skin_bg); }
+  IconBox() = default;
+  IconBox(const TBID& skin_bg) { SetSkinBg(skin_bg); }
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
@@ -33,4 +33,4 @@ class SkinImage : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_ELEMENTS_SKIN_IMAGE_H_
+#endif  // TB_ELEMENTS_ICON_BOX_H_

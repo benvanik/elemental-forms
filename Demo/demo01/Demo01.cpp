@@ -351,7 +351,7 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->id() == TBIDC("add img")) {
       Button* button = util::SafeCast<Button>(ev.target);
-      SkinImage* skin_image = new SkinImage;
+      IconBox* skin_image = new IconBox;
       skin_image->SetSkinBg(TBIDC("Icon16"));
       button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
       return true;
@@ -720,7 +720,7 @@ bool DemoApplication::Init() {
   popup_menu_source.AddItem(
       std::make_unique<GenericStringItem>("Long submenu", &name_source));
   // Give the first item a skin image
-  popup_menu_source.GetItem(0)->SetSkinImage(TBIDC("Icon16"));
+  popup_menu_source.GetItem(0)->SetIconBox(TBIDC("Icon16"));
 
   new MainWindow();
 
