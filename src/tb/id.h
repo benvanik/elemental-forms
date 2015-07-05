@@ -12,8 +12,10 @@
 
 #include <cassert>
 #include <cstdint>
+#include <memory>
 #include <string>
 
+#include "tb/config.h"
 #include "tb/util/hash.h"
 
 namespace tb {
@@ -46,6 +48,8 @@ class TBID {
 
  private:
   uint32_t id_;
+
+  std::unique_ptr<TBID> UnsafeClone(TBID* source);
 
  public:
 #ifdef TB_RUNTIME_DEBUG_INFO
