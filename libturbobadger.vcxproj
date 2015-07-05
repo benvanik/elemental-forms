@@ -107,7 +107,6 @@
     <ClCompile Include="src\tb\util\debug_win.cc" />
     <ClCompile Include="src\tb\util\dimension_converter.cc" />
     <ClCompile Include="src\tb\util\file_posix.cc" />
-    <ClCompile Include="src\tb\util\hash_table.cc" />
     <ClCompile Include="src\tb\util\link_list.cc" />
     <ClCompile Include="src\tb\util\metrics_win.cc" />
     <ClCompile Include="src\tb\util\rect_region.cc" />
@@ -200,7 +199,6 @@
     <ClInclude Include="src\tb\util\dimension_converter.h" />
     <ClInclude Include="src\tb\util\file.h" />
     <ClInclude Include="src\tb\util\hash.h" />
-    <ClInclude Include="src\tb\util\hash_table.h" />
     <ClInclude Include="src\tb\util\link_list.h" />
     <ClInclude Include="src\tb\util\math.h" />
     <ClInclude Include="src\tb\util\metrics.h" />

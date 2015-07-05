@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 #include "tb/font_description.h"
 #include "tb/graphics/bitmap_fragment.h"
@@ -20,7 +21,6 @@
 #include "tb/text/font_face.h"
 #include "tb/text/font_renderer.h"
 #include "tb/text/utf8.h"
-#include "tb/util/hash_table.h"
 
 namespace tb {
 namespace text {
@@ -80,7 +80,7 @@ class FontGlyphCache : private graphics::RendererListener {
   void DropGlyphFragment(FontGlyph* glyph);
 
   graphics::BitmapFragmentManager m_frag_manager;
-  util::HashTableAutoDeleteOf<FontGlyph> m_glyphs;
+  std::unordered_map<uint32_t, std::unique_ptr<FontGlyph>> m_glyphs;
   util::TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
 };
 
@@ -151,8 +151,8 @@ class FontManager {
  private:
   static std::unique_ptr<FontManager> font_manager_singleton_;
 
-  util::HashTableAutoDeleteOf<FontInfo> m_font_info;
-  util::HashTableAutoDeleteOf<FontFace> m_fonts;
+  std::unordered_map<uint32_t, std::unique_ptr<FontInfo>> m_font_info;
+  std::unordered_map<uint32_t, std::unique_ptr<FontFace>> m_fonts;
   util::TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
   FontGlyphCache m_glyph_cache;
   FontDescription m_default_font_desc;

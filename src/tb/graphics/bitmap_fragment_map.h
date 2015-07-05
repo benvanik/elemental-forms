@@ -62,7 +62,7 @@ class BitmapFragmentMap {
   int m_bitmap_w = 0;
   int m_bitmap_h = 0;
   uint32_t* m_bitmap_data = nullptr;
-  Bitmap* m_bitmap = nullptr;
+  std::unique_ptr<Bitmap> m_bitmap;
   bool m_need_update = false;
   int m_allocated_pixels = 0;
 };

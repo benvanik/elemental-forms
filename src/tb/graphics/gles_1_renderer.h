@@ -57,7 +57,8 @@ class RendererGL : public BatchingRenderer {
   void BeginPaint(int render_target_w, int render_target_h) override;
   void EndPaint() override;
 
-  Bitmap* CreateBitmap(int width, int height, uint32_t* data) override;
+  std::unique_ptr<Bitmap> CreateBitmap(int width, int height,
+                                       uint32_t* data) override;
 
   void RenderBatch(Batch* batch) override;
   void SetClipRect(const Rect& rect) override;

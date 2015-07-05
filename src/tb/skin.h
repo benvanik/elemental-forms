@@ -11,13 +11,13 @@
 #define TB_SKIN_H_
 
 #include <memory>
+#include <unordered_map>
 
 #include "tb/graphics/bitmap_fragment.h"
 #include "tb/graphics/bitmap_fragment_manager.h"
 #include "tb/graphics/renderer.h"
 #include "tb/types.h"
 #include "tb/util/dimension_converter.h"
-#include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
 #include "tb/value.h"
 
@@ -481,7 +481,7 @@ class Skin : private graphics::RendererListener {
   int GetPxFromNode(parsing::ParseNode* node, int def_value) const;
 
   SkinListener* m_listener = nullptr;
-  util::HashTableAutoDeleteOf<SkinElement> m_elements;
+  std::unordered_map<uint32_t, std::unique_ptr<SkinElement>> m_elements;
   graphics::BitmapFragmentManager m_frag_manager;
   util::DimensionConverter m_dim_conv;
   Color m_default_text_color;

@@ -79,7 +79,7 @@ class FontGlyph : public util::TBLinkOf<FontGlyph> {
 // Represents a loaded font that can measure and render strings.
 class FontFace {
  public:
-  FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,
+  FontFace(FontGlyphCache* glyph_cache, std::unique_ptr<FontRenderer> renderer,
            const FontDescription& font_desc);
   ~FontFace();
 
@@ -136,7 +136,7 @@ class FontFace {
   void RenderGlyph(FontGlyph* glyph);
 
   FontGlyphCache* m_glyph_cache = nullptr;
-  FontRenderer* m_font_renderer = nullptr;
+  std::unique_ptr<FontRenderer> m_font_renderer;
   FontDescription m_font_desc;
   FontMetrics m_metrics;
   FontEffect m_effect;

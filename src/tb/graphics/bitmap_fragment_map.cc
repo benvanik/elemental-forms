@@ -27,10 +27,7 @@ bool BitmapFragmentMap::Init(int bitmap_w, int bitmap_h) {
   return m_bitmap_data ? true : false;
 }
 
-BitmapFragmentMap::~BitmapFragmentMap() {
-  delete m_bitmap;
-  delete[] m_bitmap_data;
-}
+BitmapFragmentMap::~BitmapFragmentMap() { delete[] m_bitmap_data; }
 
 std::unique_ptr<BitmapFragment> BitmapFragmentMap::CreateNewFragment(
     int frag_w, int frag_h, int data_stride, uint32_t* frag_data,
@@ -201,10 +198,10 @@ void BitmapFragmentMap::CopyData(BitmapFragment* frag, int data_stride,
 
 Bitmap* BitmapFragmentMap::GetBitmap(Validate validate_type) {
   if (m_bitmap && validate_type == Validate::kFirstTime) {
-    return m_bitmap;
+    return m_bitmap.get();
   }
   ValidateBitmap();
-  return m_bitmap;
+  return m_bitmap.get();
 }
 
 bool BitmapFragmentMap::ValidateBitmap() {
@@ -221,8 +218,7 @@ bool BitmapFragmentMap::ValidateBitmap() {
 }
 
 void BitmapFragmentMap::DeleteBitmap() {
-  delete m_bitmap;
-  m_bitmap = nullptr;
+  m_bitmap.reset();
   m_need_update = true;
 }
 

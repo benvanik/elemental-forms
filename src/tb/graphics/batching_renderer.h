@@ -87,7 +87,8 @@ class BatchingRenderer : public Renderer {
   void BeginBatchHint(Renderer::BatchHint hint) override {}
   void EndBatchHint() override {}
 
-  virtual Bitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;
+  virtual std::unique_ptr<Bitmap> CreateBitmap(int width, int height,
+                                               uint32_t* data) = 0;
   virtual void RenderBatch(Batch* batch) = 0;
   virtual void SetClipRect(const Rect& rect) = 0;
 

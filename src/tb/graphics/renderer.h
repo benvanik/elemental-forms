@@ -11,6 +11,7 @@
 #define TB_GRAPHICS_RENDERER_H_
 
 #include <cstdint>
+#include <memory>
 
 #include "tb/color.h"
 #include "tb/rect.h"
@@ -130,7 +131,8 @@ class Renderer {
   // Creates a new Bitmap from the given data (in BGRA32 format).
   // Width and height must be a power of two.
   // Returns nullptr if fail.
-  virtual Bitmap* CreateBitmap(int width, int height, uint32_t* data) = 0;
+  virtual std::unique_ptr<Bitmap> CreateBitmap(int width, int height,
+                                               uint32_t* data) = 0;
 
   // Adds a listener to this renderer.
   // Does not take ownership.

@@ -118,48 +118,48 @@ bool Skin::LoadInternal(const char* skin_file) {
   // Iterate through all elements nodes and add skin elements or patch already
   // existing elements.
   ParseNode* elements = node.GetNode("elements");
-  if (elements) {
-    ParseNode* n = elements->GetFirstChild();
-    while (n) {
-      // If we have a "clone" node, clone all children from that node
-      // into this node.
-      while (ParseNode* clone = n->GetNode("clone")) {
-        n->Remove(clone);
+  if (!elements) {
+    return true;
+  }
+  ParseNode* n = elements->GetFirstChild();
+  while (n) {
+    // If we have a "clone" node, clone all children from that node
+    // into this node.
+    while (ParseNode* clone = n->GetNode("clone")) {
+      n->Remove(clone);
 
-        ParseNode* clone_source =
-            elements->GetNode(clone->GetValue().as_string());
-        if (clone_source) {
-          n->CloneChildren(clone_source);
-        }
-
-        delete clone;
+      ParseNode* clone_source =
+          elements->GetNode(clone->GetValue().as_string());
+      if (clone_source) {
+        n->CloneChildren(clone_source);
       }
 
-      // If the skin element already exist, we will call Load on it again.
-      // This will patch the element with any new data from the node.
-      TBID element_id(n->GetName());
-      SkinElement* e = GetSkinElement(element_id);
-      if (!e) {
-        e = new SkinElement();
-        m_elements.Add(element_id, e);
-      }
-
-      e->Load(n, this, skin_path.GetData());
-      if (m_listener) {
-        m_listener->OnSkinElementLoaded(this, e, n);
-      }
-
-      n = n->GetNext();
+      delete clone;
     }
+
+    // If the skin element already exist, we will call Load on it again.
+    // This will patch the element with any new data from the node.
+    TBID element_id(n->GetName());
+    SkinElement* element = GetSkinElement(element_id);
+    if (!element) {
+      element = new SkinElement();
+      m_elements.emplace(element_id, std::unique_ptr<SkinElement>(element));
+    }
+
+    element->Load(n, this, skin_path.GetData());
+    if (m_listener) {
+      m_listener->OnSkinElementLoaded(this, element, n);
+    }
+
+    n = n->GetNext();
   }
   return true;
 }
 
 void Skin::UnloadBitmaps() {
   // Unset all bitmap pointers.
-  util::HashTableIteratorOf<SkinElement> it(&m_elements);
-  while (SkinElement* element = it.GetNextContent()) {
-    element->bitmap = nullptr;
+  for (auto& it : m_elements) {
+    it.second->bitmap = nullptr;
   }
 
   // Clear all fragments and bitmaps.
@@ -182,8 +182,8 @@ bool Skin::ReloadBitmapsInternal() {
   // Load all bitmap files into new bitmap fragments.
   util::StringBuilder filename_dst_DPI;
   bool success = true;
-  util::HashTableIteratorOf<SkinElement> it(&m_elements);
-  while (SkinElement* element = it.GetNextContent()) {
+  for (auto& it : m_elements) {
+    auto element = it.second.get();
     if (!element->bitmap_file.empty()) {
       assert(!element->bitmap);
 
@@ -224,7 +224,8 @@ Skin::~Skin() { Renderer::get()->RemoveListener(this); }
 
 SkinElement* Skin::GetSkinElement(const TBID& skin_id) const {
   if (!skin_id) return nullptr;
-  return m_elements.Get(skin_id);
+  auto& it = m_elements.find(skin_id);
+  return it != m_elements.end() ? it->second.get() : nullptr;
 }
 
 SkinElement* Skin::GetSkinElementStrongOverride(

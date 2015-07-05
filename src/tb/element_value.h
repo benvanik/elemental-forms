@@ -10,8 +10,10 @@
 #ifndef TB_ELEMENT_VALUE_H_
 #define TB_ELEMENT_VALUE_H_
 
+#include <memory>
+#include <unordered_map>
+
 #include "tb/id.h"
-#include "tb/util/hash_table.h"
 #include "tb/util/link_list.h"
 #include "tb/value.h"
 
@@ -126,7 +128,7 @@ class ElementValueGroup {
                                     Value::Type type = Value::Type::kInt);
 
   // Gets the ElementValue with the given name, or nullptr if no match is found.
-  ElementValue* GetValue(const TBID& name) const { return m_values.Get(name); }
+  ElementValue* GetValue(const TBID& name) const;
 
   // Adds a listener to this group.
   // It will be removed automatically when deleted, but can also be removed by
@@ -146,7 +148,7 @@ class ElementValueGroup {
 
   static ElementValueGroup value_group_singleton_;
 
-  util::HashTableAutoDeleteOf<ElementValue> m_values;
+  std::unordered_map<uint32_t, std::unique_ptr<ElementValue>> m_values;
   util::TBLinkListOf<ElementValueGroupListener> m_listeners;
 };
 

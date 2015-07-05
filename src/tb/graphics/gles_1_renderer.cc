@@ -117,13 +117,13 @@ void RendererGL::EndPaint() {
 #endif  // TB_RUNTIME_DEBUG_INFO
 }
 
-Bitmap* RendererGL::CreateBitmap(int width, int height, uint32_t* data) {
-  BitmapGL* bitmap = new BitmapGL(this);
+std::unique_ptr<Bitmap> RendererGL::CreateBitmap(int width, int height,
+                                                 uint32_t* data) {
+  auto bitmap = std::make_unique<BitmapGL>(this);
   if (!bitmap->Init(width, height, data)) {
-    delete bitmap;
     return nullptr;
   }
-  return bitmap;
+  return std::unique_ptr<Bitmap>(std::move(bitmap));
 }
 
 void RendererGL::RenderBatch(Batch* batch) {

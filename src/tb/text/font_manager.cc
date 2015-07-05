@@ -31,23 +31,27 @@ FontGlyphCache::FontGlyphCache() {
 FontGlyphCache::~FontGlyphCache() { Renderer::get()->RemoveListener(this); }
 
 FontGlyph* FontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
-  if (FontGlyph* glyph = m_glyphs.Get(hash_id)) {
-    // Move the glyph to the end of m_all_rendered_glyphs so we maintain LRU
-    // (oldest first)
-    if (m_all_rendered_glyphs.ContainsLink(glyph)) {
-      m_all_rendered_glyphs.Remove(glyph);
-      m_all_rendered_glyphs.AddLast(glyph);
-    }
-    return glyph;
+  auto& it = m_glyphs.find(hash_id);
+  if (it == m_glyphs.end()) {
+    return nullptr;
   }
-  return nullptr;
+  auto glyph = it->second.get();
+
+  // Move the glyph to the end of m_all_rendered_glyphs so we maintain LRU
+  // (oldest first)
+  if (m_all_rendered_glyphs.ContainsLink(glyph)) {
+    m_all_rendered_glyphs.Remove(glyph);
+    m_all_rendered_glyphs.AddLast(glyph);
+  }
+  return glyph;
 }
 
 FontGlyph* FontGlyphCache::CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp) {
   assert(!GetGlyph(hash_id, cp));
-  FontGlyph* glyph = new FontGlyph(hash_id, cp);
-  m_glyphs.Add(glyph->hash_id, glyph);
-  return glyph;
+  auto glyph = std::make_unique<FontGlyph>(hash_id, cp);
+  auto glyph_ptr = glyph.get();
+  m_glyphs.emplace(glyph->hash_id, std::move(glyph));
+  return glyph_ptr;
 }
 
 graphics::BitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph,
@@ -129,28 +133,35 @@ FontManager::FontManager() {
 FontManager::~FontManager() = default;
 
 FontInfo* FontManager::AddFontInfo(const char* filename, const char* name) {
-  FontInfo* fi = new FontInfo(filename, name);
-  m_font_info.Add(fi->id(), fi);
-  return fi;
+  std::unique_ptr<FontInfo> font_info(new FontInfo(filename, name));
+  auto font_info_ptr = font_info.get();
+  m_font_info.emplace(font_info->id(), std::move(font_info));
+  return font_info_ptr;
 }
 
 FontInfo* FontManager::GetFontInfo(const TBID& id) const {
-  return m_font_info.Get(id);
+  auto& it = m_font_info.find(id);
+  return it != m_font_info.end() ? it->second.get() : nullptr;
 }
 
 bool FontManager::HasFontFace(const FontDescription& font_desc) const {
-  return m_fonts.Get(font_desc.GetFontFaceID()) ? true : false;
+  return m_fonts.count(font_desc.GetFontFaceID()) > 0;
 }
 
 FontFace* FontManager::GetFontFace(const FontDescription& font_desc) {
-  if (FontFace* font = m_fonts.Get(font_desc.GetFontFaceID())) {
-    return font;
+  // Try requested:
+  auto& it = m_fonts.find(font_desc.GetFontFaceID());
+  if (it != m_fonts.end()) {
+    return it->second.get();
   }
-  if (FontFace* font =
-          m_fonts.Get(GetDefaultFontDescription().GetFontFaceID())) {
-    return font;
+  // Try fallback:
+  it = m_fonts.find(GetDefaultFontDescription().GetFontFaceID());
+  if (it != m_fonts.end()) {
+    return it->second.get();
   }
-  return m_fonts.Get(m_test_font_desc.GetFontFaceID());
+  // Fail out with test font:
+  it = m_fonts.find(m_test_font_desc.GetFontFaceID());
+  return it != m_fonts.end() ? it->second.get() : nullptr;
 }
 
 FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
@@ -165,17 +176,20 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
 
   if (fi->id() == 0) {
     // Is this the test dummy font.
-    FontFace* font = new FontFace(&m_glyph_cache, nullptr, font_desc);
-    m_fonts.Add(font_desc.GetFontFaceID(), font);
-    return font;
+    auto font = std::make_unique<FontFace>(&m_glyph_cache, nullptr, font_desc);
+    auto font_ptr = font.get();
+    m_fonts.emplace(font_desc.GetFontFaceID(), std::move(font));
+    return font_ptr;
   }
 
   // Iterate through font renderers until we find one capable of creating a font
   // for this file.
   for (FontRenderer* fr = m_font_renderers.GetFirst(); fr; fr = fr->GetNext()) {
-    if (FontFace* font = fr->Create(this, fi->GetFilename(), font_desc)) {
-      m_fonts.Add(font_desc.GetFontFaceID(), font);
-      return font;
+    auto font = fr->Create(this, fi->GetFilename(), font_desc);
+    if (font) {
+      auto font_ptr = font.get();
+      m_fonts.emplace(font_desc.GetFontFaceID(), std::move(font));
+      return font_ptr;
     }
   }
   return nullptr;

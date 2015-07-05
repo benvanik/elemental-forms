@@ -22,10 +22,11 @@ using graphics::Renderer;
 
 FontGlyph::FontGlyph(const TBID& hash_id, UCS4 cp) : hash_id(hash_id), cp(cp) {}
 
-FontFace::FontFace(FontGlyphCache* glyph_cache, FontRenderer* renderer,
+FontFace::FontFace(FontGlyphCache* glyph_cache,
+                   std::unique_ptr<FontRenderer> renderer,
                    const FontDescription& font_desc)
     : m_glyph_cache(glyph_cache),
-      m_font_renderer(renderer),
+      m_font_renderer(std::move(renderer)),
       m_font_desc(font_desc) {
   if (m_font_renderer) {
     m_metrics = m_font_renderer->GetMetrics();
@@ -42,7 +43,7 @@ FontFace::~FontFace() {
   // It would be nice to drop all glyphs we have live for this font face.
   // Now they only die when they get old and kicked out of the cache.
   // We currently don't drop any font faces either though (except on shutdown)
-  delete m_font_renderer;
+  m_font_renderer.reset();
 }
 
 void FontFace::SetBackgroundFont(FontFace* font, const Color& col, int xofs,

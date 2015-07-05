@@ -10,6 +10,7 @@
 #ifndef TB_TEXT_FONT_RENDERER_H_
 #define TB_TEXT_FONT_RENDERER_H_
 
+#include <memory>
 #include <string>
 
 #include "tb/font_description.h"
@@ -35,10 +36,10 @@ class FontRenderer : public util::TBLinkOf<FontRenderer> {
 
   // Opens the given font file with this renderer and return a new FontFace with
   // it.
-  // return nullptr if the file can't be opened by this renderer.
-  virtual FontFace* Create(FontManager* font_manager,
-                           const std::string& filename,
-                           const FontDescription& font_desc) = 0;
+  // Returns nullptr if the file can't be opened by this renderer.
+  virtual std::unique_ptr<FontFace> Create(
+      FontManager* font_manager, const std::string& filename,
+      const FontDescription& font_desc) = 0;
 
   virtual bool RenderGlyph(FontGlyphData* data, UCS4 cp) = 0;
   virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) = 0;

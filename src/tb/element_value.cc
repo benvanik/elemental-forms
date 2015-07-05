@@ -128,12 +128,18 @@ void ElementValue::SetDouble(double value) {
 
 ElementValue* ElementValueGroup::CreateValueIfNeeded(const TBID& name,
                                                      Value::Type type) {
-  if (ElementValue* val = GetValue(name)) {
-    return val;
+  if (auto existing_value = GetValue(name)) {
+    return existing_value;
   }
-  ElementValue* val = new ElementValue(name, type);
-  m_values.Add(name, val);
-  return val;
+  auto new_value = std::make_unique<ElementValue>(name, type);
+  auto new_value_ptr = new_value.get();
+  m_values.emplace(name, std::move(new_value));
+  return new_value_ptr;
+}
+
+ElementValue* ElementValueGroup::GetValue(const TBID& name) const {
+  auto& it = m_values.find(name);
+  return it != m_values.end() ? it->second.get() : nullptr;
 }
 
 void ElementValueGroup::InvokeOnValueChanged(const ElementValue* value) {

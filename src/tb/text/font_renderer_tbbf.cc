@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <memory>
+#include <unordered_map>
 
 #include "tb/graphics/image_loader.h"
 #include "tb/graphics/renderer.h"
@@ -97,15 +98,15 @@ class TBBFRenderer : public FontRenderer {
 
   bool Load(const std::string& filename, int size);
   bool FindGlyphs();
-  GLYPH* FindNext(UCS4 cp, int x);
+  std::unique_ptr<GLYPH> FindNext(UCS4 cp, int x);
 
-  virtual FontFace* Create(FontManager* font_manager,
-                           const std::string& filename,
-                           const FontDescription& font_desc);
+  std::unique_ptr<FontFace> Create(FontManager* font_manager,
+                                   const std::string& filename,
+                                   const FontDescription& font_desc) override;
 
-  virtual FontMetrics GetMetrics();
-  virtual bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp);
-  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
+  FontMetrics GetMetrics() override;
+  bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp) override;
+  void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) override;
 
  private:
   ParseNode m_node;
@@ -116,7 +117,7 @@ class TBBFRenderer : public FontRenderer {
   int m_advance_delta;
   int m_space_advance;
   int m_rgb;
-  util::HashTableAutoDeleteOf<GLYPH> m_glyph_table;
+  std::unordered_map<uint32_t, std::unique_ptr<GLYPH>> m_glyph_table;
 };
 
 TBBFRenderer::TBBFRenderer()
@@ -127,28 +128,44 @@ TBBFRenderer::~TBBFRenderer() = default;
 FontMetrics TBBFRenderer::GetMetrics() { return m_metrics; }
 
 bool TBBFRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
-  if (cp == ' ') return false;
-  GLYPH* glyph;
-  if ((glyph = m_glyph_table.Get(cp)) || (glyph = m_glyph_table.Get('?'))) {
-    data->w = glyph->w;
-    data->h = m_img->Height();
-    data->stride = m_img->Width();
-    data->data32 = m_img->Data() + glyph->x;
-    data->rgb = m_rgb ? true : false;
-    return true;
+  if (cp == ' ') {
+    return false;
   }
-  return false;
+
+  auto& it = m_glyph_table.find(cp);
+  if (it == m_glyph_table.end()) {
+    it = m_glyph_table.find('?');
+  }
+  if (it == m_glyph_table.end()) {
+    return false;
+  }
+  auto glyph = it->second.get();
+  data->w = glyph->w;
+  data->h = m_img->Height();
+  data->stride = m_img->Width();
+  data->data32 = m_img->Data() + glyph->x;
+  data->rgb = m_rgb ? true : false;
+  return true;
 }
 
 void TBBFRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   metrics->x = m_x_ofs;
   metrics->y = -m_metrics.ascent;
-  if (cp == ' ')
+  if (cp == ' ') {
     metrics->advance = m_space_advance;
-  else if (GLYPH* glyph = m_glyph_table.Get(cp))
-    metrics->advance = glyph->w + m_advance_delta;
-  else if (GLYPH* glyph = m_glyph_table.Get('?'))
-    metrics->advance = glyph->w + m_advance_delta;
+  } else {
+    auto& it = m_glyph_table.find(cp);
+    if (it != m_glyph_table.end()) {
+      metrics->advance = it->second->w + m_advance_delta;
+    } else {
+      it = m_glyph_table.find('?');
+      if (it != m_glyph_table.end()) {
+        metrics->advance = it->second->w + m_advance_delta;
+      } else {
+        metrics->advance = 0;
+      }
+    }
+  }
 }
 
 bool TBBFRenderer::Load(const std::string& filename, int size) {
@@ -206,24 +223,26 @@ bool TBBFRenderer::FindGlyphs() {
   size_t i = 0;
   int x = 0;
   while (UCS4 uc = utf8::decode_next(glyph_str, &i, glyph_str_len)) {
-    if (GLYPH* glyph = FindNext(uc, x)) {
-      m_glyph_table.Add(uc, glyph);
-      x = glyph->x + glyph->w + 1;
-    } else
+    auto glyph = FindNext(uc, x);
+    if (!glyph) {
       break;
+    }
+    x = glyph->x + glyph->w + 1;
+    m_glyph_table.emplace(uc, std::move(glyph));
   }
   return true;
 }
 
-GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
+std::unique_ptr<GLYPH> TBBFRenderer::FindNext(UCS4 cp, int x) {
   int width = m_img->Width();
   int height = m_img->Height();
   uint32_t* data32 = m_img->Data();
 
-  if (x >= width) return nullptr;
+  if (x >= width) {
+    return nullptr;
+  }
 
-  GLYPH* glyph = new GLYPH();
-
+  auto glyph = std::make_unique<GLYPH>();
   glyph->x = -1;
   glyph->w = -1;
 
@@ -240,33 +259,33 @@ GLYPH* TBBFRenderer::FindNext(UCS4 cp, int x) {
   for (int i = x; i < width; ++i) {
     int j;
     for (j = 0; j < height; j++) {
-      if (GetAlpha(data32[i + j * width])) break;
+      if (GetAlpha(data32[i + j * width])) {
+        break;
+      }
     }
-    if (j == height)  // The whole col was clear, so we found the edge
-    {
+    if (j == height) {
+      // The whole col was clear, so we found the edge
       glyph->w = i - glyph->x;
       break;
     }
   }
 
   if (glyph->x == -1 || glyph->w == -1) {
-    delete glyph;
     return nullptr;
   }
   return glyph;
 }
 
-FontFace* TBBFRenderer::Create(FontManager* font_manager,
-                               const std::string& filename,
-                               const FontDescription& font_desc) {
+std::unique_ptr<FontFace> TBBFRenderer::Create(
+    FontManager* font_manager, const std::string& filename,
+    const FontDescription& font_desc) {
   if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
-  TBBFRenderer* fr = new TBBFRenderer();
-  if (fr->Load(filename, (int)font_desc.GetSize())) {
-    FontFace* font = new FontFace(font_manager->GetGlyphCache(), fr, font_desc);
-    return font;
+  auto fr = std::make_unique<TBBFRenderer>();
+  if (!fr->Load(filename, (int)font_desc.GetSize())) {
+    return nullptr;
   }
-  delete fr;
-  return nullptr;
+  return std::make_unique<FontFace>(font_manager->GetGlyphCache(),
+                                    std::move(fr), font_desc);
 }
 
 void register_tbbf_font_renderer() {
