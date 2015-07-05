@@ -2,14 +2,14 @@
 #define LISTWINDOW_DEMO_H
 
 #include "Demo.h"
-#include "tb/elements/list_item.h"
+#include "tb/list_item.h"
 
 class AdvancedItemSource;
 
 /** Shows a list of items from *any* type of source. */
 class ListWindow : public DemoWindow {
  public:
-  ListWindow(elements::ListItemSource* source);
+  ListWindow(ListItemSource* source);
   bool OnEvent(const ElementEvent& ev) override;
 };
 
@@ -24,10 +24,10 @@ class AdvancedListWindow : public DemoWindow {
 };
 
 /** AdvancedItem adds extra info to a string item. */
-class AdvancedItem : public elements::GenericStringItem {
+class AdvancedItem : public GenericStringItem {
  public:
   AdvancedItem(const char* str, const TBID& id, bool male)
-      : elements::GenericStringItem(str, id), m_checked(false), m_male(male) {}
+      : GenericStringItem(str, id), m_checked(false), m_male(male) {}
   void SetChecked(bool checked) { m_checked = checked; }
   bool GetChecked() const { return m_checked; }
   bool GetMale() const { return m_male; }
@@ -40,11 +40,10 @@ class AdvancedItem : public elements::GenericStringItem {
 
 /** AdvancedItemSource provides items of type AdvancedItem and makes sure
         the viewer is populated with the customized element for each item. */
-class AdvancedItemSource : public elements::ListItemSourceList<AdvancedItem> {
+class AdvancedItemSource : public ListItemSourceList<AdvancedItem> {
  public:
   bool Filter(size_t index, const std::string& filter) override;
-  Element* CreateItemElement(size_t index,
-                             elements::ListItemObserver* viewer) override;
+  Element* CreateItemElement(size_t index, ListItemObserver* viewer) override;
 };
 
 /** AdvancedItemElement is the element representing a AdvancedItem.
@@ -54,12 +53,12 @@ class AdvancedItemSource : public elements::ListItemSourceList<AdvancedItem> {
 class AdvancedItemElement : public elements::LayoutBox {
  public:
   AdvancedItemElement(AdvancedItem* item, AdvancedItemSource* source,
-                      elements::ListItemObserver* source_viewer, size_t index);
+                      ListItemObserver* source_viewer, size_t index);
   bool OnEvent(const ElementEvent& ev) override;
 
  private:
   AdvancedItemSource* m_source;
-  elements::ListItemObserver* m_source_viewer;
+  ListItemObserver* m_source_viewer;
   size_t m_index;
 };
 

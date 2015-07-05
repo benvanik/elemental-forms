@@ -38,7 +38,7 @@
     <ClCompile Include="src\tb\parts\scroller.cc" />
     <ClCompile Include="src\tb\elements\scroll_container.cc" />
     <ClCompile Include="src\tb\elements\list_box.cc" />
-    <ClCompile Include="src\tb\elements\list_item.cc" />
+    <ClCompile Include="src\tb\list_item.cc" />
     <ClCompile Include="src\tb\elements\tb_style_edit.cpp" />
     <ClCompile Include="src\tb\elements\tb_style_edit_content.cpp" />
     <ClCompile Include="src\tb\elements\tab_container.cc" />
@@ -137,7 +137,7 @@
     <ClInclude Include="src\tb\parts\scroller.h" />
     <ClInclude Include="src\tb\elements\scroll_container.h" />
     <ClInclude Include="src\tb\elements\list_box.h" />
-    <ClInclude Include="src\tb\elements\list_item.h" />
+    <ClInclude Include="src\tb\list_item.h" />
     <ClInclude Include="src\tb\elements\tb_style_edit.h" />
     <ClInclude Include="src\tb\elements\tb_style_edit_content.h" />
     <ClInclude Include="src\tb\elements\tab_container.h" />

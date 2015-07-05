@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_ELEMENTS_LIST_ITEM_H_
-#define TB_ELEMENTS_LIST_ITEM_H_
+#ifndef TB_LIST_ITEM_H_
+#define TB_LIST_ITEM_H_
 
 #include <memory>
 #include <vector>
@@ -18,16 +18,12 @@
 #include "tb/value.h"
 
 namespace tb {
+
 class Element;
+class ListItemSource;
 namespace parsing {
 class ParseNode;
 }  // namespace parsing
-}  // namespace tb
-
-namespace tb {
-namespace elements {
-
-class ListItemSource;
 
 enum class Sort {
   kNone,       // No sorting. Items appear in list order.
@@ -241,7 +237,6 @@ class GenericStringItemSource : public ListItemSourceList<GenericStringItem> {
                             GenericStringItemSource* target_source);
 };
 
-}  // namespace elements
 }  // namespace tb
 
-#endif  // TB_ELEMENTS_LIST_ITEM_H_
+#endif  // TB_LIST_ITEM_H_

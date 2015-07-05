@@ -12,8 +12,8 @@
 
 #include "tb/element.h"
 #include "tb/elements/layout_box.h"
-#include "tb/elements/list_item.h"
 #include "tb/elements/scroll_container.h"
+#include "tb/list_item.h"
 
 namespace tb {
 namespace elements {

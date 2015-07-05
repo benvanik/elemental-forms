@@ -13,8 +13,8 @@
 #include "tb/element.h"
 #include "tb/elements/button.h"
 #include "tb/elements/layout_box.h"
-#include "tb/elements/list_item.h"
 #include "tb/elements/text_box.h"
+#include "tb/list_item.h"
 
 namespace tb {
 namespace elements {

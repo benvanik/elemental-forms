@@ -12,7 +12,7 @@
 
 #include "tb/element.h"
 #include "tb/elements/icon_box.h"
-#include "tb/elements/list_item.h"
+#include "tb/list_item.h"
 #include "tb/window.h"
 
 namespace tb {

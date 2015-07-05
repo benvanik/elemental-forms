@@ -9,15 +9,16 @@
 
 #include "tb/elements/icon_box.h"
 #include "tb/elements/layout_box.h"
-#include "tb/elements/list_item.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/separator.h"
+#include "tb/list_item.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 
 namespace tb {
-namespace elements {
+
+using namespace tb::elements;
 
 // SimpleBoxItemElement is a item containing a layout with the following:
 // - IconBox showing the item image.
@@ -218,5 +219,4 @@ void GenericStringItemSource::ReadItemNodes(
   }
 }
 
-}  // namespace elements
 }  // namespace tb

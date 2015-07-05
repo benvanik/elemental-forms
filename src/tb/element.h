@@ -27,11 +27,9 @@ namespace tb {
 
 class Element;
 class ElementListener;
+class GenericStringItemSource;
 class LongClickTimer;
 class Window;
-namespace elements {
-class GenericStringItemSource;
-}  // namespace elements
 namespace parsing {
 struct InflateInfo;
 }  // namespace parsing

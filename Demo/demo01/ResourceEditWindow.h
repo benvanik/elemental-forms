@@ -10,7 +10,7 @@
 
 using namespace tb;
 
-class ResourceItem : public tb::elements::GenericStringItem {
+class ResourceItem : public tb::GenericStringItem {
  public:
   ResourceItem(Element* element, const std::string& str);
   Element* GetElement() { return m_element; }
@@ -58,7 +58,7 @@ class ResourceEditWindow : public Window,
 
  private:
   elements::ListBox* m_element_list;
-  elements::ListItemSourceList<ResourceItem> m_element_list_source;
+  ListItemSourceList<ResourceItem> m_element_list_source;
   elements::ScrollContainer* m_scroll_container;
   Element* m_build_container;
   elements::TextBox* m_source_text_box;
