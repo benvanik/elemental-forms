@@ -10,7 +10,7 @@
 #ifndef TB_SCROLLER_H
 #define TB_SCROLLER_H
 
-#include "tb_msg.h"
+#include "tb/message_handler.h"
 
 namespace tb {
 

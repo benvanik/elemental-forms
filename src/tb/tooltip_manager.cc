@@ -109,9 +109,10 @@ bool TooltipManager::OnElementInvokeEvent(Element* element,
   if (ev.type == EventType::kPointerMove && !Element::captured_element) {
     Element* tipped_element = GetTippedElement();
     if (m_last_tipped_element != tipped_element && tipped_element) {
-      MessageData* msg_data = new MessageData();
+      auto msg_data = std::make_unique<MessageData>();
       msg_data->v1.set_object(new TTMsgParam(tipped_element));
-      PostMessageDelayed(messageShow, msg_data, tooltip_show_delay_ms);
+      PostMessageDelayed(messageShow, std::move(msg_data),
+                         tooltip_show_delay_ms);
     } else if (m_last_tipped_element == tipped_element && tipped_element &&
                m_tooltip) {
       int x = Element::pointer_move_element_x;
@@ -160,9 +161,9 @@ Element* TooltipManager::GetTippedElement() {
 }
 
 void TooltipManager::OnMessageReceived(Message* msg) {
-  if (msg->message == messageShow) {
+  if (msg->message_id() == messageShow) {
     Element* tipped_element = GetTippedElement();
-    TTMsgParam* param = static_cast<TTMsgParam*>(msg->data->v1.as_object());
+    TTMsgParam* param = static_cast<TTMsgParam*>(msg->data()->v1.as_object());
     if (tipped_element == param->m_hovered) {
       KillToolTip();
 
@@ -175,12 +176,13 @@ void TooltipManager::OnMessageReceived(Message* msg) {
 
       m_tooltip->Show(x, y);
 
-      MessageData* msg_data = new MessageData();
+      auto msg_data = std::make_unique<MessageData>();
       msg_data->v1.set_object(new TTMsgParam(m_tooltip));
-      PostMessageDelayed(messageHide, msg_data, tooltip_show_duration_ms);
+      PostMessageDelayed(messageHide, std::move(msg_data),
+                         tooltip_show_duration_ms);
     }
-  } else if (msg->message == messageHide) {
-    TTMsgParam* param = static_cast<TTMsgParam*>(msg->data->v1.as_object());
+  } else if (msg->message_id() == messageHide) {
+    TTMsgParam* param = static_cast<TTMsgParam*>(msg->data()->v1.as_object());
     if (m_tooltip == param->m_hovered) {
       KillToolTip();
     }

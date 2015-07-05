@@ -368,10 +368,11 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
       return true;
     } else if (ev.target->id() == TBIDC("new buttons delayed")) {
       for (int i = 0; i < ev.target->data.as_integer(); ++i) {
-        MessageData* data = new MessageData();
-        data->id1 = ev.target->GetParent()->id();
-        data->v1.set_integer(i);
-        PostMessageDelayed(TBIDC("new button"), data, 100 + i * 500);
+        auto msg_data = std::make_unique<MessageData>();
+        msg_data->id1 = ev.target->GetParent()->id();
+        msg_data->v1.set_integer(i);
+        PostMessageDelayed(TBIDC("new button"), std::move(msg_data),
+                           100 + i * 500);
       }
       return true;
     } else if (ev.target->id() == TBIDC("remove button")) {
@@ -394,12 +395,12 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
 }
 
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("new button") && msg->data) {
-    if (Element* target = GetElementByID(msg->data->id1)) {
+  if (msg->message_id() == TBIDC("new button") && msg->data()) {
+    if (Element* target = GetElementByID(msg->data()->id1)) {
       Button* button = new Button;
       button->set_id(TBIDC("remove button"));
       button->SetText(
-          tb::util::format_string("Remove %d", msg->data->v1.as_integer()));
+          tb::util::format_string("Remove %d", msg->data()->v1.as_integer()));
       target->AddChild(button);
     }
   }
@@ -495,19 +496,19 @@ MainWindow::MainWindow() {
 }
 
 void MainWindow::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("instantmsg")) {
+  if (msg->message_id() == TBIDC("instantmsg")) {
     MessageWindow* msg_win = new MessageWindow(this, TBIDC("test_dialog"));
     msg_win->Show("Message window", "Instant message received!");
-  } else if (msg->message == TBIDC("busy")) {
+  } else if (msg->message_id() == TBIDC("busy")) {
     // Keep the message queue busy by posting another "busy" message.
     PostMessage(TBIDC("busy"), nullptr);
-  } else if (msg->message == TBIDC("delayedmsg")) {
+  } else if (msg->message_id() == TBIDC("delayedmsg")) {
     MessageWindow* msg_win = new MessageWindow(this, TBIDC(""));
     msg_win->Show("Message window",
                   tb::util::format_string(
                       "Delayed message received!\n\n"
                       "It was received %d ms after its intended fire time.",
-                      int(util::GetTimeMS() - msg->GetFireTime())));
+                      int(util::GetTimeMS() - msg->fire_time_millis())));
   }
 }
 

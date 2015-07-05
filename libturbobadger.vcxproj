@@ -43,7 +43,7 @@
     <ClCompile Include="src\tb\tb_layout.cpp" />
     <ClCompile Include="src\tb\tb_menu_window.cpp" />
     <ClCompile Include="src\tb\tb_message_window.cpp" />
-    <ClCompile Include="src\tb\tb_msg.cpp" />
+    <ClCompile Include="src\tb\message_handler.cc" />
     <ClCompile Include="src\tb\parsing\parse_node_tree.cc" />
     <ClCompile Include="src\tb\parsing\parse_node.cc" />
     <ClCompile Include="src\tb\tb_popup_window.cpp" />
@@ -106,6 +106,7 @@
     <ClInclude Include="src\tb\graphics\image_loader.h" />
     <ClInclude Include="src\tb\graphics\image_manager.h" />
     <ClInclude Include="src\tb\graphics\renderer.h" />
+    <ClInclude Include="src\tb\message.h" />
     <ClInclude Include="src\tb\parsing\element_inflater.h" />
     <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\animation.h" />
@@ -130,7 +131,7 @@
     <ClInclude Include="src\tb\tb_layout.h" />
     <ClInclude Include="src\tb\tb_menu_window.h" />
     <ClInclude Include="src\tb\tb_message_window.h" />
-    <ClInclude Include="src\tb\tb_msg.h" />
+    <ClInclude Include="src\tb\message_handler.h" />
     <ClInclude Include="src\tb\parsing\parse_node_tree.h" />
     <ClInclude Include="src\tb\parsing\parse_node.h" />
     <ClInclude Include="src\tb\tb_popup_window.h" />

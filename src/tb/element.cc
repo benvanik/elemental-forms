@@ -53,7 +53,7 @@ class LongClickTimer : private MessageHandler {
                        util::GetLongClickDelayMS());
   }
   void OnMessageReceived(Message* msg) override {
-    assert(msg->message == TBIDC("LongClickTimer"));
+    assert(msg->message_id() == TBIDC("LongClickTimer"));
     m_element->MaybeInvokeLongClickOrContextMenu(m_touch);
   }
 

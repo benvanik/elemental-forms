@@ -7,60 +7,16 @@
  ******************************************************************************
  */
 
-#ifndef TB_MSG_H
-#define TB_MSG_H
+#ifndef TB_MESSAGE_HANDLER_H_
+#define TB_MESSAGE_HANDLER_H_
+
+#include <memory>
 
 #include "tb/id.h"
+#include "tb/message.h"
 #include "tb/util/link_list.h"
-#include "tb/util/object.h"
-#include "tb/value.h"
 
 namespace tb {
-
-class MessageHandler;
-
-// Holds custom data to send with a posted message.
-class MessageData : public util::TypedObject {
- public:
-  MessageData() = default;
-  MessageData(int v1, int v2) : v1(v1), v2(v2) {}
-  virtual ~MessageData() = default;
-
- public:
-  // Values can be used for anything.
-  Value v1;
-  Value v2;
-  TBID id1;
-  TBID id2;
-};
-
-// Should never be created or subclassed anywhere except in Message.
-// It's only purpose is to add a extra typed link for Message, since it needs
-// to be added in multiple lists.
-class MessageLink : public util::TBLinkOf<MessageLink> {};
-
-// A message created and owned by MessageHandler.
-// It carries a message id, and may also carry a MessageData with additional
-// parameters.
-class Message : public util::TBLinkOf<Message>, public MessageLink {
- private:
-  Message(TBID message, MessageData* data, uint64_t fire_time_ms,
-          MessageHandler* mh);
-  ~Message();
-
- public:
-  TBID message;       // The message id.
-  MessageData* data;  // The message data, or nullptr if no data is set.
-
-  // Gets the time which a delayed message should have fired (0 for non delayed
-  // messages).
-  uint64_t GetFireTime() const { return fire_time_ms; }
-
- private:
-  friend class MessageHandler;
-  uint64_t fire_time_ms;
-  MessageHandler* mh;
-};
 
 // Handles a list of pending messages posted to itself.
 // Messages can be delivered immediately or after a delay.
@@ -81,24 +37,25 @@ class MessageHandler {
   // Posts a message to the target after a delay.
   // data may be nullptr if no extra data need to be sent. It will be deleted
   // automatically when the message is deleted.
-  void PostMessageDelayed(TBID message, MessageData* data,
+  void PostMessageDelayed(TBID message_id, std::unique_ptr<MessageData> data,
                           uint32_t delay_in_ms);
 
   // Posts a message to the target at the given time (relative to
   // util::GetTimeMS()).
   // data may be nullptr if no extra data need to be sent. It will be deleted
   // automatically when the message is deleted.
-  void PostMessageOnTime(TBID message, MessageData* data, uint64_t fire_time);
+  void PostMessageOnTime(TBID message_id, std::unique_ptr<MessageData> data,
+                         uint64_t fire_time);
 
   // Posts a message to the target.
   // data may be nullptr if no extra data need to be sent. It will be deleted
   // automatically when the message is deleted.
-  void PostMessage(TBID message, MessageData* data);
+  void PostMessage(TBID message_id, std::unique_ptr<MessageData> data);
 
   // Checks if this messagehandler has a pending message with the given id.
   // Returns the message if found, or nullptr.
   // If you want to delete the message, call DeleteMessage.
-  Message* GetMessageByID(TBID message);
+  Message* GetMessageByID(TBID message_id);
 
   // Deletes the message from this message handler.
   void DeleteMessage(Message* msg);
@@ -131,4 +88,4 @@ class MessageHandler {
 
 }  // namespace tb
 
-#endif  // TB_MSG_H
+#endif  // TB_MESSAGE_HANDLER_H_

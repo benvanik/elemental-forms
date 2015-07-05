@@ -184,7 +184,9 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
 }
 
 void ResourceEditWindow::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("update_element_list")) UpdateElementList(true);
+  if (msg->message_id() == TBIDC("update_element_list")) {
+    UpdateElementList(true);
+  }
 }
 
 bool ResourceEditWindow::OnElementInvokeEvent(Element* element,

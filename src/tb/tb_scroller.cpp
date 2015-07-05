@@ -289,7 +289,7 @@ void Scroller::GetTargetScrollXY(int& x, int& y) const {
 }
 
 void Scroller::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("scroll")) {
+  if (msg->message_id() == TBIDC("scroll")) {
     int actual_scroll_x = 0, actual_scroll_y = 0;
     GetTargetChildTranslation(actual_scroll_x, actual_scroll_y);
     if (actual_scroll_x != m_expected_scroll_x ||
@@ -341,7 +341,8 @@ void Scroller::OnMessageReceived(Message* msg) {
     }
 
     if (!StopIfAlmostStill()) {
-      uint64_t next_fire_time = msg->GetFireTime() + kPanMessageDelayMillis;
+      uint64_t next_fire_time =
+          msg->fire_time_millis() + kPanMessageDelayMillis;
       // Avoid timer catch-up if program went sleeping for a while.
       next_fire_time = std::max(next_fire_time, uint64_t(now_ms));
       PostMessageOnTime(TBIDC("scroll"), nullptr, next_fire_time);

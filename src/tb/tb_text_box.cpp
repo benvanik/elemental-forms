@@ -417,13 +417,14 @@ PreferredSize TextBox::OnCalculatePreferredContentSize(
 }
 
 void TextBox::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("blink")) {
+  if (msg->message_id() == TBIDC("blink")) {
     m_style_edit.caret.on = !m_style_edit.caret.on;
     m_style_edit.caret.Invalidate();
 
     // Post another blink message so we blink again.
     PostMessageDelayed(TBIDC("blink"), nullptr, kCaretBlinkTimeMillis);
-  } else if (msg->message == TBIDC("selscroll") && captured_element == this) {
+  } else if (msg->message_id() == TBIDC("selscroll") &&
+             captured_element == this) {
     // Get scroll speed from where mouse is relative to the padding rect.
     Rect padding_rect = GetVisibleRect().Shrink(2, 2);
     int dx = GetSelectionScrollSpeed(pointer_move_element_x, padding_rect.x,

@@ -11,9 +11,9 @@
 #define TB_WIDGETS_COMMON_H
 
 #include "tb_layout.h"
-#include "tb_msg.h"
 
 #include "tb/element.h"
+#include "tb/message_handler.h"
 #include "tb/types.h"
 
 namespace tb {

@@ -1,7 +1,7 @@
 #include "glfw_extra.h"
 
 #ifdef TB_TARGET_WINDOWS
-#include "tb_msg.h"
+#include "tb/message_handler.h"
 #include "GLFW/glfw3native.h"
 
 GLFWtimerfun timerCallback;

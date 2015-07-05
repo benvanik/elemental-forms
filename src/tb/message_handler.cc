@@ -7,10 +7,9 @@
  ******************************************************************************
  */
 
-#include "tb_msg.h"
-
 #include <cstddef>
 
+#include "tb/message_handler.h"
 #include "tb/util/metrics.h"
 #include "tb/util/timer.h"
 
@@ -21,24 +20,21 @@ util::TBLinkListOf<MessageLink> g_all_delayed_messages;
 // List of all nondelayed messages.
 util::TBLinkListOf<MessageLink> g_all_normal_messages;
 
-Message::Message(TBID message, MessageData* data, uint64_t fire_time_ms,
-                 MessageHandler* mh)
-    : message(message), data(data), fire_time_ms(fire_time_ms), mh(mh) {}
-
-Message::~Message() { delete data; }
-
 MessageHandler::MessageHandler() = default;
 
 MessageHandler::~MessageHandler() { DeleteAllMessages(); }
 
-void MessageHandler::PostMessageDelayed(TBID message, MessageData* data,
+void MessageHandler::PostMessageDelayed(TBID message_id,
+                                        std::unique_ptr<MessageData> data,
                                         uint32_t delay_in_ms) {
-  PostMessageOnTime(message, data, util::GetTimeMS() + delay_in_ms);
+  PostMessageOnTime(message_id, std::move(data),
+                    util::GetTimeMS() + delay_in_ms);
 }
 
-void MessageHandler::PostMessageOnTime(TBID message, MessageData* data,
+void MessageHandler::PostMessageOnTime(TBID message_id,
+                                       std::unique_ptr<MessageData> data,
                                        uint64_t fire_time) {
-  Message* msg = new Message(message, data, fire_time, this);
+  Message* msg = new Message(message_id, std::move(data), fire_time, this);
   // Find the message that is already in the list that should fire later, so we
   // can insert msg just before that. (Always keep the list ordered after fire
   // time).
@@ -51,7 +47,7 @@ void MessageHandler::PostMessageOnTime(TBID message, MessageData* data,
   MessageLink* link = g_all_delayed_messages.GetFirst();
   while (link) {
     Message* msg_in_list = static_cast<Message*>(link);
-    if (msg_in_list->fire_time_ms > msg->fire_time_ms) {
+    if (msg_in_list->fire_time_millis() > msg->fire_time_millis()) {
       later_msg = msg_in_list;
       break;
     }
@@ -72,12 +68,13 @@ void MessageHandler::PostMessageOnTime(TBID message, MessageData* data,
   // changed and we have to reschedule the timer.
   if (!g_all_normal_messages.GetFirst() &&
       g_all_delayed_messages.GetFirst() == msg) {
-    util::RescheduleTimer(msg->fire_time_ms);
+    util::RescheduleTimer(msg->fire_time_millis());
   }
 }
 
-void MessageHandler::PostMessage(TBID message, MessageData* data) {
-  Message* msg = new Message(message, data, 0, this);
+void MessageHandler::PostMessage(TBID message_id,
+                                 std::unique_ptr<MessageData> data) {
+  Message* msg = new Message(message_id, std::move(data), 0, this);
   g_all_normal_messages.AddLast(msg);
   m_messages.AddLast(msg);
 
@@ -88,10 +85,10 @@ void MessageHandler::PostMessage(TBID message, MessageData* data) {
   }
 }
 
-Message* MessageHandler::GetMessageByID(TBID message) {
+Message* MessageHandler::GetMessageByID(TBID message_id) {
   auto iter = m_messages.IterateForward();
   while (Message* msg = iter.GetAndStep()) {
-    if (msg->message == message) {
+    if (msg->message_id() == message_id) {
       return msg;
     }
   }
@@ -100,7 +97,7 @@ Message* MessageHandler::GetMessageByID(TBID message) {
 
 void MessageHandler::DeleteMessage(Message* msg) {
   // Ensure the same message handler.
-  assert(msg->mh == this);
+  assert(msg->message_handler() == this);
 
   // Remove from global list (g_all_delayed_messages or g_all_normal_messages)
   if (g_all_delayed_messages.ContainsLink(msg)) {
@@ -129,13 +126,13 @@ void MessageHandler::ProcessMessages() {
   // Handle delayed messages.
   auto iter = g_all_delayed_messages.IterateForward();
   while (Message* msg = static_cast<Message*>(iter.GetAndStep())) {
-    if (util::GetTimeMS() >= msg->fire_time_ms) {
+    if (util::GetTimeMS() >= msg->fire_time_millis()) {
       // Remove from global list.
       g_all_delayed_messages.Remove(msg);
       // Remove from local list.
-      msg->mh->m_messages.Remove(msg);
+      msg->message_handler()->m_messages.Remove(msg);
 
-      msg->mh->OnMessageReceived(msg);
+      msg->message_handler()->OnMessageReceived(msg);
 
       delete msg;
     } else {
@@ -150,9 +147,9 @@ void MessageHandler::ProcessMessages() {
     // Remove from global list.
     g_all_normal_messages.Remove(msg);
     // Remove from local list.
-    msg->mh->m_messages.Remove(msg);
+    msg->message_handler()->m_messages.Remove(msg);
 
-    msg->mh->OnMessageReceived(msg);
+    msg->message_handler()->OnMessageReceived(msg);
 
     delete msg;
   }
@@ -167,7 +164,7 @@ uint64_t MessageHandler::GetNextMessageFireTime() {
   if (g_all_delayed_messages.GetFirst()) {
     auto first_delayed_msg =
         static_cast<Message*>(g_all_delayed_messages.GetFirst());
-    return first_delayed_msg->fire_time_ms;
+    return first_delayed_msg->fire_time_millis();
   }
 
   return kNotSoon;

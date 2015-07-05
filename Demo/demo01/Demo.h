@@ -3,7 +3,6 @@
 
 #include "tb_widgets_common.h"
 #include "tb_message_window.h"
-#include "tb_msg.h"
 #include "tb_scroller.h"
 #include "platform/Application.h"
 

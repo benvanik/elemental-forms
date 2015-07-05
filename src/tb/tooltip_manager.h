@@ -12,8 +12,8 @@
 
 #include <memory>
 
-#include "tb_msg.h"
 #include "tb/element_listener.h"
+#include "tb/message_handler.h"
 
 namespace tb {
 

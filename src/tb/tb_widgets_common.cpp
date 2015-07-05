@@ -218,7 +218,7 @@ bool Button::OnEvent(const ElementEvent& ev) {
 }
 
 void Button::OnMessageReceived(Message* msg) {
-  if (msg->message == TBIDC("auto_click")) {
+  if (msg->message_id() == TBIDC("auto_click")) {
     assert(captured_element == this);
     if (!cancel_click &&
         GetHitStatus(pointer_move_element_x, pointer_move_element_y) !=
