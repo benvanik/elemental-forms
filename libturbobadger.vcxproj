@@ -13,8 +13,16 @@
   <ItemGroup>
     <ClCompile Include="src\tb\animation_manager.cc" />
     <ClCompile Include="src\tb\elements.cc" />
+    <ClCompile Include="src\tb\elements\check_box.cc" />
     <ClCompile Include="src\tb\elements\menu_window.cc" />
     <ClCompile Include="src\tb\elements\message_window.cc" />
+    <ClCompile Include="src\tb\elements\radio_button.cc" />
+    <ClCompile Include="src\tb\elements\scroll_bar.cc" />
+    <ClCompile Include="src\tb\elements\slider.cc" />
+    <ClCompile Include="src\tb\parts\container.cc" />
+    <ClCompile Include="src\tb\parts\dimmer.cc" />
+    <ClCompile Include="src\tb\parts\mover.cc" />
+    <ClCompile Include="src\tb\parts\resizer.cc" />
     <ClCompile Include="src\tb\elements\popup_window.cc" />
     <ClCompile Include="src\tb\elements\tb_image_widget.cpp" />
     <ClCompile Include="src\tb\elements\tb_inline_select.cpp" />
@@ -38,6 +46,7 @@
     <ClCompile Include="src\tb\graphics\image_loader_stb.cc" />
     <ClCompile Include="src\tb\graphics\image_manager.cc" />
     <ClCompile Include="src\tb\graphics\renderer.cc" />
+    <ClCompile Include="src\tb\parts\toggle_button_base.cc" />
     <ClCompile Include="src\tb\rect.cc" />
     <ClCompile Include="src\tb\animation.cc" />
     <ClCompile Include="src\tb\parsing\element_factory.cc" />
@@ -96,8 +105,16 @@
   <ItemGroup>
     <ClInclude Include="src\tb\animation_manager.h" />
     <ClInclude Include="src\tb\elements.h" />
+    <ClInclude Include="src\tb\elements\check_box.h" />
     <ClInclude Include="src\tb\elements\menu_window.h" />
     <ClInclude Include="src\tb\elements\message_window.h" />
+    <ClInclude Include="src\tb\elements\radio_button.h" />
+    <ClInclude Include="src\tb\elements\scroll_bar.h" />
+    <ClInclude Include="src\tb\elements\slider.h" />
+    <ClInclude Include="src\tb\parts\container.h" />
+    <ClInclude Include="src\tb\parts\dimmer.h" />
+    <ClInclude Include="src\tb\parts\mover.h" />
+    <ClInclude Include="src\tb\parts\resizer.h" />
     <ClInclude Include="src\tb\elements\popup_window.h" />
     <ClInclude Include="src\tb\elements\tb_image_widget.h" />
     <ClInclude Include="src\tb\elements\tb_inline_select.h" />
@@ -124,6 +141,7 @@
     <ClInclude Include="src\tb\graphics\renderer.h" />
     <ClInclude Include="src\tb\message.h" />
     <ClInclude Include="src\tb\parsing\element_inflater.h" />
+    <ClInclude Include="src\tb\parts\toggle_button_base.h" />
     <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\animation.h" />
     <ClInclude Include="src\tb\parsing\element_factory.h" />

@@ -13,6 +13,8 @@
 #include "elements/tb_select.h"
 #include "elements/tb_inline_select.h"
 #include "tb/element_value.h"
+#include "tb/elements/check_box.h"
+#include "tb/elements/slider.h"
 
 #ifdef TB_UNIT_TESTING
 

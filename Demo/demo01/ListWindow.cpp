@@ -1,5 +1,6 @@
 #include "ListWindow.h"
 
+#include "tb/elements/check_box.h"
 #include "tb/util/string.h"
 
 using namespace tb::elements;

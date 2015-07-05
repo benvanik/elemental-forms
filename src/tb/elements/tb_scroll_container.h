@@ -10,7 +10,8 @@
 #ifndef TB_SCROLL_CONTAINER_H
 #define TB_SCROLL_CONTAINER_H
 
-#include "tb_widgets_common.h"
+#include "tb/element.h"
+#include "tb/elements/scroll_bar.h"
 
 namespace tb {
 namespace elements {

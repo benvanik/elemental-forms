@@ -9,6 +9,7 @@
 
 #include <cstdio>
 
+#include "tb/elements/check_box.h"
 #include "tb/graphics/image_manager.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"

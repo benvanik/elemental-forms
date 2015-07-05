@@ -12,6 +12,7 @@
 #include "tb_text_box.h"
 
 #include "tb/elements/message_window.h"
+#include "tb/parts/dimmer.h"
 #include "tb/util/string_table.h"
 
 namespace tb {
@@ -85,7 +86,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   // Create background dimmer.
   if (settings->dimmer) {
-    Dimmer* dimmer = new Dimmer();
+    auto dimmer = new parts::Dimmer();
     root->AddChild(dimmer);
     m_dimmer.Set(dimmer);
   }

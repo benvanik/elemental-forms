@@ -15,6 +15,7 @@
 
 #include "tb/element.h"
 #include "tb/message_handler.h"
+#include "tb/elements/scroll_bar.h"
 #include "tb/types.h"
 
 namespace tb {

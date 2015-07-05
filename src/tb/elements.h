@@ -12,9 +12,13 @@
 
 #include "tb/element.h"
 
+#include "tb/elements/check_box.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/message_window.h"
 #include "tb/elements/popup_window.h"
+#include "tb/elements/radio_button.h"
+#include "tb/elements/scroll_bar.h"
+#include "tb/elements/slider.h"
 
 #include "tb/elements/tb_image_widget.h"
 #include "tb/elements/tb_inline_select.h"

@@ -14,6 +14,7 @@
 #include "tb/element_animation.h"
 #include "tb/element_animation_manager.h"
 #include "tb/elements/message_window.h"
+#include "tb/parts/dimmer.h"
 #include "tb/window.h"
 
 namespace tb {
@@ -74,7 +75,7 @@ bool ElementAnimationManager::OnElementDying(Element* element) {
     AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
   }
-  if (auto dimmer = SafeCast<elements::Dimmer>(element)) {
+  if (auto dimmer = SafeCast<parts::Dimmer>(element)) {
     // Fade out dying dim layers.
     auto anim = new OpacityElementAnimation(
         dimmer, 1.f, ElementAnimation::kAlmostZeroOpacity, true);
@@ -98,7 +99,7 @@ void ElementAnimationManager::OnElementAdded(Element* parent,
                                          RectElementAnimation::Mode::kDeltaOut);
     AnimationManager::StartAnimation(anim);
   }
-  if (auto dimmer = SafeCast<elements::Dimmer>(element)) {
+  if (auto dimmer = SafeCast<parts::Dimmer>(element)) {
     // Fade in dim layer.
     auto anim = new OpacityElementAnimation(
         dimmer, ElementAnimation::kAlmostZeroOpacity, 1.f, false);
