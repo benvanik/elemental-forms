@@ -8,6 +8,7 @@
  */
 
 #include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
 
 #include "tb_widgets.h"
@@ -16,6 +17,9 @@ namespace tb {
 namespace parsing {
 
 std::unique_ptr<ElementFactory> ElementFactory::element_reader_singleton_;
+
+ElementFactory::ElementFactory() = default;
+ElementFactory::~ElementFactory() = default;
 
 void ElementFactory::RegisterInflater(
     std::unique_ptr<ElementInflater> inflater) {

@@ -13,7 +13,7 @@
 #include "tb_select.h"
 #include "tb_widgets_listener.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/string_table.h"

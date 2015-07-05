@@ -3,6 +3,7 @@
 #include "CodeTextBox.h"
 
 #include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 
 using namespace tb;
 

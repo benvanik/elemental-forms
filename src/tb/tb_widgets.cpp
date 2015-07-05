@@ -21,7 +21,7 @@
 #include "tb_window.h"
 
 #include "tb/graphics/renderer.h"
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"

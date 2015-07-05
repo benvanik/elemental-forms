@@ -11,7 +11,7 @@
 #include <cstdlib>
 
 #include "tb_inline_select.h"
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/util/math.h"
 
 namespace tb {

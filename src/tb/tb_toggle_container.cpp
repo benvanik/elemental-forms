@@ -9,7 +9,7 @@
 
 #include "tb_toggle_container.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
 
 namespace tb {

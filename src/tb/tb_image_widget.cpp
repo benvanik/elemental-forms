@@ -9,7 +9,7 @@
 
 #include "tb_image_widget.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"
 
 namespace tb {

@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 

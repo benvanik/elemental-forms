@@ -12,7 +12,7 @@
 
 #include "tb_layout.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/resources/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"

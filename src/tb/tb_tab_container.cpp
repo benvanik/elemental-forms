@@ -12,7 +12,7 @@
 
 #include "tb_tab_container.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 
 namespace tb {
 

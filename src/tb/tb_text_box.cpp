@@ -15,7 +15,7 @@
 #include "tb_text_box.h"
 #include "tb_widget_skin_condition_context.h"
 
-#include "tb/parsing/element_factory.h"
+#include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/skin.h"
 #include "tb/util/metrics.h"
