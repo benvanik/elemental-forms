@@ -12,7 +12,7 @@
 
 #include "tb_scroll_container.h"
 #include "tb_select_item.h"
-#include "tb_window.h"
+#include "tb/window.h"
 
 namespace tb {
 

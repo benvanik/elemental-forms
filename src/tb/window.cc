@@ -10,9 +10,8 @@
 #include <algorithm>
 #include <cassert>
 
-#include "tb_window.h"
-
 #include "tb/util/math.h"
+#include "tb/window.h"
 
 namespace tb {
 

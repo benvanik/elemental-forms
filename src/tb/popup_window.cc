@@ -9,8 +9,7 @@
 
 #include <algorithm>
 
-#include "tb_popup_window.h"
-
+#include "tb/popup_window.h"
 #include "tb/util/math.h"
 
 namespace tb {

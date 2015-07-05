@@ -13,9 +13,9 @@
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
+#include "tb/window.h"
 
 #include "tb_text_box.h"
-#include "tb_window.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 

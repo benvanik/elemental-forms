@@ -7,10 +7,10 @@
  ******************************************************************************
  */
 
-#ifndef TB_MENU_WINDOW_H
-#define TB_MENU_WINDOW_H
+#ifndef TB_MENU_WINDOW_H_
+#define TB_MENU_WINDOW_H_
 
-#include "tb_popup_window.h"
+#include "tb/popup_window.h"
 #include "tb_select.h"
 
 namespace tb {
@@ -39,4 +39,4 @@ class MenuWindow : public PopupWindow {
 
 }  // namespace tb
 
-#endif  // TB_MENU_WINDOW_H
+#endif  // TB_MENU_WINDOW_H_

@@ -15,7 +15,6 @@
 #include "tb_tab_container.h"
 #include "tb_text_box.h"
 #include "tb_widgets_common.h"
-#include "tb_window.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
@@ -27,6 +26,7 @@
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
 #include "tb/value.h"
+#include "tb/window.h"
 
 namespace tb {
 

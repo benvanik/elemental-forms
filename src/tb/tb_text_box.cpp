@@ -9,11 +9,11 @@
 
 #include <algorithm>
 
-#include "tb_menu_window.h"
 #include "tb_select.h"
 #include "tb_style_edit_content.h"
 #include "tb_text_box.h"
 
+#include "tb/menu_window.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/skin.h"

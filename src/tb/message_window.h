@@ -7,11 +7,11 @@
  ******************************************************************************
  */
 
-#ifndef TB_MESSAGE_WINDOW_H
-#define TB_MESSAGE_WINDOW_H
+#ifndef TB_MESSAGE_WINDOW_H_
+#define TB_MESSAGE_WINDOW_H_
 
 #include "tb/element_listener.h"
-#include "tb_window.h"
+#include "tb/window.h"
 
 namespace tb {
 
@@ -67,4 +67,4 @@ class MessageWindow : public Window, private ElementListener {
 
 }  // namespace tb
 
-#endif  // TB_MESSAGE_WINDOW_H
+#endif  // TB_MESSAGE_WINDOW_H_

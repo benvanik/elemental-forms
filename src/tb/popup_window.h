@@ -7,11 +7,11 @@
  ******************************************************************************
  */
 
-#ifndef TB_POPUP_WINDOW_H
-#define TB_POPUP_WINDOW_H
+#ifndef TB_POPUP_WINDOW_H_
+#define TB_POPUP_WINDOW_H_
 
 #include "tb/element_listener.h"
-#include "tb_window.h"
+#include "tb/window.h"
 
 namespace tb {
 
@@ -84,4 +84,4 @@ class PopupWindow : public Window, private ElementListener {
 
 }  // namespace tb
 
-#endif  // TB_POPUP_WINDOW_H
+#endif  // TB_POPUP_WINDOW_H_

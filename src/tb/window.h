@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_WINDOW_H
-#define TB_WINDOW_H
+#ifndef TB_WINDOW_H_
+#define TB_WINDOW_H_
 
 #include "tb_widgets_common.h"
 #include "tb/element_listener.h"
@@ -120,4 +120,4 @@ class Window : public Element {
 
 }  // namespace tb
 
-#endif  // TB_WINDOW_H
+#endif  // TB_WINDOW_H_

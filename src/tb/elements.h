@@ -13,7 +13,6 @@
 #include "tb_image_widget.h"
 #include "tb_inline_select.h"
 #include "tb_layout.h"
-#include "tb_menu_window.h"
 #include "tb_scroll_container.h"
 #include "tb_scroller.h"
 #include "tb_select.h"
@@ -23,5 +22,8 @@
 #include "tb_widgets_common.h"
 
 #include "tb/element.h"
+#include "tb/menu_window.h"
+#include "tb/message_window.h"
+#include "tb/popup_window.h"
 
 #endif  // TB_ELEMENTS_H_

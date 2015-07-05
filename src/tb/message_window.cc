@@ -9,9 +9,9 @@
 
 #include <cassert>
 
-#include "tb_message_window.h"
 #include "tb_text_box.h"
 
+#include "tb/message_window.h"
 #include "tb/util/string_table.h"
 
 namespace tb {

@@ -2,8 +2,8 @@
 #define DEMO_H
 
 #include "tb_widgets_common.h"
-#include "tb_message_window.h"
 #include "tb_scroller.h"
+#include "tb/message_window.h"
 #include "platform/Application.h"
 
 using namespace tb;

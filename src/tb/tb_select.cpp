@@ -9,10 +9,10 @@
 
 #include <algorithm>
 
-#include "tb_menu_window.h"
 #include "tb_select.h"
 
 #include "tb/element_listener.h"
+#include "tb/menu_window.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"

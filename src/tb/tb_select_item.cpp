@@ -7,14 +7,13 @@
  ******************************************************************************
  */
 
-#include "tb_select_item.h"
-
 #include <cassert>
 #include <cstdlib>
 
-#include "tb_menu_window.h"
 #include "tb_select.h"
+#include "tb_select_item.h"
 
+#include "tb/menu_window.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 
