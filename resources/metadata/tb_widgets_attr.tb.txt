@@ -104,8 +104,8 @@ SkinImage
 Separator
 ProgressSpinner
 Container
-SectionHeader
-Section
+GroupBoxHeader
+GroupBox
 ToggleContainer
 	toggle enabled, opacity, expanded
 	invert <bool>

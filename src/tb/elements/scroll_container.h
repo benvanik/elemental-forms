@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_SCROLL_CONTAINER_H
-#define TB_SCROLL_CONTAINER_H
+#ifndef TB_ELEMENTS_SCROLL_CONTAINER_H_
+#define TB_ELEMENTS_SCROLL_CONTAINER_H_
 
 #include "tb/element.h"
 #include "tb/elements/scroll_bar.h"
@@ -24,39 +24,6 @@ enum class ScrollMode {
   kOff,         // X and Y never; scroll-mode: off
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(ScrollMode, "xy", "y", "y-auto", "auto", "off");
-
-// Internal for ScrollContainer.
-class ScrollContainerRoot : public Element {
- private:  // May only be used by ScrollContainer.
-  friend class ScrollContainer;
-  ScrollContainerRoot() = default;
-
- public:
-  void OnPaintChildren(const PaintProps& paint_props) override;
-  void GetChildTranslation(int& x, int& y) const override;
-};
-
-// Helper for ScrollContainer or any other scrollable container that needs to
-// solve scrollbar visibility according to ScrollMode.
-class ScrollBarVisibility {
- public:
-  ScrollBarVisibility() = default;
-
-  static ScrollBarVisibility Solve(ScrollMode mode, int content_w,
-                                   int content_h, int available_w,
-                                   int available_h, int scrollbar_x_h,
-                                   int scrollbar_y_w);
-  static bool IsAlwaysOnX(ScrollMode mode) { return mode == ScrollMode::kXY; }
-  static bool IsAlwaysOnY(ScrollMode mode) {
-    return mode == ScrollMode::kXY || mode == ScrollMode::kY;
-  }
-
- public:
-  bool x_on = false;
-  bool y_on = false;
-  int visible_w = 0;
-  int visible_h = 0;
-};
 
 // A container with scrollbars that can scroll its children.
 class ScrollContainer : public Element {
@@ -100,6 +67,12 @@ class ScrollContainer : public Element {
   Element* GetContentRoot() override { return &m_root; }
 
  protected:
+  class ScrollContainerRoot : public Element {
+   public:
+    void OnPaintChildren(const PaintProps& paint_props) override;
+    void GetChildTranslation(int& x, int& y) const override;
+  };
+
   void ValidateLayout(const SizeConstraints& constraints);
 
   ScrollBar m_scrollbar_x;
@@ -114,4 +87,4 @@ class ScrollContainer : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_SCROLL_CONTAINER_H
+#endif  // TB_ELEMENTS_SCROLL_CONTAINER_H_

@@ -97,48 +97,48 @@ elements
 	button_group
 		spacing -1px
 
-	# == Section skins ==========================================================================
-	Section.layout
+	# == GroupBox skins ==========================================================================
+	GroupBox.layout
 		spacing -1px
-	Section.container
+	GroupBox.container
 		bitmap TBSectionContainer.png
 		type stretch border
 		cut 11
 		expand 6
 		padding 10
-	SectionHeader
+	GroupBoxHeader
 		bitmap window_mover_bg_tile.png
 		type tile
 		expand -1
 		padding 3 16
 		children
-			element SectionHeader.icon_0
+			element GroupBoxHeader.icon_0
 				condition: target: this, property: value, value: 0
 				condition: target: this, property: capture, test: !=
-			element SectionHeader.icon_1
+			element GroupBoxHeader.icon_1
 				condition: target: this, property: value, value: 1
 				condition: target: this, property: capture, test: !=
-			element SectionHeader.icon_pressed
+			element GroupBoxHeader.icon_pressed
 				condition: target: this, property: capture
 		overlays
-			element SectionHeader.overlay
+			element GroupBoxHeader.overlay
 				state all
-	SectionHeader.overlay
+	GroupBoxHeader.overlay
 		bitmap window_mover_overlay.png
 		type stretch border
 		cut 16
 		expand 3
-	SectionHeader.icon_0
+	GroupBoxHeader.icon_0
 		bitmap toggle_section_icon_up.png
 		type image
 		img-position-x 0
 		img-ofs-x 4
-	SectionHeader.icon_1
+	GroupBoxHeader.icon_1
 		bitmap toggle_section_icon_down.png
 		type image
 		img-position-x 0
 		img-ofs-x 4
-	SectionHeader.icon_pressed
+	GroupBoxHeader.icon_pressed
 		bitmap toggle_section_icon_middle.png
 		type image
 		img-position-x 0
@@ -376,20 +376,20 @@ elements
 		padding 2
 	MenuWindow
 		clone PopupWindow
-	SelectItem
+	ListItem
 		padding 4 10
 		children
-			element SelectItem.hovered
+			element ListItem.hovered
 				state hovered
-			element SelectItem.selected
+			element ListItem.selected
 				state selected
-	SelectItem.selected
+	ListItem.selected
 		cut 7
 		bitmap item_selected.png
-	SelectItem.hovered
+	ListItem.hovered
 		cut 7
 		bitmap item_hover.png
-	SelectItem.separator
+	ListItem.separator
 		clone Separator
 
 	Separator

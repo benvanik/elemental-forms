@@ -27,7 +27,7 @@ void RegisterBuiltinElementInflaters() {
   ListBox::RegisterInflater();
   TabContainer::RegisterInflater();
   TextBox::RegisterInflater();
-  Section::RegisterInflater();
+  GroupBox::RegisterInflater();
   ToggleContainer::RegisterInflater();
   Element::RegisterInflater();
   Label::RegisterInflater();

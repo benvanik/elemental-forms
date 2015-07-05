@@ -11,15 +11,15 @@
 #define TB_ELEMENTS_LIST_BOX_H_
 
 #include "tb_layout.h"
-#include "tb_scroll_container.h"
-#include "tb_select_item.h"
 #include "tb/element.h"
+#include "tb/elements/list_item.h"
+#include "tb/elements/scroll_container.h"
 
 namespace tb {
 namespace elements {
 
-// Shows a scrollable list of items provided by a SelectItemSource.
-class ListBox : public Element, public SelectItemObserver {
+// Shows a scrollable list of items provided by a ListItemSource.
+class ListBox : public Element, public ListItemObserver {
  public:
   TBOBJECT_SUBCLASS(ListBox, Element);
   static void RegisterInflater();
@@ -75,7 +75,7 @@ class ListBox : public Element, public SelectItemObserver {
 
   // Sets the selected state of the item at the given index. If you want to
   // unselect the previously selected item, use SetValue.
-  void SelectItem(size_t index, bool selected);
+  void ListItem(size_t index, bool selected);
   Element* GetItemElement(size_t index);
 
   // Scrolls to the current selected item. The scroll may be delayed until

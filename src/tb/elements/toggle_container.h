@@ -2,17 +2,15 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
-#ifndef TB_TOGGLE_CONTAINER_H
-#define TB_TOGGLE_CONTAINER_H
+#ifndef TB_ELEMENTS_TOGGLE_CONTAINER_H_
+#define TB_ELEMENTS_TOGGLE_CONTAINER_H_
 
 #include "tb/element.h"
-#include "tb/elements/button.h"
-#include "tb_layout.h"
 
 namespace tb {
 namespace elements {
@@ -65,66 +63,7 @@ class ToggleContainer : public Element {
   int m_value = 0;
 };
 
-// Just a thin wrapper for a Button that is in toggle mode with the skin
-// SectionHeader by default.
-// It is used as the clickable header in Section that toggles the section.
-class SectionHeader : public Button {
- public:
-  TBOBJECT_SUBCLASS(SectionHeader, Button);
-
-  SectionHeader();
-
-  bool OnEvent(const ElementEvent& ev) override;
-};
-
-// A element with a header that when clicked toggles its children on and off
-// (using a internal ToggleContainer with ToggleAction::kExpanded).
-// The header is a SectionHeader.
-// The skin names of the internal elements are:
-//     Section           - This element itself.
-//     Section.layout    - The layout that wraps the header and the container.
-//     Section.container - The toggle container with the children that
-//                         expands/collapses.
-class Section : public Element {
- public:
-  TBOBJECT_SUBCLASS(Section, Element);
-  static void RegisterInflater();
-
-  Section();
-  ~Section() override;
-
-  Layout* GetLayout() { return &m_layout; }
-  SectionHeader* GetHeader() { return &m_header; }
-  ToggleContainer* GetContainer() { return &m_toggle_container; }
-
-  // Sets if the section should be scrolled into view after next layout.
-  void SetPendingScrollIntoView(bool pending_scroll) {
-    m_pending_scroll = pending_scroll;
-  }
-
-  // Sets the text of the text field.
-  void SetText(const char* text) override { m_header.SetText(text); }
-  std::string GetText() override { return m_header.GetText(); }
-
-  void SetValue(int value) override;
-  int GetValue() override { return m_toggle_container.GetValue(); }
-
-  Element* GetContentRoot() override {
-    return m_toggle_container.GetContentRoot();
-  }
-  void OnProcessAfterChildren() override;
-
-  PreferredSize OnCalculatePreferredSize(
-      const SizeConstraints& constraints) override;
-
- private:
-  Layout m_layout;
-  SectionHeader m_header;
-  ToggleContainer m_toggle_container;
-  bool m_pending_scroll = false;
-};
-
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_TOGGLE_CONTAINER_H
+#endif  // TB_ELEMENTS_TOGGLE_CONTAINER_H_

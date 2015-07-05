@@ -5,7 +5,7 @@ WindowInfo
 
 Layout: axis: y, distribution-position: "left top", distribution: "available"
 
-	Section: value: 1, text: "Misc features"
+	GroupBox: value: 1, text: "Misc features"
 		Layout: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "Radiobutton & Checkbox"
 				id: "test-layout"
@@ -23,7 +23,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 			Button: skin: "Button.flat", text: "Close with dim & alert", id: "Window.close"
 			Button: skin: "Button.flat", text: "ResourceEditWindow", id: "test-resource-edit"
 
-	Section: value: 0, text: "Layout tests"
+	GroupBox: value: 0, text: "Layout tests"
 		Layout: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "Size, gravity, position"
 				id: "test-layout"
@@ -35,7 +35,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 				id: "test-layout"
 				data: "test_layout03.tb.txt"
 
-	Section: value: 0, text: "Graphics tests"
+	GroupBox: value: 0, text: "Graphics tests"
 		Layout: axis: y, spacing: 0, size: available
 			LabelContainer: text: "Continous repaint"
 				lp: max-width: 0
@@ -43,7 +43,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 			Button: skin: "Button.flat", text: "Reload skin bitmaps", id: "reload skin bitmaps"
 			Button: skin: "Button.flat", text: "Context lost & restore", id: "test context lost"
 
-	Section: value: 0, text: "Message tests"
+	GroupBox: value: 0, text: "Message tests"
 		Layout: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "PostMessage", id: "msg"
 			Button: skin: "Button.flat", text: "PostMessageDelayed", id: "delayedmsg"

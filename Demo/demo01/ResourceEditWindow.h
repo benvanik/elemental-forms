@@ -59,7 +59,7 @@ class ResourceEditWindow : public Window,
 
  private:
   elements::ListBox* m_element_list;
-  elements::SelectItemSourceList<ResourceItem> m_element_list_source;
+  elements::ListItemSourceList<ResourceItem> m_element_list_source;
   elements::ScrollContainer* m_scroll_container;
   Element* m_build_container;
   elements::TextBox* m_source_text_box;

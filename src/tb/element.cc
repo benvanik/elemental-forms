@@ -7,14 +7,11 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-#include <cassert>
-
-#include "elements/tb_select_item.h"
 #include "elements/tb_text_box.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
+#include "tb/elements/list_item.h"
 #include "tb/elements/tab_container.h"
 #include "tb/graphics/renderer.h"
 #include "tb/parsing/element_inflater.h"

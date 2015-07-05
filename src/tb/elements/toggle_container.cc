@@ -2,85 +2,16 @@
  ******************************************************************************
  * xenia-project/turbobadger : a fork of Turbo Badger for Xenia               *
  ******************************************************************************
- * Copyright 2011-2015 Emil SegerÃ¥s and Ben Vanik. All rights reserved.       *
+ * Copyright 2011-2015 Emil Segerås and Ben Vanik. All rights reserved.       *
  * See turbo_badger.h and LICENSE in the root for more information.           *
  ******************************************************************************
  */
 
-#include "tb_toggle_container.h"
-
+#include "tb/elements/toggle_container.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/parsing/parse_node.h"
 
 namespace tb {
 namespace elements {
-
-SectionHeader::SectionHeader() {
-  SetSkinBg(TBIDC("SectionHeader"));
-  SetGravity(Gravity::kLeft | Gravity::kRight);
-  SetToggleMode(true);
-}
-
-bool SectionHeader::OnEvent(const ElementEvent& ev) {
-  if (ev.target == this && ev.type == EventType::kChanged &&
-      GetParent()->GetParent()) {
-    if (Section* section = util::SafeCast<Section>(GetParent()->GetParent())) {
-      section->GetContainer()->SetValue(GetValue());
-
-      // Try to scroll the container into view when expanded.
-      section->SetPendingScrollIntoView(GetValue() ? true : false);
-    }
-  }
-  return Button::OnEvent(ev);
-}
-
-Section::Section() {
-  SetGravity(Gravity::kLeft | Gravity::kRight);
-
-  SetSkinBg(TBIDC("Section"), InvokeInfo::kNoCallbacks);
-  m_layout.SetSkinBg(TBIDC("Section.layout"), InvokeInfo::kNoCallbacks);
-
-  m_toggle_container.SetSkinBg(TBIDC("Section.container"));
-  m_toggle_container.SetToggleAction(ToggleAction::kExpanded);
-  m_toggle_container.SetGravity(Gravity::kAll);
-  m_layout.SetAxis(Axis::kY);
-  m_layout.SetGravity(Gravity::kAll);
-  m_layout.SetLayoutSize(LayoutSize::kAvailable);
-
-  AddChild(&m_layout);
-  m_layout.AddChild(&m_header);
-  m_layout.AddChild(&m_toggle_container);
-}
-
-Section::~Section() {
-  m_layout.RemoveChild(&m_toggle_container);
-  m_layout.RemoveChild(&m_header);
-  RemoveChild(&m_layout);
-}
-
-void Section::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(Section, Value::Type::kInt, ElementZ::kTop);
-}
-
-void Section::SetValue(int value) {
-  m_header.SetValue(value);
-  m_toggle_container.SetValue(value);
-}
-
-void Section::OnProcessAfterChildren() {
-  if (m_pending_scroll) {
-    m_pending_scroll = false;
-    ScrollIntoViewRecursive();
-  }
-}
-
-PreferredSize Section::OnCalculatePreferredSize(
-    const SizeConstraints& constraints) {
-  PreferredSize ps = Element::OnCalculatePreferredContentSize(constraints);
-  // We should not grow larger than we are, when there's extra space available.
-  ps.max_h = ps.pref_h;
-  return ps;
-}
 
 void ToggleContainer::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(ToggleContainer, Value::Type::kInt,

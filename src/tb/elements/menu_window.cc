@@ -27,7 +27,7 @@ MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
 
 MenuWindow::~MenuWindow() { RemoveChild(&m_select_list); }
 
-bool MenuWindow::Show(SelectItemSource* source, const PopupAlignment& alignment,
+bool MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
                       int initial_value) {
   m_select_list.SetValue(initial_value);
   m_select_list.SetSource(source);

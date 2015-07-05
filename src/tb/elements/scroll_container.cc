@@ -7,17 +7,35 @@
  ******************************************************************************
  */
 
-#include "tb_scroll_container.h"
-
-#include <algorithm>
-#include <cassert>
-
+#include "tb/elements/scroll_container.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
 namespace tb {
 namespace elements {
+
+// Helper for ScrollContainer or any other scrollable container that needs to
+// solve scrollbar visibility according to ScrollMode.
+class ScrollBarVisibility {
+ public:
+  ScrollBarVisibility() = default;
+
+  static ScrollBarVisibility Solve(ScrollMode mode, int content_w,
+                                   int content_h, int available_w,
+                                   int available_h, int scrollbar_x_h,
+                                   int scrollbar_y_w);
+  static bool IsAlwaysOnX(ScrollMode mode) { return mode == ScrollMode::kXY; }
+  static bool IsAlwaysOnY(ScrollMode mode) {
+    return mode == ScrollMode::kXY || mode == ScrollMode::kY;
+  }
+
+ public:
+  bool x_on = false;
+  bool y_on = false;
+  int visible_w = 0;
+  int visible_h = 0;
+};
 
 ScrollBarVisibility ScrollBarVisibility::Solve(ScrollMode mode, int content_w,
                                                int content_h, int available_w,
@@ -69,7 +87,8 @@ ScrollBarVisibility ScrollBarVisibility::Solve(ScrollMode mode, int content_w,
   return visibility;
 }
 
-void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
+void ScrollContainer::ScrollContainerRoot::OnPaintChildren(
+    const PaintProps& paint_props) {
   // We only want clipping in one axis (the overflowing one) so we
   // don't damage any expanded skins on the other axis. Add some fluff.
   const int fluff = 100;
@@ -91,7 +110,8 @@ void ScrollContainerRoot::OnPaintChildren(const PaintProps& paint_props) {
   graphics::Renderer::get()->SetClipRect(old_clip_rect, false);
 }
 
-void ScrollContainerRoot::GetChildTranslation(int& x, int& y) const {
+void ScrollContainer::ScrollContainerRoot::GetChildTranslation(int& x,
+                                                               int& y) const {
   ScrollContainer* sc = static_cast<ScrollContainer*>(GetParent());
   x = -sc->m_scrollbar_x.GetValue();
   y = -sc->m_scrollbar_y.GetValue();

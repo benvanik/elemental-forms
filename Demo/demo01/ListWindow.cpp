@@ -10,10 +10,10 @@ using namespace tb::elements;
 
 AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
                                          AdvancedItemSource* source,
-                                         SelectItemObserver* source_viewer,
+                                         ListItemObserver* source_viewer,
                                          size_t index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
-  SetSkinBg(TBIDC("SelectItem"));
+  SetSkinBg(TBIDC("ListItem"));
   SetLayoutDistribution(LayoutDistribution::kGravity);
   SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
   SetPaintOverflowFadeout(false);
@@ -47,7 +47,7 @@ bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
 bool AdvancedItemSource::Filter(size_t index, const std::string& filter) {
   // Override this method so we can return hits for our extra data too.
 
-  if (SelectItemSource::Filter(index, filter)) return true;
+  if (ListItemSource::Filter(index, filter)) return true;
 
   AdvancedItem* item = GetItem(index);
   return tb::util::stristr(item->GetMale() ? "Male" : "Female", filter.c_str())
@@ -56,14 +56,14 @@ bool AdvancedItemSource::Filter(size_t index, const std::string& filter) {
 }
 
 Element* AdvancedItemSource::CreateItemElement(size_t index,
-                                               SelectItemObserver* viewer) {
+                                               ListItemObserver* viewer) {
   auto layout = new AdvancedItemElement(GetItem(index), this, viewer, index);
   return layout;
 }
 
 // == ListWindow ==============================================================
 
-ListWindow::ListWindow(SelectItemSource* source) {
+ListWindow::ListWindow(ListItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
   if (ListBox* select = GetElementByIDAndType<ListBox>("list")) {
     select->SetSource(source);

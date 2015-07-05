@@ -10,8 +10,8 @@
 #ifndef TB_ELEMENTS_DROP_DOWN_BUTTON_H_
 #define TB_ELEMENTS_DROP_DOWN_BUTTON_H_
 
-#include "tb_select_item.h"
 #include "tb/element.h"
+#include "tb/elements/list_item.h"
 #include "tb/elements/skin_image.h"
 #include "tb/window.h"
 
@@ -21,8 +21,8 @@ namespace elements {
 class MenuWindow;
 
 // Shows a button that opens a popup with a ListBox with items provided by a
-// SelectItemSource.
-class DropDownButton : public Button, public SelectItemObserver {
+// ItemSource.
+class DropDownButton : public Button, public ListItemObserver {
  public:
   TBOBJECT_SUBCLASS(DropDownButton, Button);
   static void RegisterInflater();

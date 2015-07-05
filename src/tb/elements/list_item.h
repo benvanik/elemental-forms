@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_SELECT_ITEM_H
-#define TB_SELECT_ITEM_H
+#ifndef TB_ELEMENTS_LIST_ITEM_H_
+#define TB_ELEMENTS_LIST_ITEM_H_
 
 #include <memory>
 #include <vector>
@@ -27,7 +27,7 @@ class ParseNode;
 namespace tb {
 namespace elements {
 
-class SelectItemSource;
+class ListItemSource;
 
 enum class Sort {
   kNone,       // No sorting. Items appear in list order.
@@ -35,19 +35,19 @@ enum class Sort {
   kDescending  // Descending sort.
 };
 
-// An observer for items provided by SelectItemSource.
+// An observer for items provided by ListItemSource.
 // There can be multiple observers for each source. The observer will recieve
 // callbacks when the source is changed, so it can update itself.
-class SelectItemObserver : public util::TBLinkOf<SelectItemObserver> {
+class ListItemObserver : public util::TBLinkOf<ListItemObserver> {
  public:
-  SelectItemObserver() = default;
-  virtual ~SelectItemObserver() = default;
+  ListItemObserver() = default;
+  virtual ~ListItemObserver() = default;
 
   // Sets the source which should provide the items for this observer.
   // This source needs to live longer than this observer.
   // Set nullptr to unset currently set source.
-  void SetSource(SelectItemSource* source);
-  SelectItemSource* GetSource() const { return m_source; }
+  void SetSource(ListItemSource* source);
+  ListItemSource* GetSource() const { return m_source; }
 
   // Called when the source has changed or been unset by calling SetSource.
   virtual void OnSourceChanged() = 0;
@@ -66,25 +66,25 @@ class SelectItemObserver : public util::TBLinkOf<SelectItemObserver> {
   virtual void OnAllItemsRemoved() = 0;
 
  protected:
-  SelectItemSource* m_source = nullptr;
+  ListItemSource* m_source = nullptr;
 };
 
 // An item provider interface for list elements (ListBox and DropDownButton).
 // Instead of feeding all list elements with all items all the time, the list
-// elements will ask SelectItemSource when it needs it. The list elements may
+// elements will ask ListItemSource when it needs it. The list elements may
 // also apply filtering so only a subset of all the items are shown.
 //
 // CreateItemElement can be overridden to create any set of element content for
 // each item.
 //
 // This class has no storage of items. If you want an array storage of items,
-// use the subclass SelectItemSourceList. If you implement your own storage,
+// use the subclass ListItemSourceList. If you implement your own storage,
 // remember to call InvokeItem[Added/...] to notify observers that they need
 // to update.
-class SelectItemSource {
+class ListItemSource {
  public:
-  SelectItemSource() = default;
-  virtual ~SelectItemSource();
+  ListItemSource() = default;
+  virtual ~ListItemSource();
 
   // Returns true if a item matches the given filter text.
   // By default, it returns true if GetItemString contains filter.
@@ -97,7 +97,7 @@ class SelectItemSource {
   virtual const char* GetItemString(size_t index) = 0;
 
   // Gets the source to be used if this item should open a sub menu.
-  virtual SelectItemSource* GetItemSubSource(size_t index) { return nullptr; }
+  virtual ListItemSource* GetItemSubSource(size_t index) { return nullptr; }
 
   // Gets the skin image to be painted before the text for this item.
   virtual TBID GetItemImage(size_t index) { return TBID(); }
@@ -108,8 +108,7 @@ class SelectItemSource {
   // Creates the item representation element(s).
   // By default, it will create a Label for string-only items, and other
   // types for items that also has image or submenu.
-  virtual Element* CreateItemElement(size_t index,
-                                     SelectItemObserver* observer);
+  virtual Element* CreateItemElement(size_t index, ListItemObserver* observer);
 
   // Gets the number of items.
   virtual size_t size() = 0;
@@ -120,29 +119,29 @@ class SelectItemSource {
 
   // Invokes OnItemChanged on all open observers for this source.
   void InvokeItemChanged(size_t index,
-                         SelectItemObserver* exclude_observer = nullptr);
+                         ListItemObserver* exclude_observer = nullptr);
   void InvokeItemAdded(size_t index);
   void InvokeItemRemoved(size_t index);
   void InvokeAllItemsRemoved();
 
  private:
-  friend class SelectItemObserver;
-  util::TBLinkListOf<SelectItemObserver> m_observers;
+  friend class ListItemObserver;
+  util::TBLinkListOf<ListItemObserver> m_observers;
   Sort m_sort = Sort::kNone;
 };
 
 // An item provider for list elements (ListBox and DropDownButton).
 // It stores items of the type specified by the template in an array.
 template <class T>
-class SelectItemSourceList : public SelectItemSource {
+class ListItemSourceList : public ListItemSource {
  public:
-  SelectItemSourceList() = default;
-  ~SelectItemSourceList() override { DeleteAllItems(); }
+  ListItemSourceList() = default;
+  ~ListItemSourceList() override { DeleteAllItems(); }
 
   const char* GetItemString(size_t index) override {
     return GetItem(index)->str.c_str();
   }
-  SelectItemSource* GetItemSubSource(size_t index) override {
+  ListItemSource* GetItemSubSource(size_t index) override {
     return GetItem(index)->sub_source;
   }
   TBID GetItemImage(size_t index) override {
@@ -152,9 +151,8 @@ class SelectItemSourceList : public SelectItemSource {
   size_t size() override { return items_.size(); }
 
   Element* CreateItemElement(size_t index,
-                             SelectItemObserver* observer) override {
-    if (Element* element =
-            SelectItemSource::CreateItemElement(index, observer)) {
+                             ListItemObserver* observer) override {
+    if (Element* element = ListItemSource::CreateItemElement(index, observer)) {
       auto& item = items_[index];
       element->set_id(item->id);
       return element;
@@ -210,11 +208,11 @@ class GenericStringItem {
         tag(other.tag) {}
   GenericStringItem(const char* str) : str(str) {}
   GenericStringItem(const char* str, TBID id) : str(str), id(id) {}
-  GenericStringItem(const char* str, SelectItemSource* sub_source)
+  GenericStringItem(const char* str, ListItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
   GenericStringItem(const std::string& str) : str(str) {}
   GenericStringItem(const std::string& str, TBID id) : str(str), id(id) {}
-  GenericStringItem(const std::string& str, SelectItemSource* sub_source)
+  GenericStringItem(const std::string& str, ListItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
   const GenericStringItem& operator=(const GenericStringItem& other) {
     str = other.str;
@@ -230,14 +228,14 @@ class GenericStringItem {
   std::string str;
   TBID id;
   TBID skin_image;
-  SelectItemSource* sub_source = nullptr;
+  ListItemSource* sub_source = nullptr;
 
   // This value is free to use for anything. It's not used internally.
   Value tag;
 };
 
 // An item source list providing items of type GenericStringItem.
-class GenericStringItemSource : public SelectItemSourceList<GenericStringItem> {
+class GenericStringItemSource : public ListItemSourceList<GenericStringItem> {
  public:
   static void ReadItemNodes(tb::parsing::ParseNode* parent_node,
                             GenericStringItemSource* target_source);
@@ -246,4 +244,4 @@ class GenericStringItemSource : public SelectItemSourceList<GenericStringItem> {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_SELECT_ITEM_H
+#endif  // TB_ELEMENTS_LIST_ITEM_H_

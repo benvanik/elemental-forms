@@ -27,7 +27,7 @@ class MenuWindow : public PopupWindow {
   MenuWindow(Element* target, TBID id);
   ~MenuWindow() override;
 
-  bool Show(SelectItemSource* source, const PopupAlignment& alignment,
+  bool Show(ListItemSource* source, const PopupAlignment& alignment,
             int initial_value = -1);
 
   ListBox* GetList() { return &m_select_list; }

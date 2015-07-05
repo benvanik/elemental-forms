@@ -7,11 +7,7 @@
  ******************************************************************************
  */
 
-#include <cassert>
-#include <cstdlib>
-
-#include "tb_select_item.h"
-
+#include "tb/elements/list_item.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/skin_image.h"
 #include "tb/elements/separator.h"
@@ -29,8 +25,7 @@ namespace elements {
 // It also handles submenu events.
 class SimpleLayoutItemElement : public Layout, private ElementListener {
  public:
-  SimpleLayoutItemElement(TBID image, SelectItemSource* source,
-                          const char* str);
+  SimpleLayoutItemElement(TBID image, ListItemSource* source, const char* str);
   ~SimpleLayoutItemElement() override;
 
   bool OnEvent(const ElementEvent& ev) override;
@@ -40,7 +35,7 @@ class SimpleLayoutItemElement : public Layout, private ElementListener {
   void OpenSubMenu();
   void CloseSubMenu();
 
-  SelectItemSource* m_source = nullptr;
+  ListItemSource* m_source = nullptr;
   Label m_textfield;
   SkinImage m_image;
   SkinImage m_image_arrow;
@@ -48,10 +43,10 @@ class SimpleLayoutItemElement : public Layout, private ElementListener {
 };
 
 SimpleLayoutItemElement::SimpleLayoutItemElement(TBID image,
-                                                 SelectItemSource* source,
+                                                 ListItemSource* source,
                                                  const char* str)
     : m_source(source) {
-  SetSkinBg(TBIDC("SelectItem"));
+  SetSkinBg(TBIDC("ListItem"));
   SetLayoutDistribution(LayoutDistribution::kAvailable);
   SetPaintOverflowFadeout(false);
 
@@ -118,7 +113,7 @@ void SimpleLayoutItemElement::CloseSubMenu() {
   m_menu = nullptr;
 }
 
-void SelectItemObserver::SetSource(SelectItemSource* source) {
+void ListItemObserver::SetSource(ListItemSource* source) {
   if (m_source == source) return;
 
   if (m_source) {
@@ -132,13 +127,13 @@ void SelectItemObserver::SetSource(SelectItemSource* source) {
   OnSourceChanged();
 }
 
-SelectItemSource::~SelectItemSource() {
+ListItemSource::~ListItemSource() {
   // If this assert trig, you are deleting a model that's still set on some
   // Select element. That might be dangerous.
   assert(!m_observers.HasLinks());
 }
 
-bool SelectItemSource::Filter(size_t index, const std::string& filter) {
+bool ListItemSource::Filter(size_t index, const std::string& filter) {
   const char* str = GetItemString(index);
   if (str && util::stristr(str, filter.c_str())) {
     return true;
@@ -146,10 +141,10 @@ bool SelectItemSource::Filter(size_t index, const std::string& filter) {
   return false;
 }
 
-Element* SelectItemSource::CreateItemElement(size_t index,
-                                             SelectItemObserver* observer) {
+Element* ListItemSource::CreateItemElement(size_t index,
+                                           ListItemObserver* observer) {
   const char* string = GetItemString(index);
-  SelectItemSource* sub_source = GetItemSubSource(index);
+  ListItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);
   if (sub_source || image) {
     SimpleLayoutItemElement* itemelement =
@@ -158,11 +153,11 @@ Element* SelectItemSource::CreateItemElement(size_t index,
   } else if (string && *string == '-') {
     Separator* separator = new Separator();
     separator->SetGravity(Gravity::kAll);
-    separator->SetSkinBg(TBIDC("SelectItem.separator"));
+    separator->SetSkinBg(TBIDC("ListItem.separator"));
     return separator;
   } else {
     Label* textfield = new Label();
-    textfield->SetSkinBg("SelectItem");
+    textfield->SetSkinBg("ListItem");
     textfield->SetText(string);
     textfield->SetTextAlign(TextAlign::kLeft);
     return textfield;
@@ -170,33 +165,33 @@ Element* SelectItemSource::CreateItemElement(size_t index,
   return nullptr;
 }
 
-void SelectItemSource::InvokeItemChanged(size_t index,
-                                         SelectItemObserver* exclude_observer) {
+void ListItemSource::InvokeItemChanged(size_t index,
+                                       ListItemObserver* exclude_observer) {
   auto iter = m_observers.IterateForward();
-  while (SelectItemObserver* observer = iter.GetAndStep()) {
+  while (ListItemObserver* observer = iter.GetAndStep()) {
     if (observer != exclude_observer) {
       observer->OnItemChanged(index);
     }
   }
 }
 
-void SelectItemSource::InvokeItemAdded(size_t index) {
+void ListItemSource::InvokeItemAdded(size_t index) {
   auto iter = m_observers.IterateForward();
-  while (SelectItemObserver* observer = iter.GetAndStep()) {
+  while (ListItemObserver* observer = iter.GetAndStep()) {
     observer->OnItemAdded(index);
   }
 }
 
-void SelectItemSource::InvokeItemRemoved(size_t index) {
+void ListItemSource::InvokeItemRemoved(size_t index) {
   auto iter = m_observers.IterateForward();
-  while (SelectItemObserver* observer = iter.GetAndStep()) {
+  while (ListItemObserver* observer = iter.GetAndStep()) {
     observer->OnItemRemoved(index);
   }
 }
 
-void SelectItemSource::InvokeAllItemsRemoved() {
+void ListItemSource::InvokeAllItemsRemoved() {
   auto iter = m_observers.IterateForward();
-  while (SelectItemObserver* observer = iter.GetAndStep()) {
+  while (ListItemObserver* observer = iter.GetAndStep()) {
     observer->OnAllItemsRemoved();
   }
 }

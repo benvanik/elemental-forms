@@ -186,7 +186,7 @@ void ListBox::ValidateList() {
     CreateAndAddItemAfter(sorted_index[i], nullptr);
   }
 
-  SelectItem(m_value, true);
+  ListItem(m_value, true);
 
   // FIX: Should not scroll just because we update the list. Only automatically
   // first time!
@@ -207,9 +207,9 @@ Element* ListBox::CreateAndAddItemAfter(size_t index, Element* reference) {
 void ListBox::SetValue(int value) {
   if (value == m_value) return;
 
-  SelectItem(m_value, false);
+  ListItem(m_value, false);
   m_value = value;
-  SelectItem(m_value, true);
+  ListItem(m_value, true);
   ScrollToSelectedItem();
 
   ElementEvent ev(EventType::kChanged);
@@ -226,7 +226,7 @@ TBID ListBox::GetSelectedItemID() {
   return TBID();
 }
 
-void ListBox::SelectItem(size_t index, bool selected) {
+void ListBox::ListItem(size_t index, bool selected) {
   if (Element* element = GetItemElement(index)) {
     element->SetState(Element::State::kSelected, selected);
   }

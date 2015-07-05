@@ -11,11 +11,11 @@
 #define TB_ELEMENTS_SPIN_BOX_H_
 
 #include "tb_layout.h"
-#include "tb_select_item.h"
 #include "tb_text_box.h"
 
 #include "tb/element.h"
 #include "tb/elements/button.h"
+#include "tb/elements/list_item.h"
 
 namespace tb {
 namespace elements {
