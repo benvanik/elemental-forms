@@ -110,7 +110,7 @@ Creating custom elements
 
 Elements are cheap to create and layout and using many elements to get what you want
 is encouraged. A custom element should typically not implement any layouting and
-drawing of sub-elements if it can be solved by wrapping a Layout and other
+drawing of sub-elements if it can be solved by wrapping a LayoutBox and other
 existing elements.
 
 Any element may contain other elements and may control into which sub-element other
@@ -144,9 +144,9 @@ Author
 -----------------------------------------------------------------------------------
 
 Emil Segerås
-Web: <http://fiffigt.com>  
+Web: <http://fiffigt.com>
 
-Turbo Badger home: <https://github.com/fruxo/turbobadger>  
+Turbo Badger home: <https://github.com/fruxo/turbobadger>
 
 
 Screenshot

@@ -11,13 +11,12 @@
 
 #include "tb/elements/check_box.h"
 #include "tb/elements/label_container.h"
+#include "tb/elements/text_box.h"
 #include "tb/graphics/image_manager.h"
 #include "tb/resources/font_manager.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"
 #include "tb/window.h"
-
-#include "tb/elements/tb_text_box.h"
 
 #ifdef TB_RUNTIME_DEBUG_INFO
 
@@ -38,8 +37,8 @@ class DebugSettingsWindow : public Window, public ElementListener {
   DebugSettingsWindow(Element* root) {
     SetText("Debug settings");
     LoadData(
-        "Layout: axis: y, distribution: available, position: left\n"
-        "	Layout: id: 'container', axis: y, size: available\n"
+        "LayoutBox: axis: y, distribution: available, position: left\n"
+        "	LayoutBox: id: 'container', axis: y, size: available\n"
         "	Label: text: 'Event output:'\n"
         "	TextBox: id: 'output', gravity: all, multiline: 1, wrap: "
         "0\n"

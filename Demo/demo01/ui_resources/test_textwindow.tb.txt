@@ -2,15 +2,15 @@ WindowInfo
 	title Text editing
 	position 280 50
 	size 450 630
-Layout: axis: y, distribution: available
-	Layout: distribution: gravity
+LayoutBox: axis: y, distribution: available
+	LayoutBox: distribution: gravity
 		Button: id: undo
 			SkinImage: skin: arrow.left
 		Button: id: redo
 			SkinImage: skin: arrow.right
 		Button: text: Clear, id: clear
 			tooltip Click for <color #f44>remove</color> all text
-		Layout
+		LayoutBox
 			gravity left right
 			distribution-position right bottom
 			Label: id: info

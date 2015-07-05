@@ -9,10 +9,9 @@
 
 #include <cassert>
 
-#include "tb_text_box.h"
-
 #include "tb/elements/message_window.h"
 #include "tb/elements/skin_image.h"
+#include "tb/elements/text_box.h"
 #include "tb/parts/dimmer.h"
 #include "tb/util/string_table.h"
 
@@ -45,11 +44,11 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   Element* root = target->GetParentRoot();
 
   const char* source =
-      "Layout: axis: y, distribution: available\n"
-      "	Layout: distribution: available, size: available\n"
+      "LayoutBox: axis: y, distribution: available\n"
+      "	LayoutBox: distribution: available, size: available\n"
       "		SkinImage: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
-      "	Layout: distribution-position: right bottom, id: 3\n";
+      "	LayoutBox: distribution-position: right bottom, id: 3\n";
   if (!GetContentRoot()->LoadData(source)) {
     return false;
   }
@@ -100,7 +99,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 }
 
 void MessageWindow::AddButton(TBID id, bool focused) {
-  Layout* layout = GetElementByIDAndType<Layout>(3);
+  auto layout = GetElementByIDAndType<LayoutBox>(3);
   if (!layout) return;
   Button* btn = new Button();
   btn->set_id(id);

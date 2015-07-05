@@ -10,10 +10,9 @@
 #ifndef TB_ELEMENTS_BUTTON_H_
 #define TB_ELEMENTS_BUTTON_H_
 
-#include "tb_layout.h"
-
 #include "tb/element.h"
 #include "tb/elements/label.h"
+#include "tb/elements/layout_box.h"
 #include "tb/message_handler.h"
 #include "tb/types.h"
 
@@ -81,12 +80,12 @@ class Button : public Element, protected MessageHandler {
   void UpdateLabelVisibility();
   bool CanToggle() { return m_toggle_mode || GetGroupID(); }
 
-  class ButtonLayout : public Layout {
+  class ButtonLayoutBox : public LayoutBox {
     void OnChildAdded(Element* child) override;
     void OnChildRemove(Element* child) override;
   };
 
-  ButtonLayout m_layout;
+  ButtonLayoutBox m_layout;
   Label m_textfield;
   bool m_auto_repeat_click = false;
   bool m_toggle_mode = false;

@@ -7,12 +7,11 @@
  ******************************************************************************
  */
 
-#include "elements/tb_text_box.h"
-
 #include "tb/element.h"
 #include "tb/element_listener.h"
 #include "tb/elements/list_item.h"
 #include "tb/elements/tab_container.h"
+#include "tb/elements/text_box.h"
 #include "tb/graphics/renderer.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/parsing/parse_node.h"

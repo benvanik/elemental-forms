@@ -9,7 +9,6 @@
 
 #include "tb/elements.h"
 
-#include "tb/parts/container.h"
 #include "tb/parts/dimmer.h"
 #include "tb/parts/mover.h"
 #include "tb/parts/resizer.h"
@@ -19,9 +18,10 @@ namespace tb {
 void RegisterBuiltinElementInflaters() {
   using namespace tb::elements;
 
+  Box::RegisterInflater();
   ImageBox::RegisterInflater();
   SpinBox::RegisterInflater();
-  Layout::RegisterInflater();
+  LayoutBox::RegisterInflater();
   ScrollContainer::RegisterInflater();
   DropDownButton::RegisterInflater();
   ListBox::RegisterInflater();
@@ -41,7 +41,6 @@ void RegisterBuiltinElementInflaters() {
   ScrollBar::RegisterInflater();
   Slider::RegisterInflater();
 
-  parts::Container::RegisterInflater();
   parts::Mover::RegisterInflater();
   parts::Resizer::RegisterInflater();
   parts::Dimmer::RegisterInflater();

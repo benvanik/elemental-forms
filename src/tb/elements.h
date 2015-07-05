@@ -12,6 +12,7 @@
 
 #include "tb/element.h"
 
+#include "tb/elements/box.h"
 #include "tb/elements/button.h"
 #include "tb/elements/check_box.h"
 #include "tb/elements/drop_down_button.h"
@@ -19,6 +20,7 @@
 #include "tb/elements/image_box.h"
 #include "tb/elements/label.h"
 #include "tb/elements/label_container.h"
+#include "tb/elements/layout_box.h"
 #include "tb/elements/list_box.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/message_window.h"
@@ -32,10 +34,8 @@
 #include "tb/elements/slider.h"
 #include "tb/elements/spin_box.h"
 #include "tb/elements/tab_container.h"
+#include "tb/elements/text_box.h"
 #include "tb/elements/toggle_container.h"
-
-#include "tb/elements/tb_layout.h"
-#include "tb/elements/tb_text_box.h"
 
 namespace tb {
 

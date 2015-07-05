@@ -7,11 +7,7 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-#include <cassert>
-
-#include "tb_layout.h"
-
+#include "tb/elements/layout_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/skin.h"
 #include "tb/util/debug.h"
@@ -22,11 +18,11 @@ namespace elements {
 
 using graphics::Renderer;
 
-void Layout::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(Layout, Value::Type::kNull, ElementZ::kTop);
+void LayoutBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(LayoutBox, Value::Type::kNull, ElementZ::kTop);
 }
 
-Layout::Layout(Axis axis) : m_axis(axis) {
+LayoutBox::LayoutBox(Axis axis) : m_axis(axis) {
   m_packed.layout_mode_size = uint32_t(LayoutSize::kGravity);
   m_packed.layout_mode_pos = uint32_t(LayoutPosition::kCenter);
   m_packed.layout_mode_overflow = uint32_t(LayoutOverflow::kClip);
@@ -35,7 +31,7 @@ Layout::Layout(Axis axis) : m_axis(axis) {
   m_packed.paint_overflow_fadeout = 1;
 }
 
-void Layout::OnInflate(const parsing::InflateInfo& info) {
+void LayoutBox::OnInflate(const parsing::InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
     SetSpacing(resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
         spacing, kSpacingFromSkin));
@@ -74,20 +70,20 @@ void Layout::OnInflate(const parsing::InflateInfo& info) {
   Element::OnInflate(info);
 }
 
-void Layout::SetAxis(Axis axis) {
+void LayoutBox::SetAxis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   InvalidateLayout(InvalidationMode::kRecursive);
   InvalidateSkinStates();
 }
 
-void Layout::SetSpacing(int spacing) {
+void LayoutBox::SetSpacing(int spacing) {
   if (spacing == m_spacing) return;
   m_spacing = spacing;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void Layout::SetOverflowScroll(int overflow_scroll) {
+void LayoutBox::SetOverflowScroll(int overflow_scroll) {
   overflow_scroll = std::min(overflow_scroll, m_overflow);
   overflow_scroll = std::max(overflow_scroll, 0);
   if (overflow_scroll == m_overflow_scroll) {
@@ -102,45 +98,45 @@ void Layout::SetOverflowScroll(int overflow_scroll) {
   }
 }
 
-void Layout::SetLayoutSize(LayoutSize size) {
+void LayoutBox::SetLayoutSize(LayoutSize size) {
   if (uint32_t(size) == m_packed.layout_mode_size) return;
   m_packed.layout_mode_size = uint32_t(size);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::SetLayoutPosition(LayoutPosition pos) {
+void LayoutBox::SetLayoutPosition(LayoutPosition pos) {
   if (uint32_t(pos) == m_packed.layout_mode_pos) return;
   m_packed.layout_mode_pos = uint32_t(pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::SetLayoutOverflow(LayoutOverflow overflow) {
+void LayoutBox::SetLayoutOverflow(LayoutOverflow overflow) {
   if (uint32_t(overflow) == m_packed.layout_mode_overflow) return;
   m_packed.layout_mode_overflow = uint32_t(overflow);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::SetLayoutDistribution(LayoutDistribution distribution) {
+void LayoutBox::SetLayoutDistribution(LayoutDistribution distribution) {
   if (uint32_t(distribution) == m_packed.layout_mode_dist) return;
   m_packed.layout_mode_dist = uint32_t(distribution);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::SetLayoutDistributionPosition(
+void LayoutBox::SetLayoutDistributionPosition(
     LayoutDistributionPosition distribution_pos) {
   if (uint32_t(distribution_pos) == m_packed.layout_mode_dist_pos) return;
   m_packed.layout_mode_dist_pos = uint32_t(distribution_pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::SetLayoutOrder(LayoutOrder order) {
+void LayoutBox::SetLayoutOrder(LayoutOrder order) {
   bool reversed = (order == LayoutOrder::kTopToBottom);
   if (reversed == m_packed.mode_reverse_order) return;
   m_packed.mode_reverse_order = reversed;
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void Layout::InvalidateLayout(InvalidationMode il) {
+void LayoutBox::InvalidateLayout(InvalidationMode il) {
   m_packed.layout_is_invalid = 1;
   // Continue invalidating parents (depending on il).
   Element::InvalidateLayout(il);
@@ -186,7 +182,7 @@ Gravity GetRotatedGravity(Gravity gravity, Axis axis) {
   return r;
 }
 
-bool Layout::QualifyForExpansion(Gravity gravity) const {
+bool LayoutBox::QualifyForExpansion(Gravity gravity) const {
   if (m_packed.layout_mode_dist == uint32_t(LayoutDistribution::kAvailable)) {
     return true;
   }
@@ -197,8 +193,8 @@ bool Layout::QualifyForExpansion(Gravity gravity) const {
   return false;
 }
 
-int Layout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
-                            int available_height) const {
+int LayoutBox::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
+                               int available_height) const {
   int height = 0;
   switch (LayoutSize(m_packed.layout_mode_size)) {
     case LayoutSize::kGravity:
@@ -217,7 +213,7 @@ int Layout::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
   return height;
 }
 
-Element* Layout::GetNextNonCollapsedElement(Element* child) const {
+Element* LayoutBox::GetNextNonCollapsedElement(Element* child) const {
   Element* next = GetNextInLayoutOrder(child);
   while (next && next->GetVisibility() == Visibility::kGone) {
     next = GetNextInLayoutOrder(next);
@@ -225,13 +221,13 @@ Element* Layout::GetNextNonCollapsedElement(Element* child) const {
   return next;
 }
 
-int Layout::GetTrailingSpace(Element* child, int spacing) const {
+int LayoutBox::GetTrailingSpace(Element* child, int spacing) const {
   if (spacing == 0) return 0;
   if (!GetNextNonCollapsedElement(child)) return 0;
   return spacing;
 }
 
-int Layout::CalculateSpacing() {
+int LayoutBox::CalculateSpacing() {
   // Get spacing from skin, if not specified.
   int spacing = m_spacing;
   if (spacing == kSpacingFromSkin) {
@@ -246,16 +242,16 @@ int Layout::CalculateSpacing() {
   return spacing;
 }
 
-Element* Layout::GetFirstInLayoutOrder() const {
+Element* LayoutBox::GetFirstInLayoutOrder() const {
   return m_packed.mode_reverse_order ? GetLastChild() : GetFirstChild();
 }
 
-Element* Layout::GetNextInLayoutOrder(Element* child) const {
+Element* LayoutBox::GetNextInLayoutOrder(Element* child) const {
   return m_packed.mode_reverse_order ? child->GetPrev() : child->GetNext();
 }
 
-void Layout::ValidateLayout(const SizeConstraints& constraints,
-                            PreferredSize* calculate_ps) {
+void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
+                               PreferredSize* calculate_ps) {
   // Layout notes:
   // - All layout code is written for Axis::kX layout.
   //   Instead of duplicating the layout code for both Axis::kX and Axis::kY, we
@@ -425,7 +421,7 @@ void Layout::ValidateLayout(const SizeConstraints& constraints,
   SetOverflowScroll(m_overflow_scroll);
 }
 
-PreferredSize Layout::OnCalculatePreferredContentSize(
+PreferredSize LayoutBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
   // Do a layout pass (without layouting) to check childrens preferences.
   PreferredSize ps;
@@ -433,7 +429,7 @@ PreferredSize Layout::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool Layout::OnEvent(const ElementEvent& ev) {
+bool LayoutBox::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = GetOverflowScroll();
     SetOverflowScroll(m_overflow_scroll +
@@ -443,7 +439,7 @@ bool Layout::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
-void Layout::OnPaintChildren(const PaintProps& paint_props) {
+void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {
   Rect padding_rect = GetPaddingRect();
   if (padding_rect.empty()) return;
 
@@ -496,22 +492,22 @@ void Layout::OnPaintChildren(const PaintProps& paint_props) {
   }
 }
 
-void Layout::OnProcess() {
+void LayoutBox::OnProcess() {
   SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 
-void Layout::OnResized(int old_w, int old_h) {
+void LayoutBox::OnResized(int old_w, int old_h) {
   InvalidateLayout(InvalidationMode::kTargetOnly);
   SizeConstraints sc(rect().w, rect().h);
   ValidateLayout(sc);
 }
 
-void Layout::OnInflateChild(Element* child) {
+void LayoutBox::OnInflateChild(Element* child) {
   // Do nothing since we're going to layout the child soon.
 }
 
-void Layout::GetChildTranslation(int& x, int& y) const {
+void LayoutBox::GetChildTranslation(int& x, int& y) const {
   if (m_axis == Axis::kX) {
     x = -m_overflow_scroll;
     y = 0;
@@ -521,11 +517,11 @@ void Layout::GetChildTranslation(int& x, int& y) const {
   }
 }
 
-void Layout::ScrollTo(int x, int y) {
+void LayoutBox::ScrollTo(int x, int y) {
   SetOverflowScroll(m_axis == Axis::kX ? x : y);
 }
 
-Element::ScrollInfo Layout::GetScrollInfo() {
+Element::ScrollInfo LayoutBox::GetScrollInfo() {
   ScrollInfo info;
   if (m_axis == Axis::kX) {
     info.max_x = m_overflow;

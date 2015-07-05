@@ -319,7 +319,7 @@ elements
 		children
 
 	# == Misc skins ====================================================================================
-	Container
+	Box
 		bitmap container.png
 		type stretch border
 		cut 12

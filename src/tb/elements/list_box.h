@@ -10,8 +10,8 @@
 #ifndef TB_ELEMENTS_LIST_BOX_H_
 #define TB_ELEMENTS_LIST_BOX_H_
 
-#include "tb_layout.h"
 #include "tb/element.h"
+#include "tb/elements/layout_box.h"
 #include "tb/elements/list_item.h"
 #include "tb/elements/scroll_container.h"
 
@@ -99,7 +99,7 @@ class ListBox : public Element, public ListItemObserver {
 
  protected:
   ScrollContainer m_container;
-  Layout m_layout;
+  LayoutBox m_layout;
   GenericStringItemSource m_default_source;
   int m_value = -1;
   std::string m_filter;

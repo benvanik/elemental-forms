@@ -1,11 +1,11 @@
 #include <cstdio>
 
 #include "ResourceEditWindow.h"
-#include "elements/tb_text_box.h"
 
 #include "tb/elements/list_box.h"
 #include "tb/elements/message_window.h"
 #include "tb/elements/scroll_container.h"
+#include "tb/elements/text_box.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"

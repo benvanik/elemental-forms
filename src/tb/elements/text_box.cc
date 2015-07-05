@@ -7,12 +7,10 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-
 #include "tb_style_edit_content.h"
-#include "tb_text_box.h"
 
 #include "tb/elements/menu_window.h"
+#include "tb/elements/text_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"
 #include "tb/resources/skin.h"
@@ -524,7 +522,8 @@ void TextBox::CaretBlinkStop() {
   }
 }
 
-void TextBoxScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
+void TextBox::TextBoxScrollRoot::OnPaintChildren(
+    const PaintProps& paint_props) {
   // Avoid setting clipping (can be expensive) if we have no children to paint
   // anyway.
   if (!GetFirstChild()) return;
@@ -534,13 +533,13 @@ void TextBoxScrollRoot::OnPaintChildren(const PaintProps& paint_props) {
   Renderer::get()->SetClipRect(old_clip_rect, false);
 }
 
-void TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
+void TextBox::TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
   TextBox* edit_field = static_cast<TextBox*>(GetParent());
   x = -edit_field->GetStyleEdit()->scroll_x;
   y = -edit_field->GetStyleEdit()->scroll_y;
 }
 
-HitStatus TextBoxScrollRoot::GetHitStatus(int x, int y) {
+HitStatus TextBox::TextBoxScrollRoot::GetHitStatus(int x, int y) {
   // Return no hit on this element, but maybe on any of the children.
   if (Element::GetHitStatus(x, y) != HitStatus::kNoHit &&
       GetElementAt(x, y, false)) {
@@ -598,11 +597,11 @@ int32_t TextFragmentContentElement::GetBaseline(resources::FontFace* font,
   return (height + fragment->block->CalculateBaseline(font)) / 2;
 }
 
-int TextBoxContentFactory::GetContent(const char* text) {
+int TextBox::TextBoxContentFactory::GetContent(const char* text) {
   return TextFragmentContentFactory::GetContent(text);
 }
 
-TextFragmentContent* TextBoxContentFactory::CreateFragmentContent(
+TextFragmentContent* TextBox::TextBoxContentFactory::CreateFragmentContent(
     const char* text, size_t text_len) {
   if (strncmp(text, "<element ", std::min(text_len, 8ull)) == 0) {
     // Create a wrapper for the generated element.

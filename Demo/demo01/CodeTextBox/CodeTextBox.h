@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tb/elements/tb_text_box.h"
+#include "tb/elements/text_box.h"
 
 #include <vector>
 

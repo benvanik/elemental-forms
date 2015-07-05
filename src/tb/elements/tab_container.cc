@@ -17,7 +17,7 @@
 namespace tb {
 namespace elements {
 
-void TabContainer::TabLayout::OnChildAdded(Element* child) {
+void TabContainer::TabLayoutBox::OnChildAdded(Element* child) {
   if (auto button = util::SafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
@@ -25,9 +25,9 @@ void TabContainer::TabLayout::OnChildAdded(Element* child) {
   }
 }
 
-PreferredSize TabContainer::TabLayout::OnCalculatePreferredContentSize(
+PreferredSize TabContainer::TabLayoutBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
-  PreferredSize ps = Layout::OnCalculatePreferredContentSize(constraints);
+  PreferredSize ps = LayoutBox::OnCalculatePreferredContentSize(constraints);
   // Make sure the number of tabs doesn't grow parents.
   // It is only the content that should do that. The tabs
   // will scroll anyway.
@@ -50,23 +50,22 @@ TabContainer::TabContainer() {
   // a seamless overlap over the border. Control which side they are layouted
   // to by calling SetLayoutOrder.
   m_root_layout.AddChild(&m_content_root);
-  m_root_layout.AddChild(&m_tab_layout);
+  m_root_layout.AddChild(&m_tab_bar);
   m_root_layout.SetAxis(Axis::kY);
   m_root_layout.SetGravity(Gravity::kAll);
   m_root_layout.SetLayoutDistribution(LayoutDistribution::kAvailable);
   m_root_layout.SetLayoutOrder(LayoutOrder::kTopToBottom);
   m_root_layout.SetSkinBg(TBIDC("TabContainer.rootlayout"));
-  m_tab_layout.SetLayoutDistributionPosition(
-      LayoutDistributionPosition::kCenter);
-  m_tab_layout.SetSkinBg(TBIDC("TabContainer.tablayout_x"));
-  m_tab_layout.SetLayoutPosition(LayoutPosition::kRightBottom);
+  m_tab_bar.SetLayoutDistributionPosition(LayoutDistributionPosition::kCenter);
+  m_tab_bar.SetSkinBg(TBIDC("TabContainer.tablayout_x"));
+  m_tab_bar.SetLayoutPosition(LayoutPosition::kRightBottom);
   m_content_root.SetGravity(Gravity::kAll);
   m_content_root.SetSkinBg(TBIDC("TabContainer.container"));
 }
 
 TabContainer::~TabContainer() {
   m_root_layout.RemoveChild(&m_content_root);
-  m_root_layout.RemoveChild(&m_tab_layout);
+  m_root_layout.RemoveChild(&m_tab_bar);
   RemoveChild(&m_root_layout);
 }
 
@@ -80,12 +79,12 @@ void TabContainer::OnInflate(const parsing::InflateInfo& info) {
   // "root" layouts by calling OnInflate.
   if (auto tabs = info.node->GetNode("tabs")) {
     // Inflate the tabs elements into the tab layout.
-    Layout* tab_layout = GetTabLayout();
-    info.reader->LoadNodeTree(tab_layout, tabs);
+    auto tab_bar = GetTabBar();
+    info.reader->LoadNodeTree(tab_bar, tabs);
 
-    parsing::InflateInfo inflate_info(info.reader, tab_layout->GetContentRoot(),
+    parsing::InflateInfo inflate_info(info.reader, tab_bar->GetContentRoot(),
                                       tabs, Value::Type::kNull);
-    tab_layout->OnInflate(inflate_info);
+    tab_bar->OnInflate(inflate_info);
   }
   if (auto tabs = info.node->GetNode("content")) {
     parsing::InflateInfo inflate_info(info.reader, GetContentRoot(), tabs,
@@ -101,9 +100,9 @@ void TabContainer::OnInflate(const parsing::InflateInfo& info) {
 
 void TabContainer::SetAxis(Axis axis) {
   m_root_layout.SetAxis(axis);
-  m_tab_layout.SetAxis(axis == Axis::kX ? Axis::kY : Axis::kX);
-  m_tab_layout.SetSkinBg(axis == Axis::kX ? TBIDC("TabContainer.tablayout_y")
-                                          : TBIDC("TabContainer.tablayout_x"));
+  m_tab_bar.SetAxis(axis == Axis::kX ? Axis::kY : Axis::kX);
+  m_tab_bar.SetSkinBg(axis == Axis::kX ? TBIDC("TabContainer.tablayout_y")
+                                       : TBIDC("TabContainer.tablayout_x"));
 }
 
 void TabContainer::SetValue(int index) {
@@ -113,7 +112,7 @@ void TabContainer::SetValue(int index) {
   // Update the pages visibility and tabs pressed value.
   index = 0;
   Element* page = m_content_root.GetFirstChild();
-  Element* tab = m_tab_layout.GetFirstChild();
+  Element* tab = m_tab_bar.GetFirstChild();
   for (; page && tab; page = page->GetNext(), tab = tab->GetNext(), index++) {
     bool active = index == m_current_page;
     page->SetVisibilility(active ? Visibility::kVisible
@@ -124,7 +123,7 @@ void TabContainer::SetValue(int index) {
 
 int TabContainer::GetNumPages() {
   int count = 0;
-  for (Element* tab = m_tab_layout.GetFirstChild(); tab; tab = tab->GetNext()) {
+  for (Element* tab = m_tab_bar.GetFirstChild(); tab; tab = tab->GetNext()) {
     count++;
   }
   return count;
@@ -140,16 +139,15 @@ void TabContainer::SetAlignment(Align align) {
   SetAxis(horizontal ? Axis::kY : Axis::kX);
   m_root_layout.SetLayoutOrder(reverse ? LayoutOrder::kTopToBottom
                                        : LayoutOrder::kBottomToTop);
-  m_tab_layout.SetLayoutPosition(reverse ? LayoutPosition::kRightBottom
-                                         : LayoutPosition::kLeftTop);
+  m_tab_bar.SetLayoutPosition(reverse ? LayoutPosition::kRightBottom
+                                      : LayoutPosition::kLeftTop);
   m_align = align;
 }
 
 bool TabContainer::OnEvent(const ElementEvent& ev) {
   if ((ev.type == EventType::kClick || ev.type == EventType::kPointerDown) &&
-      ev.target->id() == TBIDC("tab") &&
-      ev.target->GetParent() == &m_tab_layout) {
-    int clicked_index = m_tab_layout.GetIndexFromChild(ev.target);
+      ev.target->id() == TBIDC("tab") && ev.target->GetParent() == &m_tab_bar) {
+    int clicked_index = m_tab_bar.GetIndexFromChild(ev.target);
     SetValue(clicked_index);
     return true;
   }

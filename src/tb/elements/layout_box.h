@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_LAYOUT_H
-#define TB_LAYOUT_H
+#ifndef TB_ELEMENTS_LAYOUT_BOX_H_
+#define TB_ELEMENTS_LAYOUT_BOX_H_
 
 #include "tb/element.h"
 #include "tb/types.h"
@@ -87,15 +87,15 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 // SetLayoutSize, SetLayoutPosition SetLayoutOverflow, SetLayoutDistribution,
 // SetLayoutDistributionPosition), and the available size.
 // Each element is also separated by the specified spacing (See SetSpacing).
-class Layout : public Element {
+class LayoutBox : public Element {
  public:
-  TBOBJECT_SUBCLASS(Layout, Element);
+  TBOBJECT_SUBCLASS(LayoutBox, Element);
   static void RegisterInflater();
 
   // This means the spacing should be the default, read from the skin.
   static const int kSpacingFromSkin = util::kInvalidDimension;
 
-  Layout(Axis axis = Axis::kX);
+  LayoutBox(Axis axis = Axis::kX);
 
   // Sets along which axis the content should layout.
   void SetAxis(Axis axis) override;
@@ -178,4 +178,4 @@ class Layout : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_LAYOUT_H
+#endif  // TB_ELEMENTS_LAYOUT_BOX_H_

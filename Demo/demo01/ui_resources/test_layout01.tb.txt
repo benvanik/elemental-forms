@@ -2,7 +2,7 @@ WindowInfo
 	title Layout size & gravity
 # Declare a branch of layout nodes that is included in all three containers below.
 test_layout_content
-	Layout
+	LayoutBox
 		Button
 			text Default
 		CheckBox
@@ -21,9 +21,9 @@ test_layout_content
 		Button
 			gravity bottom
 			text Gravity bottom
-Layout
+LayoutBox
 	axis y
-	Layout
+	LayoutBox
 		DropDownButton
 			text Select position
 			id select position
@@ -35,21 +35,21 @@ Layout
 		Button
 			text Toggle axis
 			id toggle axis
-	Layout
+	LayoutBox
 		id switch_layout
 		axis y
 		Label: text: "size: preferred"
-		Container
+		Box
 			@include test_layout_content
 				size preferred
 				id 1
 		Label: text: "size: available"
-		Container
+		Box
 			@include test_layout_content
 				size available
 				id 2
 		Label: text: "size: gravity"
-		Container
+		Box
 			@include test_layout_content
 				size gravity
 				id 3

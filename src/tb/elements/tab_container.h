@@ -10,8 +10,8 @@
 #ifndef TB_ELEMENTS_TAB_CONTAINER_H_
 #define TB_ELEMENTS_TAB_CONTAINER_H_
 
-#include "tb_layout.h"
 #include "tb/element.h"
+#include "tb/elements/layout_box.h"
 
 namespace tb {
 namespace elements {
@@ -52,22 +52,22 @@ class TabContainer : public Element {
   void OnProcess() override;
 
   Element* GetContentRoot() override { return &m_content_root; }
-  Layout* GetTabLayout() { return &m_tab_layout; }
+  LayoutBox* GetTabBar() { return &m_tab_bar; }
 
  protected:
-  // A Layout used in TabContainer to apply some default properties on any
+  // A Box used in TabContainer to apply some default properties on any
   // Button added to it.
-  class TabLayout : public Layout {
+  class TabLayoutBox : public LayoutBox {
    public:
-    TBOBJECT_SUBCLASS(TabLayout, Layout);
+    TBOBJECT_SUBCLASS(TabLayoutBox, LayoutBox);
 
     void OnChildAdded(Element* child) override;
     PreferredSize OnCalculatePreferredContentSize(
         const SizeConstraints& constraints) override;
   };
 
-  Layout m_root_layout;
-  TabLayout m_tab_layout;
+  LayoutBox m_root_layout;
+  TabLayoutBox m_tab_bar;
   Element m_content_root;
   bool m_need_page_update = true;
   int m_current_page = 0;

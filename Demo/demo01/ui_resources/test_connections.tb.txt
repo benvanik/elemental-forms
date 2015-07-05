@@ -1,12 +1,12 @@
 WindowInfo
 	title ElementValue connections
-Layout
+LayoutBox
 	axis y
 	Label
 		text Numeric elements sharing a connection
-	Container
+	Box
 		gravity all
-		Layout
+		LayoutBox
 			SpinBox
 				connection master-volume
 				min 0
@@ -25,9 +25,9 @@ Layout
 				id reset-master-volume
 	Label
 		text Text elements sharing a connection
-	Container
+	Box
 		gravity all
-		Layout
+		LayoutBox
 			TextBox
 				placeholder User name
 				connection user-name

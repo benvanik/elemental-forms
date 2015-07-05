@@ -2,11 +2,11 @@ WindowInfo
 	title Customized list items
 	position 770 50
 	size 300 300
-Layout
+LayoutBox
 	axis y
 	distribution gravity
 	gravity all
-	Layout
+	LayoutBox
 		distribution gravity
 		TextBox
 			id filter
@@ -16,7 +16,7 @@ Layout
 	ListBox
 		id list
 		gravity all
-	Layout
+	LayoutBox
 		distribution gravity
 		TextBox
 			id add_name

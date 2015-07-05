@@ -253,17 +253,17 @@ bool LayoutWindow::OnEvent(const ElementEvent& ev) {
             GetElementByIDAndType<DropDownButton>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
-      if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
+      if (auto layout = GetElementByIDAndType<LayoutBox>(i + 1))
         layout->SetLayoutPosition(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
-      if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
+      if (auto layout = GetElementByIDAndType<LayoutBox>(i + 1))
         layout->SetAxis(axis);
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (Layout* layout = GetElementByIDAndType<Layout>(TBIDC("switch_layout")))
+    if (auto layout = GetElementByIDAndType<LayoutBox>(TBIDC("switch_layout")))
       layout->SetAxis(axis);
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;
@@ -290,7 +290,7 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
             GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
-      for (Element* child = tc->GetTabLayout()->GetFirstChild(); child;
+      for (Element* child = tc->GetTabBar()->GetFirstChild(); child;
            child = child->GetNext()) {
         if (Button* button = util::SafeCast<Button>(child)) {
           button->SetAxis(axis);

@@ -51,7 +51,7 @@ class AdvancedItemSource : public elements::ListItemSourceList<AdvancedItem> {
         On changes to the item, it calls InvokeItemChanged on the source, so
    that all
         viewers of the source are updated to reflect the change. */
-class AdvancedItemElement : public elements::Layout {
+class AdvancedItemElement : public elements::LayoutBox {
  public:
   AdvancedItemElement(AdvancedItem* item, AdvancedItemSource* source,
                       elements::ListItemObserver* source_viewer, size_t index);

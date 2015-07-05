@@ -7,25 +7,17 @@
  ******************************************************************************
  */
 
-#ifndef TB_PARTS_CONTAINER_H_
-#define TB_PARTS_CONTAINER_H_
-
-#include "tb/element.h"
+#include "tb/elements/box.h"
+#include "tb/parsing/element_inflater.h"
 
 namespace tb {
-namespace parts {
+namespace elements {
 
-// Container is just a Element with border and padding (using skin
-// "Container").
-class Container : public Element {
- public:
-  TBOBJECT_SUBCLASS(Container, Element);
-  static void RegisterInflater();
+void Box::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Box, Value::Type::kNull, ElementZ::kTop);
+}
 
-  Container();
-};
+Box::Box() { SetSkinBg(TBIDC("Box"), InvokeInfo::kNoCallbacks); }
 
-}  // namespace parts
+}  // namespace elements
 }  // namespace tb
-
-#endif  // TB_PARTS_CONTAINER_H_

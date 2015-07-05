@@ -1,7 +1,7 @@
 WindowInfo
 	title List and filter
 	position 1100 50
-Layout
+LayoutBox
 	axis y
 	distribution gravity
 	gravity all

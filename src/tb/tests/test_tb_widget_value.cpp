@@ -8,11 +8,11 @@
  */
 
 #include "tb_test.h"
-#include "elements/tb_text_box.h"
 #include "tb/element_value.h"
 #include "tb/elements/check_box.h"
 #include "tb/elements/slider.h"
 #include "tb/elements/spin_box.h"
+#include "tb/elements/text_box.h"
 
 #ifdef TB_UNIT_TESTING
 

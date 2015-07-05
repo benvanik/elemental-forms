@@ -1,13 +1,13 @@
-Layout
+LayoutBox
 	distribution gravity
 	size available
-	Layout
+	LayoutBox
 		gravity top bottom
 		distribution available
 		distribution-position top left
 		size available
 		axis y
-		Layout
+		LayoutBox
 			distribution available
 			Button
 				text @new
@@ -24,13 +24,13 @@ Layout
 			id element_list_search
 		ListBox
 			id element_list
-	Layout
+	LayoutBox
 		distribution available
 		TextBox
 			id source_edit
 			multiline 1
 			gravity all
-		Layout: axis: y, distribution: available, position: left
+		LayoutBox: axis: y, distribution: available, position: left
 			ScrollContainer
 				id scroll_container
 				gravity all

@@ -1,16 +1,16 @@
 WindowInfo
 	title Skin conditions
 	position 200 170
-Layout: axis: y
+LayoutBox: axis: y
 	Label: text: Normal layout with buttons:
-	Container
-		Layout
+	Box
+		LayoutBox
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"
-	Label: text: Layout with skin "Starry buttons":
-	Container
-		Layout: skin: Starry buttons
+	Label: text: LayoutBox with skin "Starry buttons":
+	Box
+		LayoutBox: skin: Starry buttons
 			Button: text: "  A  ", skin: "SpecialButton"
 			Button: text: "  B  ", skin: "SpecialButton"
 			Button: text: "  C  ", skin: "SpecialButton"

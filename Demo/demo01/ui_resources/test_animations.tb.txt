@@ -1,6 +1,6 @@
 WindowInfo
 	title Animations
-Layout: axis: y
+LayoutBox: axis: y
 	Label: text: "Duration (in milliseconds):"
 	SpinBox: id: "duration", min: 0, max: 100000, value: 500
 	Label: text: "Curve:"

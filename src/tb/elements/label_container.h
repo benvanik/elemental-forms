@@ -10,10 +10,9 @@
 #ifndef TB_ELEMENTS_LABEL_CONTAINER_H_
 #define TB_ELEMENTS_LABEL_CONTAINER_H_
 
-#include "tb_layout.h"
-
 #include "tb/element.h"
 #include "tb/elements/label.h"
+#include "tb/elements/layout_box.h"
 
 namespace tb {
 namespace elements {
@@ -48,7 +47,7 @@ class LabelContainer : public Element {
   bool OnEvent(const ElementEvent& ev) override;
 
  protected:
-  Layout m_layout;
+  LayoutBox m_layout;
   Label m_textfield;
 };
 

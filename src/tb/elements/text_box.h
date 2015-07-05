@@ -35,40 +35,6 @@ enum class EditType {
 MAKE_ORDERED_ENUM_STRING_UTILS(EditType, "text", "search", "password", "email",
                                "phone", "url", "number");
 
-// The default content factory for embedded content in TextBox with styling
-// enabled.
-// Creates all that TextFragmentContentFactory creates by default, and any type
-// of element from a inline resource string.
-//
-// Syntax: <element xxx>
-// (where xxx is parsed by ElementFactory).
-//
-// Example - Create a button with id "hello":
-//   <element Button: text: "Hello world!" id: "hello">
-// Example - Create a image from skin element "Icon48":
-//   <element SkinImage: skin: "Icon48">
-class TextBoxContentFactory : public TextFragmentContentFactory {
- public:
-  class TextBox* text_box = nullptr;
-  int GetContent(const char* text) override;
-  TextFragmentContent* CreateFragmentContent(const char* text,
-                                             size_t text_len) override;
-};
-
-// Internal for TextBox.
-// Acts as a scrollable container for any element created as embedded content.
-class TextBoxScrollRoot : public Element {
- private:
-  // May only be used by TextBox.
-  friend class TextBox;
-  TextBoxScrollRoot() = default;
-
- public:
-  void OnPaintChildren(const PaintProps& paint_props) override;
-  void GetChildTranslation(int& x, int& y) const override;
-  HitStatus GetHitStatus(int x, int y) override;
-};
-
 // A one line or multi line textfield that is editable or read-only.
 // It can also be a passwordfield by calling SetEditType(EditType::kPassword).
 // It may perform styling of text and contain custom embedded content, if
@@ -191,6 +157,40 @@ class TextBox : public Element,
   void OnMessageReceived(Message* msg) override;
 
  protected:
+  // Acts as a scrollable container for any element created as embedded content.
+  class TextBoxScrollRoot : public Element {
+   private:
+    // May only be used by TextBox.
+    friend class TextBox;
+    TextBoxScrollRoot() = default;
+
+   public:
+    void OnPaintChildren(const PaintProps& paint_props) override;
+    void GetChildTranslation(int& x, int& y) const override;
+    HitStatus GetHitStatus(int x, int y) override;
+  };
+
+  // The default content factory for embedded content in TextBox with styling
+  // enabled.
+  // Creates all that TextFragmentContentFactory creates by default, and any
+  // type
+  // of element from a inline resource string.
+  //
+  // Syntax: <element xxx>
+  // (where xxx is parsed by ElementFactory).
+  //
+  // Example - Create a button with id "hello":
+  //   <element Button: text: "Hello world!" id: "hello">
+  // Example - Create a image from skin element "Icon48":
+  //   <element SkinImage: skin: "Icon48">
+  class TextBoxContentFactory : public TextFragmentContentFactory {
+   public:
+    class TextBox* text_box = nullptr;
+    int GetContent(const char* text) override;
+    TextFragmentContent* CreateFragmentContent(const char* text,
+                                               size_t text_len) override;
+  };
+
   void UpdateScrollbarVisibility(bool multiline);
 
   void OnChange() override;

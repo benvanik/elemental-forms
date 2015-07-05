@@ -39,7 +39,7 @@ bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
     m_source->DeleteItem(m_index);
     return true;
   }
-  return Layout::OnEvent(ev);
+  return LayoutBox::OnEvent(ev);
 }
 
 // == AdvancedItemSource ======================================================

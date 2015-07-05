@@ -1,16 +1,16 @@
 WindowInfo
 	title ScrollContainer with misc elements
 	size 500 500
-Layout
+LayoutBox
 	gravity all
 	distribution available
 	axis y
 	ScrollContainer
-		Layout
+		LayoutBox
 			position left top
 			axis y
 			Label: text: Buttons with different fonts:
-			Layout
+			LayoutBox
 				Button
 					text: "Orange"
 					font: name: Orange
@@ -21,7 +21,7 @@ Layout
 					text: "Segoe 28"
 					font: size: 28px
 			Label: text: Button containing SkinImage:
-			Layout
+			LayoutBox
 				Button
 					text Click for image!
 					id add img
@@ -34,12 +34,12 @@ Layout
 					SkinImage
 						skin Icon16
 			Label: text: "Button containing TextBox:"
-			Layout
+			LayoutBox
 				Button
 					TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1, styling: 1
 						text: "A <color #0794f8>Button</color> with styled text that is able to wrap to multiple lines."
 			Label: text: "Showing menu manually, and DropDownButton:"
-			Layout
+			LayoutBox
 				Button
 					text Give me a popup menu!
 					id showpopupmenu1
@@ -49,7 +49,7 @@ Layout
 				DropDownButton
 					text Customized items in Dropdown
 					id advanced dropdown
-			Layout
+			LayoutBox
 				overflow scroll
 				RadioButton
 				CheckBox
@@ -61,7 +61,7 @@ Layout
 				Button
 				Button: toggle-mode: 1
 			Label: text: "TextBox:"
-			Layout
+			LayoutBox
 				TextBox
 					text Edit type text
 				TextBox
@@ -74,7 +74,7 @@ Layout
 					text In this field, multiple lines are enabled.
 					multiline 1
 			Label: text: "Slider:"
-			Layout
+			LayoutBox
 				Slider
 				Slider
 					min 100
@@ -86,12 +86,12 @@ Layout
 					max 100
 					connection master-volume
 			Label: text: "ScrollBar:"
-			Layout
+			LayoutBox
 				ScrollBar
 				ScrollBar
 					axis y
 			Label: text: Horizontal layout:
-			Layout
+			LayoutBox
 				id horizontal_layout
 				Button
 					text "1 new button"
@@ -106,7 +106,7 @@ Layout
 					id new buttons delayed
 					data 10
 			Label: text: Vertical layout:
-			Layout
+			LayoutBox
 				id vertical_layout
 				axis y
 				Button

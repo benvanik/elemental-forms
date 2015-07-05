@@ -1,15 +1,15 @@
 WindowInfo
 	title Default Element positioning
 	size 350 350
-Layout: axis: y, distribution: gravity
-	Layout: distribution: available, gravity: left right
+LayoutBox: axis: y, distribution: gravity
+	LayoutBox: distribution: available, gravity: left right
 		TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1
 			text: "Any element may contain children and by default applies basic gravity positioning.\n" \
 					"To achieve more advanced layout, you would normally wrap a layouting " \
-					"element (f.ex Layout) but sometimes the default is enough.\n" \
+					"element (f.ex LayoutBox) but sometimes the default is enough.\n" \
 					"The default preferred size is calculated to the largest child " \
 					"(or the skin if there are no children)."
-	Container: gravity: all
+	Box: gravity: all
 		Label: text: "all", gravity: all
 		Label: text: "top, left, right", gravity: top left right
 		Label: text: "bottom, left, right", gravity: bottom left right

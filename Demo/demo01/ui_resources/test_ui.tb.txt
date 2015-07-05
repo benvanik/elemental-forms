@@ -3,10 +3,10 @@ WindowInfo
 	position 10 50
 	size 250 630
 
-Layout: axis: y, distribution-position: "left top", distribution: "available"
+LayoutBox: axis: y, distribution-position: "left top", distribution: "available"
 
 	GroupBox: value: 1, text: "Misc features"
-		Layout: axis: y, spacing: 0, size: available
+		LayoutBox: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "Radiobutton & Checkbox"
 				id: "test-layout"
 				data: "test_radio_checkbox.tb.txt"
@@ -24,7 +24,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 			Button: skin: "Button.flat", text: "ResourceEditWindow", id: "test-resource-edit"
 
 	GroupBox: value: 0, text: "Layout tests"
-		Layout: axis: y, spacing: 0, size: available
+		LayoutBox: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "Size, gravity, position"
 				id: "test-layout"
 				data: "test_layout01.tb.txt"
@@ -36,7 +36,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 				data: "test_layout03.tb.txt"
 
 	GroupBox: value: 0, text: "Graphics tests"
-		Layout: axis: y, spacing: 0, size: available
+		LayoutBox: axis: y, spacing: 0, size: available
 			LabelContainer: text: "Continous repaint"
 				lp: max-width: 0
 				CheckBox: connection: continous-repaint
@@ -44,7 +44,7 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 			Button: skin: "Button.flat", text: "Context lost & restore", id: "test context lost"
 
 	GroupBox: value: 0, text: "Message tests"
-		Layout: axis: y, spacing: 0, size: available
+		LayoutBox: axis: y, spacing: 0, size: available
 			Button: skin: "Button.flat", text: "PostMessage", id: "msg"
 			Button: skin: "Button.flat", text: "PostMessageDelayed", id: "delayedmsg"
 			LabelContainer: text: "Busy message loop"
@@ -53,6 +53,6 @@ Layout: axis: y, distribution-position: "left top", distribution: "available"
 
 	# We want the debug button at the bottom if there is space over,
 	# so use an trailing layout which may expand a lot.
-	Layout: axis: y, distribution-position: bottom
+	LayoutBox: axis: y, distribution-position: bottom
 		lp: max-height: 10000
 		Button: id: "debug settings", text: "Runtime debug settings..."

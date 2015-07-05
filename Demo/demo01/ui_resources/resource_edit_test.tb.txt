@@ -1,14 +1,14 @@
-Layout
+LayoutBox
 	distribution available
 	axis y
-	Layout
+	LayoutBox
 		Button
 			text Button 1
 		RadioButton
 		CheckBox
 	@if 1
-		Container
-			Layout
+		Box
+			LayoutBox
 				Slider
 					value 0.5
 				ScrollBar

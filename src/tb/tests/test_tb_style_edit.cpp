@@ -8,7 +8,7 @@
  */
 
 #include "tb_test.h"
-#include "elements/tb_text_box.h"
+#include "tb/elements/text_box.h"
 
 #ifdef TB_UNIT_TESTING
 

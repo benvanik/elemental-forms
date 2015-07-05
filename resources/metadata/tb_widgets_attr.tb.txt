@@ -103,7 +103,7 @@ RadioButton
 SkinImage
 Separator
 ProgressSpinner
-Container
+Box
 GroupBoxHeader
 GroupBox
 ToggleContainer

@@ -1,37 +1,37 @@
 WindowInfo
 	title Layout distribution
-Layout: position: left top, axis: y
+LayoutBox: position: left top, axis: y
 	Label: text: "distribution: preferred"
-	Layout: distribution: preferred
+	LayoutBox: distribution: preferred
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: available"
-	Layout: distribution: available
+	LayoutBox: distribution: available
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: "distribution: gravity"
-	Layout: distribution: gravity
+	LayoutBox: distribution: gravity
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
 		TextBox: placeholder: @search, gravity: left right, type: "search"
 	Label: text: gravity + trailing layout for right align
-	Layout: distribution: gravity
+	LayoutBox: distribution: gravity
 		Button: text: tab 1
 		Button: text: tab 2
 		Button: text: tab 3
 		Button: text: tab 4
-		Layout: gravity: left right, distribution-position: right bottom
+		LayoutBox: gravity: left right, distribution-position: right bottom
 			TextBox: placeholder: @search, type: "search"
 	Label: text: "gravity + mixed gravity"
-	Layout: distribution: gravity
+	LayoutBox: distribution: gravity
 		Button: text: tab 1
 		TextBox: placeholder: @search, gravity: left right, type: "search"
 		Button: text: tab 3

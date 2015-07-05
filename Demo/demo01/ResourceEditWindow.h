@@ -1,11 +1,10 @@
 #ifndef ResourceEditWindow_H
 #define ResourceEditWindow_H
 
-#include "tb/elements/tb_text_box.h"
-
 #include "tb/element.h"
 #include "tb/element_listener.h"
 #include "tb/elements/list_box.h"
+#include "tb/elements/text_box.h"
 #include "tb/message_handler.h"
 #include "tb/window.h"
 

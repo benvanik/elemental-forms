@@ -6,20 +6,20 @@ definitions
 ScrollContainer: id: "page-scroller"
 	@include definitions>pagesize
 	scroll-mode off
-	Layout
+	LayoutBox
 		spacing 0
-		Container
+		Box
 			@include definitions>pagesize
 			Label: text: "One - Swipe to next page"
-		Container
+		Box
 			@include definitions>pagesize
 			Label: text: "Two"
-		Container
+		Box
 			@include definitions>pagesize
 			Label: text: "Three"
-		Container
+		Box
 			@include definitions>pagesize
 			Label: text: "Four"
-		Container
+		Box
 			@include definitions>pagesize
 			Label: text: "Five - Last page"

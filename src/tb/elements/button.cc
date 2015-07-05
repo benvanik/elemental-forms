@@ -136,11 +136,11 @@ void Button::UpdateLabelVisibility() {
                                                  : Visibility::kVisible);
 }
 
-void Button::ButtonLayout::OnChildAdded(Element* child) {
+void Button::ButtonLayoutBox::OnChildAdded(Element* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 
-void Button::ButtonLayout::OnChildRemove(Element* child) {
+void Button::ButtonLayoutBox::OnChildRemove(Element* child) {
   static_cast<Button*>(GetParent())->UpdateLabelVisibility();
 }
 

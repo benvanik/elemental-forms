@@ -10,9 +10,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "elements/tb_text_box.h"
-
 #include "tb/elements/popup_window.h"
+#include "tb/elements/text_box.h"
 #include "tb/tooltip_manager.h"
 
 namespace tb {

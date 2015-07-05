@@ -7,6 +7,7 @@
  ******************************************************************************
  */
 
+#include "tb/elements/layout_box.h"
 #include "tb/elements/list_item.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/skin_image.h"
@@ -18,15 +19,15 @@
 namespace tb {
 namespace elements {
 
-// SimpleLayoutItemElement is a item containing a layout with the following:
+// SimpleBoxItemElement is a item containing a layout with the following:
 // - SkinImage showing the item image.
 // - Label showing the item string.
 // - SkinImage showing the arrow for items with a submenu.
 // It also handles submenu events.
-class SimpleLayoutItemElement : public Layout, private ElementListener {
+class SimpleBoxItemElement : public LayoutBox, private ElementListener {
  public:
-  SimpleLayoutItemElement(TBID image, ListItemSource* source, const char* str);
-  ~SimpleLayoutItemElement() override;
+  SimpleBoxItemElement(TBID image, ListItemSource* source, const char* str);
+  ~SimpleBoxItemElement() override;
 
   bool OnEvent(const ElementEvent& ev) override;
 
@@ -42,9 +43,8 @@ class SimpleLayoutItemElement : public Layout, private ElementListener {
   MenuWindow* m_menu = nullptr;  // Points to the submenu window if opened.
 };
 
-SimpleLayoutItemElement::SimpleLayoutItemElement(TBID image,
-                                                 ListItemSource* source,
-                                                 const char* str)
+SimpleBoxItemElement::SimpleBoxItemElement(TBID image, ListItemSource* source,
+                                           const char* str)
     : m_source(source) {
   SetSkinBg(TBIDC("ListItem"));
   SetLayoutDistribution(LayoutDistribution::kAvailable);
@@ -68,7 +68,7 @@ SimpleLayoutItemElement::SimpleLayoutItemElement(TBID image,
   }
 }
 
-SimpleLayoutItemElement::~SimpleLayoutItemElement() {
+SimpleBoxItemElement::~SimpleBoxItemElement() {
   if (m_image_arrow.GetParent()) {
     RemoveChild(&m_image_arrow);
   }
@@ -79,7 +79,7 @@ SimpleLayoutItemElement::~SimpleLayoutItemElement() {
   CloseSubMenu();
 }
 
-bool SimpleLayoutItemElement::OnEvent(const ElementEvent& ev) {
+bool SimpleBoxItemElement::OnEvent(const ElementEvent& ev) {
   if (m_source && ev.type == EventType::kClick && ev.target == this) {
     OpenSubMenu();
     return true;
@@ -87,12 +87,12 @@ bool SimpleLayoutItemElement::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
-void SimpleLayoutItemElement::OnElementDelete(Element* element) {
+void SimpleBoxItemElement::OnElementDelete(Element* element) {
   assert(element == m_menu);
   CloseSubMenu();
 }
 
-void SimpleLayoutItemElement::OpenSubMenu() {
+void SimpleBoxItemElement::OpenSubMenu() {
   if (m_menu) return;
 
   // Open a new menu window for the submenu with this element as target.
@@ -102,7 +102,7 @@ void SimpleLayoutItemElement::OpenSubMenu() {
   m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);
 }
 
-void SimpleLayoutItemElement::CloseSubMenu() {
+void SimpleBoxItemElement::CloseSubMenu() {
   if (!m_menu) return;
 
   SetState(resources::SkinState::kSelected, false);
@@ -147,8 +147,7 @@ Element* ListItemSource::CreateItemElement(size_t index,
   ListItemSource* sub_source = GetItemSubSource(index);
   TBID image = GetItemImage(index);
   if (sub_source || image) {
-    SimpleLayoutItemElement* itemelement =
-        new SimpleLayoutItemElement(image, sub_source, string);
+    auto itemelement = new SimpleBoxItemElement(image, sub_source, string);
     return itemelement;
   } else if (string && *string == '-') {
     Separator* separator = new Separator();

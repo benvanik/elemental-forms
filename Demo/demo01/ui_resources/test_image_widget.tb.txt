@@ -3,7 +3,7 @@ WindowInfo
 	size 350 500
 ScrollContainer
 	adapt-content 1
-	Layout
+	LayoutBox
 		axis y
 		spacing 20
 		TextBox: gravity: all, skin: 0, multiline: 1, readonly: 1, adapt-to-content: 1

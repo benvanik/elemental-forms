@@ -2,5 +2,5 @@ WindowInfo
 	title Text editing
 	position 50 50
 	size 750 630
-Layout: axis: y, distribution: available
+LayoutBox: axis: y, distribution: available
 	CodeTextBox: multiline: 1, styling: 1, gravity: all, id: text_box, autofocus: 1

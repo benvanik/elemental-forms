@@ -10,12 +10,11 @@
 #ifndef TB_ELEMENTS_SPIN_BOX_H_
 #define TB_ELEMENTS_SPIN_BOX_H_
 
-#include "tb_layout.h"
-#include "tb_text_box.h"
-
 #include "tb/element.h"
 #include "tb/elements/button.h"
+#include "tb/elements/layout_box.h"
 #include "tb/elements/list_item.h"
+#include "tb/elements/text_box.h"
 
 namespace tb {
 namespace elements {
@@ -52,7 +51,7 @@ class SpinBox : public Element {
   void SetValueInternal(int value, bool update_text);
 
   Button m_buttons[2];
-  Layout m_layout;
+  LayoutBox m_layout;
   TextBox m_text_box;
   int m_value = 0;
   int m_min = 0;

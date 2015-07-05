@@ -10,9 +10,9 @@ TabContainer
 		Button: text: "Spinner"
 			SkinImage: skin: Icon16
 		Button: text: code
-	Layout: axis: y
+	LayoutBox: axis: y
 		Label: text: "Tab alignment:"
-		Layout
+		LayoutBox
 			LabelContainer: text: Left
 				RadioButton: group-id: set_align, id: set_align, data: 0
 			LabelContainer: text: Up
@@ -24,20 +24,20 @@ TabContainer
 		Button
 			text Toggle tab axis
 			id toggle_tab_axis
-	Layout
-		Layout: axis: y, position: right bottom
+	LayoutBox
+		LayoutBox: axis: y, position: right bottom
 			Button: text: Normal button
 			Button: text: Overridden skin, skin: SpecialButton
 			Button: text: Disabled button, state: disabled
 		TextBox
 			text TextBox
 			multiline 1
-	Layout
+	LayoutBox
 		axis y
 		Button: id: start_spinner, text: Start spinner
 		Button: id: stop_spinner, text: Stop spinner
 		ProgressSpinner: id: spinner
-	Layout
+	LayoutBox
 		gravity all
 		distribution available
 		CodeTextBox

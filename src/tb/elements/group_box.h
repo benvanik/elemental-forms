@@ -12,8 +12,8 @@
 
 #include "tb/element.h"
 #include "tb/elements/button.h"
+#include "tb/elements/layout_box.h"
 #include "tb/elements/toggle_container.h"
-#include "tb_layout.h"
 
 namespace tb {
 namespace elements {
@@ -36,7 +36,6 @@ class GroupBox : public Element {
   GroupBox();
   ~GroupBox() override;
 
-  Layout* GetLayout() { return &m_layout; }
   Element* GetHeader() { return &m_header; }
   ToggleContainer* GetContainer() { return &m_toggle_container; }
 
@@ -71,7 +70,7 @@ class GroupBox : public Element {
     bool OnEvent(const ElementEvent& ev) override;
   };
 
-  Layout m_layout;
+  LayoutBox m_layout;
   Header m_header;
   ToggleContainer m_toggle_container;
   bool m_pending_scroll = false;

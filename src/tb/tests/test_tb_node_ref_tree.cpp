@@ -8,9 +8,9 @@
  */
 
 #include "tb_test.h"
-#include "elements/tb_layout.h"
-#include "elements/tb_text_box.h"
 
+#include "tb/elements/layout_box.h"
+#include "tb/elements/text_box.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/parsing/parse_node_tree.h"
 
@@ -150,7 +150,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	landscape: 1\n");
 
     const char* layout_str =
-        "Layout: id: 'layout'\n"
+        "LayoutBox: id: 'layout'\n"
         "	distribution: 'available'\n"
         "	@if @test_settings>layout>landscape\n"
         "		axis: 'x'\n"
@@ -164,7 +164,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root1.LoadData(layout_str);
-    auto layout1 = root1.GetElementByIDAndType<Layout>(TBIDC("layout"));
+    auto layout1 = root1.GetElementByIDAndType<LayoutBox>(TBIDC("layout"));
     TB_VERIFY(layout1->GetAxis() == Axis::kX);
     TB_VERIFY(layout1->GetSpacing() == 100);
     TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
@@ -174,7 +174,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root2.LoadData(layout_str);
-    auto layout2 = root2.GetElementByIDAndType<Layout>(TBIDC("layout"));
+    auto layout2 = root2.GetElementByIDAndType<LayoutBox>(TBIDC("layout"));
     TB_VERIFY(layout2->GetAxis() == Axis::kY);
     TB_VERIFY(layout2->GetSpacing() == 200);
     TB_VERIFY(layout2->GetGravity() == Gravity::kAll);
