@@ -31,43 +31,43 @@ TB_TEST_GROUP(tb_widget_value_text) {
 
   TB_TEST(connect) {
     // Set the initial value, no elements connected yet.
-    element_val.SetText("turbo badger");
+    element_val.set_text("turbo badger");
 
     // Connecting elements should give them the current value.
     a->Connect(&element_val);
     b->Connect(&element_val);
     c->Connect(&element_val);
 
-    TB_VERIFY_STR(a->GetText(), "turbo badger");
-    TB_VERIFY_STR(b->GetText(), "turbo badger");
-    TB_VERIFY_STR(c->GetText(), "turbo badger");
+    TB_VERIFY_STR(a->text(), "turbo badger");
+    TB_VERIFY_STR(b->text(), "turbo badger");
+    TB_VERIFY_STR(c->text(), "turbo badger");
   }
 
   TB_TEST(change_value) {
     // Changing the value should change all elements
-    element_val.SetText("Emil");
+    element_val.set_text("Emil");
 
-    TB_VERIFY_STR(a->GetText(), "Emil");
-    TB_VERIFY_STR(b->GetText(), "Emil");
-    TB_VERIFY_STR(c->GetText(), "Emil");
+    TB_VERIFY_STR(a->text(), "Emil");
+    TB_VERIFY_STR(b->text(), "Emil");
+    TB_VERIFY_STR(c->text(), "Emil");
   }
 
   TB_TEST(change_element) {
     // When a element change, all the other elements should also change.
-    a->SetText("A");
-    TB_VERIFY_STR(b->GetText(), "A");
-    TB_VERIFY_STR(c->GetText(), "A");
+    a->set_text("A");
+    TB_VERIFY_STR(b->text(), "A");
+    TB_VERIFY_STR(c->text(), "A");
 
-    b->SetText("B");
-    TB_VERIFY_STR(a->GetText(), "B");
-    TB_VERIFY_STR(c->GetText(), "B");
+    b->set_text("B");
+    TB_VERIFY_STR(a->text(), "B");
+    TB_VERIFY_STR(c->text(), "B");
 
-    c->SetText("C");
-    TB_VERIFY_STR(a->GetText(), "C");
-    TB_VERIFY_STR(b->GetText(), "C");
+    c->set_text("C");
+    TB_VERIFY_STR(a->text(), "C");
+    TB_VERIFY_STR(b->text(), "C");
 
     // The value itself should also have changed.
-    TB_VERIFY_STR(element_val.GetText(), "C");
+    TB_VERIFY_STR(element_val.text(), "C");
   }
 
   TB_TEST(Shutdown) {
@@ -87,9 +87,9 @@ TB_TEST_GROUP(tb_widget_value_int) {
     TB_VERIFY(a = new Slider);
     TB_VERIFY(b = new ScrollBar);
     TB_VERIFY(c = new SpinBox);
-    a->SetLimits(0, 1000);
-    b->SetLimits(0, 1000, 1);
-    c->SetLimits(0, 1000);
+    a->set_limits(0, 1000);
+    b->set_limits(0, 1000, 1);
+    c->set_limits(0, 1000);
   }
 
   TB_TEST(connect) {
@@ -101,33 +101,33 @@ TB_TEST_GROUP(tb_widget_value_int) {
     b->Connect(&element_val);
     c->Connect(&element_val);
 
-    TB_VERIFY(a->GetValue() == 42);
-    TB_VERIFY(b->GetValue() == 42);
-    TB_VERIFY(c->GetValue() == 42);
+    TB_VERIFY(a->value() == 42);
+    TB_VERIFY(b->value() == 42);
+    TB_VERIFY(c->value() == 42);
   }
 
   TB_TEST(change_value) {
     // Changing the value should change all elements
     element_val.set_integer(123);
 
-    TB_VERIFY(a->GetValue() == 123);
-    TB_VERIFY(b->GetValue() == 123);
-    TB_VERIFY(c->GetValue() == 123);
+    TB_VERIFY(a->value() == 123);
+    TB_VERIFY(b->value() == 123);
+    TB_VERIFY(c->value() == 123);
   }
 
   TB_TEST(change_element) {
     // When a element change, all the other elements should also change.
-    a->SetValue(1);
-    TB_VERIFY(b->GetValue() == 1);
-    TB_VERIFY(c->GetValue() == 1);
+    a->set_value(1);
+    TB_VERIFY(b->value() == 1);
+    TB_VERIFY(c->value() == 1);
 
-    b->SetValue(2);
-    TB_VERIFY(a->GetValue() == 2);
-    TB_VERIFY(c->GetValue() == 2);
+    b->set_value(2);
+    TB_VERIFY(a->value() == 2);
+    TB_VERIFY(c->value() == 2);
 
-    c->SetValue(3);
-    TB_VERIFY(a->GetValue() == 3);
-    TB_VERIFY(b->GetValue() == 3);
+    c->set_value(3);
+    TB_VERIFY(a->value() == 3);
+    TB_VERIFY(b->value() == 3);
 
     // The value itself should also have changed.
     TB_VERIFY(element_val.as_integer() == 3);
@@ -152,7 +152,7 @@ TB_TEST_GROUP(tb_widget_value_listener) {
     MyListener() : change_counter(0) {}
     virtual void OnValueChanged(const ElementValueGroup* group,
                                 const ElementValue* value) {
-      val = value->GetValue();
+      val = value->value();
       change_counter++;
     }
   };
@@ -195,7 +195,7 @@ TB_TEST_GROUP(tb_widget_value_listener) {
 
   TB_TEST(change_element) {
     // Change one of the elements
-    a->SetValue(1);
+    a->set_value(1);
 
     // The listener should have registered the change, once.
     TB_VERIFY(listener.val.as_integer() == 1);

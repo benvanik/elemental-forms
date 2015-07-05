@@ -17,7 +17,7 @@ void Box::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Box, Value::Type::kNull, ElementZ::kTop);
 }
 
-Box::Box() { SetSkinBg(TBIDC("Box"), InvokeInfo::kNoCallbacks); }
+Box::Box() { set_background_skin(TBIDC("Box"), InvokeInfo::kNoCallbacks); }
 
 }  // namespace elements
 }  // namespace tb

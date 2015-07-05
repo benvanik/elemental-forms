@@ -40,8 +40,8 @@ BitmapFragment* BitmapFragmentManager::GetFragmentFromFile(
     return nullptr;
   }
 
-  return CreateNewFragment(id, dedicated_map, img->Width(), img->Height(),
-                           img->Width(), img->Data());
+  return CreateNewFragment(id, dedicated_map, img->width(), img->height(),
+                           img->width(), img->data());
 }
 
 BitmapFragment* BitmapFragmentManager::CreateNewFragment(const TBID& id,

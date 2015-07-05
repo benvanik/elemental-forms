@@ -47,34 +47,34 @@ class SimpleBoxItemElement : public LayoutBox, private ElementListener {
 SimpleBoxItemElement::SimpleBoxItemElement(TBID image, ListItemSource* source,
                                            const char* str)
     : m_source(source) {
-  SetSkinBg(TBIDC("ListItem"));
-  SetLayoutDistribution(LayoutDistribution::kAvailable);
-  SetPaintOverflowFadeout(false);
+  set_background_skin(TBIDC("ListItem"));
+  set_layout_distribution(LayoutDistribution::kAvailable);
+  set_paint_overflow_fadeout(false);
 
   if (image) {
-    m_image.SetSkinBg(image);
-    m_image.SetIgnoreInput(true);
+    m_image.set_background_skin(image);
+    m_image.set_ignoring_input(true);
     AddChild(&m_image);
   }
 
-  m_textfield.SetText(str);
-  m_textfield.SetTextAlign(TextAlign::kLeft);
-  m_textfield.SetIgnoreInput(true);
+  m_textfield.set_text(str);
+  m_textfield.set_text_align(TextAlign::kLeft);
+  m_textfield.set_ignoring_input(true);
   AddChild(&m_textfield);
 
   if (source) {
-    m_image_arrow.SetSkinBg(TBIDC("arrow.right"));
-    m_image_arrow.SetIgnoreInput(true);
+    m_image_arrow.set_background_skin(TBIDC("arrow.right"));
+    m_image_arrow.set_ignoring_input(true);
     AddChild(&m_image_arrow);
   }
 }
 
 SimpleBoxItemElement::~SimpleBoxItemElement() {
-  if (m_image_arrow.GetParent()) {
+  if (m_image_arrow.parent()) {
     RemoveChild(&m_image_arrow);
   }
   RemoveChild(&m_textfield);
-  if (m_image.GetParent()) {
+  if (m_image.parent()) {
     RemoveChild(&m_image);
   }
   CloseSubMenu();
@@ -98,7 +98,7 @@ void SimpleBoxItemElement::OpenSubMenu() {
 
   // Open a new menu window for the submenu with this element as target.
   m_menu = new MenuWindow(this, TBIDC("submenu"));
-  SetState(SkinState::kSelected, true);
+  set_state(SkinState::kSelected, true);
   m_menu->AddListener(this);
   m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);
 }
@@ -106,15 +106,15 @@ void SimpleBoxItemElement::OpenSubMenu() {
 void SimpleBoxItemElement::CloseSubMenu() {
   if (!m_menu) return;
 
-  SetState(SkinState::kSelected, false);
+  set_state(SkinState::kSelected, false);
   m_menu->RemoveListener(this);
-  if (!m_menu->GetIsDying()) {
+  if (!m_menu->is_dying()) {
     m_menu->Close();
   }
   m_menu = nullptr;
 }
 
-void ListItemObserver::SetSource(ListItemSource* source) {
+void ListItemObserver::set_source(ListItemSource* source) {
   if (m_source == source) return;
 
   if (m_source) {
@@ -152,14 +152,14 @@ Element* ListItemSource::CreateItemElement(size_t index,
     return itemelement;
   } else if (string && *string == '-') {
     Separator* separator = new Separator();
-    separator->SetGravity(Gravity::kAll);
-    separator->SetSkinBg(TBIDC("ListItem.separator"));
+    separator->set_gravity(Gravity::kAll);
+    separator->set_background_skin(TBIDC("ListItem.separator"));
     return separator;
   } else {
     Label* textfield = new Label();
-    textfield->SetSkinBg("ListItem");
-    textfield->SetText(string);
-    textfield->SetTextAlign(TextAlign::kLeft);
+    textfield->set_background_skin("ListItem");
+    textfield->set_text(string);
+    textfield->set_text_align(TextAlign::kLeft);
     return textfield;
   }
   return nullptr;
@@ -205,8 +205,8 @@ void GenericStringItemSource::ReadItemNodes(
   if (!items_node) {
     return;
   }
-  for (auto node = items_node->GetFirstChild(); node; node = node->GetNext()) {
-    if (std::strcmp(node->GetName(), "item") != 0) {
+  for (auto node = items_node->first_child(); node; node = node->GetNext()) {
+    if (std::strcmp(node->name(), "item") != 0) {
       continue;
     }
     const char* text = node->GetValueString("text", "");

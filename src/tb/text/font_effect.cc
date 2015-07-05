@@ -98,7 +98,7 @@ FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
     // Blur!
     BlurGlyph(src->data8, src->w, src->h, src->stride, effect_glyph_data->data8,
               effect_glyph_data->w, effect_glyph_data->h, effect_glyph_data->w,
-              (float*)m_blur_temp.GetData(), m_kernel, m_blur_radius);
+              (float*)m_blur_temp.data(), m_kernel, m_blur_radius);
 
     // Adjust glyph position to compensate for larger size.
     metrics->x -= m_blur_radius;

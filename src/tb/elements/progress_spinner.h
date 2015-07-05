@@ -26,19 +26,19 @@ class ProgressSpinner : public Element, protected MessageHandler {
   ProgressSpinner();
 
   // Returns true if the animation is running.
-  bool IsRunning() { return m_value > 0; }
+  bool is_animating() { return m_value > 0; }
 
   // Begin/End are used to start or stop the animation in a incremental way.
   // If several tasks may activate the same spinner, calling Begin/End instead
   // of using SetValue, so it will keep running as long as any source wants it
   // to.
-  void Begin() { SetValue(GetValue() + 1); }
-  void End() { SetValue(GetValue() - 1); }
+  void PushAnimating() { set_value(value() + 1); }
+  void PopAnimating() { set_value(value() - 1); }
 
+  int value() override { return m_value; }
   // Setting the value to 1 will start the spinner. Setting it to 0 will stop
   // it.
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
+  void set_value(int value) override;
 
   void OnPaint(const PaintProps& paint_props) override;
 

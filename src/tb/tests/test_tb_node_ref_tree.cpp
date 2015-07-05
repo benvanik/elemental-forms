@@ -64,8 +64,8 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     Element root;
     root.LoadData("Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
-    Element* button = root.GetElementByID(TBIDC("fire"));
-    TB_VERIFY(button->GetSkinBg() == TBIDC("FireButtonSkin"));
+    Element* button = root.GetElementById(TBIDC("fire"));
+    TB_VERIFY(button->background_skin() == TBIDC("FireButtonSkin"));
   }
 
   TB_TEST(reference_value_recurse) {
@@ -90,12 +90,12 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "Button: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
 
     // Reference from resource to one tree to another tree.
-    Element* select = root.GetElementByID(TBIDC("select"));
-    TB_VERIFY(select->GetValue() == 42);
+    Element* select = root.GetElementById(TBIDC("select"));
+    TB_VERIFY(select->value() == 42);
 
     // Reference in a circular loop. Should not freeze.
-    Element* button_circular = root.GetElementByID(TBIDC("button_circular"));
-    TB_VERIFY_STR(button_circular->GetText(), "@test_bar>bar_circular");
+    Element* button_circular = root.GetElementById(TBIDC("button_circular"));
+    TB_VERIFY_STR(button_circular->text(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
     TB_VERIFY(ParseNodeTree::GetValueFromTree("@test_bar>bar_circular2")
@@ -106,12 +106,12 @@ TB_TEST_GROUP(tb_node_ref_tree) {
                   .type() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
-    Element* button_broken1 = root.GetElementByID(TBIDC("button_broken_node"));
-    TB_VERIFY_STR(button_broken1->GetText(), "@test_foo>foo_broken_node");
+    Element* button_broken1 = root.GetElementById(TBIDC("button_broken_node"));
+    TB_VERIFY_STR(button_broken1->text(), "@test_foo>foo_broken_node");
 
     // Reference that is broken (has no matching tree).
-    Element* button_broken2 = root.GetElementByID(TBIDC("button_broken_tree"));
-    TB_VERIFY_STR(button_broken2->GetText(), "@test_bad_tree>foo");
+    Element* button_broken2 = root.GetElementById(TBIDC("button_broken_tree"));
+    TB_VERIFY_STR(button_broken2->text(), "@test_bad_tree>foo");
   }
 
   TB_TEST(reference_include) {
@@ -125,9 +125,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     root.LoadData(
         "TextBox: id: 'edit'\n"
         "	@include @test_styles>VeryNice");
-    auto edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
-    TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
-    TB_VERIFY_STR(edit->GetText(), "hello");
+    auto edit = root.GetElementByIdAndType<TextBox>(TBIDC("edit"));
+    TB_VERIFY(edit->background_skin() == TBIDC("SpecialSkin"));
+    TB_VERIFY_STR(edit->text(), "hello");
   }
 
   TB_TEST(reference_local_include) {
@@ -138,9 +138,9 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	text: 'hello'\n"
         "TextBox: id: 'edit'\n"
         "	@include SomeDeclarations");
-    auto edit = root.GetElementByIDAndType<TextBox>(TBIDC("edit"));
-    TB_VERIFY(edit->GetSkinBg() == TBIDC("SpecialSkin"));
-    TB_VERIFY_STR(edit->GetText(), "hello");
+    auto edit = root.GetElementByIdAndType<TextBox>(TBIDC("edit"));
+    TB_VERIFY(edit->background_skin() == TBIDC("SpecialSkin"));
+    TB_VERIFY_STR(edit->text(), "hello");
   }
 
   TB_TEST(reference_condition) {
@@ -164,24 +164,24 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root1.LoadData(layout_str);
-    auto layout1 = root1.GetElementByIDAndType<LayoutBox>(TBIDC("layout"));
-    TB_VERIFY(layout1->GetAxis() == Axis::kX);
-    TB_VERIFY(layout1->GetSpacing() == 100);
-    TB_VERIFY(layout1->GetGravity() == Gravity::kAll);
+    auto layout1 = root1.GetElementByIdAndType<LayoutBox>(TBIDC("layout"));
+    TB_VERIFY(layout1->axis() == Axis::kX);
+    TB_VERIFY(layout1->spacing() == 100);
+    TB_VERIFY(layout1->gravity() == Gravity::kAll);
 
     // Change data for condition
     dt.SetValue("layout>landscape", Value(0));
 
     // Inflate & check
     root2.LoadData(layout_str);
-    auto layout2 = root2.GetElementByIDAndType<LayoutBox>(TBIDC("layout"));
-    TB_VERIFY(layout2->GetAxis() == Axis::kY);
-    TB_VERIFY(layout2->GetSpacing() == 200);
-    TB_VERIFY(layout2->GetGravity() == Gravity::kAll);
+    auto layout2 = root2.GetElementByIdAndType<LayoutBox>(TBIDC("layout"));
+    TB_VERIFY(layout2->axis() == Axis::kY);
+    TB_VERIFY(layout2->spacing() == 200);
+    TB_VERIFY(layout2->gravity() == Gravity::kAll);
   }
 
   ParseNode* GetChildNodeFromIndex(ParseNode * parent, int index) {
-    ParseNode* child = parent->GetFirstChild();
+    ParseNode* child = parent->first_child();
     while (child && index-- > 0) child = child->GetNext();
     return child;
   }
@@ -201,14 +201,14 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     node.ReadData(str);
 
     ParseNode* a = GetChildNodeFromIndex(&node, 0);
-    TB_VERIFY_STR(a->GetName(), "A");
-    TB_VERIFY_STR(GetChildNodeFromIndex(a, 0)->GetName(), "B1");
-    TB_VERIFY_STR(
-        GetChildNodeFromIndex(GetChildNodeFromIndex(a, 0), 0)->GetName(), "C1");
-    TB_VERIFY_STR(GetChildNodeFromIndex(a, 1)->GetName(), "B2");
-    TB_VERIFY_STR(GetChildNodeFromIndex(a, 2)->GetName(), "B3");
-    TB_VERIFY_STR(GetChildNodeFromIndex(a, 3)->GetName(), "B4");
-    TB_VERIFY_STR(GetChildNodeFromIndex(a, 4)->GetName(), "B5");
+    TB_VERIFY_STR(a->name(), "A");
+    TB_VERIFY_STR(GetChildNodeFromIndex(a, 0)->name(), "B1");
+    TB_VERIFY_STR(GetChildNodeFromIndex(GetChildNodeFromIndex(a, 0), 0)->name(),
+                  "C1");
+    TB_VERIFY_STR(GetChildNodeFromIndex(a, 1)->name(), "B2");
+    TB_VERIFY_STR(GetChildNodeFromIndex(a, 2)->name(), "B3");
+    TB_VERIFY_STR(GetChildNodeFromIndex(a, 3)->name(), "B4");
+    TB_VERIFY_STR(GetChildNodeFromIndex(a, 4)->name(), "B5");
   }
 }
 

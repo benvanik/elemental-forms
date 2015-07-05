@@ -25,7 +25,7 @@ void Caret::Invalidate() {
 
 void Caret::UpdatePos() {
   Invalidate();
-  TextFragment* fragment = GetFragment();
+  TextFragment* fragment = this->fragment();
   x = fragment->xpos +
       fragment->GetCharX(style_edit->font, pos.ofs - fragment->ofs);
   y = fragment->ypos + pos.block->ypos;
@@ -94,7 +94,7 @@ bool Caret::Place(const Point& point) {
                fragment->GetCharOfs(style_edit->font, point.x - fragment->xpos);
 
   if (Place(block, ofs)) {
-    if (GetFragment() != fragment) {
+    if (this->fragment() != fragment) {
       prefer_first = !prefer_first;
       Place(block, ofs);
     }
@@ -153,7 +153,7 @@ bool Caret::Place(TextBlock* block, size_t ofs, bool allow_snap,
 }
 
 void Caret::AvoidLineBreak() {
-  TextFragment* fragment = GetFragment();
+  TextFragment* fragment = this->fragment();
   if (pos.ofs > fragment->ofs && fragment->IsBreak()) {
     pos.ofs = fragment->ofs;
   }
@@ -177,13 +177,13 @@ void Caret::ResetBlink() {
 
 void Caret::UpdateWantedX() { wanted_x = x; }
 
-TextFragment* Caret::GetFragment() {
+TextFragment* Caret::fragment() {
   return pos.block->FindFragment(pos.ofs, prefer_first);
 }
 
 void Caret::SwitchBlock(bool second) {}
 
-void Caret::SetGlobalOffset(size_t gofs, bool allow_snap, bool snap_forward) {
+void Caret::set_global_offset(size_t gofs, bool allow_snap, bool snap_forward) {
   TextOffset ofs;
   if (ofs.SetGlobalOffset(style_edit, gofs)) {
     Place(ofs.block, ofs.ofs, allow_snap, snap_forward);

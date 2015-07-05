@@ -24,7 +24,9 @@ class RadioButton : public parts::BaseRadioCheckBox {
   TBOBJECT_SUBCLASS(RadioButton, BaseRadioCheckBox);
   static void RegisterInflater();
 
-  RadioButton() { SetSkinBg(TBIDC("RadioButton"), InvokeInfo::kNoCallbacks); }
+  RadioButton() {
+    set_background_skin(TBIDC("RadioButton"), InvokeInfo::kNoCallbacks);
+  }
 };
 
 }  // namespace elements

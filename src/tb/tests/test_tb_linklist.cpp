@@ -78,7 +78,7 @@ TB_TEST_GROUP(tb_linklist) {
 
     // Lets pretend we do some iteration in a list...
     auto iterator = apple_refs->IterateForward();
-    TB_VERIFY(iterator.Get());
+    TB_VERIFY(iterator.get());
 
     // Now the list itself gets deallocated.
     delete apple_refs;
@@ -90,41 +90,41 @@ TB_TEST_GROUP(tb_linklist) {
 
     // Now the iterator should not point to anything,
     // and we should not crash.
-    TB_VERIFY(!iterator.Get());
+    TB_VERIFY(!iterator.get());
   }
 
   TB_TEST(forward_iterator) {
     auto i = list.IterateForward();
-    TB_VERIFY(i.Get()->id == 1);
+    TB_VERIFY(i.get()->id == 1);
 
     TB_VERIFY(i.GetAndStep()->id == 1);
     TB_VERIFY(i.GetAndStep()->id == 2);
     TB_VERIFY(i.GetAndStep()->id == 3);
-    TB_VERIFY(i.Get() == nullptr);
+    TB_VERIFY(i.get() == nullptr);
 
     i.Reset();
-    TB_VERIFY(i.Get()->id == 1);
+    TB_VERIFY(i.get()->id == 1);
   }
 
   TB_TEST(backward_iterator) {
     auto i = list.IterateBackward();
-    TB_VERIFY(i.Get()->id == 3);
+    TB_VERIFY(i.get()->id == 3);
 
     TB_VERIFY(i.GetAndStep()->id == 3);
     TB_VERIFY(i.GetAndStep()->id == 2);
     TB_VERIFY(i.GetAndStep()->id == 1);
-    TB_VERIFY(i.Get() == nullptr);
+    TB_VERIFY(i.get() == nullptr);
 
     i.Reset();
-    TB_VERIFY(i.Get()->id == 3);
+    TB_VERIFY(i.get()->id == 3);
   }
 
   TB_TEST(multiple_iterators_assign) {
     auto iA = list.IterateForward();
     auto iB = list.IterateBackward();
 
-    TB_VERIFY(iA.Get()->id == 1);
-    TB_VERIFY(iB.Get()->id == 3);
+    TB_VERIFY(iA.get()->id == 1);
+    TB_VERIFY(iB.get()->id == 3);
 
     iA = iB;
     TB_VERIFY(iA.GetAndStep()->id == 3);
@@ -139,12 +139,12 @@ TB_TEST_GROUP(tb_linklist) {
     auto iA = list.IterateForward();
     auto iB = other_list.IterateForward();
 
-    TB_VERIFY(iA.Get()->id == 1);
-    TB_VERIFY(iB.Get()->id == 42);
+    TB_VERIFY(iA.get()->id == 1);
+    TB_VERIFY(iB.get()->id == 42);
 
     iA = iB;
     TB_VERIFY(iA.GetAndStep()->id == 42);
-    TB_VERIFY(iA.Get() == nullptr);
+    TB_VERIFY(iA.get() == nullptr);
   }
 
   TB_TEST(autodelete) {

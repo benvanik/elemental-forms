@@ -43,11 +43,11 @@ class Caret {
   void ResetBlink();
   void UpdateWantedX();
 
-  size_t GetGlobalOffset() const { return pos.GetGlobalOffset(style_edit); }
-  void SetGlobalOffset(size_t gofs, bool allow_snap = true,
-                       bool snap_forward = false);
+  size_t global_offset() const { return pos.GetGlobalOffset(style_edit); }
+  void set_global_offset(size_t gofs, bool allow_snap = true,
+                         bool snap_forward = false);
 
-  TextFragment* GetFragment();
+  TextFragment* fragment();
 
  private:
   void SwitchBlock(bool second);

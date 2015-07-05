@@ -111,15 +111,15 @@ void BatchingRenderer::Translate(int dx, int dy) {
   translation_y_ += dy;
 }
 
-void BatchingRenderer::SetOpacity(float opacity) {
+void BatchingRenderer::set_opacity(float opacity) {
   int8_t opacity8 = (uint8_t)(opacity * 255);
   if (opacity8 == opacity_) return;
   opacity_ = opacity8;
 }
 
-float BatchingRenderer::GetOpacity() { return opacity_ / 255.0f; }
+float BatchingRenderer::opacity() { return opacity_ / 255.0f; }
 
-Rect BatchingRenderer::SetClipRect(const Rect& rect, bool add_to_current) {
+Rect BatchingRenderer::set_clip_rect(const Rect& rect, bool add_to_current) {
   Rect old_clip_rect = clip_rect_;
   clip_rect_ = rect;
   clip_rect_.x += translation_x_;
@@ -130,14 +130,14 @@ Rect BatchingRenderer::SetClipRect(const Rect& rect, bool add_to_current) {
   }
 
   FlushAllInternal();
-  SetClipRect(clip_rect_);
+  set_clip_rect(clip_rect_);
 
   old_clip_rect.x -= translation_x_;
   old_clip_rect.y -= translation_y_;
   return old_clip_rect;
 }
 
-Rect BatchingRenderer::GetClipRect() {
+Rect BatchingRenderer::clip_rect() {
   Rect curr_clip_rect = clip_rect_;
   curr_clip_rect.x -= translation_x_;
   curr_clip_rect.y -= translation_y_;
@@ -219,8 +219,8 @@ void BatchingRenderer::AddQuadInternal(const Rect& dst_rect,
   }
   batch_.fragment = fragment;
   if (bitmap) {
-    int bitmap_w = bitmap->Width();
-    int bitmap_h = bitmap->Height();
+    int bitmap_w = bitmap->width();
+    int bitmap_h = bitmap->height();
     m_u = (float)src_rect.x / bitmap_w;
     m_v = (float)src_rect.y / bitmap_h;
     m_uu = (float)(src_rect.x + src_rect.w) / bitmap_w;

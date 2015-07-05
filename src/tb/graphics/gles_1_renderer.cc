@@ -64,12 +64,12 @@ bool BitmapGL::Init(int width, int height, uint32_t* data) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-  SetData(data);
+  set_data(data);
 
   return true;
 }
 
-void BitmapGL::SetData(uint32_t* data) {
+void BitmapGL::set_data(uint32_t* data) {
   m_renderer->FlushBitmap(this);
   BindBitmap(this);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_w, m_h, 0, GL_RGBA,
@@ -141,7 +141,7 @@ void RendererGL::RenderBatch(Batch* batch) {
   glDrawArrays(GL_TRIANGLES, 0, batch->vertex_count);
 }
 
-void RendererGL::SetClipRect(const Rect& rect) {
+void RendererGL::set_clip_rect(const Rect& rect) {
   glScissor(clip_rect_.x, screen_rect_.h - (clip_rect_.y + clip_rect_.h),
             clip_rect_.w, clip_rect_.h);
 }

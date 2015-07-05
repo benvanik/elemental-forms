@@ -141,9 +141,9 @@ bool TBBFRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
   }
   auto glyph = it->second.get();
   data->w = glyph->w;
-  data->h = m_img->Height();
-  data->stride = m_img->Width();
-  data->data32 = m_img->Data() + glyph->x;
+  data->h = m_img->height();
+  data->stride = m_img->width();
+  data->data32 = m_img->data() + glyph->x;
   data->rgb = m_rgb ? true : false;
   return true;
 }
@@ -174,11 +174,11 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
 
   // Check for size nodes and get the one closest to the size we want.
   ParseNode* size_node = nullptr;
-  for (ParseNode* n = m_node.GetFirstChild(); n; n = n->GetNext()) {
-    if (strcmp(n->GetName(), "size") == 0) {
+  for (ParseNode* n = m_node.first_child(); n; n = n->GetNext()) {
+    if (strcmp(n->name(), "size") == 0) {
       if (!size_node ||
-          std::abs(m_size - n->GetValue().as_integer()) <
-              std::abs(m_size - size_node->GetValue().as_integer()))
+          std::abs(m_size - n->value().as_integer()) <
+              std::abs(m_size - size_node->value().as_integer()))
         size_node = n;
     }
   }
@@ -204,7 +204,7 @@ bool TBBFRenderer::Load(const std::string& filename, int size) {
   // Append the bitmap filename for the given size.
   bitmap_filename.AppendString(size_node->GetValueString("bitmap", ""));
 
-  m_img = graphics::ImageLoader::CreateFromFile(bitmap_filename.GetData());
+  m_img = graphics::ImageLoader::CreateFromFile(bitmap_filename.c_str());
 
   return FindGlyphs();
 }
@@ -234,9 +234,9 @@ bool TBBFRenderer::FindGlyphs() {
 }
 
 std::unique_ptr<GLYPH> TBBFRenderer::FindNext(UCS4 cp, int x) {
-  int width = m_img->Width();
-  int height = m_img->Height();
-  uint32_t* data32 = m_img->Data();
+  int width = m_img->width();
+  int height = m_img->height();
+  uint32_t* data32 = m_img->data();
 
   if (x >= width) {
     return nullptr;
@@ -281,11 +281,11 @@ std::unique_ptr<FontFace> TBBFRenderer::Create(
     const FontDescription& font_desc) {
   if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
   auto fr = std::make_unique<TBBFRenderer>();
-  if (!fr->Load(filename, (int)font_desc.GetSize())) {
+  if (!fr->Load(filename, (int)font_desc.size())) {
     return nullptr;
   }
-  return std::make_unique<FontFace>(font_manager->GetGlyphCache(),
-                                    std::move(fr), font_desc);
+  return std::make_unique<FontFace>(font_manager->glyph_cache(), std::move(fr),
+                                    font_desc);
 }
 
 void register_tbbf_font_renderer() {

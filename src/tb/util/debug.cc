@@ -35,7 +35,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
   elements::TextBox* output;
 
   DebugSettingsWindow(Element* root) {
-    SetText("Debug settings");
+    set_text("Debug settings");
     LoadData(
         "LayoutBox: axis: y, distribution: available, position: left\n"
         "	LayoutBox: id: 'container', axis: y, size: available\n"
@@ -55,7 +55,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     AddCheckbox(DebugInfo::Setting::kDrawImageBitmapFragments,
                 "Render image bitmap fragments");
 
-    output = GetElementByIDAndType<elements::TextBox>(TBIDC("output"));
+    output = GetElementByIdAndType<elements::TextBox>(TBIDC("output"));
 
     Rect bounds(0, 0, root->rect().w, root->rect().h);
     set_rect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -70,23 +70,23 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     auto check = new elements::CheckBox();
-    check->SetValue(DebugInfo::get()->settings[int(setting)]);
+    check->set_value(DebugInfo::get()->settings[int(setting)]);
     check->data.set_integer(int(setting));
     check->set_id(TBIDC("check"));
 
     auto label = new elements::LabelContainer();
-    label->SetText(str);
-    label->GetContentRoot()->AddChild(check, ElementZ::kBottom);
+    label->set_text(str);
+    label->content_root()->AddChild(check, ElementZ::kBottom);
 
-    GetElementByID(TBIDC("container"))->AddChild(label);
+    GetElementById(TBIDC("container"))->AddChild(label);
   }
 
   bool OnEvent(const ElementEvent& ev) override {
     if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
       // Update setting and invalidate.
       DebugInfo::get()->settings[ev.target->data.as_integer()] =
-          ev.target->GetValue();
-      GetParentRoot()->Invalidate();
+          ev.target->value();
+      parent_root()->Invalidate();
       return true;
     }
     return Window::OnEvent(ev);
@@ -106,8 +106,8 @@ class DebugSettingsWindow : public Window, public ElementListener {
       Element* element = Element::hovered_element ? Element::hovered_element
                                                   : Element::focused_element;
       auto font_face = text::FontManager::get()->GetFontFace(
-          element ? element->GetCalculatedFontDescription()
-                  : text::FontManager::get()->GetDefaultFontDescription());
+          element ? element->computed_font_description()
+                  : text::FontManager::get()->default_font_description());
       font_face->Debug();
     }
 
@@ -131,13 +131,13 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
   bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override {
     // Skip these events for now.
-    if (ev.IsPointerEvent()) {
+    if (ev.is_pointer_event()) {
       return false;
     }
 
     // Always ignore activity in this window (or we might get endless
     // recursion).
-    if (Window* window = element->GetParentWindow()) {
+    if (Window* window = element->parent_window()) {
       if (SafeCast<DebugSettingsWindow>(window)) {
         return false;
       }
@@ -158,21 +158,21 @@ class DebugSettingsWindow : public Window, public ElementListener {
     }
 
     if (ev.type == EventType::kChanged) {
-      auto text = ev.target->GetText();
+      auto text = ev.target->text();
       if (text.size() > 24) {
         text.erase(20);
         text.append("...");
       }
-      auto extra = util::format_string(
-          ", value: %.2f (\"%s\")", ev.target->GetValueDouble(), text.c_str());
+      auto extra = util::format_string(", value: %.2f (\"%s\")",
+                                       ev.target->double_value(), text.c_str());
       buf.AppendString(extra);
     }
     buf.AppendString("\n");
 
     // Append the line to the output textfield.
-    auto se = output->GetTextView();
+    auto se = output->text_view();
     se->selection.SelectNothing();
-    se->AppendText(buf.GetData(), std::string::npos, true);
+    se->AppendText(buf.c_str(), std::string::npos, true);
     se->ScrollIfNeeded(false, true);
 
     // Remove lines from the top if we exceed the height limit.

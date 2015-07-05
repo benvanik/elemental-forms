@@ -79,28 +79,29 @@ class TextView {
 
   void Clear(bool init_new = true);
   bool Load(const char* filename);
-  void SetText(const char* text, CaretPosition pos = CaretPosition::kBeginning);
-  void SetText(const char* text, size_t text_len,
-               CaretPosition pos = CaretPosition::kBeginning);
-  std::string GetText();
+  std::string text();
+  void set_text(const char* text,
+                CaretPosition pos = CaretPosition::kBeginning);
+  void set_text(const char* text, size_t text_len,
+                CaretPosition pos = CaretPosition::kBeginning);
   bool empty() const;
 
   // Sets the default text alignment and all currently selected blocks, or the
   // block of the current caret position if nothing is selected.
-  void SetAlign(TextAlign align);
-  void SetMultiline(bool multiline = true);
-  void SetStyling(bool styling = true);
-  void SetReadOnly(bool readonly = true);
-  void SetSelection(bool selection = true);
-  void SetPassword(bool password = true);
-  void SetWrapping(bool wrapping = true);
+  void set_alignment(TextAlign align);
+  void set_multiline(bool multiline = true);
+  void set_styled(bool styling = true);
+  void set_read_only(bool readonly = true);
+  void set_selection(bool selection = true);
+  void set_password(bool password = true);
+  void set_wrapping(bool wrapping = true);
 
   // Sets if line breaks should be inserted in windows style (\r\n) or unix
   // style (\n). The default is windows style on the windows platform and
   // disabled elsewhere.
   // NOTE: This only affects InsertBreak (pressing enter). Content set from
   // SetText (and clipboard etc.) maintains the used line break.
-  void SetWindowsStyleBreak(bool win_style_br) {
+  void set_windows_style_break(bool win_style_br) {
     packed.win_style_br = win_style_br;
   }
 

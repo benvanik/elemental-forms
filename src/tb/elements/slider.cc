@@ -21,8 +21,8 @@ void Slider::RegisterInflater() {
 Slider::Slider()
     : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
 {
-  SetIsFocusable(true);
-  SetAxis(Axis::kX);
+  set_focusable(true);
+  set_axis(Axis::kX);
   AddChild(&m_handle);
 }
 
@@ -30,39 +30,39 @@ Slider::~Slider() { RemoveChild(&m_handle); }
 
 void Slider::OnInflate(const parsing::InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
-  SetAxis(axis);
-  SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
-  double min = double(info.node->GetValueFloat("min", (float)GetMinValue()));
-  double max = double(info.node->GetValueFloat("max", (float)GetMaxValue()));
-  SetLimits(min, max);
+  set_axis(axis);
+  set_gravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
+  double min = double(info.node->GetValueFloat("min", (float)min_value()));
+  double max = double(info.node->GetValueFloat("max", (float)max_value()));
+  set_limits(min, max);
   Element::OnInflate(info);
 }
 
-void Slider::SetAxis(Axis axis) {
+void Slider::set_axis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   if (axis == Axis::kX) {
-    SetSkinBg(TBIDC("SliderBgX"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("SliderFgX"), InvokeInfo::kNoCallbacks);
+    set_background_skin(TBIDC("SliderBgX"), InvokeInfo::kNoCallbacks);
+    m_handle.set_background_skin(TBIDC("SliderFgX"), InvokeInfo::kNoCallbacks);
   } else {
-    SetSkinBg(TBIDC("SliderBgY"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("SliderFgY"), InvokeInfo::kNoCallbacks);
+    set_background_skin(TBIDC("SliderBgY"), InvokeInfo::kNoCallbacks);
+    m_handle.set_background_skin(TBIDC("SliderFgY"), InvokeInfo::kNoCallbacks);
   }
   Invalidate();
 }
 
-void Slider::SetLimits(double min, double max) {
+void Slider::set_limits(double min, double max) {
   min = std::min(min, max);
   if (min == m_min && max == m_max) {
     return;
   }
   m_min = min;
   m_max = max;
-  SetValueDouble(m_value);
+  set_double_value(m_value);
   UpdateHandle();
 }
 
-void Slider::SetValueDouble(double value) {
+void Slider::set_double_value(double value) {
   value = util::Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
@@ -78,22 +78,22 @@ bool Slider::OnEvent(const ElementEvent& ev) {
       int dx = ev.target_x - pointer_down_element_x;
       int dy = ev.target_y - pointer_down_element_y;
       double delta_val = (m_axis == Axis::kX ? dx : -dy) / m_to_pixel_factor;
-      SetValueDouble(m_value + delta_val);
+      set_double_value(m_value + delta_val);
     }
     return true;
   } else if (ev.type == EventType::kWheel) {
     double old_val = m_value;
-    double step = (m_axis == Axis::kX ? GetSmallStep() : -GetSmallStep());
-    SetValueDouble(m_value + step * ev.delta_y);
+    double step = (m_axis == Axis::kX ? small_step() : -small_step());
+    set_double_value(m_value + step * ev.delta_y);
     return m_value != old_val;
   } else if (ev.type == EventType::kKeyDown) {
-    double step = (m_axis == Axis::kX ? GetSmallStep() : -GetSmallStep());
+    double step = (m_axis == Axis::kX ? small_step() : -small_step());
     if (ev.special_key == SpecialKey::kLeft ||
         ev.special_key == SpecialKey::kUp) {
-      SetValueDouble(GetValueDouble() - step);
+      set_double_value(double_value() - step);
     } else if (ev.special_key == SpecialKey::kRight ||
                ev.special_key == SpecialKey::kDown) {
-      SetValueDouble(GetValueDouble() + step);
+      set_double_value(double_value() + step);
     } else {
       return false;
     }

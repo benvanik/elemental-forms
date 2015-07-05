@@ -37,14 +37,14 @@ class DropDownButton : public Button, public ListItemObserver {
   // If you need to add other types of items, or if you want to share item
   // sources between several DropDownButton/ListBox elements, use SetSource
   // using a external item source.
-  GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
+  GenericStringItemSource* default_source() { return &m_default_source; }
 
+  int value() override { return m_value; }
   // Sets the selected item.
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
+  void set_value(int value) override;
 
   // Gets the ID of the selected item, or 0 if there is no item selected.
-  TBID GetSelectedItemID();
+  TBID selected_item_id();
 
   // Opens the window if the model has items.
   void OpenWindow();
@@ -53,7 +53,7 @@ class DropDownButton : public Button, public ListItemObserver {
   void CloseWindow();
 
   // Returns the menu window if it's open, or nullptr.
-  MenuWindow* GetMenuIfOpen() const;
+  MenuWindow* menu_if_open() const;
 
   void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;

@@ -68,24 +68,24 @@ class ElementValue {
   ElementValue(const TBID& name, Value::Type type = Value::Type::kInt);
   ~ElementValue();
 
-  TBID GetName() const { return m_name; }
+  TBID name() const { return m_name; }
 
   // Sets integer value and sync to connected elements.
   void set_integer(int value);
 
   // Sets text value and sync to connected elements.
-  void SetText(const char* text);
+  void set_text(const char* text);
 
   // Sets double value and sync to connected elements.
-  void SetDouble(double value);
+  void set_double(double value);
 
   // Sets the value from the given element. Using the current format type.
   void SetFromElement(Element* source_element);
 
   int as_integer() { return m_value.as_integer(); }
-  std::string GetText() { return m_value.as_string(); }
-  double GetDouble() { return m_value.as_float(); }
-  const Value& GetValue() const { return m_value; }
+  std::string text() { return m_value.as_string(); }
+  double as_double() { return m_value.as_float(); }
+  const Value& value() const { return m_value; }
 
  private:
   friend class ElementValueConnection;

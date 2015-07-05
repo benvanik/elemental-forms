@@ -32,12 +32,12 @@ ResourceEditWindow::ResourceEditWindow()
   LoadFile("Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
-      GetElementByIDAndType<ScrollContainer>(TBIDC("scroll_container"));
-  m_build_container = m_scroll_container->GetContentRoot();
-  m_source_text_box = GetElementByIDAndType<TextBox>(TBIDC("source_edit"));
+      GetElementByIdAndType<ScrollContainer>(TBIDC("scroll_container"));
+  m_build_container = m_scroll_container->content_root();
+  m_source_text_box = GetElementByIdAndType<TextBox>(TBIDC("source_edit"));
 
-  m_element_list = GetElementByIDAndType<ListBox>(TBIDC("element_list"));
-  m_element_list->SetSource(&m_element_list_source);
+  m_element_list = GetElementByIdAndType<ListBox>(TBIDC("element_list"));
+  m_element_list->set_source(&m_element_list_source);
 
   set_rect({100, 50, 900, 600});
 }
@@ -46,24 +46,24 @@ ResourceEditWindow::~ResourceEditWindow() {
   ElementListener::RemoveGlobalListener(this);
 
   // avoid assert
-  m_element_list->SetSource(nullptr);
+  m_element_list->set_source(nullptr);
 }
 
 void ResourceEditWindow::Load(const char* resource_file) {
   m_resource_filename = resource_file;
-  SetText(resource_file);
+  set_text(resource_file);
 
   // Set the text of the source view.
-  m_source_text_box->SetText("");
+  m_source_text_box->set_text("");
 
   auto file = util::File::Open(m_resource_filename, util::File::Mode::kRead);
   if (file) {
     util::StringBuilder buffer(file->Size());
-    size_t size_read = file->Read(buffer.GetData(), 1, buffer.GetCapacity());
-    m_source_text_box->SetText(buffer.GetData(), size_read);
+    size_t size_read = file->Read(buffer.data(), 1, buffer.capacity());
+    m_source_text_box->set_text(buffer.c_str(), size_read);
   } else {
     // Error, show message.
-    MessageWindow* msg_win = new MessageWindow(GetParentRoot(), TBIDC(""));
+    MessageWindow* msg_win = new MessageWindow(parent_root(), TBIDC(""));
     msg_win->Show(
         "Error loading resource",
         tb::util::format_string("Could not load file %s", resource_file));
@@ -74,17 +74,17 @@ void ResourceEditWindow::Load(const char* resource_file) {
 
 void ResourceEditWindow::RefreshFromSource() {
   // Clear old elements
-  while (Element* child = m_build_container->GetFirstChild()) {
+  while (Element* child = m_build_container->first_child()) {
     m_build_container->RemoveChild(child);
     delete child;
   }
 
   // Create new elements from source
-  m_build_container->LoadData(m_source_text_box->GetText());
+  m_build_container->LoadData(m_source_text_box->text());
 
   // Force focus back in case the edited resource has autofocus.
   // FIX: It would be better to prevent the focus change instead!
-  m_source_text_box->SetFocus(FocusReason::kUnknown);
+  m_source_text_box->set_focus(FocusReason::kUnknown);
 }
 
 void ResourceEditWindow::UpdateElementList(bool immediately) {
@@ -113,7 +113,7 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
     m_element_list_source.AddItem(std::move(item));
   }
 
-  for (Element* child = element->GetFirstChild(); child;
+  for (Element* child = element->first_child(); child;
        child = child->GetNext()) {
     AddElementListItemsRecursive(child, depth + 1);
   }
@@ -132,21 +132,21 @@ ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromElement(
 }
 
 void ResourceEditWindow::SetSelectedElement(Element* element) {
-  m_selected_element.Set(element);
+  m_selected_element.reset(element);
   ITEM_INFO item_info = GetItemFromElement(element);
-  if (item_info.item) m_element_list->SetValue(item_info.index);
+  if (item_info.item) m_element_list->set_value(item_info.index);
 }
 
 bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("element_list_search")) {
-    m_element_list->SetFilter(ev.target->GetText());
+    m_element_list->set_filter(ev.target->text());
     return true;
   } else if (ev.type == EventType::kChanged && ev.target == m_element_list) {
-    if (m_element_list->GetValue() >= 0 &&
-        m_element_list->GetValue() < m_element_list_source.size())
+    if (m_element_list->value() >= 0 &&
+        m_element_list->value() < m_element_list_source.size())
       if (ResourceItem* item =
-              m_element_list_source.GetItem(m_element_list->GetValue()))
+              m_element_list_source.GetItem(m_element_list->value()))
         SetSelectedElement(item->GetElement());
   } else if (ev.type == EventType::kChanged && ev.target == m_source_text_box) {
     RefreshFromSource();
@@ -154,16 +154,16 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kClick && ev.target->id() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
     Window* win = new Window();
-    win->SetText("Test window");
-    win->GetContentRoot()->LoadData(m_source_text_box->GetText());
-    Rect bounds(0, 0, GetParent()->rect().w, GetParent()->rect().h);
+    win->set_text("Test window");
+    win->content_root()->LoadData(m_source_text_box->text());
+    Rect bounds(0, 0, parent()->rect().w, parent()->rect().h);
     win->set_rect(
         win->GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
             bounds));
-    GetParent()->AddChild(win);
+    parent()->AddChild(win);
     return true;
   } else if (ev.target->id() == TBIDC("constrained")) {
-    m_scroll_container->SetAdaptContentSize(ev.target->GetValue() ? true
+    m_scroll_container->set_adapt_content_size(ev.target->value() ? true
                                                                   : false);
     return true;
   } else if (ev.type == EventType::kFileDrop) {

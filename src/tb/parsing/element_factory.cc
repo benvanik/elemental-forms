@@ -44,7 +44,7 @@ bool ElementFactory::LoadData(Element* target, const char* data,
 
 void ElementFactory::LoadNodeTree(Element* target, ParseNode* node) {
   // Iterate through all nodes and create elements.
-  for (ParseNode* child = node->GetFirstChild(); child;
+  for (ParseNode* child = node->first_child(); child;
        child = child->GetNext()) {
     CreateElement(target, child);
   }
@@ -54,7 +54,7 @@ bool ElementFactory::CreateElement(Element* target, ParseNode* node) {
   // Find a element creator from the node name.
   ElementInflater* source_factory = nullptr;
   for (auto& inflater : inflaters_) {
-    if (std::strcmp(inflater->name(), node->GetName()) == 0) {
+    if (std::strcmp(inflater->name(), node->name()) == 0) {
       source_factory = inflater.get();
       break;
     }
@@ -64,7 +64,7 @@ bool ElementFactory::CreateElement(Element* target, ParseNode* node) {
   }
 
   // Create the element.
-  InflateInfo info(this, target->GetContentRoot(), node,
+  InflateInfo info(this, target->content_root(), node,
                    source_factory->sync_type());
   Element* new_element = source_factory->Create(&info);
   if (!new_element) {
@@ -76,15 +76,15 @@ bool ElementFactory::CreateElement(Element* target, ParseNode* node) {
 
   // If this assert is trigged, you probably forgot to call Element::OnInflate
   // from an overridden version.
-  assert(new_element->GetParent());
+  assert(new_element->parent());
 
   // Iterate through all nodes and create elements.
-  for (ParseNode* n = node->GetFirstChild(); n; n = n->GetNext()) {
+  for (ParseNode* n = node->first_child(); n; n = n->GetNext()) {
     CreateElement(new_element, n);
   }
 
   if (node->GetValueInt("autofocus", 0)) {
-    new_element->SetFocus(FocusReason::kUnknown);
+    new_element->set_focus(FocusReason::kUnknown);
   }
 
   return true;

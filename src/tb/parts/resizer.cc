@@ -20,7 +20,9 @@ void Resizer::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Resizer, Value::Type::kNull, ElementZ::kTop);
 }
 
-Resizer::Resizer() { SetSkinBg(TBIDC("Resizer"), InvokeInfo::kNoCallbacks); }
+Resizer::Resizer() {
+  set_background_skin(TBIDC("Resizer"), InvokeInfo::kNoCallbacks);
+}
 
 HitStatus Resizer::GetHitStatus(int x, int y) {
   // Shave off some of the upper left diagonal half from the hit area.
@@ -32,7 +34,7 @@ HitStatus Resizer::GetHitStatus(int x, int y) {
 }
 
 bool Resizer::OnEvent(const ElementEvent& ev) {
-  Element* target = GetParent();
+  Element* target = parent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_element == this) {
     int dx = ev.target_x - pointer_down_element_x;

@@ -17,7 +17,7 @@ bool SpaceAllocator::HasSpace(int needed_w) const {
   if (needed_w > m_available_space) {
     return false;
   }
-  if (IsAllAvailable()) {
+  if (empty()) {
     return true;
   }
   for (Space* fs = m_free_space_list.GetFirst(); fs; fs = fs->GetNext()) {
@@ -53,7 +53,7 @@ SpaceAllocator::Space* SpaceAllocator::GetSmallestAvailableSpace(int needed_w) {
   assert(needed_w > 0);
 
   // Add free space covering all available space if empty.
-  if (!m_free_space_list.HasLinks() && IsAllAvailable()) {
+  if (!m_free_space_list.HasLinks() && empty()) {
     Space* fs = new Space();
     fs->x = 0;
     fs->width = m_available_space;

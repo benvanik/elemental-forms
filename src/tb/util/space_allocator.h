@@ -26,7 +26,7 @@ class SpaceAllocator {
   SpaceAllocator(int available_space) : m_available_space(available_space) {}
 
   // Returns true if no allocations are currently live using this allocator.
-  bool IsAllAvailable() const { return !m_used_space_list.HasLinks(); }
+  bool empty() const { return !m_used_space_list.HasLinks(); }
   // Returns true if the given width is currently available.
   bool HasSpace(int needed_w) const;
   // Allocates the given space and return the Space, or nullptr on error.

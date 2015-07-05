@@ -11,6 +11,7 @@
 #define TB_ELEMENT_H_
 
 #include <algorithm>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -274,11 +275,11 @@ class Element : public util::TypedObject,
   }
   void LoadNodeTree(parsing::ParseNode* node);
 
+  inline Rect rect() const { return m_rect; }
   // Sets the rect for this element in its parent.
   // The rect is relative to the parent element. The skin may expand outside
   // this rect to draw f.ex shadows.
   void set_rect(const Rect& rect);
-  inline Rect rect() const { return m_rect; }
 
   // Sets the position of this element in its parent.
   // The position is relative to the parent element.
@@ -321,51 +322,51 @@ class Element : public util::TypedObject,
   void Die();
 
   // Returns true if this element or any of its parents is dying.
-  bool GetIsDying() const {
-    return m_packed.is_dying || (m_parent && m_parent->GetIsDying());
+  bool is_dying() const {
+    return m_packed.is_dying || (m_parent && m_parent->is_dying());
   }
 
+  TBID& id() { return m_id; }
   // Sets the id reference for this elements. This id is 0 by default.
-  // You can use this id to receive the element from GetElementByID (or
+  // You can use this id to receive the element from GetElementById (or
   // preferable TBSafeGetByID to avoid dangerous casts).
   void set_id(const TBID& id);
-  TBID& id() { return m_id; }
 
+  TBID& group_id() { return m_group_id; }
   // Sets the group id reference for this elements. This id is 0 by default.
   // All elements with the same group id under the same group root will be
   // automatically changed when one change its value.
-  void SetGroupID(const TBID& id) { m_group_id = id; }
-  TBID& GetGroupID() { return m_group_id; }
+  void set_group_id(const TBID& id) { m_group_id = id; }
 
   // Gets this element or any child element with a matching id, or nullptr if
   // none is found.
-  Element* GetElementByID(const TBID& id) { return GetElementByIDInternal(id); }
+  Element* GetElementById(const TBID& id) { return GetElementByIdInternal(id); }
 
   // Gets this element or any child element with a matching id and type, or
   // nullptr if none is found.
   template <class T>
-  T* GetElementByIDAndType(const TBID& id) {
-    return (T*)GetElementByIDInternal(id, GetTypeId<T>());
+  T* GetElementByIdAndType(const TBID& id) {
+    return (T*)GetElementByIdInternal(id, GetTypeId<T>());
   }
 
   using State = SkinState;
 
-  // Enables or disables the given state(s).
-  // The state affects which skin state is used when drawing.
-  // Some states are set automatically on interaction. See GetAutoState().
-  void SetState(State state, bool on);
-
   // Gets status of the given state(s).
   // Returns true if the given state combination is set.
-  bool GetState(State state) const { return any(m_state & state); }
+  bool has_state(State state) const { return any(m_state & state); }
 
-  // Sets the element state.
-  // Like SetState but setting the entire state as given, instead of toggling
-  // individual states. See SetState for more info on states.
-  void SetStateRaw(State state);
+  // Enables or disables the given state(s).
+  // The state affects which skin state is used when drawing.
+  // Some states are set automatically on interaction. See computed_state().
+  void set_state(State state, bool on);
 
   // Gets the element state.
-  State GetStateRaw() const { return m_state; }
+  State state_raw() const { return m_state; }
+
+  // Sets the element state.
+  // Like set_state but setting the entire state as given, instead of toggling
+  // individual states. See set_state for more info on states.
+  void set_state_raw(State state);
 
   // Returns the current combined state for this element. It will also add some
   // automatic states, such as hovered (if the element is currently hovered), or
@@ -374,34 +375,35 @@ class Element : public util::TypedObject,
   // Automatic states:
   // SkinState::kPressed, SkinState::kHovered, SkinState::kFocused.
   //
-  // RE SkinState::kFocused: may also be controlled by calling SetAutoFocusState
+  // RE SkinState::kFocused: may also be controlled by calling
+  // set_auto_focus_state
   // and the define TB_ALWAYS_SHOW_EDIT_FOCUS.
-  State GetAutoState() const;
+  State computed_state() const;
 
   // Sets whether the state SkinState::kFocused should be set automatically for
   // the focused element.
   // This value is set to true when moving focus by keyboard, and set to off
   // when clicking with the pointer.
-  static void SetAutoFocusState(bool on);
+  static void set_auto_focus_state(bool on);
 
+  float opacity() const { return m_opacity; }
   // Sets opacity for this element and its children from 0.0 - 1.0.
   // If opacity is 0 (invisible), the element won't receive any input.
-  void SetOpacity(float opacity);
-  float GetOpacity() const { return m_opacity; }
+  void set_opacity(float opacity);
 
+  Visibility visibility() const;
   // Sets visibility for this element and its children.
   // If visibility is not Visibility::kVisible, the element won't receive any
   // input.
-  void SetVisibilility(Visibility vis);
-  Visibility GetVisibility() const;
+  void set_visibility(Visibility vis);
 
   // Returns true if this element and all its ancestors are visible (has a
   // opacity > 0 and visibility Visibility::kVisible).
-  bool GetVisibilityCombined() const;
+  bool computed_visibility() const;
 
-  // Returns true if this element or any of its parents are disabled (has state
+  // Returns false if this element or any of its parents are disabled (has state
   // SkinState::kDisabled).
-  bool GetDisabled() const;
+  bool is_enabled() const;
 
   // Adds a child to this element.
   // The child element will automatically be deleted when this element is
@@ -431,12 +433,13 @@ class Element : public util::TypedObject,
   // When a element is added with AddChild, it will be placed at the top in the
   // parent (Above previously added element). SetZ can be used to change the
   // order.
-  void SetZ(ElementZ z);
+  void set_z(ElementZ z);
 
+  ElementZ z_inflate() const { return (ElementZ)m_packed.inflate_child_z; }
   // Sets the z-order in which children are added during resource loading.
-  void SetZInflate(ElementZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
-  ElementZ GetZInflate() const { return (ElementZ)m_packed.inflate_child_z; }
+  void set_z_inflate(ElementZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
 
+  Gravity gravity() const { return m_gravity; }
   // Sets the element gravity (any combination of Gravity).
   // For child elements in a layout, the gravity affects how the layout is done
   // depending on the layout settings.
@@ -446,8 +449,10 @@ class Element : public util::TypedObject,
   // - !left && right: Element follows the right edge when parent resize.
   // - top && bottom: Element resize vertically when parent resize.
   // - !top && bottom: Element follows the bottom edge when parent resize.
-  void SetGravity(Gravity g);
-  Gravity GetGravity() const { return m_gravity; }
+  void set_gravity(Gravity g);
+
+  // Returns the current skin background, as set by SetSkinBg.
+  TBID background_skin() const { return m_skin_bg; }
 
   // Sets the skin background for this element and call OnSkinChanged if it
   // changed.
@@ -462,61 +467,59 @@ class Element : public util::TypedObject,
   //
   // It's possible to omit the OnSkinChanged callback using
   // InvokeInfo::kNoCallbacks.
-  void SetSkinBg(const TBID& skin_bg, InvokeInfo info = InvokeInfo::kNormal);
-
-  // Returns the current skin background, as set by SetSkinBg.
-  TBID GetSkinBg() const { return m_skin_bg; }
+  void set_background_skin(const TBID& skin_bg,
+                           InvokeInfo info = InvokeInfo::kNormal);
 
   // Returns the skin background element, or nullptr.
-  SkinElement* GetSkinBgElement();
+  SkinElement* background_skin_element();
 
+  bool is_group_root() const { return m_packed.is_group_root; }
   // Sets if this element is a group root.
   // Grouped elements (such as RadioButton) will toggle all other elements with
   // the same group_id under the nearest parent group root.
   // Window is a group root by default.
-  void SetIsGroupRoot(bool group_root) { m_packed.is_group_root = group_root; }
-  bool GetIsGroupRoot() const { return m_packed.is_group_root; }
+  void set_group_root(bool group_root) { m_packed.is_group_root = group_root; }
 
+  bool is_focusable() const { return m_packed.is_focusable; }
   // Sets if this element should be able to receive focus or not.
-  void SetIsFocusable(bool focusable) { m_packed.is_focusable = focusable; }
-  bool GetIsFocusable() const { return m_packed.is_focusable; }
+  void set_focusable(bool focusable) { m_packed.is_focusable = focusable; }
 
+  bool is_click_by_key() const { return m_packed.click_by_key; }
   // Sets if this element should emulate a click when it's focused and pressing
   // enter or space.
-  void SetClickByKey(bool click_by_key) {
+  void set_click_by_key(bool click_by_key) {
     m_packed.click_by_key = click_by_key;
   }
-  bool GetClickByKey() const { return m_packed.click_by_key; }
 
+  bool is_long_clickable() const { return m_packed.want_long_click; }
   // Sets if this element should generate long-click event (or context menu
   // event if nothing handles the long click event). The default is false.
-  void SetWantLongClick(bool want_long_click) {
+  void set_long_clickable(bool want_long_click) {
     m_packed.want_long_click = want_long_click;
   }
-  bool GetWantLongClick() const { return m_packed.want_long_click; }
 
+  bool is_ignoring_input() const { return m_packed.ignore_input; }
   // Sets if this element should ignore input, as if it didn't exist.
-  void SetIgnoreInput(bool ignore_input) {
+  void set_ignoring_input(bool ignore_input) {
     m_packed.ignore_input = ignore_input;
   }
-  bool GetIgnoreInput() const { return m_packed.ignore_input; }
 
   // Gets if this element wants interaction depending on various states.
   // Cares about zero opacity, visibility, flag set by SetIgnoreInput, disabled
   // state, and if the element is currently dying.
-  bool GetIsInteractable() const;
+  bool is_interactable() const;
 
+  bool is_focused() const { return focused_element == this; }
   // Sets this element to be the focused element. It will be the one receiving
   // keyboard input.
-  // Elements can be focused only after enabling it (see SetIsFocusable(true)).
+  // Elements can be focused only after enabling it (see set_focusable(true)).
   // Invisible or disabled elements can not be focused.
   // If SetFocus is called on a element in a inactive window, it will succeed
   // (return true), but it won't actually become focused until that window is
-  // activated (see Window::SetLastFocus).
+  // activated (see Window::set_last_focus).
   // Returns true if successfully focused, or if set as last focus in its
   // window.
-  bool SetFocus(FocusReason reason, InvokeInfo info = InvokeInfo::kNormal);
-  bool GetIsFocused() const { return focused_element == this; }
+  bool set_focus(FocusReason reason, InvokeInfo info = InvokeInfo::kNormal);
 
   // Calls SetFocus on all children and their children, until a element is found
   // that accepts it.
@@ -549,21 +552,21 @@ class Element : public util::TypedObject,
 
   // Gets the text of a child element with the given id, or an empty string if
   // there was no element with that id.
-  std::string GetTextByID(const TBID& id);
+  std::string GetTextById(const TBID& id);
 
   // Gets the value of a child element with the given id, or 0 if there was no
   // element with that id.
-  int GetValueByID(const TBID& id);
+  int GetValueById(const TBID& id);
 
   Element* GetNextDeep(const Element* bounding_ancestor = nullptr) const;
   Element* GetPrevDeep() const;
   Element* GetLastLeaf() const;
-  inline Element* GetFirstChild() const { return m_children.GetFirst(); }
-  inline Element* GetLastChild() const { return m_children.GetLast(); }
-  util::IntrusiveList<Element>::Iterator GetIteratorForward() {
+  inline Element* first_child() const { return m_children.GetFirst(); }
+  inline Element* last_child() const { return m_children.GetLast(); }
+  util::IntrusiveList<Element>::Iterator begin() {
     return m_children.IterateForward();
   }
-  util::IntrusiveList<Element>::Iterator GetIteratorBackward() {
+  util::IntrusiveList<Element>::Iterator rbegin() {
     return m_children.IterateBackward();
   }
 
@@ -572,7 +575,7 @@ class Element : public util::TypedObject,
 
   // Returns true if this element is the same as other_element or if
   // other_element events are going through this element (see
-  // GetEventDestination()).
+  // event_destination()).
   bool IsEventDestinationFor(Element* other_element) const;
 
   // Adds a listener to this element. It should be removed again with
@@ -624,7 +627,8 @@ class Element : public util::TypedObject,
   // Invalidate().
   virtual void OnInvalid() {}
 
-  // Called when the background skin changes by calling SetSkinBg(), or when the
+  // Called when the background skin changes by calling set_background_skin(),
+  // or when the
   // skin has changed indirectly after a skin condition changes in a way that
   // may affect layout.
   // For indirect skin changes, OnSkinChanged is called before validation of
@@ -707,22 +711,22 @@ class Element : public util::TypedObject,
   // children.
   // This is useful for elements having multiple children by default, to specify
   // which one that should get the children.
-  virtual Element* GetContentRoot() { return this; }
+  virtual Element* content_root() { return this; }
 
   // Gets this element or a parent element that is the absolute root parent.
-  Element* GetParentRoot();
+  Element* parent_root();
 
   // Gets the closest parent element that is a Window or nullptr if there is
   // none.
   // If this element is a window itself, this will be returned.
-  Window* GetParentWindow();
+  Window* parent_window();
 
   // Gets the parent element, or nullptr if this element is not added.
-  inline Element* GetParent() const { return m_parent; }
+  inline Element* parent() const { return m_parent; }
 
   // Gets the element that should receive the events this element invoke. By
   // default the parent.
-  virtual Element* GetEventDestination() { return m_parent; }
+  virtual Element* event_destination() { return m_parent; }
 
   // Returns translation the children should have.
   // Any scrolling of child elements should be done with this method, by
@@ -734,7 +738,7 @@ class Element : public util::TypedObject,
   //
   // NOTE: you can apply the translation on one element and implement those
   // methods on a parent, by returning this element from the parents
-  // GetScrollRoot().
+  // scroll_root().
   virtual void GetChildTranslation(int& x, int& y) const { x = y = 0; }
 
   // If this is a element that scroll children (see GetChildTranslation), it
@@ -765,7 +769,7 @@ class Element : public util::TypedObject,
     bool CanScrollRight() const { return x < max_x; }
     bool CanScrollUp() const { return y > min_y; }
     bool CanScrollDown() const { return y < max_y; }
-    bool CanScroll() const { return CanScrollX() || CanScrollY(); }
+    bool can_scroll() const { return CanScrollX() || CanScrollY(); }
     int min_x = 0, min_y = 0;  // Minimum x and y scroll position.
     int max_x = 0, max_y = 0;  // Maximum x and y scroll position.
     int x = 0, y = 0;          // Current x and y scroll position.
@@ -773,12 +777,12 @@ class Element : public util::TypedObject,
 
   // If this is a element that scroll children (see GetChildTranslation), it
   // should return the current scroll information.
-  virtual ScrollInfo GetScrollInfo() { return ScrollInfo(); }
+  virtual ScrollInfo scroll_info() { return ScrollInfo(); }
 
   // If this element is implementing ScrollTo and GetScrollInfo but the
   // corresponding GetChildTranslation is implemented on a child, you should
   // return that child from this method.
-  virtual Element* GetScrollRoot() { return this; }
+  virtual Element* scroll_root() { return this; }
 
   // Scrolls this element and/or any parent elements by the given delta.
   // dx and dy will be reduced by the amount that was successfully scrolled.
@@ -792,45 +796,43 @@ class Element : public util::TypedObject,
   // will scroll so that rect is visible. Rect is relative to this element.
   void ScrollIntoView(const Rect& rect);
 
-  // Returns the Scroller set up for this element, or nullptr if creation
-  // failed.
-  parts::Scroller* GetScroller();
+  // Returns the Scroller set up for this element, creating it if needed.
+  parts::Scroller* scroller();
 
+  virtual Axis axis() const { return Axis::kX; }
   // Sets along which axis the content should layout.
-  virtual void SetAxis(Axis axis) {}
-  virtual Axis GetAxis() const { return Axis::kX; }
+  virtual void set_axis(Axis axis) {}
 
+  virtual int value() { return 0; }
   // Sets the value of this element.
   // Implemented by most elements that have a value.
   // NOTE: some elements also provide special setters with other types (such as
   // double).
-  virtual void SetValue(int value) {}
-  virtual int GetValue() { return 0; }
-
-  // Sets the value in double precision.
-  // It only makes sense to use this instead of SetValue() on elements that
-  // store the value as double.
-  // F.ex ScrollBar, Slider.
-  virtual void SetValueDouble(double value) { SetValue(int(value)); }
+  virtual void set_value(int value) {}
 
   // Returns the value in double precision.
-  // It only makes sense to use this instead of GetValue() on elements that
+  // It only makes sense to use this instead of value() on elements that
   // store the value as double.
   // F.ex ScrollBar, Slider.
-  virtual double GetValueDouble() { return double(GetValue()); }
-
-  // Sets the text of this element. Implemented by most elements that have text.
-  virtual void SetText(const char* text) {}
-  void SetText(const std::string& text) { SetText(text.c_str()); }
+  virtual double double_value() { return double(value()); }
+  // Sets the value in double precision.
+  // It only makes sense to use this instead of set_value() on elements that
+  // store the value as double.
+  // F.ex ScrollBar, Slider.
+  virtual void set_double_value(double value) { set_value(int(value)); }
 
   // Gets the text of this element. Implemented by most elements that have text.
-  virtual std::string GetText() { return ""; }
+  virtual std::string text() { return ""; }
+
+  // Sets the text of this element. Implemented by most elements that have text.
+  virtual void set_text(const char* text) {}
+  void set_text(const std::string& text) { set_text(text.c_str()); }
+  void set_text_format(const char* format, ...);
 
   // Gets the description string of this element. Used for tooltips.
-  virtual std::string GetTooltip() { return m_tooltip_str; }
-
+  virtual const std::string& tooltip() { return m_tooltip_str; }
   // Sets the description string for this element. Used for tooltips.
-  virtual void SetTooltip(const char* value) {
+  virtual void set_tooltip(const char* value) {
     m_tooltip_str = value ? value : "";
   }
 
@@ -849,7 +851,7 @@ class Element : public util::TypedObject,
   // This is the rectangle in which the content should be rendered.
   // This may be overridden to f.ex deduct space allocated by visible scrollbars
   // managed by this element. Anything that removes space from the content area.
-  virtual Rect GetPaddingRect();
+  virtual Rect padding_rect();
 
   // Calculates the preferred content size for this element.
   // This is the size of the actual content. Don't care about padding or other
@@ -896,14 +898,13 @@ class Element : public util::TypedObject,
   //   already recursing down, to avoid unnecessary computation.
   virtual void InvalidateLayout(InvalidationMode il);
 
-  // Sets layout params. Calls InvalidateLayout.
-  void SetLayoutParams(const LayoutParams& lp);
-
   // Gets layout params, or nullptr if not specified.
   // NOTE: the layout params has already been applied to the PreferredSize
   // returned from GetPreferredSize so you normally don't need to check these
   // params.
-  const LayoutParams* GetLayoutParams() const { return m_layout_params; }
+  const LayoutParams* layout_params() const { return m_layout_params.get(); }
+  // Sets layout params. Calls InvalidateLayout.
+  void set_layout_params(const LayoutParams& lp);
 
   // TODO(benvanik): move to a special RootElement type.
 
@@ -967,6 +968,17 @@ class Element : public util::TypedObject,
   // relative to this element.
   void ConvertFromRoot(int& x, int& y) const;
 
+  // Gets the font description as set with SetFontDescription.
+  // Use computed_font_description() to get the calculated font description
+  // (inherit from parent element, etc).
+  FontDescription font_description() const { return m_font_desc; }
+
+  // Calculates the font description for this element.
+  // If this element have unspecified font description, it will be inheritted
+  // from parent. If no parent specify any font, the default font description
+  // will be returned.
+  FontDescription computed_font_description() const;
+
   // Sets the font description for this element and any children that inherit
   // the font.
   // Setting an unspecified FontDescription (no changes made since construction)
@@ -975,27 +987,16 @@ class Element : public util::TypedObject,
   // font was successfully set.
   // Returns false and keep the font onchanged if it no matching font exists or
   // fails creation.
-  bool SetFontDescription(const FontDescription& font_desc);
-
-  // Gets the font description as set with SetFontDescription.
-  // Use GetCalculatedFontDescription() to get the calculated font description
-  // (inherit from parent element, etc).
-  FontDescription GetFontDescription() const { return m_font_desc; }
-
-  // Calculates the font description for this element.
-  // If this element have unspecified font description, it will be inheritted
-  // from parent. If no parent specify any font, the default font description
-  // will be returned.
-  FontDescription GetCalculatedFontDescription() const;
+  bool set_font_description(const FontDescription& font_desc);
 
   // Gets the FontFace for this element from the current font description
   // (calculated by GetCalculatedFontDescription).
-  text::FontFace* GetFont() const;
+  text::FontFace* computed_font() const;
 
  private:
   friend class ElementListener;
   Element* m_parent = nullptr;
-  TBID m_id;                // ID for GetElementByID and others.
+  TBID m_id;                // ID for GetElementById and others.
   TBID m_group_id;          // ID for button groups (such as RadioButton)
   TBID m_skin_bg;           // ID for the background skin (0 for no skin).
   TBID m_skin_bg_expected;  // ID for the background skin after strong override,
@@ -1014,9 +1015,9 @@ class Element : public util::TypedObject,
   FontDescription m_font_desc;
   PreferredSize m_cached_ps;    // Cached preferred size.
   SizeConstraints m_cached_sc;  // Cached size constraints.
-  LayoutParams* m_layout_params = nullptr;
-  parts::Scroller* m_scroller = nullptr;
-  LongClickTimer* m_long_click_timer = nullptr;
+  std::unique_ptr<LayoutParams> m_layout_params;
+  std::unique_ptr<parts::Scroller> m_scroller;
+  std::unique_ptr<LongClickTimer> m_long_click_timer;
   std::string m_tooltip_str;
   union {
     struct {
@@ -1082,7 +1083,7 @@ class Element : public util::TypedObject,
   Element* FindScrollableElement(bool scroll_x, bool scroll_y);
   parts::Scroller* FindStartedScroller();
   parts::Scroller* GetReadyScroller(bool scroll_x, bool scroll_y);
-  Element* GetElementByIDInternal(const TBID& id,
+  Element* GetElementByIdInternal(const TBID& id,
                                   const util::tb_type_id_t type_id = nullptr);
   void InvokeSkinUpdatesInternal(bool force_update);
   void InvokeProcessInternal();

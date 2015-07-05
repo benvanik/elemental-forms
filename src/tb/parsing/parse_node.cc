@@ -78,7 +78,7 @@ ParseNode* ParseNode::GetNodeFollowRef(const char* request, MissingPolicy mp) {
 }
 
 ParseNode* ParseNode::GetNodeInternal(const char* name, size_t name_len) const {
-  for (ParseNode* n = GetFirstChild(); n; n = n->GetNext()) {
+  for (ParseNode* n = first_child(); n; n = n->GetNext()) {
     if (strncmp(n->m_name, name, name_len) == 0 && n->m_name[name_len] == 0) {
       return n;
     }
@@ -94,7 +94,7 @@ void ParseNode::Clone(ParseNode* source) {
 }
 
 void ParseNode::CloneChildren(ParseNode* source) {
-  ParseNode* item = source->GetFirstChild();
+  ParseNode* item = source->first_child();
   while (item) {
     ParseNode* new_child = Create(item->m_name);
     new_child->m_value.Copy(item->m_value);
@@ -105,7 +105,7 @@ void ParseNode::CloneChildren(ParseNode* source) {
 }
 
 Value& ParseNode::GetValueFollowRef() {
-  return ParseNodeTree::FollowNodeRef(this)->GetValue();
+  return ParseNodeTree::FollowNodeRef(this)->value();
 }
 
 int ParseNode::GetValueInt(const char* request, int def) {
@@ -122,8 +122,8 @@ const char* ParseNode::GetValueString(const char* request, const char* def) {
   if (ParseNode* node = GetNodeFollowRef(request)) {
     // We might have a language string. Those are not
     // looked up in GetNode/ResolveNode.
-    if (node->GetValue().is_string()) {
-      const char* string = node->GetValue().as_string();
+    if (node->value().is_string()) {
+      const char* string = node->value().as_string();
       if (*string == '@' && *ParseNode::GetNextNodeSeparator(string) == 0) {
         // TODO(benvanik): replace this with something better (std::string all
         // around?). This is nasty and will break a great many things.
@@ -133,7 +133,7 @@ const char* ParseNode::GetValueString(const char* request, const char* def) {
       }
       return string;
     }
-    return node->GetValue().as_string();
+    return node->value().as_string();
   }
   return def;
 }
@@ -165,7 +165,7 @@ class ParseNodeTarget : public TextParserTarget {
   }
   void Enter() override {
     if (m_target_node) {
-      m_target_node = m_target_node->GetLastChild();
+      m_target_node = m_target_node->last_child();
     }
   }
   void Leave() override {
@@ -182,22 +182,22 @@ class ParseNodeTarget : public TextParserTarget {
     include_filename.AppendPath(m_filename);
     include_filename.AppendString(filename);
     ParseNode content;
-    if (content.ReadFile(include_filename.GetData())) {
-      while (ParseNode* content_n = content.GetFirstChild()) {
+    if (content.ReadFile(include_filename.c_str())) {
+      while (ParseNode* content_n = content.first_child()) {
         content.Remove(content_n);
         m_target_node->Add(content_n);
       }
     } else {
       OnError(line_nr,
               tb::util::format_string("Referenced file \"%s\" was not found!",
-                                      include_filename.GetData()));
+                                      include_filename.c_str()));
     }
   }
   void IncludeRef(int line_nr, const char* refstr) {
     ParseNode* refnode = nullptr;
     if (*refstr == '@') {
       ParseNode tmp;
-      tmp.GetValue().set_string(refstr, Value::Set::kAsStatic);
+      tmp.value().set_string(refstr, Value::Set::kAsStatic);
       refnode = ParseNodeTree::FollowNodeRef(&tmp);
     } else {
       // Local look-up.
@@ -212,7 +212,7 @@ class ParseNodeTarget : public TextParserTarget {
         if (cycle_detection == refnode) {
           refnode = nullptr;  // We have a cycle, so just fail the inclusion.
         }
-        cycle_detection = cycle_detection->GetParent();
+        cycle_detection = cycle_detection->parent();
       }
     }
     if (refnode) {

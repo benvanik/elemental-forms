@@ -29,7 +29,7 @@ class AnimationManager {
   static void Update();
 
   // Returns true if there is running animations.
-  static bool HasAnimationsRunning();
+  static bool has_running_animations();
 
   static void StartAnimation(
       Animation* obj, AnimationCurve animation_curve = Animation::kDefaultCurve,
@@ -47,7 +47,7 @@ class AnimationManager {
   static void AbortAllAnimations();
 
   // Returns true if new animations are blocked.
-  static bool IsAnimationsBlocked();
+  static bool is_animation_blocked();
 
   // Begins a period of blocking new animations. End the period with
   // EndBlockAnimations.

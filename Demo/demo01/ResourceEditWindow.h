@@ -35,7 +35,7 @@ class ResourceEditWindow : public Window,
     int index;
   };
   ITEM_INFO GetItemFromElement(Element* element);
-  Element* GetSelectedElement() { return m_selected_element.Get(); }
+  Element* GetSelectedElement() { return m_selected_element.get(); }
   void SetSelectedElement(Element* element);
 
   void Load(const char* resource_file);

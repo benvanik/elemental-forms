@@ -21,7 +21,7 @@ namespace elements {
 
 // A regular button element.
 // Has a text field in its internal layout by default. Other elements can be
-// added under GetContentRoot().
+// added under content_root().
 class Button : public Element, protected MessageHandler {
  public:
   TBOBJECT_SUBCLASS(Button, Element);
@@ -30,34 +30,36 @@ class Button : public Element, protected MessageHandler {
   Button();
   ~Button() override;
 
+  Axis axis() const override { return m_layout.axis(); }
   // Sets along which axis the content should layout (if the button has more
   // content than the text).
-  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
-  Axis GetAxis() const override { return m_layout.GetAxis(); }
+  void set_axis(Axis axis) override { m_layout.set_axis(axis); }
 
+  bool is_squeezable() { return m_textfield.is_squeezable(); }
   // Sets if the text field should be allowed to squeeze below its preferred
   // size. If squeezable it may shrink to width 0.
-  void SetSqueezable(bool squeezable) { m_textfield.SetSqueezable(squeezable); }
-  bool GetSqueezable() { return m_textfield.GetSqueezable(); }
+  void set_squeezable(bool squeezable) {
+    m_textfield.set_squeezable(squeezable);
+  }
 
+  bool is_auto_repeat() { return m_auto_repeat_click; }
   // Sets if the button should fire repeatedly while pressed.
-  void SetAutoRepeat(bool auto_repeat_click) {
+  void set_auto_repeat(bool auto_repeat_click) {
     m_auto_repeat_click = auto_repeat_click;
   }
-  bool GetAutoRepeat() { return m_auto_repeat_click; }
 
+  bool is_toggle_mode() const { return m_toggle_mode; }
   // Sets if the button should toggle on and off, instead of just fire click
   // events. When it's on, it will have value 1 pressed state.
-  void SetToggleMode(bool toggle_mode_on) { m_toggle_mode = toggle_mode_on; }
-  bool GetToggleMode() const { return m_toggle_mode; }
+  void set_toggle_mode(bool toggle_mode_on) { m_toggle_mode = toggle_mode_on; }
 
+  std::string text() override { return m_textfield.text(); }
   // Sets the text of the button.
-  void SetText(const char* text) override;
-  using Element::SetText;
-  std::string GetText() override { return m_textfield.GetText(); }
+  void set_text(const char* text) override;
+  using Element::set_text;
 
-  void SetValue(int value) override;
-  int GetValue() override;
+  int value() override;
+  void set_value(int new_value) override;
 
   void OnInflate(const parsing::InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
@@ -69,7 +71,7 @@ class Button : public Element, protected MessageHandler {
     return m_layout.GetPreferredSize();
   }
 
-  Element* GetContentRoot() override { return &m_layout; }
+  Element* content_root() override { return &m_layout; }
 
   void OnMessageReceived(Message* msg) override;
 
@@ -78,7 +80,7 @@ class Button : public Element, protected MessageHandler {
   static const int kAutoClickRepeattDelayMillis = 100;
 
   void UpdateLabelVisibility();
-  bool CanToggle() { return m_toggle_mode || GetGroupID(); }
+  bool can_toggle() { return m_toggle_mode || group_id(); }
 
   class ButtonLayoutBox : public LayoutBox {
     void OnChildAdded(Element* child) override;

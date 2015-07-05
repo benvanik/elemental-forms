@@ -19,11 +19,11 @@ void ProgressSpinner::RegisterInflater() {
 }
 
 ProgressSpinner::ProgressSpinner() {
-  SetSkinBg(TBIDC("ProgressSpinner"), InvokeInfo::kNoCallbacks);
+  set_background_skin(TBIDC("ProgressSpinner"), InvokeInfo::kNoCallbacks);
   m_skin_fg.reset(TBIDC("ProgressSpinner.fg"));
 }
 
-void ProgressSpinner::SetValue(int value) {
+void ProgressSpinner::set_value(int value) {
   if (value == m_value) return;
   InvalidateSkinStates();
   assert(value >=
@@ -44,15 +44,14 @@ void ProgressSpinner::SetValue(int value) {
 }
 
 void ProgressSpinner::OnPaint(const PaintProps& paint_props) {
-  if (IsRunning()) {
-    auto e = Skin::get()->GetSkinElement(m_skin_fg);
+  if (is_animating()) {
+    auto e = Skin::get()->GetSkinElementById(m_skin_fg);
     if (e && e->bitmap) {
-      int size = e->bitmap->Height();
-      int num_frames = e->bitmap->Width() / e->bitmap->Height();
+      int size = e->bitmap->height();
+      int num_frames = e->bitmap->width() / e->bitmap->height();
       int current_frame = m_frame % num_frames;
       graphics::Renderer::get()->DrawBitmap(
-          GetPaddingRect(), Rect(current_frame * size, 0, size, size),
-          e->bitmap);
+          padding_rect(), Rect(current_frame * size, 0, size, size), e->bitmap);
     }
   }
 }

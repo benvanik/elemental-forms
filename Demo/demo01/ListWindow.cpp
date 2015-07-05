@@ -13,24 +13,24 @@ AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
                                          ListItemObserver* source_viewer,
                                          size_t index)
     : m_source(source), m_source_viewer(source_viewer), m_index(index) {
-  SetSkinBg(TBIDC("ListItem"));
-  SetLayoutDistribution(LayoutDistribution::kGravity);
-  SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
-  SetPaintOverflowFadeout(false);
+  set_background_skin(TBIDC("ListItem"));
+  set_layout_distribution(LayoutDistribution::kGravity);
+  set_layout_distribution_position(LayoutDistributionPosition::kLeftTop);
+  set_paint_overflow_fadeout(false);
 
-  GetContentRoot()->LoadFile("Demo/demo01/ui_resources/test_list_item.tb.txt");
-  CheckBox* checkbox = GetElementByIDAndType<CheckBox>(TBIDC("check"));
-  Label* name = GetElementByIDAndType<Label>(TBIDC("name"));
-  Label* info = GetElementByIDAndType<Label>(TBIDC("info"));
-  checkbox->SetValue(item->GetChecked() ? true : false);
-  name->SetText(item->str);
-  info->SetText(item->GetMale() ? "Male" : "Female");
+  content_root()->LoadFile("Demo/demo01/ui_resources/test_list_item.tb.txt");
+  CheckBox* checkbox = GetElementByIdAndType<CheckBox>(TBIDC("check"));
+  Label* name = GetElementByIdAndType<Label>(TBIDC("name"));
+  Label* info = GetElementByIdAndType<Label>(TBIDC("info"));
+  checkbox->set_value(item->GetChecked() ? true : false);
+  name->set_text(item->str);
+  info->set_text(item->GetMale() ? "Male" : "Female");
 }
 
 bool AdvancedItemElement::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
     AdvancedItem* item = m_source->GetItem(m_index);
-    item->SetChecked(ev.target->GetValue() ? true : false);
+    item->SetChecked(ev.target->value() ? true : false);
 
     m_source->InvokeItemChanged(m_index, m_source_viewer);
     return true;
@@ -65,16 +65,16 @@ Element* AdvancedItemSource::CreateItemElement(size_t index,
 
 ListWindow::ListWindow(ListItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
-  if (ListBox* select = GetElementByIDAndType<ListBox>("list")) {
-    select->SetSource(source);
-    select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoY);
+  if (ListBox* select = GetElementByIdAndType<ListBox>("list")) {
+    select->set_source(source);
+    select->scroll_container()->set_scroll_mode(ScrollMode::kAutoY);
   }
 }
 
 bool ListWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target->id() == TBIDC("filter")) {
-    ListBox* select = GetElementByIDAndType<ListBox>("list");
-    select->SetFilter(ev.target->GetText());
+    ListBox* select = GetElementByIdAndType<ListBox>("list");
+    select->set_filter(ev.target->text());
     return true;
   }
   return DemoWindow::OnEvent(ev);
@@ -86,21 +86,21 @@ bool ListWindow::OnEvent(const ElementEvent& ev) {
 AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
     : m_source(source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select_advanced.tb.txt");
-  if (ListBox* select = GetElementByIDAndType<ListBox>("list")) {
-    select->SetSource(source);
-    select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoXAutoY);
+  if (ListBox* select = GetElementByIdAndType<ListBox>("list")) {
+    select->set_source(source);
+    select->scroll_container()->set_scroll_mode(ScrollMode::kAutoXAutoY);
   }
 }
 
 bool AdvancedListWindow::OnEvent(const ElementEvent& ev) {
-  ListBox* select = GetElementByIDAndType<ListBox>("list");
+  ListBox* select = GetElementByIdAndType<ListBox>("list");
   if (select && ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("filter")) {
-    select->SetFilter(ev.target->GetText());
+    select->set_filter(ev.target->text());
     return true;
   } else if (select && ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("add")) {
-    std::string name = GetTextByID(TBIDC("add_name"));
+    std::string name = GetTextById(TBIDC("add_name"));
     if (!name.empty()) {
       m_source->AddItem(std::make_unique<AdvancedItem>(
           name.c_str(), TBIDC("boy_item"), true));

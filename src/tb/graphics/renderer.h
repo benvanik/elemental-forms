@@ -46,14 +46,14 @@ class Bitmap {
  public:
   virtual ~Bitmap() = default;
 
-  virtual int Width() = 0;
-  virtual int Height() = 0;
+  virtual int width() = 0;
+  virtual int height() = 0;
 
   // Updates the bitmap with the given data (in BGRA32 format).
   // NOTE: Implementations for batched renderers should call
   // Renderer::FlushBitmap to make sure any active batch is being flushed
   // before the bitmap is changed.
-  virtual void SetData(uint32_t* data) = 0;
+  virtual void set_data(uint32_t* data) = 0;
 };
 
 // A minimal interface for painting strings and bitmaps.
@@ -74,19 +74,19 @@ class Renderer {
   // Translates all drawing with the given offset.
   virtual void Translate(int dx, int dy) = 0;
 
+  virtual float opacity() = 0;
   // Sets the current opacity that should apply to all drawing (0.f-1.f).
-  virtual void SetOpacity(float opacity) = 0;
-  virtual float GetOpacity() = 0;
+  virtual void set_opacity(float opacity) = 0;
+
+  // Gets the current clip rect. Note: This may be different from the rect sent
+  // to set_clip_rect, due to intersecting with the previous cliprect!
+  virtual Rect clip_rect() = 0;
 
   // Sets a clip rect to the renderer. add_to_current should be true when
   // pushing a new cliprect that should clip inside the last clip rect, and
   // false when restoring. It will return the clip rect that was in use before
   // this call.
-  virtual Rect SetClipRect(const Rect& rect, bool add_to_current) = 0;
-
-  // Gets the current clip rect. Note: This may be different from the rect sent
-  // to SetClipRect, due to intersecting with the previous cliprect!
-  virtual Rect GetClipRect() = 0;
+  virtual Rect set_clip_rect(const Rect& rect, bool add_to_current) = 0;
 
   // Draws the src_rect part of the fragment stretched to dst_rect.
   // dst_rect or src_rect can have negative width and height to achieve

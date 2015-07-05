@@ -22,7 +22,7 @@ void ScrollBar::RegisterInflater() {
 ScrollBar::ScrollBar()
     : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
 {
-  SetAxis(Axis::kX);
+  set_axis(Axis::kX);
   AddChild(&m_handle);
 }
 
@@ -30,34 +30,36 @@ ScrollBar::~ScrollBar() { RemoveChild(&m_handle); }
 
 void ScrollBar::OnInflate(const parsing::InflateInfo& info) {
   auto axis = tb::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
-  SetAxis(axis);
-  SetGravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
+  set_axis(axis);
+  set_gravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
   Element::OnInflate(info);
 }
 
-void ScrollBar::SetAxis(Axis axis) {
+void ScrollBar::set_axis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   if (axis == Axis::kX) {
-    SetSkinBg(TBIDC("ScrollBarBgX"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("ScrollBarFgX"), InvokeInfo::kNoCallbacks);
+    set_background_skin(TBIDC("ScrollBarBgX"), InvokeInfo::kNoCallbacks);
+    m_handle.set_background_skin(TBIDC("ScrollBarFgX"),
+                                 InvokeInfo::kNoCallbacks);
   } else {
-    SetSkinBg(TBIDC("ScrollBarBgY"), InvokeInfo::kNoCallbacks);
-    m_handle.SetSkinBg(TBIDC("ScrollBarFgY"), InvokeInfo::kNoCallbacks);
+    set_background_skin(TBIDC("ScrollBarBgY"), InvokeInfo::kNoCallbacks);
+    m_handle.set_background_skin(TBIDC("ScrollBarFgY"),
+                                 InvokeInfo::kNoCallbacks);
   }
   Invalidate();
 }
 
-void ScrollBar::SetLimits(double min, double max, double visible) {
+void ScrollBar::set_limits(double min, double max, double visible_range) {
   max = std::max(min, max);
-  visible = std::max(visible, 0.0);
-  if (min == m_min && max == m_max && m_visible == visible) {
+  visible_range = std::max(visible_range, 0.0);
+  if (min == m_min && max == m_max && m_visible == visible_range) {
     return;
   }
   m_min = min;
   m_max = max;
-  m_visible = visible;
-  SetValueDouble(m_value);
+  m_visible = visible_range;
+  set_double_value(m_value);
 
   // If we're currently dragging the scrollbar handle, convert the down point
   // to root and then back after the applying the new limit.
@@ -73,7 +75,7 @@ void ScrollBar::SetLimits(double min, double max, double visible) {
   }
 }
 
-void ScrollBar::SetValueDouble(double value) {
+void ScrollBar::set_double_value(double value) {
   value = util::Clamp(value, m_min, m_max);
   if (value == m_value) {
     return;
@@ -91,7 +93,7 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
       int dx = ev.target_x - pointer_down_element_x;
       int dy = ev.target_y - pointer_down_element_y;
       double delta_val = (m_axis == Axis::kX ? dx : dy) / m_to_pixel_factor;
-      SetValueDouble(m_value + delta_val);
+      set_double_value(m_value + delta_val);
     }
     return true;
   } else if (ev.type == EventType::kPointerMove && ev.target == this) {
@@ -99,11 +101,11 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kPointerDown && ev.target == this) {
     bool after_handle = m_axis == Axis::kX ? ev.target_x > m_handle.rect().x
                                            : ev.target_y > m_handle.rect().y;
-    SetValueDouble(m_value + (after_handle ? m_visible : -m_visible));
+    set_double_value(m_value + (after_handle ? m_visible : -m_visible));
     return true;
   } else if (ev.type == EventType::kWheel) {
     double old_val = m_value;
-    SetValueDouble(m_value + ev.delta_y * util::GetPixelsPerLine());
+    set_double_value(m_value + ev.delta_y * util::GetPixelsPerLine());
     return m_value != old_val;
   }
   return false;

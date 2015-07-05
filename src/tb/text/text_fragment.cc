@@ -142,7 +142,7 @@ void TextProps::Pop() {
   data = data_list.GetLast() ? data_list.GetLast() : &base_data;
 }
 
-tb::text::FontFace* TextProps::GetFont() {
+tb::text::FontFace* TextProps::computed_font() {
   return tb::text::FontManager::get()->GetFontFace(data->font_desc);
 }
 
@@ -160,7 +160,7 @@ void TextBlock::Set(const char* newstr, size_t len) {
   Layout(true, true);
 }
 
-void TextBlock::SetAlign(TextAlign align) {
+void TextBlock::set_alignment(TextAlign align) {
   if (TextAlign(this->align) == align) return;
   this->align = int8_t(align);
   Layout(false, false);
@@ -284,7 +284,7 @@ int32_t TextBlock::CalculateLineHeight(tb::text::FontFace* font) const {
 }
 
 int32_t TextBlock::CalculateBaseline(tb::text::FontFace* font) const {
-  return font->GetAscent();
+  return font->ascent();
 }
 
 int TextBlock::GetStartIndentation(tb::text::FontFace* font,
@@ -616,7 +616,7 @@ void TextFragment::BuildSelectionRegion(int32_t translate_x,
 
   int x = translate_x + xpos;
   int y = translate_y + ypos;
-  auto font = props->GetFont();
+  auto font = props->computed_font();
 
   if (content) {
     // Selected embedded content should add to the foreground region.
@@ -645,7 +645,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
   int x = translate_x + xpos;
   int y = translate_y + ypos;
   Color color = props->data->text_color;
-  auto font = props->GetFont();
+  auto font = props->computed_font();
 
   if (content) {
     content->Paint(this, translate_x, translate_y, props);

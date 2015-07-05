@@ -36,24 +36,22 @@ class GroupBox : public Element {
   GroupBox();
   ~GroupBox() override;
 
-  Element* GetHeader() { return &m_header; }
-  ToggleContainer* GetContainer() { return &m_toggle_container; }
+  Element* header_element() { return &m_header; }
+  ToggleContainer* container() { return &m_toggle_container; }
 
   // Sets if the section should be scrolled into view after next layout.
-  void SetPendingScrollIntoView(bool pending_scroll) {
+  void set_pending_scroll_into_view(bool pending_scroll) {
     m_pending_scroll = pending_scroll;
   }
 
+  std::string text() override { return m_header.text(); }
   // Sets the text of the text field.
-  void SetText(const char* text) override { m_header.SetText(text); }
-  std::string GetText() override { return m_header.GetText(); }
+  void set_text(const char* text) override { m_header.set_text(text); }
 
-  void SetValue(int value) override;
-  int GetValue() override { return m_toggle_container.GetValue(); }
+  int value() override { return m_toggle_container.value(); }
+  void set_value(int value) override;
 
-  Element* GetContentRoot() override {
-    return m_toggle_container.GetContentRoot();
-  }
+  Element* content_root() override { return m_toggle_container.content_root(); }
   void OnProcessAfterChildren() override;
 
   PreferredSize OnCalculatePreferredSize(

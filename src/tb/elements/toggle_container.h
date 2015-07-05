@@ -37,21 +37,21 @@ class ToggleContainer : public Element {
 
   ToggleContainer();
 
-  void SetToggleAction(ToggleAction toggle);
-  ToggleAction GetToggleAction() const { return m_toggle; }
+  ToggleAction toggle_action() const { return m_toggle; }
+  void set_toggle_action(ToggleAction toggle);
 
+  bool is_inverted() const { return m_invert; }
   // Sets if the toggle state should be inverted.
-  void SetInvert(bool invert);
-  bool GetInvert() const { return m_invert; }
+  void set_inverted(bool invert);
 
   // Gets the current value, after checking the invert mode.
-  bool GetIsOn() const { return m_invert ? !m_value : !!m_value; }
+  bool is_toggled() const { return m_invert ? !m_value : !!m_value; }
 
+  int value() override { return m_value; }
   // Sets the value of this element.
   // 1 will turn on the toggle, 0 will turn it off (or the opposite if the
   // invert mode is set).
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
+  void set_value(int value) override;
 
   void OnInflate(const parsing::InflateInfo& info) override;
 

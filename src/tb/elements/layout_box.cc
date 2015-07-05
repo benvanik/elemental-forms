@@ -33,12 +33,12 @@ LayoutBox::LayoutBox(Axis axis) : m_axis(axis) {
 
 void LayoutBox::OnInflate(const parsing::InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
-    SetSpacing(Skin::get()->GetDimensionConverter()->GetPxFromString(
+    set_spacing(Skin::get()->dimension_converter()->GetPxFromString(
         spacing, kSpacingFromSkin));
   }
-  SetGravity(Gravity::kAll);
+  set_gravity(Gravity::kAll);
   if (const char* size = info.node->GetValueString("size", nullptr)) {
-    SetLayoutSize(from_string(size, LayoutSize::kPreferred));
+    set_layout_size(from_string(size, LayoutSize::kPreferred));
   }
   if (const char* pos = info.node->GetValueString("position", nullptr)) {
     LayoutPosition lp = LayoutPosition::kCenter;
@@ -49,13 +49,13 @@ void LayoutBox::OnInflate(const parsing::InflateInfo& info) {
     } else if (strstr(pos, "gravity")) {
       lp = LayoutPosition::kGravity;
     }
-    SetLayoutPosition(lp);
+    set_layout_position(lp);
   }
   if (const char* pos = info.node->GetValueString("overflow", nullptr)) {
-    SetLayoutOverflow(from_string(pos, LayoutOverflow::kClip));
+    set_layout_overflow(from_string(pos, LayoutOverflow::kClip));
   }
   if (const char* dist = info.node->GetValueString("distribution", nullptr)) {
-    SetLayoutDistribution(from_string(dist, LayoutDistribution::kPreferred));
+    set_layout_distribution(from_string(dist, LayoutDistribution::kPreferred));
   }
   if (const char* dist =
           info.node->GetValueString("distribution-position", nullptr)) {
@@ -65,25 +65,25 @@ void LayoutBox::OnInflate(const parsing::InflateInfo& info) {
     } else if (strstr(dist, "right") || strstr(dist, "bottom")) {
       ld = LayoutDistributionPosition::kRightBottom;
     }
-    SetLayoutDistributionPosition(ld);
+    set_layout_distribution_position(ld);
   }
   Element::OnInflate(info);
 }
 
-void LayoutBox::SetAxis(Axis axis) {
+void LayoutBox::set_axis(Axis axis) {
   if (axis == m_axis) return;
   m_axis = axis;
   InvalidateLayout(InvalidationMode::kRecursive);
   InvalidateSkinStates();
 }
 
-void LayoutBox::SetSpacing(int spacing) {
+void LayoutBox::set_spacing(int spacing) {
   if (spacing == m_spacing) return;
   m_spacing = spacing;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void LayoutBox::SetOverflowScroll(int overflow_scroll) {
+void LayoutBox::set_overflow_scroll(int overflow_scroll) {
   overflow_scroll = std::min(overflow_scroll, m_overflow);
   overflow_scroll = std::max(overflow_scroll, 0);
   if (overflow_scroll == m_overflow_scroll) {
@@ -98,38 +98,38 @@ void LayoutBox::SetOverflowScroll(int overflow_scroll) {
   }
 }
 
-void LayoutBox::SetLayoutSize(LayoutSize size) {
+void LayoutBox::set_layout_size(LayoutSize size) {
   if (uint32_t(size) == m_packed.layout_mode_size) return;
   m_packed.layout_mode_size = uint32_t(size);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void LayoutBox::SetLayoutPosition(LayoutPosition pos) {
+void LayoutBox::set_layout_position(LayoutPosition pos) {
   if (uint32_t(pos) == m_packed.layout_mode_pos) return;
   m_packed.layout_mode_pos = uint32_t(pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void LayoutBox::SetLayoutOverflow(LayoutOverflow overflow) {
+void LayoutBox::set_layout_overflow(LayoutOverflow overflow) {
   if (uint32_t(overflow) == m_packed.layout_mode_overflow) return;
   m_packed.layout_mode_overflow = uint32_t(overflow);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void LayoutBox::SetLayoutDistribution(LayoutDistribution distribution) {
+void LayoutBox::set_layout_distribution(LayoutDistribution distribution) {
   if (uint32_t(distribution) == m_packed.layout_mode_dist) return;
   m_packed.layout_mode_dist = uint32_t(distribution);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void LayoutBox::SetLayoutDistributionPosition(
+void LayoutBox::set_layout_distribution_position(
     LayoutDistributionPosition distribution_pos) {
   if (uint32_t(distribution_pos) == m_packed.layout_mode_dist_pos) return;
   m_packed.layout_mode_dist_pos = uint32_t(distribution_pos);
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void LayoutBox::SetLayoutOrder(LayoutOrder order) {
+void LayoutBox::set_layout_order(LayoutOrder order) {
   bool reversed = (order == LayoutOrder::kTopToBottom);
   if (reversed == m_packed.mode_reverse_order) return;
   m_packed.mode_reverse_order = reversed;
@@ -215,7 +215,7 @@ int LayoutBox::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
 
 Element* LayoutBox::GetNextNonCollapsedElement(Element* child) const {
   Element* next = GetNextInLayoutOrder(child);
-  while (next && next->GetVisibility() == Visibility::kGone) {
+  while (next && next->visibility() == Visibility::kGone) {
     next = GetNextInLayoutOrder(next);
   }
   return next;
@@ -231,19 +231,19 @@ int LayoutBox::CalculateSpacing() {
   // Get spacing from skin, if not specified.
   int spacing = m_spacing;
   if (spacing == kSpacingFromSkin) {
-    if (auto el = GetSkinBgElement()) {
-      spacing = el->spacing;
+    if (auto el = background_skin_element()) {
+      spacing = el->spacing();
     }
     assert(kSpacingFromSkin == kSkinValueNotSpecified);
     if (spacing == kSpacingFromSkin /*|| spacing == kSkinValueNotSpecified*/) {
-      spacing = Skin::get()->GetDefaultSpacing();
+      spacing = Skin::get()->default_spacing();
     }
   }
   return spacing;
 }
 
 Element* LayoutBox::GetFirstInLayoutOrder() const {
-  return m_packed.mode_reverse_order ? GetLastChild() : GetFirstChild();
+  return m_packed.mode_reverse_order ? last_child() : first_child();
 }
 
 Element* LayoutBox::GetNextInLayoutOrder(Element* child) const {
@@ -267,7 +267,7 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
   }
 
   const int spacing = CalculateSpacing();
-  const Rect padding_rect = GetPaddingRect();
+  const Rect padding_rect = this->padding_rect();
   const Rect layout_rect = GetRotatedRect(padding_rect, m_axis);
 
   auto inner_sc = constraints.ConstrainByPadding(rect().w - padding_rect.w,
@@ -279,14 +279,14 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
   int total_max_pref_diff_w = 0;
   for (Element* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == Visibility::kGone) {
+    if (child->visibility() == Visibility::kGone) {
       continue;
     }
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
         GetRotatedPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const Gravity gravity = GetRotatedGravity(child->GetGravity(), m_axis);
+    const Gravity gravity = GetRotatedGravity(child->gravity(), m_axis);
 
     total_preferred_w += ps.pref_w + ending_space;
     total_min_pref_diff_w += ps.pref_w - ps.min_w;
@@ -352,14 +352,14 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
   int used_space = 0;
   for (Element* child = GetFirstInLayoutOrder(); child;
        child = GetNextInLayoutOrder(child)) {
-    if (child->GetVisibility() == Visibility::kGone) {
+    if (child->visibility() == Visibility::kGone) {
       continue;
     }
 
     const int ending_space = GetTrailingSpace(child, spacing);
     const PreferredSize ps =
         GetRotatedPreferredSize(child->GetPreferredSize(inner_sc), m_axis);
-    const Gravity gravity = GetRotatedGravity(child->GetGravity(), m_axis);
+    const Gravity gravity = GetRotatedGravity(child->gravity(), m_axis);
 
     // Calculate width. May shrink if space is missing, or grow if we have extra
     // space.
@@ -418,7 +418,7 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
   }
   // Update overflow and overflow scroll.
   m_overflow = std::max(0, used_space - layout_rect.w);
-  SetOverflowScroll(m_overflow_scroll);
+  set_overflow_scroll(m_overflow_scroll);
 }
 
 PreferredSize LayoutBox::OnCalculatePreferredContentSize(
@@ -431,16 +431,16 @@ PreferredSize LayoutBox::OnCalculatePreferredContentSize(
 
 bool LayoutBox::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
-    int old_scroll = GetOverflowScroll();
-    SetOverflowScroll(m_overflow_scroll +
-                      ev.delta_y * util::GetPixelsPerLine());
+    int old_scroll = overflow_scroll();
+    set_overflow_scroll(m_overflow_scroll +
+                        ev.delta_y * util::GetPixelsPerLine());
     return m_overflow_scroll != old_scroll;
   }
   return false;
 }
 
 void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {
-  Rect padding_rect = GetPaddingRect();
+  Rect padding_rect = this->padding_rect();
   if (padding_rect.empty()) return;
 
   // If we overflow the layout, apply clipping when painting children.
@@ -461,7 +461,7 @@ void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {
                            m_overflow_scroll == m_overflow ? fluff : 0);
     }
 
-    old_clip_rect = Renderer::get()->SetClipRect(clip_rect, true);
+    old_clip_rect = Renderer::get()->set_clip_rect(clip_rect, true);
 
     TB_IF_DEBUG_SETTING(
         util::DebugInfo::Setting::kLayoutClipping,
@@ -488,7 +488,7 @@ void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {
 
   // Restore clipping
   if (m_overflow) {
-    Renderer::get()->SetClipRect(old_clip_rect, false);
+    Renderer::get()->set_clip_rect(old_clip_rect, false);
   }
 }
 
@@ -518,10 +518,10 @@ void LayoutBox::GetChildTranslation(int& x, int& y) const {
 }
 
 void LayoutBox::ScrollTo(int x, int y) {
-  SetOverflowScroll(m_axis == Axis::kX ? x : y);
+  set_overflow_scroll(m_axis == Axis::kX ? x : y);
 }
 
-Element::ScrollInfo LayoutBox::GetScrollInfo() {
+Element::ScrollInfo LayoutBox::scroll_info() {
   ScrollInfo info;
   if (m_axis == Axis::kX) {
     info.max_x = m_overflow;

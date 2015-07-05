@@ -36,12 +36,12 @@ void UndoStack::Apply(TextView* style_edit, UndoEvent* e, bool reverse) {
   applying = true;
   if (e->insert == reverse) {
     style_edit->selection.SelectNothing();
-    style_edit->caret.SetGlobalOffset(e->gofs, false);
+    style_edit->caret.set_global_offset(e->gofs, false);
     assert(TextOffset(style_edit->caret.pos).GetGlobalOffset(style_edit) ==
            e->gofs);
 
     TextOffset start = style_edit->caret.pos;
-    style_edit->caret.SetGlobalOffset(e->gofs + e->text.size(), false);
+    style_edit->caret.set_global_offset(e->gofs + e->text.size(), false);
     assert(TextOffset(style_edit->caret.pos).GetGlobalOffset(style_edit) ==
            e->gofs + e->text.size());
 
@@ -49,7 +49,7 @@ void UndoStack::Apply(TextView* style_edit, UndoEvent* e, bool reverse) {
     style_edit->selection.RemoveContent();
   } else {
     style_edit->selection.SelectNothing();
-    style_edit->caret.SetGlobalOffset(e->gofs, true, true);
+    style_edit->caret.set_global_offset(e->gofs, true, true);
     style_edit->InsertText(e->text);
     size_t text_len = e->text.size();
     if (text_len > 1) {

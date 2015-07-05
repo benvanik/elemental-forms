@@ -86,14 +86,14 @@ class ElementListener : public util::IntrusiveListEntry<ElementListener>,
 class WeakElementPointer : private ElementListener {
  public:
   WeakElementPointer() = default;
-  WeakElementPointer(Element* element) { Set(element); }
-  ~WeakElementPointer() { Set(nullptr); }
+  WeakElementPointer(Element* element) { reset(element); }
+  ~WeakElementPointer() { reset(nullptr); }
 
   // Sets the element pointer that should be nulled if deleted.
-  void Set(Element* element);
+  void reset(Element* element);
 
   // Returns the element, or nullptr if it has been deleted.
-  Element* Get() const { return m_element; }
+  Element* get() const { return m_element; }
 
  private:
   void OnElementDelete(Element* element) override;

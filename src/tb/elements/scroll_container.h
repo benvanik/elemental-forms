@@ -27,8 +27,6 @@ MAKE_ORDERED_ENUM_STRING_UTILS(ScrollMode, "xy", "y", "y-auto", "auto", "off");
 
 // A container with scrollbars that can scroll its children.
 class ScrollContainer : public Element {
-  friend class ScrollContainerRoot;
-
  public:
   TBOBJECT_SUBCLASS(ScrollContainer, Element);
   static void RegisterInflater();
@@ -36,26 +34,26 @@ class ScrollContainer : public Element {
   ScrollContainer();
   ~ScrollContainer() override;
 
+  bool is_adapting_to_content_size() { return m_adapt_to_content_size; }
   // Sets to true if the preferred size of this container should adapt to the
   // preferred size of the content. This is disabled by default.
-  void SetAdaptToContentSize(bool adapt);
-  bool GetAdaptToContentSize() { return m_adapt_to_content_size; }
+  void set_adapt_to_content_size(bool adapt);
 
+  bool is_adapting_content_size() { return m_adapt_content_size; }
   // Sets to true if the content should adapt to the available size of this
   // container when it's larger than the preferred size.
-  void SetAdaptContentSize(bool adapt);
-  bool GetAdaptContentSize() { return m_adapt_content_size; }
+  void set_adapt_content_size(bool adapt);
 
-  void SetScrollMode(ScrollMode mode);
-  ScrollMode GetScrollMode() { return m_mode; }
+  ScrollMode scroll_mode() { return m_mode; }
+  void set_scroll_mode(ScrollMode mode);
 
   void ScrollTo(int x, int y) override;
-  Element::ScrollInfo GetScrollInfo() override;
-  Element* GetScrollRoot() override { return &m_root; }
+  Element::ScrollInfo scroll_info() override;
+  Element* scroll_root() override { return &m_root; }
 
   void InvalidateLayout(InvalidationMode il) override;
 
-  Rect GetPaddingRect() override;
+  Rect padding_rect() override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override;
 
@@ -64,7 +62,7 @@ class ScrollContainer : public Element {
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
 
-  Element* GetContentRoot() override { return &m_root; }
+  Element* content_root() override { return &m_root; }
 
  protected:
   class ScrollContainerRoot : public Element {

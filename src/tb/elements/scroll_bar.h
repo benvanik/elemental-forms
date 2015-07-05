@@ -24,37 +24,37 @@ class ScrollBar : public Element {
   ScrollBar();
   ~ScrollBar() override;
 
+  Axis axis() const override { return m_axis; }
   // Sets along which axis the scrollbar should scroll.
-  void SetAxis(Axis axis) override;
-  Axis GetAxis() const override { return m_axis; }
+  void set_axis(Axis axis) override;
 
+  double min_value() const { return m_min; }
+  double max_value() const { return m_max; }
   // Sets the min, max limits for the scrollbar.
   // The visible parameter is how much of the range that is visible.
   // When this is called, the scrollbar might change value and invoke if the
   // current value is outside of the new limits.
-  void SetLimits(double min, double max, double visible);
+  void set_limits(double min, double max, double visible_range);
 
   // Returns true if the scrollbar has anywhere to go with the current limits.
-  bool CanScroll() const { return m_visible > 0; }
+  bool can_scroll() const { return m_visible > 0; }
 
   // Returns true if the scrollbar can scroll in the positive direction with its
   // current limits.
-  bool CanScrollPositive() const { return m_value < m_max; }
+  bool can_scroll_positive() const { return m_value < m_max; }
 
   // Returns true if the scrollbar can scroll in the negative direction with its
   // current limits.
-  bool CanScrollNegative() const { return m_value > m_min; }
+  bool can_scroll_negative() const { return m_value > m_min; }
 
-  double GetMinValue() const { return m_min; }
-  double GetMaxValue() const { return m_max; }
-  double GetVisible() const { return m_visible; }
+  double visible_range() const { return m_visible; }
 
+  double double_value() override { return m_value; }
   // Same as SetValue, but with double precision.
-  void SetValueDouble(double value) override;
-  double GetValueDouble() override { return m_value; }
+  void set_double_value(double value) override;
 
-  void SetValue(int value) override { SetValueDouble(value); }
-  int GetValue() override { return (int)GetValueDouble(); }
+  int value() override { return (int)double_value(); }
+  void set_value(int value) override { set_double_value(value); }
 
   void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const ElementEvent& ev) override;

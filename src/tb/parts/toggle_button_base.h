@@ -22,8 +22,8 @@ class BaseRadioCheckBox : public Element {
 
   BaseRadioCheckBox();
 
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
+  void set_value(int value) override;
+  int value() override { return m_value; }
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;

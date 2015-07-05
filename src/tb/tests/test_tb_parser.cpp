@@ -132,8 +132,8 @@ TB_TEST_GROUP(tb_parser) {
   TB_TEST(arrays_numbers) {
     ParseNode* arr_n = node.GetNode("arrays>numbers");
     TB_VERIFY(arr_n);
-    TB_VERIFY(arr_n->GetValue().array_size() == 5);
-    ValueArray* arr = arr_n->GetValue().as_array();
+    TB_VERIFY(arr_n->value().array_size() == 5);
+    ValueArray* arr = arr_n->value().as_array();
     TB_VERIFY(arr->at(0)->as_integer() == 1);
     TB_VERIFY(arr->at(1)->as_integer() == 2);
     TB_VERIFY_FLOAT(arr->at(2)->as_float(), 0.5);
@@ -144,8 +144,8 @@ TB_TEST_GROUP(tb_parser) {
   TB_TEST(arrays_dimensions) {
     ParseNode* arr_n = node.GetNode("arrays>dimensions");
     TB_VERIFY(arr_n);
-    TB_VERIFY(arr_n->GetValue().array_size() == 2);
-    ValueArray* arr = arr_n->GetValue().as_array();
+    TB_VERIFY(arr_n->value().array_size() == 2);
+    ValueArray* arr = arr_n->value().as_array();
     TB_VERIFY(arr->at(0)->as_integer() == 1);
     TB_VERIFY(arr->at(1)->as_integer() == 2);
   }
@@ -155,8 +155,8 @@ TB_TEST_GROUP(tb_parser) {
   //	{
   //		Node *arr_n = node.GetNode("arrays>strings");
   //		TB_VERIFY(arr_n);
-  //		TB_VERIFY(arr_n->GetValue().array_size() == 5);
-  //		ValueArray *arr = arr_n->GetValue().as_array();
+  //		TB_VERIFY(arr_n->value().array_size() == 5);
+  //		ValueArray *arr = arr_n->value().as_array();
   //		TB_VERIFY_STR(arr->GetValue(0)->as_string(), "Foo");
   //		TB_VERIFY_STR(arr->GetValue(1)->as_string(), "'Foo'");
   //		TB_VERIFY_STR(arr->GetValue(2)->as_string(), "Foo");
@@ -168,8 +168,8 @@ TB_TEST_GROUP(tb_parser) {
   //	{
   //		Node *arr_n = node.GetNode("arrays>mixed");
   //		TB_VERIFY(arr_n);
-  //		TB_VERIFY(arr_n->GetValue().array_size() == 4);
-  //		ValueArray *arr = arr_n->GetValue().as_array();
+  //		TB_VERIFY(arr_n->value().array_size() == 4);
+  //		ValueArray *arr = arr_n->value().as_array();
   //		TB_VERIFY_STR(arr->GetValue(0)->as_string(), "Foo");
   //		TB_VERIFY(arr->GetValue(1)->as_integer() == 2);
   //		TB_VERIFY_STR(arr->GetValue(2)->as_string(), "bar");

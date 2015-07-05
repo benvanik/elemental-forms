@@ -48,10 +48,10 @@ class FontDescription {
   // style), and should be used to identify a certain font face.
   // If this is 0, the font description is unspecified. For a element, that
   // means that the font should be inherited from the parent element.
-  TBID GetFontFaceID() const { return id_ + packed_init_; }
+  TBID font_face_id() const { return id_ + packed_init_; }
 
-  void SetSize(uint32_t size) { packed_.size = std::min(size, 0x8000u); }
-  uint32_t GetSize() const { return packed_.size; }
+  uint32_t size() const { return packed_.size; }
+  void set_size(uint32_t size) { packed_.size = std::min(size, 0x8000u); }
 
   bool is_bold() const { return !!packed_.bold; }
   void set_bold(bool value) { packed_.bold = value ? 1 : 0; }

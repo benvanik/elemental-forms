@@ -28,21 +28,21 @@ class LabelContainer : public Element {
   LabelContainer();
   ~LabelContainer() override;
 
+  Axis axis() const override { return m_layout.axis(); }
   // Sets along which axis the content should layout (if the label has more
   // content than the text).
-  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
-  Axis GetAxis() const override { return m_layout.GetAxis(); }
+  void set_axis(Axis axis) override { m_layout.set_axis(axis); }
 
+  std::string text() override { return m_textfield.text(); }
   // Sets the text of the label.
-  void SetText(const char* text) override { m_textfield.SetText(text); }
-  std::string GetText() override { return m_textfield.GetText(); }
+  void set_text(const char* text) override { m_textfield.set_text(text); }
 
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override {
     return m_layout.GetPreferredSize();
   }
 
-  Element* GetContentRoot() override { return &m_layout; }
+  Element* content_root() override { return &m_layout; }
 
   bool OnEvent(const ElementEvent& ev) override;
 

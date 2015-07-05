@@ -40,9 +40,9 @@ class BitmapGL : public Bitmap {
   ~BitmapGL() override;
 
   bool Init(int width, int height, uint32_t* data);
-  int Width() override { return m_w; }
-  int Height() override { return m_h; }
-  void SetData(uint32_t* data) override;
+  int width() override { return m_w; }
+  int height() override { return m_h; }
+  void set_data(uint32_t* data) override;
 
  public:
   RendererGL* m_renderer = nullptr;
@@ -61,7 +61,7 @@ class RendererGL : public BatchingRenderer {
                                        uint32_t* data) override;
 
   void RenderBatch(Batch* batch) override;
-  void SetClipRect(const Rect& rect) override;
+  void set_clip_rect(const Rect& rect) override;
 };
 
 }  // namespace graphics

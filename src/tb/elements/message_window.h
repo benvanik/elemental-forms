@@ -53,7 +53,7 @@ class MessageWindow : public Window, private ElementListener {
   bool Show(const std::string& title, const std::string& message,
             MessageWindowSettings* settings = nullptr);
 
-  Element* GetEventDestination() override { return m_target.Get(); }
+  Element* event_destination() override { return m_target.get(); }
 
   bool OnEvent(const ElementEvent& ev) override;
   void OnDie() override;

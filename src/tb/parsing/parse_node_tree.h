@@ -31,8 +31,8 @@ class ParseNodeTree : public util::IntrusiveListEntry<ParseNodeTree> {
   ParseNodeTree(const char* name);
   virtual ~ParseNodeTree();
 
-  const std::string& GetName() const { return m_name; }
-  const TBID& GetNameID() const { return m_name_id; }
+  const std::string& name() const { return m_name; }
+  const TBID& name_id() const { return m_name_id; }
 
   // Reads the data file. This will *not* invoke any change listener!
   bool ReadFile(const char* filename) { return m_node.ReadFile(filename); }

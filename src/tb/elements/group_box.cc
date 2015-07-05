@@ -14,37 +14,37 @@ namespace tb {
 namespace elements {
 
 GroupBox::Header::Header() {
-  SetSkinBg(TBIDC("GroupBoxHeader"));
-  SetGravity(Gravity::kLeft | Gravity::kRight);
-  SetToggleMode(true);
+  set_background_skin(TBIDC("GroupBoxHeader"));
+  set_gravity(Gravity::kLeft | Gravity::kRight);
+  set_toggle_mode(true);
 }
 
 bool GroupBox::Header::OnEvent(const ElementEvent& ev) {
   if (ev.target == this && ev.type == EventType::kChanged &&
-      GetParent()->GetParent()) {
-    if (GroupBox* section =
-            util::SafeCast<GroupBox>(GetParent()->GetParent())) {
-      section->GetContainer()->SetValue(GetValue());
+      parent()->parent()) {
+    if (GroupBox* section = util::SafeCast<GroupBox>(parent()->parent())) {
+      section->container()->set_value(value());
 
       // Try to scroll the container into view when expanded.
-      section->SetPendingScrollIntoView(GetValue() ? true : false);
+      section->set_pending_scroll_into_view(value() ? true : false);
     }
   }
   return Button::OnEvent(ev);
 }
 
 GroupBox::GroupBox() {
-  SetGravity(Gravity::kLeft | Gravity::kRight);
+  set_gravity(Gravity::kLeft | Gravity::kRight);
 
-  SetSkinBg(TBIDC("GroupBox"), InvokeInfo::kNoCallbacks);
-  m_layout.SetSkinBg(TBIDC("GroupBox.layout"), InvokeInfo::kNoCallbacks);
+  set_background_skin(TBIDC("GroupBox"), InvokeInfo::kNoCallbacks);
+  m_layout.set_background_skin(TBIDC("GroupBox.layout"),
+                               InvokeInfo::kNoCallbacks);
 
-  m_toggle_container.SetSkinBg(TBIDC("GroupBox.container"));
-  m_toggle_container.SetToggleAction(ToggleAction::kExpanded);
-  m_toggle_container.SetGravity(Gravity::kAll);
-  m_layout.SetAxis(Axis::kY);
-  m_layout.SetGravity(Gravity::kAll);
-  m_layout.SetLayoutSize(LayoutSize::kAvailable);
+  m_toggle_container.set_background_skin(TBIDC("GroupBox.container"));
+  m_toggle_container.set_toggle_action(ToggleAction::kExpanded);
+  m_toggle_container.set_gravity(Gravity::kAll);
+  m_layout.set_axis(Axis::kY);
+  m_layout.set_gravity(Gravity::kAll);
+  m_layout.set_layout_size(LayoutSize::kAvailable);
 
   AddChild(&m_layout);
   m_layout.AddChild(&m_header);
@@ -61,9 +61,9 @@ void GroupBox::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(GroupBox, Value::Type::kInt, ElementZ::kTop);
 }
 
-void GroupBox::SetValue(int value) {
-  m_header.SetValue(value);
-  m_toggle_container.SetValue(value);
+void GroupBox::set_value(int value) {
+  m_header.set_value(value);
+  m_toggle_container.set_value(value);
 }
 
 void GroupBox::OnProcessAfterChildren() {

@@ -24,7 +24,7 @@ class IconBox : public Element {
   static void RegisterInflater();
 
   IconBox() = default;
-  IconBox(const TBID& skin_bg) { SetSkinBg(skin_bg); }
+  IconBox(const TBID& skin_bg) { set_background_skin(skin_bg); }
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;

@@ -52,7 +52,7 @@ class IntrusiveListIterator {
   void Reset();
 
   /** Get the current link or nullptr if out of bounds. */
-  IntrusiveListEntry* Get() const { return current_entry_; }
+  IntrusiveListEntry* get() const { return current_entry_; }
 
   /** Get the current link and step the iterator to the next (forward or
   * backward). */
@@ -183,13 +183,13 @@ class IntrusiveList {
                                       forward) {}
     Iterator(IntrusiveList<T>* linklistof, T* link, bool forward)
         : impl::IntrusiveListIterator(&linklistof->base_list_, link, forward) {}
-    inline T* Get() const {
-      return (T*)static_cast<TLink*>(impl::IntrusiveListIterator::Get());
+    inline T* get() const {
+      return (T*)static_cast<TLink*>(impl::IntrusiveListIterator::get());
     }
     inline T* GetAndStep() {
       return (T*)static_cast<TLink*>(impl::IntrusiveListIterator::GetAndStep());
     }
-    inline operator T*() const { return (T*)static_cast<TLink*>(Get()); }
+    inline operator T*() const { return (T*)static_cast<TLink*>(get()); }
   };
 
   /** Get a forward iterator that starts with the first link. */

@@ -154,11 +154,11 @@ class ElementEvent : public util::TypedObject {
   // you'll get a count that always cycle in the range you need.
   int GetCountCycle(int max) { return ((count - 1) % max) + 1; }
 
-  bool IsPointerEvent() const {
+  bool is_pointer_event() const {
     return type == EventType::kPointerDown || type == EventType::kPointerUp ||
            type == EventType::kPointerMove;
   }
-  bool IsKeyEvent() const {
+  bool is_key_event() const {
     return type == EventType::kKeyDown || type == EventType::kKeyUp;
   }
 };

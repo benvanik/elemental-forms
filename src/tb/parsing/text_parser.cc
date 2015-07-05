@@ -192,8 +192,8 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
   multi_line_sub_level = 0;
 
   while (size_t read_len =
-             stream->GetMoreData((char*)work.GetData(), work.GetCapacity())) {
-    char* buf = work.GetData();
+             stream->GetMoreData((char*)work.data(), work.capacity())) {
+    char* buf = work.data();
 
     // Skip BOM (BYTE ORDER MARK) character, often in the beginning of UTF-8
     // documents.
@@ -218,7 +218,7 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
         line.Append(buf + line_start, line_len);
 
         // Strip away trailing '\r' if the line has it.
-        char* linebuf = line.GetData();
+        char* linebuf = line.data();
         size_t linebuf_len = line.GetAppendPos();
         if (linebuf_len > 0 && linebuf[linebuf_len - 1] == '\r') {
           linebuf[linebuf_len - 1] = 0;
@@ -228,7 +228,7 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
         line.Append("", 1);
 
         // Handle line.
-        OnLine(line.GetData(), target);
+        OnLine(line.data(), target);
         current_line_nr++;
 
         line.ResetAppendPos();
@@ -243,7 +243,7 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
   }
   if (line.GetAppendPos()) {
     line.Append("", 1);
-    OnLine(line.GetData(), target);
+    OnLine(line.data(), target);
     current_line_nr++;
   }
   return Status::kOk;
@@ -388,7 +388,7 @@ void TextParser::OnMultiline(char* line, TextParserTarget* target) {
 
   if (!pending_multiline) {
     // Ready with all lines.
-    value.set_string(multi_line_value.GetData(), Value::Set::kAsStatic);
+    value.set_string(multi_line_value.data(), Value::Set::kAsStatic);
     target->OnToken(current_line_nr, multi_line_token.c_str(), value);
 
     if (multi_line_sub_level) {

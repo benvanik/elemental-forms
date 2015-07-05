@@ -193,8 +193,8 @@ class SkinElementStateList {
       SkinElementState::MatchRule rule =
           SkinElementState::MatchRule::kDefault) const;
 
-  bool HasStateElements() const { return m_state_elements.HasLinks(); }
-  const SkinElementState* GetFirstElement() const {
+  bool has_state_elements() const { return m_state_elements.HasLinks(); }
+  const SkinElementState* first_element() const {
     return m_state_elements.GetFirst();
   }
 
@@ -230,26 +230,8 @@ class SkinElement {
   int16_t padding_top = 0;     // Top padding for any content in the element.
   int16_t padding_right = 0;   // Right padding for any content in the element.
   int16_t padding_bottom = 0;  // Bottom padding for any content in the element.
-  int16_t width =
-      kSkinValueNotSpecified;  // Intrinsic width or kSkinValueNotSpecified
-  int16_t height =
-      kSkinValueNotSpecified;  // Intrinsic height or kSkinValueNotSpecified
-  int16_t pref_width =
-      kSkinValueNotSpecified;  // Preferred width or kSkinValueNotSpecified
-  int16_t pref_height =
-      kSkinValueNotSpecified;  // Preferred height or kSkinValueNotSpecified
-  int16_t min_width =
-      kSkinValueNotSpecified;  // Minimum width or kSkinValueNotSpecified
-  int16_t min_height =
-      kSkinValueNotSpecified;  // Minimum height or kSkinValueNotSpecified
-  int16_t max_width =
-      kSkinValueNotSpecified;  // Maximum width or kSkinValueNotSpecified
-  int16_t max_height =
-      kSkinValueNotSpecified;  // Maximum height or kSkinValueNotSpecified
-  int16_t spacing = kSkinValueNotSpecified;  // Spacing used on layout or
-                                             // kSkinValueNotSpecified.
-  int16_t content_ofs_x = 0;  // X offset of the content in the element.
-  int16_t content_ofs_y = 0;  // Y offset of the content in the element.
+  int16_t content_ofs_x = 0;   // X offset of the content in the element.
+  int16_t content_ofs_y = 0;   // Y offset of the content in the element.
   int16_t img_ofs_x = 0;  // X offset for type image. Relative to image position
                           // (img_position_x).
   int16_t img_ofs_y = 0;  // Y offset for type image. Relative to image position
@@ -271,44 +253,68 @@ class SkinElement {
       tag;  // This value is free to use for anything. It's not used internally.
 
   // Gets the minimum width, or kSkinValueNotSpecified if not specified.
-  int GetMinWidth() const { return min_width; }
-
+  int min_width() const { return min_width_; }
   // Gets the minimum height, or kSkinValueNotSpecified if not specified.
-  int GetMinHeight() const { return min_height; }
+  int min_height() const { return min_height_; }
 
   // Gets the intrinsic minimum width. It will be calculated based on the skin
   // properties.
-  int GetIntrinsicMinWidth() const;
-
+  int intrinsic_min_width() const;
   // Gets the intrinsic minimum height. It will be calculated based on the skin
   // properties.
-  int GetIntrinsicMinHeight() const;
+  int intrinsic_min_height() const;
 
   // Gets the maximum width, or kSkinValueNotSpecified if not specified.
-  int GetMaxWidth() const { return max_width; }
-
+  int max_width() const { return max_width_; }
   // Gets the maximum height, or kSkinValueNotSpecified if not specified.
-  int GetMaxHeight() const { return max_height; }
+  int max_height() const { return max_height_; }
 
   // Gets the preferred width, or kSkinValueNotSpecified if not specified.
-  int GetPrefWidth() const { return pref_width; }
-
+  int preferred_width() const { return pref_width_; }
   // Gets the preferred height, or kSkinValueNotSpecified if not specified.
-  int GetPrefHeight() const { return pref_height; }
+  int preferred_height() const { return pref_height_; }
 
   // Gets the intrinsic width. If not specified using the "width" attribute, it
   // will be calculated based on the skin properties. If it can't be calculated
   // it will return kSkinValueNotSpecified.
-  int GetIntrinsicWidth() const;
-
+  int intrinsic_width() const;
   // Gets the intrinsic height. If not specified using the "height" attribute,
   // it will be calculated based on the skin properties. If it can't be
   // calculated it will return kSkinValueNotSpecified.
-  int GetIntrinsicHeight() const;
+  int intrinsic_height() const;
+
+  // Gets the spacing used on layout or kSkinValueNotSpecified.
+  int spacing() const { return spacing_; }
 
   // Sets the DPI that the bitmap was loaded in. This may modify properties to
   // compensate for the bitmap resolution.
   void SetBitmapDPI(const util::DimensionConverter& dim_conv, int bitmap_dpi);
+
+  // Checks if there's a exact or partial match for the given state in either
+  // override, child or overlay element list. State elements with state "all"
+  // will be ignored.
+  bool has_state(SkinState state, SkinConditionContext& context);
+
+  // Returns true if this element has overlay elements.
+  bool has_overlay_elements() const {
+    return m_overlay_elements.has_state_elements();
+  }
+
+  void Load(parsing::ParseNode* n, Skin* skin, const char* skin_path);
+
+ private:
+  int16_t width_ = kSkinValueNotSpecified;
+  int16_t height_ = kSkinValueNotSpecified;
+  int16_t pref_width_ = kSkinValueNotSpecified;
+  int16_t pref_height_ = kSkinValueNotSpecified;
+  int16_t min_width_ = kSkinValueNotSpecified;
+  int16_t min_height_ = kSkinValueNotSpecified;
+  int16_t max_width_ = kSkinValueNotSpecified;
+  int16_t max_height_ = kSkinValueNotSpecified;
+  int16_t spacing_ = kSkinValueNotSpecified;
+
+ private:
+  friend class Skin;
 
   // List of override elements (See Skin::PaintSkin).
   SkinElementStateList m_override_elements;
@@ -321,18 +327,6 @@ class SkinElement {
 
   // List of overlay elements (See Skin::PaintSkin).
   SkinElementStateList m_overlay_elements;
-
-  // Checks if there's a exact or partial match for the given state in either
-  // override, child or overlay element list. State elements with state "all"
-  // will be ignored.
-  bool HasState(SkinState state, SkinConditionContext& context);
-
-  // Returns true if this element has overlay elements.
-  bool HasOverlayElements() const {
-    return m_overlay_elements.HasStateElements();
-  }
-
-  void Load(parsing::ParseNode* n, Skin* skin, const char* skin_path);
 };
 
 class SkinListener {
@@ -356,8 +350,8 @@ class Skin : private graphics::RendererListener {
   Skin();
   ~Skin() override;
 
-  void SetListener(SkinListener* listener) { m_listener = listener; }
-  SkinListener* GetListener() const { return m_listener; }
+  SkinListener* listener() const { return m_listener; }
+  void set_listener(SkinListener* listener) { m_listener = listener; }
 
   // Loads the skin file and the bitmaps it refers to.
   // If override_skin_file is specified, it will also be loaded into this skin
@@ -378,13 +372,13 @@ class Skin : private graphics::RendererListener {
   // Gets the dimension converter used for the current skin. This dimension
   // converter converts to px by the same factor as the skin (based on the skin
   // DPI settings).
-  const util::DimensionConverter* GetDimensionConverter() const {
+  const util::DimensionConverter* dimension_converter() const {
     return &m_dim_conv;
   }
 
   // Gets the skin element with the given id.
   // Returns nullptr if there's no match.
-  SkinElement* GetSkinElement(const TBID& skin_id) const;
+  SkinElement* GetSkinElementById(const TBID& skin_id) const;
 
   // Gets the skin element with the given id and state.
   // This is like calling GetSkinElement and also following any strong overrides
@@ -395,12 +389,12 @@ class Skin : private graphics::RendererListener {
       const TBID& skin_id, SkinState state,
       SkinConditionContext& context) const;
 
-  Color GetDefaultTextColor() const { return m_default_text_color; }
-  float GetDefaultDisabledOpacity() const { return m_default_disabled_opacity; }
-  float GetDefaultPlaceholderOpacity() const {
+  Color default_text_color() const { return m_default_text_color; }
+  float default_disabled_opacity() const { return m_default_disabled_opacity; }
+  float default_placeholder_opacity() const {
     return m_default_placeholder_opacity;
   }
-  int GetDefaultSpacing() const { return m_default_spacing; }
+  int default_spacing() const { return m_default_spacing; }
 
   // Paints the skin at dst_rect.
   //
@@ -456,7 +450,7 @@ class Skin : private graphics::RendererListener {
   void Debug();
 #endif  // TB_RUNTIME_DEBUG_INFO
 
-  graphics::BitmapFragmentManager* GetFragmentManager() {
+  graphics::BitmapFragmentManager* fragment_manager() {
     return &m_frag_manager;
   }
 

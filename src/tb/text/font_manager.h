@@ -33,8 +33,8 @@ using UCS4 = tb::text::utf8::UCS4;
 // Provides information about a font file associated with a font id.
 class FontInfo {
  public:
-  const std::string& GetFilename() const { return m_filename; }
-  const std::string& GetName() const { return m_name; }
+  const std::string& filename() const { return m_filename; }
+  const std::string& name() const { return m_name; }
 
   // Gets the font ID that can be used to create this font from a
   // FontDescription (See FontDescription::SetID).
@@ -132,18 +132,18 @@ class FontManager {
   // FontDescription.
   FontFace* CreateFontFace(const FontDescription& font_desc);
 
+  FontDescription default_font_description() const {
+    return m_default_font_desc;
+  }
   // Sets the default font description. This is the font description that will
   // be used by default for elements. By default, the default description is
   // using the test dummy font.
-  void SetDefaultFontDescription(const FontDescription& font_desc) {
+  void set_default_font_description(const FontDescription& font_desc) {
     m_default_font_desc = font_desc;
-  }
-  FontDescription GetDefaultFontDescription() const {
-    return m_default_font_desc;
   }
 
   // Returns the glyph cache used for fonts created by this font manager.
-  FontGlyphCache* GetGlyphCache() { return &m_glyph_cache; }
+  FontGlyphCache* glyph_cache() { return &m_glyph_cache; }
 
  private:
   static std::unique_ptr<FontManager> font_manager_singleton_;

@@ -86,7 +86,7 @@ class Animation : public util::TypedObject,
   ~Animation() override = default;
 
   /** Returns true if the object is currently animating. */
-  bool IsAnimating() const { return linklist ? true : false; }
+  bool is_animating() const { return linklist ? true : false; }
 
   // Called on animation start.
   virtual void OnAnimationStart() = 0;
@@ -139,9 +139,9 @@ class FloatAnimation : public Animation {
     Animation::animation_duration = animation_duration;
   }
 
-  float GetValue() { return src_val + (dst_val - src_val) * current_progress; }
-  void SetValueAnimated(float value);
-  void SetValueImmediately(float value);
+  float value() { return src_val + (dst_val - src_val) * current_progress; }
+  void set_value_animated(float new_value);
+  void set_value_immediately(float new_value);
 
   void OnAnimationStart() override { current_progress = 0; }
   void OnAnimationUpdate(float progress) override {
@@ -167,11 +167,11 @@ class ExternalFloatAnimation : public FloatAnimation {
 
   void OnAnimationStart() override {
     FloatAnimation::OnAnimationStart();
-    *target_value = GetValue();
+    *target_value = value();
   }
   void OnAnimationUpdate(float progress) override {
     FloatAnimation::OnAnimationUpdate(progress);
-    *target_value = GetValue();
+    *target_value = value();
   }
 };
 

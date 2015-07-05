@@ -96,7 +96,7 @@ bool ElementListener::InvokeElementInvokeEvent(Element* element,
   return handled;
 }
 
-void WeakElementPointer::Set(Element* element) {
+void WeakElementPointer::reset(Element* element) {
   if (m_element == element) {
     return;
   }
@@ -111,7 +111,7 @@ void WeakElementPointer::Set(Element* element) {
 
 void WeakElementPointer::OnElementDelete(Element* element) {
   if (element == m_element) {
-    Set(nullptr);
+    reset(nullptr);
   }
 }
 

@@ -26,15 +26,15 @@ class ElementString {
   int GetWidth(Element* element);
   int GetHeight(Element* element);
 
-  void SetText(const char* text) { m_text = text; }
-  std::string GetText() const { return m_text; }
+  void set_text(const char* text) { m_text = text; }
+  std::string text() const { return m_text; }
 
   bool empty() const { return m_text.empty(); }
 
   // Sets which alignment the text should have if the space given when painting
   // is larger than the text.
-  void SetTextAlign(TextAlign align) { m_text_align = align; }
-  TextAlign GetTextAlign() { return m_text_align; }
+  void set_text_align(TextAlign align) { m_text_align = align; }
+  TextAlign text_align() { return m_text_align; }
 
  public:
   std::string m_text;
@@ -49,22 +49,22 @@ class Label : public Element {
 
   Label();
 
+  std::string text() override { return m_text.text(); }
   // Sets the text of the text field.
-  void SetText(const char* text) override;
-  using Element::SetText;
-  std::string GetText() override { return m_text.GetText(); }
+  void set_text(const char* text) override;
+  using Element::set_text;
 
   bool empty() const { return m_text.empty(); }
 
+  TextAlign text_align() { return m_text.text_align(); }
   // Sets which alignment the text should have if the space given when painting
   // is larger than the text.
-  void SetTextAlign(TextAlign align) { m_text.SetTextAlign(align); }
-  TextAlign GetTextAlign() { return m_text.GetTextAlign(); }
+  void set_text_align(TextAlign align) { m_text.set_text_align(align); }
 
+  bool is_squeezable() { return m_squeezable; }
   // Sets if this text field should be allowed to squeeze below its preferred
   // size. If squeezable it may shrink to width 0.
-  void SetSqueezable(bool squeezable);
-  bool GetSqueezable() { return m_squeezable; }
+  void set_squeezable(bool squeezable);
 
   void OnInflate(const parsing::InflateInfo& info) override;
   PreferredSize OnCalculatePreferredContentSize(

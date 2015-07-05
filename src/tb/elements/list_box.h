@@ -34,18 +34,18 @@ class ListBox : public Element, public ListItemObserver {
   // If you need to add other types of items, or if you want to share item
   // sources between several DropDownButton/ListBox elements, use SetSource
   // using a external item source.
-  GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
+  GenericStringItemSource* default_source() { return &m_default_source; }
 
+  const std::string& filter() const { return m_filter; }
   // Sets filter string so only matching items will be showed.
   // Set nullptr or empty string to remove filter and show all items.
-  void SetFilter(const char* filter);
-  void SetFilter(const std::string& filter) { SetFilter(filter.c_str()); }
-  const std::string& GetFilter() const { return m_filter; }
+  void set_filter(const char* filter);
+  void set_filter(const std::string& filter) { set_filter(filter.c_str()); }
 
   // Sets the language string id for the header.
   // The header is shown at the top of the list when only a subset of all items
   // are shown.
-  void SetHeaderString(const TBID& id);
+  void set_header_string(const TBID& id);
 
   // Makes the list update its items to reflect the items from the in the
   // current source. The update will take place next time the list is validated.
@@ -54,14 +54,14 @@ class ListBox : public Element, public ListItemObserver {
   // Makes sure the list is reflecting the current items in the source.
   void ValidateList();
 
+  int value() override { return m_value; }
   // Sets the value that is the selected item.
   // In lists with multiple selectable items it's the item that is the current
   // focus.
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
+  void set_value(int value) override;
 
   // Gets the ID of the selected item, or 0 if there is no item selected.
-  TBID GetSelectedItemID();
+  TBID selected_item_id();
 
   // Changes the value to a non disabled item that is visible with the current
   // filter.
@@ -83,7 +83,7 @@ class ListBox : public Element, public ListItemObserver {
   void ScrollToSelectedItem();
 
   // Returns the scrollcontainer used in this list.
-  ScrollContainer* GetScrollContainer() { return &m_container; }
+  ScrollContainer* scroll_container() { return &m_container; }
 
   void OnInflate(const parsing::InflateInfo& info) override;
   void OnSkinChanged() override;

@@ -66,11 +66,11 @@ class Window : public Element {
   // time.
   // This should not be used to change focus. Call Element::SetFocus to focus,
   // which will call this method if the window is inactive!
-  void SetLastFocus(Element* last_focus) { m_last_focus.Set(last_focus); }
+  void set_last_focus(Element* last_focus) { m_last_focus.reset(last_focus); }
 
+  WindowSettings settings() const { return m_settings; }
   // Sets settings for how this window should look and behave.
-  void SetSettings(WindowSettings settings);
-  WindowSettings GetSettings() const { return m_settings; }
+  void set_settings(WindowSettings settings);
 
   // ResizeFit specifies how ResizeToFitContent should resize the window.
   enum class ResizeFit {
@@ -89,16 +89,16 @@ class Window : public Element {
   // set_rect(GetResizeToFitContentRect(fit)).
   void ResizeToFitContent(ResizeFit fit = ResizeFit::kPreferred);
 
+  std::string text() override { return m_textfield.text(); }
   // Sets the window title.
-  void SetText(const char* text) override { m_textfield.SetText(text); }
-  using Element::SetText;
-  std::string GetText() override { return m_textfield.GetText(); }
+  void set_text(const char* text) override { m_textfield.set_text(text); }
+  using Element::set_text;
 
   // Gets the height of the title bar (or 0 if the WindowSettings say this
   // window shouldn't have any title bar).
-  int GetTitleHeight();
+  int title_bar_height();
 
-  Rect GetPaddingRect() override;
+  Rect padding_rect() override;
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
 

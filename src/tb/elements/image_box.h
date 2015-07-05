@@ -26,8 +26,8 @@ class ImageBox : public Element {
 
   ImageBox() = default;
 
-  void SetImage(const graphics::Image& image) { m_image = image; }
-  void SetImage(const char* filename) {
+  void set_image(const graphics::Image& image) { m_image = image; }
+  void set_image(const char* filename) {
     m_image = graphics::ImageManager::get()->GetImage(filename);
   }
 

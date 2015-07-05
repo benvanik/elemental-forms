@@ -92,14 +92,15 @@ void ScrollContainer::ScrollContainerRoot::OnPaintChildren(
   // We only want clipping in one axis (the overflowing one) so we
   // don't damage any expanded skins on the other axis. Add some fluff.
   const int fluff = 100;
-  ScrollContainer* sc = static_cast<ScrollContainer*>(GetParent());
-  Rect clip_rect = GetPaddingRect().Expand(
-      sc->m_scrollbar_x.CanScrollNegative() ? 0 : fluff,
-      sc->m_scrollbar_y.CanScrollNegative() ? 0 : fluff,
-      sc->m_scrollbar_x.CanScrollPositive() ? 0 : fluff,
-      sc->m_scrollbar_y.CanScrollPositive() ? 0 : fluff);
+  ScrollContainer* sc = static_cast<ScrollContainer*>(parent());
+  Rect clip_rect = padding_rect().Expand(
+      sc->m_scrollbar_x.can_scroll_negative() ? 0 : fluff,
+      sc->m_scrollbar_y.can_scroll_negative() ? 0 : fluff,
+      sc->m_scrollbar_x.can_scroll_positive() ? 0 : fluff,
+      sc->m_scrollbar_y.can_scroll_positive() ? 0 : fluff);
 
-  Rect old_clip_rect = graphics::Renderer::get()->SetClipRect(clip_rect, true);
+  Rect old_clip_rect =
+      graphics::Renderer::get()->set_clip_rect(clip_rect, true);
 
   TB_IF_DEBUG_SETTING(
       util::DebugInfo::Setting::kLayoutClipping,
@@ -107,14 +108,14 @@ void ScrollContainer::ScrollContainerRoot::OnPaintChildren(
 
   Element::OnPaintChildren(paint_props);
 
-  graphics::Renderer::get()->SetClipRect(old_clip_rect, false);
+  graphics::Renderer::get()->set_clip_rect(old_clip_rect, false);
 }
 
 void ScrollContainer::ScrollContainerRoot::GetChildTranslation(int& x,
                                                                int& y) const {
-  ScrollContainer* sc = static_cast<ScrollContainer*>(GetParent());
-  x = -sc->m_scrollbar_x.GetValue();
-  y = -sc->m_scrollbar_y.GetValue();
+  ScrollContainer* sc = static_cast<ScrollContainer*>(parent());
+  x = -sc->m_scrollbar_x.value();
+  y = -sc->m_scrollbar_y.value();
 }
 
 void ScrollContainer::RegisterInflater() {
@@ -126,7 +127,7 @@ ScrollContainer::ScrollContainer() {
   AddChild(&m_scrollbar_x);
   AddChild(&m_scrollbar_y);
   AddChild(&m_root);
-  m_scrollbar_y.SetAxis(Axis::kY);
+  m_scrollbar_y.set_axis(Axis::kY);
 }
 
 ScrollContainer::~ScrollContainer() {
@@ -136,57 +137,58 @@ ScrollContainer::~ScrollContainer() {
 }
 
 void ScrollContainer::OnInflate(const parsing::InflateInfo& info) {
-  SetGravity(Gravity::kAll);
-  SetAdaptContentSize(
-      info.node->GetValueInt("adapt-content", GetAdaptContentSize()) ? true
-                                                                     : false);
-  SetAdaptToContentSize(
-      info.node->GetValueInt("adapt-to-content", GetAdaptToContentSize())
+  set_gravity(Gravity::kAll);
+  set_adapt_content_size(
+      info.node->GetValueInt("adapt-content", is_adapting_content_size())
+          ? true
+          : false);
+  set_adapt_to_content_size(
+      info.node->GetValueInt("adapt-to-content", is_adapting_to_content_size())
           ? true
           : false);
   if (const char* mode = info.node->GetValueString("scroll-mode", nullptr)) {
-    SetScrollMode(from_string(mode, GetScrollMode()));
+    set_scroll_mode(from_string(mode, scroll_mode()));
   }
   Element::OnInflate(info);
 }
 
-void ScrollContainer::SetAdaptToContentSize(bool adapt) {
+void ScrollContainer::set_adapt_to_content_size(bool adapt) {
   if (m_adapt_to_content_size == adapt) return;
   InvalidateLayout(InvalidationMode::kRecursive);
   m_adapt_to_content_size = adapt;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void ScrollContainer::SetAdaptContentSize(bool adapt) {
+void ScrollContainer::set_adapt_content_size(bool adapt) {
   if (m_adapt_content_size == adapt) return;
   m_adapt_content_size = adapt;
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
-void ScrollContainer::SetScrollMode(ScrollMode mode) {
+void ScrollContainer::set_scroll_mode(ScrollMode mode) {
   if (mode == m_mode) return;
   m_mode = mode;
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
 
 void ScrollContainer::ScrollTo(int x, int y) {
-  int old_x = m_scrollbar_x.GetValue();
-  int old_y = m_scrollbar_y.GetValue();
-  m_scrollbar_x.SetValue(x);
-  m_scrollbar_y.SetValue(y);
-  if (old_x != m_scrollbar_x.GetValue() || old_y != m_scrollbar_y.GetValue()) {
+  int old_x = m_scrollbar_x.value();
+  int old_y = m_scrollbar_y.value();
+  m_scrollbar_x.set_value(x);
+  m_scrollbar_y.set_value(y);
+  if (old_x != m_scrollbar_x.value() || old_y != m_scrollbar_y.value()) {
     Invalidate();
   }
 }
 
-Element::ScrollInfo ScrollContainer::GetScrollInfo() {
+Element::ScrollInfo ScrollContainer::scroll_info() {
   ScrollInfo info;
-  info.min_x = static_cast<int>(m_scrollbar_x.GetMinValue());
-  info.min_y = static_cast<int>(m_scrollbar_y.GetMinValue());
-  info.max_x = static_cast<int>(m_scrollbar_x.GetMaxValue());
-  info.max_y = static_cast<int>(m_scrollbar_y.GetMaxValue());
-  info.x = m_scrollbar_x.GetValue();
-  info.y = m_scrollbar_y.GetValue();
+  info.min_x = static_cast<int>(m_scrollbar_x.min_value());
+  info.min_y = static_cast<int>(m_scrollbar_y.min_value());
+  info.max_x = static_cast<int>(m_scrollbar_x.max_value());
+  info.max_y = static_cast<int>(m_scrollbar_y.max_value());
+  info.x = m_scrollbar_x.value();
+  info.y = m_scrollbar_y.value();
   return info;
 }
 
@@ -196,13 +198,13 @@ void ScrollContainer::InvalidateLayout(InvalidationMode il) {
   if (m_adapt_to_content_size) Element::InvalidateLayout(il);
 }
 
-Rect ScrollContainer::GetPaddingRect() {
+Rect ScrollContainer::padding_rect() {
   int visible_w = rect().w;
   int visible_h = rect().h;
-  if (m_scrollbar_x.GetOpacity()) {
+  if (m_scrollbar_x.opacity()) {
     visible_h -= m_scrollbar_x.GetPreferredSize().pref_h;
   }
-  if (m_scrollbar_y.GetOpacity()) {
+  if (m_scrollbar_y.opacity()) {
     visible_w -= m_scrollbar_y.GetPreferredSize().pref_w;
   }
   return Rect(0, 0, visible_w, visible_h);
@@ -214,7 +216,7 @@ PreferredSize ScrollContainer::OnCalculatePreferredContentSize(
   ps.pref_w = ps.pref_h = 100;
   ps.min_w = ps.min_h = 50;
   if (m_adapt_to_content_size) {
-    if (Element* content_child = m_root.GetFirstChild()) {
+    if (Element* content_child = m_root.first_child()) {
       ps = content_child->GetPreferredSize(constraints);
       int scrollbar_y_w = m_scrollbar_y.GetPreferredSize().pref_w;
       int scrollbar_x_h = m_scrollbar_x.GetPreferredSize().pref_h;
@@ -235,42 +237,41 @@ bool ScrollContainer::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
       (ev.target == &m_scrollbar_x || ev.target == &m_scrollbar_y)) {
     Invalidate();
-    OnScroll(m_scrollbar_x.GetValue(), m_scrollbar_y.GetValue());
+    OnScroll(m_scrollbar_x.value(), m_scrollbar_y.value());
     return true;
   } else if (ev.type == EventType::kWheel &&
              ev.modifierkeys == ModifierKeys::kNone) {
-    double old_val_y = m_scrollbar_y.GetValueDouble();
-    m_scrollbar_y.SetValueDouble(old_val_y +
-                                 ev.delta_y * util::GetPixelsPerLine());
-    double old_val_x = m_scrollbar_x.GetValueDouble();
-    m_scrollbar_x.SetValueDouble(old_val_x +
-                                 ev.delta_x * util::GetPixelsPerLine());
-    return (m_scrollbar_x.GetValueDouble() != old_val_x ||
-            m_scrollbar_y.GetValueDouble() != old_val_y);
+    double old_val_y = m_scrollbar_y.double_value();
+    m_scrollbar_y.set_double_value(old_val_y +
+                                   ev.delta_y * util::GetPixelsPerLine());
+    double old_val_x = m_scrollbar_x.double_value();
+    m_scrollbar_x.set_double_value(old_val_x +
+                                   ev.delta_x * util::GetPixelsPerLine());
+    return (m_scrollbar_x.double_value() != old_val_x ||
+            m_scrollbar_y.double_value() != old_val_y);
   } else if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kLeft &&
-        m_scrollbar_x.CanScrollNegative()) {
+        m_scrollbar_x.can_scroll_negative()) {
       ScrollBySmooth(-util::GetPixelsPerLine(), 0);
     } else if (ev.special_key == SpecialKey::kRight &&
-               m_scrollbar_x.CanScrollPositive()) {
+               m_scrollbar_x.can_scroll_positive()) {
       ScrollBySmooth(util::GetPixelsPerLine(), 0);
     } else if (ev.special_key == SpecialKey::kUp &&
-               m_scrollbar_y.CanScrollNegative()) {
+               m_scrollbar_y.can_scroll_negative()) {
       ScrollBySmooth(0, -util::GetPixelsPerLine());
     } else if (ev.special_key == SpecialKey::kDown &&
-               m_scrollbar_y.CanScrollPositive()) {
+               m_scrollbar_y.can_scroll_positive()) {
       ScrollBySmooth(0, util::GetPixelsPerLine());
     } else if (ev.special_key == SpecialKey::kPageUp &&
-               m_scrollbar_y.CanScrollNegative()) {
-      ScrollBySmooth(0, -GetPaddingRect().h);
+               m_scrollbar_y.can_scroll_negative()) {
+      ScrollBySmooth(0, -padding_rect().h);
     } else if (ev.special_key == SpecialKey::kPageDown &&
-               m_scrollbar_y.CanScrollPositive()) {
-      ScrollBySmooth(0, GetPaddingRect().h);
+               m_scrollbar_y.can_scroll_positive()) {
+      ScrollBySmooth(0, padding_rect().h);
     } else if (ev.special_key == SpecialKey::kHome) {
-      ScrollToSmooth(m_scrollbar_x.GetValue(), 0);
+      ScrollToSmooth(m_scrollbar_x.value(), 0);
     } else if (ev.special_key == SpecialKey::kEnd) {
-      ScrollToSmooth(m_scrollbar_x.GetValue(),
-                     (int)m_scrollbar_y.GetMaxValue());
+      ScrollToSmooth(m_scrollbar_x.value(), (int)m_scrollbar_y.max_value());
     } else {
       return false;
     }
@@ -296,7 +297,7 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
   m_scrollbar_y.set_rect(
       {rect().w - scrollbar_y_w, 0, scrollbar_y_w, rect().h});
 
-  if (Element* content_child = m_root.GetFirstChild()) {
+  if (Element* content_child = m_root.first_child()) {
     int horizontal_padding =
         ScrollBarVisibility::IsAlwaysOnY(m_mode) ? scrollbar_y_w : 0;
     int vertical_padding =
@@ -310,8 +311,8 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
     auto visibility =
         ScrollBarVisibility::Solve(m_mode, ps.pref_w, ps.pref_h, rect().w,
                                    rect().h, scrollbar_x_h, scrollbar_y_w);
-    m_scrollbar_x.SetOpacity(visibility.x_on ? 1.f : 0.f);
-    m_scrollbar_y.SetOpacity(visibility.y_on ? 1.f : 0.f);
+    m_scrollbar_x.set_opacity(visibility.x_on ? 1.f : 0.f);
+    m_scrollbar_y.set_opacity(visibility.y_on ? 1.f : 0.f);
     m_root.set_rect({0, 0, visibility.visible_w, visibility.visible_h});
 
     int content_w, content_h;
@@ -329,8 +330,8 @@ void ScrollContainer::ValidateLayout(const SizeConstraints& constraints) {
     content_child->set_rect(Rect(0, 0, content_w, content_h));
     double limit_max_w = std::max(0, content_w - m_root.rect().w);
     double limit_max_h = std::max(0, content_h - m_root.rect().h);
-    m_scrollbar_x.SetLimits(0, limit_max_w, m_root.rect().w);
-    m_scrollbar_y.SetLimits(0, limit_max_h, m_root.rect().h);
+    m_scrollbar_x.set_limits(0, limit_max_w, m_root.rect().w);
+    m_scrollbar_y.set_limits(0, limit_max_h, m_root.rect().h);
   }
 }
 

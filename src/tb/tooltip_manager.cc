@@ -43,7 +43,7 @@ class TooltipWindow : public elements::PopupWindow {
 
   bool Show(int mouse_x, int mouse_y);
 
-  Point GetOffsetPoint() const { return Point(m_offset_x, m_offset_y); }
+  Point offset_point() const { return Point(m_offset_x, m_offset_y); }
 
  private:
   Rect GetAlignedRect(int x, int y);
@@ -54,16 +54,16 @@ class TooltipWindow : public elements::PopupWindow {
 };
 
 TooltipWindow::TooltipWindow(Element* target) : PopupWindow(target) {
-  SetSkinBg("", InvokeInfo::kNoCallbacks);
-  SetSettings(WindowSettings::kNone);
-  m_content.SetSkinBg(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
-  m_content.SetIsFocusable(false);
-  m_content.SetStyling(true);
-  m_content.SetGravity(Gravity::kAll);
-  m_content.SetReadOnly(true);
-  m_content.SetMultiline(true);
-  m_content.SetText(target->GetTooltip());
-  m_content.SetAdaptToContentSize(true);
+  set_background_skin("", InvokeInfo::kNoCallbacks);
+  set_settings(WindowSettings::kNone);
+  m_content.set_background_skin(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
+  m_content.set_focusable(false);
+  m_content.set_styled(true);
+  m_content.set_gravity(Gravity::kAll);
+  m_content.set_read_only(true);
+  m_content.set_multiline(true);
+  m_content.set_text(target->tooltip());
+  m_content.set_adapt_to_content_size(true);
   AddChild(&m_content);
 }
 
@@ -73,13 +73,13 @@ bool TooltipWindow::Show(int mouse_x, int mouse_y) {
   m_offset_x = mouse_x;
   m_offset_y = mouse_y;
 
-  GetTargetElement().Get()->GetParentRoot()->AddChild(this);
+  target_element().get()->parent_root()->AddChild(this);
   set_rect(GetAlignedRect(m_offset_x, mouse_y));
   return true;
 }
 
 Rect TooltipWindow::GetAlignedRect(int x, int y) {
-  Element* root = GetParentRoot();
+  Element* root = parent_root();
 
   SizeConstraints sc(root->rect().w, root->rect().h);
 
@@ -119,7 +119,7 @@ bool TooltipManager::OnElementInvokeEvent(Element* element,
       int y = Element::pointer_move_element_y;
       tipped_element->ConvertToRoot(x, y);
       y += tooltip_point_offset_y;
-      Point tt_point = m_tooltip->GetOffsetPoint();
+      Point tt_point = m_tooltip->offset_point();
       if (abs(tt_point.x - x) > (int)tooltip_hide_point_dist ||
           abs(tt_point.y - y) > (int)tooltip_hide_point_dist) {
         KillToolTip();
@@ -154,8 +154,8 @@ void TooltipManager::DeleteShowMessages() {
 
 Element* TooltipManager::GetTippedElement() {
   Element* current = Element::hovered_element;
-  while (current && current->GetTooltip().empty()) {
-    current = current->GetParent();
+  while (current && current->tooltip().empty()) {
+    current = current->parent();
   }
   return current;
 }

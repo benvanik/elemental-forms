@@ -21,12 +21,12 @@ void Dimmer::RegisterInflater() {
 }
 
 Dimmer::Dimmer() {
-  SetSkinBg(TBIDC("Dimmer"), InvokeInfo::kNoCallbacks);
-  SetGravity(Gravity::kAll);
+  set_background_skin(TBIDC("Dimmer"), InvokeInfo::kNoCallbacks);
+  set_gravity(Gravity::kAll);
 }
 
 void Dimmer::OnAdded() {
-  set_rect({0, 0, GetParent()->rect().w, GetParent()->rect().h});
+  set_rect({0, 0, parent()->rect().w, parent()->rect().h});
 }
 
 }  // namespace parts

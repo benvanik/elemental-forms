@@ -28,10 +28,10 @@ class ImageLoader {
 
   virtual ~ImageLoader() = default;
 
-  virtual int Width() = 0;
-  virtual int Height() = 0;
+  virtual int width() = 0;
+  virtual int height() = 0;
   // This data should always be in 32bit RGBA format.
-  virtual uint32_t* Data() = 0;
+  virtual uint32_t* data() = 0;
 };
 
 }  // namespace graphics

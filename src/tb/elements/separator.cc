@@ -18,8 +18,8 @@ void Separator::RegisterInflater() {
 }
 
 Separator::Separator() {
-  SetSkinBg(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
-  SetState(Element::State::kDisabled, true);
+  set_background_skin(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
+  set_state(Element::State::kDisabled, true);
 }
 
 }  // namespace elements

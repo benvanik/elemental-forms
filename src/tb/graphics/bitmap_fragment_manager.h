@@ -31,10 +31,10 @@ class BitmapFragmentManager {
   BitmapFragmentManager();
   ~BitmapFragmentManager();
 
+  bool has_border() const { return m_add_border; }
   // Sets whether a 1px border should be added to new fragments so stretched
   // drawing won't get filtering artifacts at the edges (default is disabled).
-  void SetAddBorder(bool add_border) { m_add_border = add_border; }
-  bool GetAddBorder() const { return m_add_border; }
+  void set_has_border(bool add_border) { m_add_border = add_border; }
 
   // Gets the fragment with the given image filename.
   // If it's not already loaded, it will be loaded into a new fragment with the

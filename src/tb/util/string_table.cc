@@ -24,10 +24,10 @@ bool StringTable::Load(const char* filename) {
   }
 
   // Go through all nodes and add to the strings hash table.
-  auto n = node.GetFirstChild();
+  auto n = node.first_child();
   while (n) {
-    const char* str = n->GetValue().as_string();
-    table_.emplace(TBID(n->GetName()), str);
+    const char* str = n->value().as_string();
+    table_.emplace(TBID(n->name()), str);
     n = n->GetNext();
   }
   return true;

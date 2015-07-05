@@ -55,16 +55,16 @@ class Image {
   bool empty() const;
 
   // Returns the width of this image, or 0 if empty.
-  int Width() const;
+  int width() const;
 
   // Returns the height of this image, or 0 if empty.
-  int Height() const;
+  int height() const;
 
   // Returns the bitmap fragment for this image, or nullptr if empty.
-  BitmapFragment* GetBitmap() const;
+  BitmapFragment* bitmap() const;
 
   const Image& operator=(const Image& image) {
-    SetImageRep(image.m_image_rep);
+    set_image_rep(image.m_image_rep);
     return *this;
   }
   bool operator==(const Image& image) const {
@@ -75,7 +75,7 @@ class Image {
   }
 
  private:
-  void SetImageRep(ImageRep* image_rep);
+  void set_image_rep(ImageRep* image_rep);
 
   ImageRep* m_image_rep = nullptr;
 };

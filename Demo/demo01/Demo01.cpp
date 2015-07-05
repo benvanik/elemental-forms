@@ -75,28 +75,28 @@ void DemoWindow::LoadResource(ParseNode& node) {
   this->LoadNodeTree(&node);
 
   // Get title from the WindowInfo section (or use "" if not specified)
-  SetText(node.GetValueString("WindowInfo>title", ""));
+  set_text(node.GetValueString("WindowInfo>title", ""));
 
-  const Rect parent_rect(0, 0, GetParent()->rect().w, GetParent()->rect().h);
-  auto dc = Skin::get()->GetDimensionConverter();
+  const Rect parent_rect(0, 0, parent()->rect().w, parent()->rect().h);
+  auto dc = Skin::get()->dimension_converter();
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
   ParseNode* tmp = node.GetNode("WindowInfo>size");
-  if (tmp && tmp->GetValue().array_size() == 2) {
+  if (tmp && tmp->value().array_size() == 2) {
     window_rect.w = dc->GetPxFromString(
-        tmp->GetValue().as_array()->at(0)->as_string(), window_rect.w);
+        tmp->value().as_array()->at(0)->as_string(), window_rect.w);
     window_rect.h = dc->GetPxFromString(
-        tmp->GetValue().as_array()->at(1)->as_string(), window_rect.h);
+        tmp->value().as_array()->at(1)->as_string(), window_rect.h);
   }
 
   // Use the specified position or center in parent.
   tmp = node.GetNode("WindowInfo>position");
-  if (tmp && tmp->GetValue().array_size() == 2) {
+  if (tmp && tmp->value().array_size() == 2) {
     window_rect.x = dc->GetPxFromString(
-        tmp->GetValue().as_array()->at(0)->as_string(), window_rect.x);
+        tmp->value().as_array()->at(0)->as_string(), window_rect.x);
     window_rect.y = dc->GetPxFromString(
-        tmp->GetValue().as_array()->at(1)->as_string(), window_rect.y);
+        tmp->value().as_array()->at(1)->as_string(), window_rect.y);
   } else
     window_rect = window_rect.CenterIn(parent_rect);
 
@@ -138,32 +138,32 @@ class EditWindow : public DemoWindow {
   virtual void OnProcessStates() {
     // Update the disabled state of undo/redo buttons, and caret info.
 
-    if (TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"))) {
-      if (Element* undo = GetElementByID("undo"))
-        undo->SetState(Element::State::kDisabled,
-                       !edit->GetTextView()->CanUndo());
-      if (Element* redo = GetElementByID("redo"))
-        redo->SetState(Element::State::kDisabled,
-                       !edit->GetTextView()->CanRedo());
-      if (Label* info = GetElementByIDAndType<Label>(TBIDC("info"))) {
-        info->SetText(tb::util::format_string(
-            "Caret ofs: %d", edit->GetTextView()->caret.GetGlobalOffset()));
+    if (TextBox* edit = GetElementByIdAndType<TextBox>(TBIDC("text_box"))) {
+      if (Element* undo = GetElementById("undo"))
+        undo->set_state(Element::State::kDisabled,
+                        !edit->text_view()->CanUndo());
+      if (Element* redo = GetElementById("redo"))
+        redo->set_state(Element::State::kDisabled,
+                        !edit->text_view()->CanRedo());
+      if (Label* info = GetElementByIdAndType<Label>(TBIDC("info"))) {
+        info->set_text_format("Caret ofs: %d",
+                              edit->text_view()->caret.global_offset());
       }
     }
   }
   virtual bool OnEvent(const ElementEvent& ev) {
     if (ev.type == EventType::kClick) {
-      TextBox* edit = GetElementByIDAndType<TextBox>(TBIDC("text_box"));
+      TextBox* edit = GetElementByIdAndType<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
 
       if (ev.target->id() == TBIDC("clear")) {
-        edit->SetText("");
+        edit->set_text("");
         return true;
       } else if (ev.target->id() == TBIDC("undo")) {
-        edit->GetTextView()->Undo();
+        edit->text_view()->Undo();
         return true;
       } else if (ev.target->id() == TBIDC("redo")) {
-        edit->GetTextView()->Redo();
+        edit->text_view()->Redo();
         return true;
       } else if (ev.target->id() == TBIDC("menu")) {
         static GenericStringItemSource source;
@@ -198,23 +198,23 @@ class EditWindow : public DemoWindow {
         return true;
       } else if (ev.target->id() == TBIDC("popup_menu")) {
         if (ev.ref_id == TBIDC("default font"))
-          edit->SetFontDescription(FontDescription());
+          edit->set_font_description(FontDescription());
         else if (ev.ref_id == TBIDC("large font")) {
-          auto fd = text::FontManager::get()->GetDefaultFontDescription();
-          fd.SetSize(28);
-          edit->SetFontDescription(fd);
+          auto fd = text::FontManager::get()->default_font_description();
+          fd.set_size(28);
+          edit->set_font_description(fd);
         } else if (ev.ref_id == TBIDC("rgb font Neon")) {
-          FontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->computed_font_description();
           fd.set_id(TBIDC("Neon"));
-          edit->SetFontDescription(fd);
+          edit->set_font_description(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orangutang")) {
-          FontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->computed_font_description();
           fd.set_id(TBIDC("Orangutang"));
-          edit->SetFontDescription(fd);
+          edit->set_font_description(fd);
         } else if (ev.ref_id == TBIDC("rgb font Orange")) {
-          FontDescription fd = edit->GetCalculatedFontDescription();
+          FontDescription fd = edit->computed_font_description();
           fd.set_id(TBIDC("Orange"));
-          edit->SetFontDescription(fd);
+          edit->set_font_description(fd);
         } else if (ev.ref_id == TBIDC("CJK")) {
           util::StringBuilder buf;
           for (int i = 0, cp = 0x4E00; cp <= 0x9FCC; ++cp, ++i) {
@@ -223,15 +223,15 @@ class EditWindow : public DemoWindow {
             buf.Append(utf8, len);
             if (i % 64 == 63) buf.Append("\n", 1);
           }
-          edit->GetTextView()->SetText(buf.GetData(), buf.GetAppendPos());
+          edit->text_view()->set_text(buf.c_str(), buf.GetAppendPos());
         } else if (ev.ref_id == TBIDC("toggle wrapping"))
-          edit->SetWrapping(!edit->GetWrapping());
+          edit->set_wrapping(!edit->is_wrapping());
         else if (ev.ref_id == TBIDC("align left"))
-          edit->SetTextAlign(TextAlign::kLeft);
+          edit->set_text_align(TextAlign::kLeft);
         else if (ev.ref_id == TBIDC("align center"))
-          edit->SetTextAlign(TextAlign::kCenter);
+          edit->set_text_align(TextAlign::kCenter);
         else if (ev.ref_id == TBIDC("align right"))
-          edit->SetTextAlign(TextAlign::kRight);
+          edit->set_text_align(TextAlign::kRight);
         return true;
       }
     }
@@ -250,21 +250,21 @@ bool LayoutWindow::OnEvent(const ElementEvent& ev) {
       ev.target->id() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
     if (DropDownButton* select =
-            GetElementByIDAndType<DropDownButton>(TBIDC("select position")))
-      pos = static_cast<LayoutPosition>(select->GetValue());
+            GetElementByIdAndType<DropDownButton>(TBIDC("select position")))
+      pos = static_cast<LayoutPosition>(select->value());
     for (int i = 0; i < 3; i++)
-      if (auto layout = GetElementByIDAndType<LayoutBox>(i + 1))
-        layout->SetLayoutPosition(pos);
+      if (auto layout = GetElementByIdAndType<LayoutBox>(i + 1))
+        layout->set_layout_position(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
-      if (auto layout = GetElementByIDAndType<LayoutBox>(i + 1))
-        layout->SetAxis(axis);
+      if (auto layout = GetElementByIdAndType<LayoutBox>(i + 1))
+        layout->set_axis(axis);
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (auto layout = GetElementByIDAndType<LayoutBox>(TBIDC("switch_layout")))
-      layout->SetAxis(axis);
+    if (auto layout = GetElementByIdAndType<LayoutBox>(TBIDC("switch_layout")))
+      layout->set_axis(axis);
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;
   }
@@ -281,19 +281,19 @@ TabContainerWindow::TabContainerWindow() {
 bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("set_align")) {
     if (TabContainer* tc =
-            GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer")))
-      tc->SetAlignment(static_cast<Align>(ev.target->data.as_integer()));
+            GetElementByIdAndType<TabContainer>(TBIDC("tabcontainer")))
+      tc->set_alignment(static_cast<Align>(ev.target->data.as_integer()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("toggle_tab_axis")) {
     static Axis axis = Axis::kX;
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
-            GetElementByIDAndType<TabContainer>(TBIDC("tabcontainer"))) {
-      for (Element* child = tc->GetTabBar()->GetFirstChild(); child;
+            GetElementByIdAndType<TabContainer>(TBIDC("tabcontainer"))) {
+      for (Element* child = tc->tab_bar()->first_child(); child;
            child = child->GetNext()) {
         if (Button* button = util::SafeCast<Button>(child)) {
-          button->SetAxis(axis);
+          button->set_axis(axis);
         }
       }
     }
@@ -301,13 +301,13 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("start_spinner")) {
     if (ProgressSpinner* spinner =
-            GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
-      spinner->SetValue(1);
+            GetElementByIdAndType<ProgressSpinner>(TBIDC("spinner")))
+      spinner->set_value(1);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("stop_spinner")) {
     if (ProgressSpinner* spinner =
-            GetElementByIDAndType<ProgressSpinner>(TBIDC("spinner")))
-      spinner->SetValue(0);
+            GetElementByIdAndType<ProgressSpinner>(TBIDC("spinner")))
+      spinner->set_value(0);
   }
   return DemoWindow::OnEvent(ev);
 }
@@ -328,7 +328,7 @@ bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
              ev.target->id() == TBIDC("reset-user-name")) {
     if (ElementValue* val =
             ElementValueGroup::get()->GetValue(TBIDC("user-name")))
-      val->SetText("");
+      val->set_text("");
   }
   return DemoWindow::OnEvent(ev);
 }
@@ -339,12 +339,12 @@ ScrollContainerWindow::ScrollContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scrollcontainer.tb.txt");
 
   if (DropDownButton* select =
-          GetElementByIDAndType<DropDownButton>(TBIDC("name dropdown")))
-    select->SetSource(&name_source);
+          GetElementByIdAndType<DropDownButton>(TBIDC("name dropdown")))
+    select->set_source(&name_source);
 
   if (DropDownButton* select =
-          GetElementByIDAndType<DropDownButton>(TBIDC("advanced dropdown")))
-    select->SetSource(&advanced_source);
+          GetElementByIdAndType<DropDownButton>(TBIDC("advanced dropdown")))
+    select->set_source(&advanced_source);
 }
 
 bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
@@ -352,28 +352,28 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
     if (ev.target->id() == TBIDC("add img")) {
       Button* button = util::SafeCast<Button>(ev.target);
       IconBox* skin_image = new IconBox;
-      skin_image->SetSkinBg(TBIDC("Icon16"));
-      button->GetContentRoot()->AddChild(skin_image, ElementZ::kBottom);
+      skin_image->set_background_skin(TBIDC("Icon16"));
+      button->content_root()->AddChild(skin_image, ElementZ::kBottom);
       return true;
     } else if (ev.target->id() == TBIDC("new buttons")) {
       for (int i = 0; i < ev.target->data.as_integer(); ++i) {
         Button* button = new Button;
         button->set_id(TBIDC("remove button"));
-        button->SetText(tb::util::format_string("Remove %d", i));
-        ev.target->GetParent()->AddChild(button);
+        button->set_text_format("Remove %d", i);
+        ev.target->parent()->AddChild(button);
       }
       return true;
     } else if (ev.target->id() == TBIDC("new buttons delayed")) {
       for (int i = 0; i < ev.target->data.as_integer(); ++i) {
         auto msg_data = std::make_unique<MessageData>();
-        msg_data->id1 = ev.target->GetParent()->id();
+        msg_data->id1 = ev.target->parent()->id();
         msg_data->v1.set_integer(i);
         PostMessageDelayed(TBIDC("new button"), std::move(msg_data),
                            100 + i * 500);
       }
       return true;
     } else if (ev.target->id() == TBIDC("remove button")) {
-      ev.target->GetParent()->RemoveChild(ev.target);
+      ev.target->parent()->RemoveChild(ev.target);
       delete ev.target;
       return true;
     } else if (ev.target->id() == TBIDC("showpopupmenu1")) {
@@ -393,10 +393,10 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
 
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message_id() == TBIDC("new button") && msg->data()) {
-    if (Element* target = GetElementByID(msg->data()->id1)) {
+    if (Element* target = GetElementById(msg->data()->id1)) {
       Button* button = new Button;
       button->set_id(TBIDC("remove button"));
-      button->SetText(
+      button->set_text(
           tb::util::format_string("Remove %d", msg->data()->v1.as_integer()));
       target->AddChild(button);
     }
@@ -411,8 +411,8 @@ ImageWindow::ImageWindow() {
 
 bool ImageWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("remove")) {
-    Element* image = ev.target->GetParent();
-    image->GetParent()->RemoveChild(image);
+    Element* image = ev.target->parent();
+    image->parent()->RemoveChild(image);
     delete image;
     return true;
   }
@@ -425,8 +425,8 @@ PageWindow::PageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scroller_snap.tb.txt");
 
   // Listen to the pagers scroller
-  if (Element* pager = GetElementByID(TBIDC("page-scroller")))
-    pager->GetScroller()->SetSnapListener(this);
+  if (Element* pager = GetElementById(TBIDC("page-scroller")))
+    pager->scroller()->SetSnapListener(this);
 }
 
 bool PageWindow::OnEvent(const ElementEvent& ev) {
@@ -435,7 +435,7 @@ bool PageWindow::OnEvent(const ElementEvent& ev) {
 
 void PageWindow::OnScrollSnap(Element* target_element, int& target_x,
                               int& target_y) {
-  int page_w = target_element->GetPaddingRect().w;
+  int page_w = target_element->padding_rect().w;
   int target_page = (target_x + page_w / 2) / page_w;
   target_x = target_page * page_w;
 }
@@ -455,14 +455,14 @@ void AnimationsWindow::Animate() {
   uint64_t duration = 500;
   bool fade = true;
 
-  if (ListBox* curve_select = GetElementByIDAndType<ListBox>("curve")) {
-    curve = static_cast<AnimationCurve>(curve_select->GetValue());
+  if (ListBox* curve_select = GetElementByIdAndType<ListBox>("curve")) {
+    curve = static_cast<AnimationCurve>(curve_select->value());
   }
-  if (SpinBox* duration_select = GetElementByIDAndType<SpinBox>("duration")) {
-    duration = uint64_t(duration_select->GetValueDouble());
+  if (SpinBox* duration_select = GetElementByIdAndType<SpinBox>("duration")) {
+    duration = uint64_t(duration_select->double_value());
   }
-  if (CheckBox* fade_check = GetElementByIDAndType<CheckBox>("fade")) {
-    fade = fade_check->GetValue() ? true : false;
+  if (CheckBox* fade_check = GetElementByIdAndType<CheckBox>("fade")) {
+    fade = fade_check->value() ? true : false;
   }
 
   // Start move animation
@@ -488,7 +488,7 @@ bool AnimationsWindow::OnEvent(const ElementEvent& ev) {
 MainWindow::MainWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_ui.tb.txt");
 
-  SetOpacity(0.97f);
+  set_opacity(0.97f);
 }
 
 void MainWindow::OnMessageReceived(Message* msg) {
@@ -518,7 +518,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
       PostMessage(TBIDC("instantmsg"), nullptr);
       return true;
     } else if (ev.target->id() == TBIDC("busymsg")) {
-      if (ev.target->GetValue() == 1) {
+      if (ev.target->value() == 1) {
         // Post the first "busy" message when we check the checkbox.
         assert(!GetMessageByID(TBIDC("busy")));
         if (!GetMessageByID(TBIDC("busy"))) {
@@ -613,12 +613,12 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
     } else if (ev.target->id() == TBIDC("test-resource-edit")) {
       ResourceEditWindow* res_edit_win = new ResourceEditWindow();
       res_edit_win->Load("Demo/demo01/ui_resources/resource_edit_test.tb.txt");
-      GetParent()->AddChild(res_edit_win);
+      parent()->AddChild(res_edit_win);
       return true;
     } else if (ev.type == EventType::kClick &&
                ev.target->id() == TBIDC("debug settings")) {
 #ifdef TB_RUNTIME_DEBUG_INFO
-      util::ShowDebugInfoSettingsWindow(GetParentRoot());
+      util::ShowDebugInfoSettingsWindow(parent_root());
 #else
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Debug settings",
@@ -705,8 +705,8 @@ bool DemoApplication::Init() {
   for (int i = 0; boy_names[i]; i++)
     name_source.AddItem(
         std::make_unique<GenericStringItem>(boy_names[i++], TBIDC("boy_item")));
-  advanced_source.SetSort(Sort::kAscending);
-  name_source.SetSort(Sort::kAscending);
+  advanced_source.set_sort(Sort::kAscending);
+  name_source.set_sort(Sort::kAscending);
 
   // Prepare a source with submenus (with eternal recursion) so we can test sub
   // menu support.
@@ -720,7 +720,7 @@ bool DemoApplication::Init() {
   popup_menu_source.AddItem(
       std::make_unique<GenericStringItem>("Long submenu", &name_source));
   // Give the first item a skin image
-  popup_menu_source.GetItem(0)->SetIconBox(TBIDC("Icon16"));
+  popup_menu_source.GetItem(0)->set_icon(TBIDC("Icon16"));
 
   new MainWindow();
 
@@ -776,13 +776,13 @@ void DemoApplication::RenderFrame(int window_w, int window_h) {
   } else {
     str = tb::util::format_string("Frame %d", frame_counter_total);
   }
-  GetRoot()->GetFont()->DrawString(5, 5, Color(255, 255, 255), str);
+  GetRoot()->computed_font()->DrawString(5, 5, Color(255, 255, 255), str);
 
   Renderer::get()->EndPaint();
 
   // If we want continous updates or got animations running, reinvalidate
   // immediately
-  if (continuous_repaint || AnimationManager::HasAnimationsRunning()) {
+  if (continuous_repaint || AnimationManager::has_running_animations()) {
     GetRoot()->Invalidate();
   }
 }
@@ -838,12 +838,12 @@ int app_main() {
 #else
   fd.set_id(TBIDC("Vera"));
 #endif
-  fd.SetSize(Skin::get()->GetDimensionConverter()->DpToPx(14));
-  font_manager->SetDefaultFontDescription(fd);
+  fd.set_size(Skin::get()->dimension_converter()->DpToPx(14));
+  font_manager->set_default_font_description(fd);
 
   // Create the font now.
   auto font =
-      font_manager->CreateFontFace(font_manager->GetDefaultFontDescription());
+      font_manager->CreateFontFace(font_manager->default_font_description());
 
   // Render some glyphs in one go now since we know we are going to use them. It
   // would work fine
@@ -856,7 +856,7 @@ int app_main() {
         "abcdefghijklmnopqrstuvwxyz{|}~•·åäöÅÄÖ");
 
   // Give the root element a background skin
-  application->GetRoot()->SetSkinBg(TBIDC("background"));
+  application->GetRoot()->set_background_skin(TBIDC("background"));
 
   application->Init();
   application->Run();

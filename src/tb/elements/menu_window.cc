@@ -15,13 +15,13 @@ namespace elements {
 
 MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
   set_id(id);
-  SetSkinBg(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
-  m_select_list.GetScrollContainer()->SetAdaptToContentSize(true);
+  set_background_skin(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
+  m_select_list.scroll_container()->set_adapt_to_content_size(true);
   // Avoid it autoclosing its window on click:
-  m_select_list.SetIsFocusable(false);
-  m_select_list.SetSkinBg("");
-  m_select_list.set_rect(GetPaddingRect());
-  m_select_list.SetGravity(Gravity::kAll);
+  m_select_list.set_focusable(false);
+  m_select_list.set_background_skin("");
+  m_select_list.set_rect(padding_rect());
+  m_select_list.set_gravity(Gravity::kAll);
   AddChild(&m_select_list);
 }
 
@@ -29,8 +29,8 @@ MenuWindow::~MenuWindow() { RemoveChild(&m_select_list); }
 
 bool MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
                       int initial_value) {
-  m_select_list.SetValue(initial_value);
-  m_select_list.SetSource(source);
+  m_select_list.set_value(initial_value);
+  m_select_list.set_source(source);
   m_select_list.ValidateList();
   return PopupWindow::Show(alignment);
 }
@@ -45,7 +45,7 @@ bool MenuWindow::OnEvent(const ElementEvent& ev) {
     InvokeEvent(target_ev);
 
     // If target got deleted, close.
-    if (this_element.Get()) {
+    if (this_element.get()) {
       Close();
     }
     return true;

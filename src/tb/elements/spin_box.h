@@ -32,16 +32,16 @@ class SpinBox : public Element {
   SpinBox();
   ~SpinBox() override;
 
+  Axis axis() const override { return m_layout.axis(); }
   // Sets along which axis the content should layout.
-  void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
-  Axis GetAxis() const override { return m_layout.GetAxis(); }
+  void set_axis(Axis axis) override { m_layout.set_axis(axis); }
 
-  void SetLimits(int min, int max);
-  int GetMinValue() const { return m_min; }
-  int GetMaxValue() const { return m_max; }
+  int min_value() const { return m_min; }
+  int max_value() const { return m_max; }
+  void set_limits(int min, int max);
 
-  void SetValue(int value) override { SetValueInternal(value, true); }
-  int GetValue() override { return m_value; }
+  int value() override { return m_value; }
+  void set_value(int value) override { SetValueInternal(value, true); }
 
   void OnInflate(const parsing::InflateInfo& info) override;
   void OnSkinChanged() override;

@@ -63,11 +63,11 @@ class BatchingRenderer : public Renderer {
 
   void Translate(int dx, int dy) override;
 
-  void SetOpacity(float opacity) override;
-  float GetOpacity() override;
+  float opacity() override;
+  void set_opacity(float opacity) override;
 
-  Rect SetClipRect(const Rect& rect, bool add_to_current) override;
-  Rect GetClipRect() override;
+  Rect clip_rect() override;
+  Rect set_clip_rect(const Rect& rect, bool add_to_current) override;
 
   void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
                   BitmapFragment* bitmap_fragment) override;
@@ -90,7 +90,7 @@ class BatchingRenderer : public Renderer {
   virtual std::unique_ptr<Bitmap> CreateBitmap(int width, int height,
                                                uint32_t* data) = 0;
   virtual void RenderBatch(Batch* batch) = 0;
-  virtual void SetClipRect(const Rect& rect) = 0;
+  virtual void set_clip_rect(const Rect& rect) = 0;
 
  protected:
   void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,

@@ -30,7 +30,7 @@ class MenuWindow : public PopupWindow {
   bool Show(ListItemSource* source, const PopupAlignment& alignment,
             int initial_value = -1);
 
-  ListBox* GetList() { return &m_select_list; }
+  ListBox* list_box() { return &m_select_list; }
 
   bool OnEvent(const ElementEvent& ev) override;
 

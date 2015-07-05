@@ -113,9 +113,9 @@ class ParseNode : public util::IntrusiveListEntry<ParseNode> {
   ParseNode* GetNode(const char* request,
                      MissingPolicy mp = MissingPolicy::kNull);
 
-  const char* GetName() const { return m_name; }
+  const char* name() const { return m_name; }
 
-  Value& GetValue() { return m_value; }
+  Value& value() { return m_value; }
 
   // Returns the value of this node.
   // Will follow eventual references to ParseNodeTree.
@@ -144,9 +144,9 @@ class ParseNode : public util::IntrusiveListEntry<ParseNode> {
   // of the string.
   static const char* GetNextNodeSeparator(const char* request);
 
-  inline ParseNode* GetParent() const { return m_parent; }
-  inline ParseNode* GetFirstChild() const { return m_children.GetFirst(); }
-  inline ParseNode* GetLastChild() const { return m_children.GetLast(); }
+  inline ParseNode* parent() const { return m_parent; }
+  inline ParseNode* first_child() const { return m_children.GetFirst(); }
+  inline ParseNode* last_child() const { return m_children.GetLast(); }
 
  private:
   friend class ParseNodeTarget;

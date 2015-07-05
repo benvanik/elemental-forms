@@ -35,7 +35,7 @@ void TextSelection::CorrectOrder() {
 
 void TextSelection::CopyToClipboard() {
   if (IsSelected()) {
-    util::Clipboard::SetText(GetText());
+    util::Clipboard::SetText(text());
   }
 }
 
@@ -176,7 +176,7 @@ void TextSelection::RemoveContent() {
       commit_string.Append(stop.block->str, stop.ofs);
       style_edit->undo_stack.Commit(style_edit, start_gofs,
                                     commit_string.GetAppendPos(),
-                                    commit_string.GetData(), false);
+                                    commit_string.c_str(), false);
     }
     stop.block->RemoveContent(0, stop.ofs);
   }
@@ -188,7 +188,7 @@ void TextSelection::RemoveContent() {
   style_edit->EndLockScrollbars();
 }
 
-std::string TextSelection::GetText() const {
+std::string TextSelection::text() const {
   if (!IsSelected()) {
     return std::string();
   }
@@ -206,7 +206,7 @@ std::string TextSelection::GetText() const {
     }
     // FIX: Add methods to change data owner from temp buffer to string!
     buf.Append(stop.block->str, stop.ofs);
-    return std::string(buf.GetData(), buf.GetAppendPos());
+    return buf.to_string();
   }
 }
 

@@ -57,8 +57,8 @@ class GlyphMetrics {
 // Contains metrics for a font face.
 class FontMetrics {
  public:
-  int16_t ascent = 0;   // Ascent. See FontFace::GetAscent().
-  int16_t descent = 0;  // Descent. See FontFace::GetDescent().
+  int16_t ascent = 0;   // Ascent. See FontFace::ascent().
+  int16_t descent = 0;  // Descent. See FontFace::descent().
   int16_t height = 0;   // Height. See FontFace::height().
 };
 
@@ -89,21 +89,21 @@ class FontFace {
 
   // Gets the vertical distance (positive) from the horizontal baseline to the
   // highest character coordinate in a font face.
-  int GetAscent() const { return m_metrics.ascent; }
+  int ascent() const { return m_metrics.ascent; }
 
   // Gets the vertical distance (positive) from the horizontal baseline to the
   // lowest character coordinate in the font face.
-  int GetDescent() const { return m_metrics.descent; }
+  int descent() const { return m_metrics.descent; }
 
   // Gets height of the font in pixels.
   int height() const { return m_metrics.height; }
 
   // Gets the font description that was used to create this font.
-  FontDescription GetFontDescription() const { return m_font_desc; }
+  FontDescription font_description() const { return m_font_desc; }
 
   // Gets the effect object, so the effect can be changed.
   // NOTE: No glyphs are re-rendered. Only new glyphs are affected.
-  FontEffect* GetEffect() { return &m_effect; }
+  FontEffect* effect() { return &m_effect; }
 
   // Draw string at position x, y (marks the upper left corner of the text).
   void DrawString(int x, int y, const Color& color, const char* str,

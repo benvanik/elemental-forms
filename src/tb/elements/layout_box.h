@@ -67,7 +67,7 @@ enum class LayoutDistributionPosition {
 MAKE_ORDERED_ENUM_STRING_UTILS(LayoutDistributionPosition, "center", "left top",
                                "right bottom");
 
-// Layout order parameter for Layout::SetLayoutOrder.
+// Layout order parameter for Layout::set_layout_order.
 enum class LayoutOrder {
   kBottomToTop,  // From bottom to top element (default creation order).
   kTopToBottom,  // From top to bottom element.
@@ -84,8 +84,9 @@ MAKE_ORDERED_ENUM_STRING_UTILS(LayoutOverflow, "clip", "scroll");
 // Layout lays out its children along the given axis.
 // Each elements size depend on its preferred size (See
 // Element::GetPreferredSize), gravity, and the specified layout settings (See
-// SetLayoutSize, SetLayoutPosition SetLayoutOverflow, SetLayoutDistribution,
-// SetLayoutDistributionPosition), and the available size.
+// set_layout_size, set_layout_position set_layout_overflow,
+// set_layout_distribution,
+// set_layout_distribution_position), and the available size.
 // Each element is also separated by the specified spacing (See SetSpacing).
 class LayoutBox : public Element {
  public:
@@ -97,37 +98,37 @@ class LayoutBox : public Element {
 
   LayoutBox(Axis axis = Axis::kX);
 
+  Axis axis() const override { return m_axis; }
   // Sets along which axis the content should layout.
-  void SetAxis(Axis axis) override;
-  Axis GetAxis() const override { return m_axis; }
+  void set_axis(Axis axis) override;
 
+  int spacing() const { return m_spacing; }
   // Sets the spacing between elements in this layout. Setting the default
   // (kSpacingFromSkin) will make it use the spacing specified in the skin.
-  void SetSpacing(int spacing);
-  int GetSpacing() const { return m_spacing; }
+  void set_spacing(int spacing);
 
+  int overflow_scroll() const { return m_overflow_scroll; }
   // Sets the overflow scroll. If there is not enough room for all children in
   // this layout, it can scroll in the axis it's laid out. It does so
   // automatically by wheel or panning also for other LayoutOverflow than
   // LayoutOverflow::kScroll.
-  void SetOverflowScroll(int overflow_scroll);
-  int GetOverflowScroll() const { return m_overflow_scroll; }
+  void set_overflow_scroll(int overflow_scroll);
 
-  // Sets if a fadeout should be painter where the layout overflows or not.
-  void SetPaintOverflowFadeout(bool paint_fadeout) {
+  // Sets if a fadeout should be painted where the layout overflows or not.
+  void set_paint_overflow_fadeout(bool paint_fadeout) {
     m_packed.paint_overflow_fadeout = paint_fadeout;
   }
 
-  void SetLayoutSize(LayoutSize size);
-  void SetLayoutPosition(LayoutPosition pos);
-  void SetLayoutOverflow(LayoutOverflow overflow);
-  void SetLayoutDistribution(LayoutDistribution distribution);
-  void SetLayoutDistributionPosition(
+  void set_layout_size(LayoutSize size);
+  void set_layout_position(LayoutPosition pos);
+  void set_layout_overflow(LayoutOverflow overflow);
+  void set_layout_distribution(LayoutDistribution distribution);
+  void set_layout_distribution_position(
       LayoutDistributionPosition distribution_pos);
 
   // Sets the layout order. The default is LayoutOrder::kBottomToTop, which
   // begins from bottom to top (default creation order).
-  void SetLayoutOrder(LayoutOrder order);
+  void set_layout_order(LayoutOrder order);
 
   void InvalidateLayout(InvalidationMode il) override;
 
@@ -142,7 +143,7 @@ class LayoutBox : public Element {
   void OnInflateChild(Element* child) override;
   void GetChildTranslation(int& x, int& y) const override;
   void ScrollTo(int x, int y) override;
-  Element::ScrollInfo GetScrollInfo() override;
+  Element::ScrollInfo scroll_info() override;
 
  protected:
   void ValidateLayout(const SizeConstraints& constraints,

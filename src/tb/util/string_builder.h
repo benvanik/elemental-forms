@@ -28,10 +28,11 @@ class StringBuilder {
   void Reserve(size_t size);
 
   // Gets a pointer to the buffer data.
-  char* GetData() const { return m_data; }
+  char* data() const { return m_data; }
+  char* c_str() const { return m_data; }
 
   // Returns the size of the buffer in bytes.
-  size_t GetCapacity() const { return m_data_size; }
+  size_t capacity() const { return m_data_size; }
 
   // Appends data with size bytes at the end of the buffer and increase the
   // append position with the same amount.
@@ -65,6 +66,8 @@ class StringBuilder {
 
   // Returns the current append position in in bytes.
   size_t GetAppendPos() const { return m_append_pos; }
+
+  std::string to_string() const { return std::string(m_data, m_append_pos); }
 
  private:
   size_t GetAppendReserveSize(size_t needed_size) const;

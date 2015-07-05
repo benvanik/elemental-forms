@@ -38,15 +38,15 @@ void Animation::InvokeOnAnimationStop(bool aborted) {
   }
 }
 
-void FloatAnimation::SetValueAnimated(float value) {
-  src_val = GetValue();
-  dst_val = value;
+void FloatAnimation::set_value_animated(float new_value) {
+  src_val = value();
+  dst_val = new_value;
   AnimationManager::StartAnimation(this, animation_curve, animation_duration);
 }
 
-void FloatAnimation::SetValueImmediately(float value) {
+void FloatAnimation::set_value_immediately(float new_value) {
   AnimationManager::AbortAnimation(this, false);
-  src_val = dst_val = value;
+  src_val = dst_val = new_value;
   OnAnimationUpdate(1.0f);
 }
 

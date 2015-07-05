@@ -82,11 +82,11 @@ class Scroller : private MessageHandler {
   void Stop();
 
   // Returns true if the pan tracking is started or.
-  bool IsStarted() const { return m_is_started; }
+  bool is_started() const { return m_is_started; }
 
   // Gets the element that will be panned/scrolled. Any parent of this element
   // may also be panned/scrolled.
-  Element* GetTarget() const { return m_target; }
+  Element* target() const { return m_target; }
 
   // Pans the target element (or any parent) with the given deltas.
   // Should be called while the pointer is down. This will track the pan speed

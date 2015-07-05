@@ -68,11 +68,11 @@ class PopupWindow : public Window, private ElementListener {
 
   bool Show(const PopupAlignment& alignment);
 
-  Element* GetEventDestination() override { return m_target.Get(); }
+  Element* event_destination() override { return m_target.get(); }
 
   bool OnEvent(const ElementEvent& ev) override;
 
-  const WeakElementPointer& GetTargetElement() { return m_target; }
+  const WeakElementPointer& target_element() { return m_target; }
 
  private:
   void OnElementFocusChanged(Element* element, bool focused) override;

@@ -21,23 +21,23 @@ void Mover::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Mover, Value::Type::kNull, ElementZ::kTop);
 }
 
-Mover::Mover() { SetSkinBg(TBIDC("Mover"), InvokeInfo::kNoCallbacks); }
+Mover::Mover() {
+  set_background_skin(TBIDC("Mover"), InvokeInfo::kNoCallbacks);
+}
 
 bool Mover::OnEvent(const ElementEvent& ev) {
-  Element* target = GetParent();
+  Element* target = parent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_element == this) {
     int dx = ev.target_x - pointer_down_element_x;
     int dy = ev.target_y - pointer_down_element_y;
     Rect rect = target->rect().Offset(dx, dy);
-    if (target->GetParent()) {
+    if (target->parent()) {
       // Apply limit.
-      rect.x =
-          util::Clamp(rect.x, -pointer_down_element_x,
-                      target->GetParent()->rect().w - pointer_down_element_x);
-      rect.y =
-          util::Clamp(rect.y, -pointer_down_element_y,
-                      target->GetParent()->rect().h - pointer_down_element_y);
+      rect.x = util::Clamp(rect.x, -pointer_down_element_x,
+                           target->parent()->rect().w - pointer_down_element_x);
+      rect.y = util::Clamp(rect.y, -pointer_down_element_y,
+                           target->parent()->rect().h - pointer_down_element_y);
     }
     target->set_rect(rect);
     return true;

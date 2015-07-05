@@ -17,16 +17,16 @@ namespace elements {
 ElementString::ElementString() = default;
 
 int ElementString::GetWidth(Element* element) {
-  return element->GetFont()->GetStringWidth(m_text);
+  return element->computed_font()->GetStringWidth(m_text);
 }
 
 int ElementString::GetHeight(Element* element) {
-  return element->GetFont()->height();
+  return element->computed_font()->height();
 }
 
 void ElementString::Paint(Element* element, const Rect& rect,
                           const Color& color) {
-  auto font = element->GetFont();
+  auto font = element->computed_font();
   int string_w = GetWidth(element);
 
   int x = rect.x;
@@ -68,25 +68,27 @@ void Label::RegisterInflater() {
   TB_REGISTER_ELEMENT_INFLATER(Label, Value::Type::kString, ElementZ::kTop);
 }
 
-Label::Label() { SetSkinBg(TBIDC("Label"), InvokeInfo::kNoCallbacks); }
+Label::Label() {
+  set_background_skin(TBIDC("Label"), InvokeInfo::kNoCallbacks);
+}
 
 void Label::OnInflate(const parsing::InflateInfo& info) {
-  if (const char* text_align =
+  if (const char* text_align_str =
           info.node->GetValueString("text-align", nullptr)) {
-    SetTextAlign(from_string(text_align, GetTextAlign()));
+    set_text_align(from_string(text_align_str, text_align()));
   }
   Element::OnInflate(info);
 }
 
-void Label::SetText(const char* text) {
+void Label::set_text(const char* text) {
   if (m_text.m_text.compare(text) == 0) return;
   m_cached_text_width = kTextWidthCacheNeedsUpdate;
   Invalidate();
   InvalidateLayout(InvalidationMode::kRecursive);
-  m_text.SetText(text);
+  m_text.set_text(text);
 }
 
-void Label::SetSqueezable(bool squeezable) {
+void Label::set_squeezable(bool squeezable) {
   if (squeezable == m_squeezable) return;
   m_squeezable = squeezable;
   Invalidate();
@@ -104,8 +106,7 @@ PreferredSize Label::OnCalculatePreferredContentSize(
   // If gravity pull both up and down, use default max_h (grow as much as
   // possible).
   // Otherwise it makes sense to only accept one line height.
-  if (!(any(GetGravity() & Gravity::kTop) &&
-        any(GetGravity() & Gravity::kBottom))) {
+  if (!(any(gravity() & Gravity::kTop) && any(gravity() & Gravity::kBottom))) {
     ps.max_h = ps.pref_h;
   }
   if (!m_squeezable) {
@@ -120,7 +121,7 @@ void Label::OnFontChanged() {
 }
 
 void Label::OnPaint(const PaintProps& paint_props) {
-  m_text.Paint(this, GetPaddingRect(), paint_props.text_color);
+  m_text.Paint(this, padding_rect(), paint_props.text_color);
 }
 
 }  // namespace elements

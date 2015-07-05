@@ -71,14 +71,14 @@ class ElementInflater;
 // skin				      SetSkinBg         TBID (string or int)
 // rect				      set_rect          4 integers (x, y, width,
 //                                    height)
-// lp>width			    SetLayoutParams   dimension
-// lp>min-width		  SetLayoutParams   dimension
-// lp>max-width		  SetLayoutParams   dimension
-// lp>pref-width		SetLayoutParams   dimension
-// lp>height			  SetLayoutParams   dimension
-// lp>min-height		SetLayoutParams   dimension
-// lp>max-height		SetLayoutParams   dimension
-// lp>pref-height		SetLayoutParams   dimension
+// lp>width			    set_layout_params   dimension
+// lp>min-width		  set_layout_params   dimension
+// lp>max-width		  set_layout_params   dimension
+// lp>pref-width		set_layout_params   dimension
+// lp>height			  set_layout_params   dimension
+// lp>min-height		set_layout_params   dimension
+// lp>max-height		set_layout_params   dimension
+// lp>pref-height		set_layout_params   dimension
 // autofocus			  The Element will be focused automatically the
 //                  first time its Window is activated.
 // font>name			  Font name

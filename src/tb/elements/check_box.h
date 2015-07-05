@@ -23,7 +23,9 @@ class CheckBox : public parts::BaseRadioCheckBox {
   TBOBJECT_SUBCLASS(CheckBox, BaseRadioCheckBox);
   static void RegisterInflater();
 
-  CheckBox() { SetSkinBg(TBIDC("CheckBox"), InvokeInfo::kNoCallbacks); }
+  CheckBox() {
+    set_background_skin(TBIDC("CheckBox"), InvokeInfo::kNoCallbacks);
+  }
 };
 
 }  // namespace elements

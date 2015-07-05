@@ -48,25 +48,25 @@ Image::~Image() {
 
 bool Image::empty() const { return m_image_rep && m_image_rep->fragment; }
 
-int Image::Width() const {
+int Image::width() const {
   if (m_image_rep && m_image_rep->fragment) {
-    return m_image_rep->fragment->Width();
+    return m_image_rep->fragment->width();
   }
   return 0;
 }
 
-int Image::Height() const {
+int Image::height() const {
   if (m_image_rep && m_image_rep->fragment) {
-    return m_image_rep->fragment->Height();
+    return m_image_rep->fragment->height();
   }
   return 0;
 }
 
-BitmapFragment* Image::GetBitmap() const {
+BitmapFragment* Image::bitmap() const {
   return m_image_rep ? m_image_rep->fragment : nullptr;
 }
 
-void Image::SetImageRep(ImageRep* image_rep) {
+void Image::set_image_rep(ImageRep* image_rep) {
   if (m_image_rep == image_rep) {
     return;
   }
@@ -101,12 +101,12 @@ Image ImageManager::GetImage(const char* filename) {
 
   // Load a fragment. Load a destination DPI bitmap if available.
   BitmapFragment* fragment = nullptr;
-  auto dimension_converter = Skin::get()->GetDimensionConverter();
+  auto dimension_converter = Skin::get()->dimension_converter();
   if (dimension_converter->NeedConversion()) {
     util::StringBuilder filename_dst_DPI;
     dimension_converter->GetDstDPIFilename(filename, &filename_dst_DPI);
     fragment =
-        m_frag_manager.GetFragmentFromFile(filename_dst_DPI.GetData(), false);
+        m_frag_manager.GetFragmentFromFile(filename_dst_DPI.c_str(), false);
   }
   if (!fragment) {
     fragment = m_frag_manager.GetFragmentFromFile(filename, false);

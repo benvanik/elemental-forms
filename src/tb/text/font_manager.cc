@@ -80,8 +80,8 @@ graphics::BitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph,
       int check_count = 0;
       for (FontGlyph* oldest = m_all_rendered_glyphs.GetFirst();
            oldest && check_count < check_limit; oldest = oldest->GetNext()) {
-        if (oldest->frag->Width() >= w &&
-            oldest->frag->GetAllocatedHeight() >= h) {
+        if (oldest->frag->width() >= w &&
+            oldest->frag->allocated_height() >= h) {
           DropGlyphFragment(oldest);
           dropped_large_enough_glyph = true;
           break;
@@ -123,7 +123,7 @@ void FontGlyphCache::OnContextRestored() {
 FontManager::FontManager() {
   // Add the test dummy font with empty name (equal to ID 0).
   AddFontInfo("-test-font-dummy-", "");
-  m_test_font_desc.SetSize(16);
+  m_test_font_desc.set_size(16);
   CreateFontFace(m_test_font_desc);
 
   // Use the test dummy font as default by default.
@@ -145,22 +145,22 @@ FontInfo* FontManager::GetFontInfo(const TBID& id) const {
 }
 
 bool FontManager::HasFontFace(const FontDescription& font_desc) const {
-  return m_fonts.count(font_desc.GetFontFaceID()) > 0;
+  return m_fonts.count(font_desc.font_face_id()) > 0;
 }
 
 FontFace* FontManager::GetFontFace(const FontDescription& font_desc) {
   // Try requested:
-  auto& it = m_fonts.find(font_desc.GetFontFaceID());
+  auto& it = m_fonts.find(font_desc.font_face_id());
   if (it != m_fonts.end()) {
     return it->second.get();
   }
   // Try fallback:
-  it = m_fonts.find(GetDefaultFontDescription().GetFontFaceID());
+  it = m_fonts.find(default_font_description().font_face_id());
   if (it != m_fonts.end()) {
     return it->second.get();
   }
   // Fail out with test font:
-  it = m_fonts.find(m_test_font_desc.GetFontFaceID());
+  it = m_fonts.find(m_test_font_desc.font_face_id());
   return it != m_fonts.end() ? it->second.get() : nullptr;
 }
 
@@ -178,17 +178,17 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
     // Is this the test dummy font.
     auto font = std::make_unique<FontFace>(&m_glyph_cache, nullptr, font_desc);
     auto font_ptr = font.get();
-    m_fonts.emplace(font_desc.GetFontFaceID(), std::move(font));
+    m_fonts.emplace(font_desc.font_face_id(), std::move(font));
     return font_ptr;
   }
 
   // Iterate through font renderers until we find one capable of creating a font
   // for this file.
   for (auto& font_renderer : m_font_renderers) {
-    auto font = font_renderer->Create(this, fi->GetFilename(), font_desc);
+    auto font = font_renderer->Create(this, fi->filename(), font_desc);
     if (font) {
       auto font_ptr = font.get();
-      m_fonts.emplace(font_desc.GetFontFaceID(), std::move(font));
+      m_fonts.emplace(font_desc.font_face_id(), std::move(font));
       return font_ptr;
     }
   }

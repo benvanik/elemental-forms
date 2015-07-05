@@ -39,11 +39,11 @@ class ListItemObserver : public util::IntrusiveListEntry<ListItemObserver> {
   ListItemObserver() = default;
   virtual ~ListItemObserver() = default;
 
+  ListItemSource* source() const { return m_source; }
   // Sets the source which should provide the items for this observer.
   // This source needs to live longer than this observer.
   // Set nullptr to unset currently set source.
-  void SetSource(ListItemSource* source);
-  ListItemSource* GetSource() const { return m_source; }
+  void set_source(ListItemSource* source);
 
   // Called when the source has changed or been unset by calling SetSource.
   virtual void OnSourceChanged() = 0;
@@ -99,7 +99,7 @@ class ListItemSource {
   virtual TBID GetItemImage(size_t index) { return TBID(); }
 
   // Get the ID of the item.
-  virtual TBID GetItemID(size_t index) { return TBID(); }
+  virtual TBID GetItemId(size_t index) { return TBID(); }
 
   // Creates the item representation element(s).
   // By default, it will create a Label for string-only items, and other
@@ -109,9 +109,9 @@ class ListItemSource {
   // Gets the number of items.
   virtual size_t size() = 0;
 
+  Sort sort() const { return m_sort; }
   // Sets sort type. Default is Sort::kNone.
-  void SetSort(Sort sort) { m_sort = sort; }
-  Sort GetSort() const { return m_sort; }
+  void set_sort(Sort sort) { m_sort = sort; }
 
   // Invokes OnItemChanged on all open observers for this source.
   void InvokeItemChanged(size_t index,
@@ -143,7 +143,7 @@ class ListItemSourceList : public ListItemSource {
   TBID GetItemImage(size_t index) override {
     return GetItem(index)->skin_image;
   }
-  TBID GetItemID(size_t index) override { return GetItem(index)->id; }
+  TBID GetItemId(size_t index) override { return GetItem(index)->id; }
   size_t size() override { return items_.size(); }
 
   Element* CreateItemElement(size_t index,
@@ -218,7 +218,7 @@ class GenericStringItem {
     return *this;
   }
 
-  void SetIconBox(const TBID& image) { skin_image = image; }
+  void set_icon(const TBID& image) { skin_image = image; }
 
  public:
   std::string str;

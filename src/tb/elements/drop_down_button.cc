@@ -23,73 +23,74 @@ void DropDownButton::RegisterInflater() {
 }
 
 DropDownButton::DropDownButton() {
-  SetSource(&m_default_source);
-  SetSkinBg(TBIDC("DropDownButton"), InvokeInfo::kNoCallbacks);
-  m_arrow.SetSkinBg(TBIDC("DropDownButton.arrow"), InvokeInfo::kNoCallbacks);
-  GetContentRoot()->AddChild(&m_arrow);
+  set_source(&m_default_source);
+  set_background_skin(TBIDC("DropDownButton"), InvokeInfo::kNoCallbacks);
+  m_arrow.set_background_skin(TBIDC("DropDownButton.arrow"),
+                              InvokeInfo::kNoCallbacks);
+  content_root()->AddChild(&m_arrow);
 }
 
 DropDownButton::~DropDownButton() {
-  GetContentRoot()->RemoveChild(&m_arrow);
-  SetSource(nullptr);
+  content_root()->RemoveChild(&m_arrow);
+  set_source(nullptr);
   CloseWindow();
 }
 
 void DropDownButton::OnInflate(const parsing::InflateInfo& info) {
   // Read items (if there is any) into the default source.
-  GenericStringItemSource::ReadItemNodes(info.node, GetDefaultSource());
+  GenericStringItemSource::ReadItemNodes(info.node, default_source());
   Element::OnInflate(info);
 }
 
 void DropDownButton::OnSourceChanged() {
   m_value = -1;
   if (m_source && m_source->size()) {
-    SetValue(0);
+    set_value(0);
   }
 }
 
 void DropDownButton::OnItemChanged(size_t index) {}
 
-void DropDownButton::SetValue(int value) {
+void DropDownButton::set_value(int value) {
   if (value == m_value || !m_source) return;
   m_value = value;
 
   if (m_value < 0) {
-    SetText("");
+    set_text("");
   } else if (m_value < m_source->size()) {
-    SetText(m_source->GetItemString(m_value));
+    set_text(m_source->GetItemString(m_value));
   }
 
   ElementEvent ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-TBID DropDownButton::GetSelectedItemID() {
+TBID DropDownButton::selected_item_id() {
   if (m_source && m_value >= 0 && m_value < m_source->size()) {
-    return m_source->GetItemID(m_value);
+    return m_source->GetItemId(m_value);
   }
   return TBID();
 }
 
 void DropDownButton::OpenWindow() {
-  if (!m_source || !m_source->size() || m_window_pointer.Get()) {
+  if (!m_source || !m_source->size() || m_window_pointer.get()) {
     return;
   }
 
   MenuWindow* window = new MenuWindow(this, TBIDC("DropDownButton.window"));
-  m_window_pointer.Set(window);
-  window->SetSkinBg(TBIDC("DropDownButton.window"));
-  window->Show(m_source, PopupAlignment(), GetValue());
+  m_window_pointer.reset(window);
+  window->set_background_skin(TBIDC("DropDownButton.window"));
+  window->Show(m_source, PopupAlignment(), value());
 }
 
 void DropDownButton::CloseWindow() {
-  if (MenuWindow* window = GetMenuIfOpen()) {
+  if (MenuWindow* window = menu_if_open()) {
     window->Close();
   }
 }
 
-MenuWindow* DropDownButton::GetMenuIfOpen() const {
-  return util::SafeCast<MenuWindow>(m_window_pointer.Get());
+MenuWindow* DropDownButton::menu_if_open() const {
+  return util::SafeCast<MenuWindow>(m_window_pointer.get());
 }
 
 bool DropDownButton::OnEvent(const ElementEvent& ev) {
@@ -97,12 +98,12 @@ bool DropDownButton::OnEvent(const ElementEvent& ev) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
     // button).
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
+    if (MenuWindow* menu_window = menu_if_open()) {
       WeakElementPointer tmp(this);
-      int value = menu_window->GetList()->GetValue();
+      int value = menu_window->list_box()->value();
       menu_window->Die();
-      if (tmp.Get()) {
-        SetValue(value);
+      if (tmp.get()) {
+        set_value(value);
       }
     } else {
       OpenWindow();
@@ -111,15 +112,15 @@ bool DropDownButton::OnEvent(const ElementEvent& ev) {
   } else if (ev.target->id() == TBIDC("DropDownButton.window") &&
              ev.type == EventType::kClick) {
     // Set the value of the clicked item.
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      SetValue(menu_window->GetList()->GetValue());
+    if (MenuWindow* menu_window = menu_if_open()) {
+      set_value(menu_window->list_box()->value());
     }
     return true;
-  } else if (ev.target == this && m_source && ev.IsKeyEvent()) {
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
+  } else if (ev.target == this && m_source && ev.is_key_event()) {
+    if (MenuWindow* menu_window = menu_if_open()) {
       // Redirect the key strokes to the list.
       ElementEvent redirected_ev(ev);
-      return menu_window->GetList()->InvokeEvent(redirected_ev);
+      return menu_window->list_box()->InvokeEvent(redirected_ev);
     }
   }
   return false;

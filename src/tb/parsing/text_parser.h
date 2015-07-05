@@ -38,6 +38,7 @@ class TextParser {
     kParseError,
   };
   TextParser() = default;
+
   Status Read(TextParserStream* stream, TextParserTarget* target);
 
  private:

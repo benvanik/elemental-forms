@@ -36,15 +36,18 @@ namespace graphics {
 
 class StbiImageLoader : public ImageLoader {
  public:
-  int width = 0, height = 0;
-  uint8_t* data = nullptr;
+  StbiImageLoader(int width, int height, uint8_t* data)
+      : width_(width), height_(height), data_(data) {}
+  ~StbiImageLoader() { stbi_image_free(data_); }
 
-  StbiImageLoader() = default;
-  ~StbiImageLoader() { stbi_image_free(data); }
+  int width() override { return width_; }
+  int height() override { return height_; }
+  uint32_t* data() override { return (uint32_t*)data_; }
 
-  int Width() override { return width; }
-  int Height() override { return height; }
-  uint32_t* Data() override { return (uint32_t*)data; }
+ private:
+  int width_;
+  int height_;
+  uint8_t* data_;
 };
 
 std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
@@ -65,10 +68,7 @@ std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
     return nullptr;
   }
 
-  auto img = std::make_unique<StbiImageLoader>();
-  img->width = w;
-  img->height = h;
-  img->data = img_data;
+  auto img = std::make_unique<StbiImageLoader>(w, h, img_data);
   return std::unique_ptr<ImageLoader>(img.release());
 }
 

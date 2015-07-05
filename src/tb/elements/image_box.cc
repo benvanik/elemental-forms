@@ -20,20 +20,20 @@ void ImageBox::RegisterInflater() {
 
 void ImageBox::OnInflate(const parsing::InflateInfo& info) {
   if (const char* filename = info.node->GetValueString("filename", nullptr)) {
-    SetImage(filename);
+    set_image(filename);
   }
   Element::OnInflate(info);
 }
 
 PreferredSize ImageBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
-  return PreferredSize(m_image.Width(), m_image.Height());
+  return PreferredSize(m_image.width(), m_image.height());
 }
 
 void ImageBox::OnPaint(const PaintProps& paint_props) {
-  if (auto fragment = m_image.GetBitmap()) {
+  if (auto fragment = m_image.bitmap()) {
     graphics::Renderer::get()->DrawBitmap(
-        GetPaddingRect(), Rect(0, 0, m_image.Width(), m_image.Height()),
+        padding_rect(), Rect(0, 0, m_image.width(), m_image.height()),
         fragment);
   }
 }

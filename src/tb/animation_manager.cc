@@ -97,7 +97,7 @@ void AnimationManager::Update() {
 }
 
 // static
-bool AnimationManager::HasAnimationsRunning() {
+bool AnimationManager::has_running_animations() {
   return animating_objects.HasLinks();
 }
 
@@ -106,10 +106,10 @@ void AnimationManager::StartAnimation(Animation* obj,
                                       AnimationCurve animation_curve,
                                       uint64_t animation_duration,
                                       AnimationTime animation_time) {
-  if (obj->IsAnimating()) {
+  if (obj->is_animating()) {
     AbortAnimation(obj, false);
   }
-  if (IsAnimationsBlocked()) {
+  if (is_animation_blocked()) {
     animation_duration = 0;
   }
   obj->adjust_start_time = animation_time == AnimationTime::kFirstUpdate;
@@ -122,7 +122,7 @@ void AnimationManager::StartAnimation(Animation* obj,
 
 // static
 void AnimationManager::AbortAnimation(Animation* obj, bool delete_animation) {
-  if (obj->IsAnimating()) {
+  if (obj->is_animating()) {
     animating_objects.Remove(obj);
     obj->InvokeOnAnimationStop(true);
     if (delete_animation) {
@@ -132,7 +132,7 @@ void AnimationManager::AbortAnimation(Animation* obj, bool delete_animation) {
 }
 
 // static
-bool AnimationManager::IsAnimationsBlocked() {
+bool AnimationManager::is_animation_blocked() {
   return block_animations_counter > 0;
 }
 

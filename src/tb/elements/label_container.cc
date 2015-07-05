@@ -21,9 +21,10 @@ void LabelContainer::RegisterInflater() {
 LabelContainer::LabelContainer() {
   AddChild(&m_layout);
   m_layout.AddChild(&m_textfield);
-  m_layout.set_rect(GetPaddingRect());
-  m_layout.SetGravity(Gravity::kAll);
-  m_layout.SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
+  m_layout.set_rect(padding_rect());
+  m_layout.set_gravity(Gravity::kAll);
+  m_layout.set_layout_distribution_position(
+      LayoutDistributionPosition::kLeftTop);
 }
 
 LabelContainer::~LabelContainer() {
@@ -34,28 +35,28 @@ LabelContainer::~LabelContainer() {
 bool LabelContainer::OnEvent(const ElementEvent& ev) {
   // Get a element from the layout that isn't the textfield, or just bail out
   // if we only have the textfield.
-  if (m_layout.GetFirstChild() == m_layout.GetLastChild()) {
+  if (m_layout.first_child() == m_layout.last_child()) {
     return false;
   }
-  Element* click_target = m_layout.GetFirstChild() == &m_textfield
-                              ? m_layout.GetLastChild()
-                              : m_layout.GetFirstChild();
+  Element* click_target = m_layout.first_child() == &m_textfield
+                              ? m_layout.last_child()
+                              : m_layout.first_child();
   // Invoke the event on it, as if it was invoked on the target itself.
   if (click_target && ev.target != click_target) {
     // Focus the target if we clicked the label.
     if (ev.type == EventType::kClick) {
-      click_target->SetFocus(FocusReason::kPointer);
+      click_target->set_focus(FocusReason::kPointer);
     }
 
     // Sync our pressed state with the click target. Special case for when we're
     // just about to lose it ourself (pointer is being released).
     bool pressed_state =
-        any(ev.target->GetAutoState() & Element::State::kPressed);
+        any(ev.target->computed_state() & Element::State::kPressed);
     if (ev.type == EventType::kPointerUp || ev.type == EventType::kClick) {
       pressed_state = false;
     }
 
-    click_target->SetState(Element::State::kPressed, pressed_state);
+    click_target->set_state(Element::State::kPressed, pressed_state);
 
     ElementEvent target_ev(ev.type, ev.target_x - click_target->rect().x,
                            ev.target_y - click_target->rect().y, ev.touch,

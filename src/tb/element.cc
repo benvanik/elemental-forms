@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <cstdarg>
+
 #include "tb/element.h"
 #include "tb/element_listener.h"
 #include "tb/elements/tab_container.h"
@@ -20,6 +22,7 @@
 #include "tb/util/debug.h"
 #include "tb/util/math.h"
 #include "tb/util/metrics.h"
+#include "tb/util/string.h"
 #include "tb/value.h"
 #include "tb/window.h"
 
@@ -60,7 +63,7 @@ class LongClickTimer : private MessageHandler {
 Element::PaintProps::PaintProps() {
   // Set the default properties, used for the root elements
   // calling InvokePaint. The base values for all inheritance.
-  text_color = Skin::get()->GetDefaultTextColor();
+  text_color = Skin::get()->default_text_color();
 }
 
 void Element::RegisterInflater() {
@@ -86,9 +89,6 @@ Element::~Element() {
   ElementListener::InvokeElementDelete(this);
   DeleteAllChildren();
 
-  delete m_scroller;
-  delete m_layout_params;
-
   StopLongClickTimer();
 
   assert(!m_listeners
@@ -110,44 +110,45 @@ void Element::LoadNodeTree(parsing::ParseNode* node) {
 // Sets the id from the given node.
 void Element::SetIdFromNode(TBID& id, parsing::ParseNode* node) {
   if (!node) return;
-  if (node->GetValue().is_string()) {
-    id.reset(node->GetValue().as_string());
+  if (node->value().is_string()) {
+    id.reset(node->value().as_string());
   } else {
-    id.reset(node->GetValue().as_integer());
+    id.reset(node->value().as_integer());
   }
 }
 
 void Element::OnInflate(const parsing::InflateInfo& info) {
   Element::SetIdFromNode(id(), info.node->GetNode("id"));
-  Element::SetIdFromNode(GetGroupID(), info.node->GetNode("group-id"));
+  Element::SetIdFromNode(group_id(), info.node->GetNode("group-id"));
 
   if (info.sync_type == Value::Type::kFloat) {
-    SetValueDouble(info.node->GetValueFloat("value", 0));
+    set_double_value(info.node->GetValueFloat("value", 0));
   } else {
-    SetValue(info.node->GetValueInt("value", 0));
+    set_value(info.node->GetValueInt("value", 0));
   }
 
   if (auto data_node = info.node->GetNode("data")) {
-    data.Copy(data_node->GetValue());
+    data.Copy(data_node->value());
   }
 
-  SetIsGroupRoot(
-      info.node->GetValueInt("is-group-root", GetIsGroupRoot()) ? true : false);
+  set_group_root(
+      info.node->GetValueInt("is-group-root", is_group_root()) ? true : false);
 
-  SetIsFocusable(
-      info.node->GetValueInt("is-focusable", GetIsFocusable()) ? true : false);
+  set_focusable(info.node->GetValueInt("is-focusable", is_focusable()) ? true
+                                                                       : false);
 
-  SetWantLongClick(info.node->GetValueInt("want-long-click", GetWantLongClick())
-                       ? true
-                       : false);
+  set_long_clickable(
+      info.node->GetValueInt("want-long-click", is_long_clickable()) ? true
+                                                                     : false);
 
-  SetIgnoreInput(
-      info.node->GetValueInt("ignore-input", GetIgnoreInput()) ? true : false);
+  set_ignoring_input(info.node->GetValueInt("ignore-input", is_ignoring_input())
+                         ? true
+                         : false);
 
-  SetOpacity(info.node->GetValueFloat("opacity", GetOpacity()));
+  set_opacity(info.node->GetValueFloat("opacity", opacity()));
 
   if (const char* text = info.node->GetValueString("text", nullptr)) {
-    SetText(text);
+    set_text(text);
   }
 
   if (const char* connection =
@@ -165,7 +166,7 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
     }
   }
   if (const char* axis = info.node->GetValueString("axis", nullptr)) {
-    SetAxis(tb::from_string(axis, Axis::kY));
+    set_axis(tb::from_string(axis, Axis::kY));
   }
   if (const char* gravity = info.node->GetValueString("gravity", nullptr)) {
     Gravity g = Gravity::kNone;
@@ -176,26 +177,26 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
     if (strstr(gravity, "all")) g |= Gravity::kAll;
     if (!any(g & Gravity::kLeftRight)) g |= Gravity::kLeft;
     if (!any(g & Gravity::kTopBottom)) g |= Gravity::kTop;
-    SetGravity(g);
+    set_gravity(g);
   }
-  if (const char* visibility =
+  if (const char* visibility_str =
           info.node->GetValueString("visibility", nullptr)) {
-    SetVisibilility(from_string(visibility, GetVisibility()));
+    set_visibility(from_string(visibility_str, visibility()));
   }
   if (const char* state = info.node->GetValueString("state", nullptr)) {
     if (strstr(state, "disabled")) {
-      SetState(Element::State::kDisabled, true);
+      set_state(Element::State::kDisabled, true);
     }
   }
   if (const char* skin = info.node->GetValueString("skin", nullptr)) {
-    SetSkinBg(skin);
+    set_background_skin(skin);
   }
   if (auto lp = info.node->GetNode("lp")) {
     LayoutParams layout_params;
-    if (GetLayoutParams()) {
-      layout_params = *GetLayoutParams();
+    if (this->layout_params()) {
+      layout_params = *this->layout_params();
     }
-    auto dc = Skin::get()->GetDimensionConverter();
+    auto dc = Skin::get()->dimension_converter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
       layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -228,33 +229,33 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
       layout_params.pref_h =
           dc->GetPxFromString(str, LayoutParams::kUnspecified);
     }
-    SetLayoutParams(layout_params);
+    set_layout_params(layout_params);
   }
 
-  SetTooltip(info.node->GetValueString("tooltip", nullptr));
+  set_tooltip(info.node->GetValueString("tooltip", nullptr));
 
   // Add the new element to the hiearchy if not already added.
-  if (!GetParent()) info.target->AddChild(this, info.target->GetZInflate());
+  if (!parent()) info.target->AddChild(this, info.target->z_inflate());
 
   // Read the font now when the element is in the hiearchy so inheritance works.
   if (auto font = info.node->GetNode("font")) {
-    FontDescription fd = GetCalculatedFontDescription();
+    FontDescription fd = computed_font_description();
     if (const char* size = font->GetValueString("size", nullptr)) {
-      int new_size = Skin::get()->GetDimensionConverter()->GetPxFromString(
-          size, fd.GetSize());
-      fd.SetSize(new_size);
+      int new_size =
+          Skin::get()->dimension_converter()->GetPxFromString(size, fd.size());
+      fd.set_size(new_size);
     }
     if (const char* name = font->GetValueString("name", nullptr)) {
       fd.set_id(name);
     }
-    SetFontDescription(fd);
+    set_font_description(fd);
   }
 
   info.target->OnInflateChild(this);
 
   if (auto rect_node = info.node->GetNode("rect")) {
-    auto dc = Skin::get()->GetDimensionConverter();
-    Value& val = rect_node->GetValue();
+    auto dc = Skin::get()->dimension_converter();
+    Value& val = rect_node->value();
     if (val.array_size() == 4) {
       set_rect({dc->GetPxFromValue(val.as_array()->at(0), 0),
                 dc->GetPxFromValue(val.as_array()->at(1), 0),
@@ -279,7 +280,7 @@ void Element::set_rect(const Rect& rect) {
 }
 
 void Element::Invalidate() {
-  if (!GetVisibilityCombined() && !m_rect.empty()) {
+  if (!computed_visibility() && !m_rect.empty()) {
     return;
   }
   Element* tmp = this;
@@ -311,29 +312,29 @@ void Element::Die() {
   }
 }
 
-Element* Element::GetElementByIDInternal(const TBID& id,
+Element* Element::GetElementByIdInternal(const TBID& id,
                                          const util::tb_type_id_t type_id) {
   if (m_id == id && (!type_id || IsOfTypeId(type_id))) {
     return this;
   }
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (Element* sub_child = child->GetElementByIDInternal(id, type_id)) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
+    if (Element* sub_child = child->GetElementByIdInternal(id, type_id)) {
       return sub_child;
     }
   }
   return nullptr;
 }
 
-std::string Element::GetTextByID(const TBID& id) {
-  if (Element* element = GetElementByID(id)) {
-    return element->GetText();
+std::string Element::GetTextById(const TBID& id) {
+  if (Element* element = GetElementById(id)) {
+    return element->text();
   }
   return "";
 }
 
-int Element::GetValueByID(const TBID& id) {
-  if (Element* element = GetElementByID(id)) {
-    return element->GetValue();
+int Element::GetValueById(const TBID& id) {
+  if (Element* element = GetElementById(id)) {
+    return element->value();
   }
   return 0;
 }
@@ -343,18 +344,18 @@ void Element::set_id(const TBID& id) {
   InvalidateSkinStates();
 }
 
-void Element::SetStateRaw(Element::State state) {
+void Element::set_state_raw(Element::State state) {
   if (m_state == state) return;
   m_state = state;
   Invalidate();
   InvalidateSkinStates();
 }
 
-void Element::SetState(Element::State state, bool on) {
-  SetStateRaw(on ? m_state | state : m_state & ~state);
+void Element::set_state(Element::State state, bool on) {
+  set_state_raw(on ? m_state | state : m_state & ~state);
 }
 
-Element::State Element::GetAutoState() const {
+Element::State Element::computed_state() const {
   Element::State state = m_state;
   bool add_pressed_state =
       !cancel_click && this == captured_element && this == hovered_element;
@@ -377,7 +378,7 @@ Element::State Element::GetAutoState() const {
 }
 
 // static
-void Element::SetAutoFocusState(bool on) {
+void Element::set_auto_focus_state(bool on) {
   if (show_focus_state == on) {
     return;
   }
@@ -387,7 +388,7 @@ void Element::SetAutoFocusState(bool on) {
   }
 }
 
-void Element::SetOpacity(float opacity) {
+void Element::set_opacity(float opacity) {
   opacity = util::Clamp(opacity, 0.f, 1.f);
   if (m_opacity == opacity) {
     return;
@@ -400,7 +401,7 @@ void Element::SetOpacity(float opacity) {
   Invalidate();
 }
 
-void Element::SetVisibilility(Visibility vis) {
+void Element::set_visibility(Visibility vis) {
   if (m_packed.visibility == int(vis)) {
     return;
   }
@@ -413,7 +414,7 @@ void Element::SetVisibilility(Visibility vis) {
     InvalidateLayout(InvalidationMode::kRecursive);
   }
 
-  Visibility old_vis = GetVisibility();
+  Visibility old_vis = visibility();
   m_packed.visibility = int(vis);
 
   Invalidate();
@@ -424,15 +425,14 @@ void Element::SetVisibilility(Visibility vis) {
   OnVisibilityChanged();
 }
 
-Visibility Element::GetVisibility() const {
+Visibility Element::visibility() const {
   return static_cast<Visibility>(m_packed.visibility);
 }
 
-bool Element::GetVisibilityCombined() const {
+bool Element::computed_visibility() const {
   const Element* tmp = this;
   while (tmp) {
-    if (tmp->GetOpacity() == 0 ||
-        tmp->GetVisibility() != Visibility::kVisible) {
+    if (tmp->opacity() == 0 || tmp->visibility() != Visibility::kVisible) {
       return false;
     }
     tmp = tmp->m_parent;
@@ -440,15 +440,15 @@ bool Element::GetVisibilityCombined() const {
   return true;
 }
 
-bool Element::GetDisabled() const {
+bool Element::is_enabled() const {
   const Element* tmp = this;
   while (tmp) {
-    if (tmp->GetState(Element::State::kDisabled)) {
-      return true;
+    if (tmp->has_state(Element::State::kDisabled)) {
+      return false;
     }
     tmp = tmp->m_parent;
   }
-  return false;
+  return true;
 }
 
 void Element::AddChild(Element* child, ElementZ z, InvokeInfo info) {
@@ -517,12 +517,12 @@ void Element::DeleteChild(Element* child, InvokeInfo info) {
 }
 
 void Element::DeleteAllChildren() {
-  while (Element* child = GetFirstChild()) {
+  while (Element* child = first_child()) {
     DeleteChild(child);
   }
 }
 
-void Element::SetZ(ElementZ z) {
+void Element::set_z(ElementZ z) {
   if (!m_parent) return;
   if (z == ElementZ::kTop && this == m_parent->m_children.GetLast()) {
     return;  // Already at the top
@@ -535,13 +535,13 @@ void Element::SetZ(ElementZ z) {
   parent->AddChild(this, z, InvokeInfo::kNoCallbacks);
 }
 
-void Element::SetGravity(Gravity g) {
+void Element::set_gravity(Gravity g) {
   if (m_gravity == g) return;
   m_gravity = g;
   InvalidateLayout(InvalidationMode::kRecursive);
 }
 
-void Element::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
+void Element::set_background_skin(const TBID& skin_bg, InvokeInfo info) {
   if (skin_bg == m_skin_bg) return;
 
   // Set the skin and m_skin_bg_expected. During InvokeProcess, we will detect
@@ -561,9 +561,9 @@ void Element::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   }
 }
 
-SkinElement* Element::GetSkinBgElement() {
+SkinElement* Element::background_skin_element() {
   ElementSkinConditionContext context(this);
-  Element::State state = GetAutoState();
+  Element::State state = computed_state();
   return Skin::get()->GetSkinElementStrongOverride(
       m_skin_bg, static_cast<Element::State>(state), context);
 }
@@ -571,12 +571,12 @@ SkinElement* Element::GetSkinBgElement() {
 Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
   Element* candidate = this;
   while (candidate) {
-    ScrollInfo scroll_info = candidate->GetScrollInfo();
+    ScrollInfo scroll_info = candidate->scroll_info();
     if ((scroll_x && scroll_info.CanScrollX()) ||
         (scroll_y && scroll_info.CanScrollY())) {
       return candidate;
     }
-    candidate = candidate->GetParent();
+    candidate = candidate->parent();
   }
   return nullptr;
 }
@@ -584,10 +584,10 @@ Element* Element::FindScrollableElement(bool scroll_x, bool scroll_y) {
 parts::Scroller* Element::FindStartedScroller() {
   Element* candidate = this;
   while (candidate) {
-    if (candidate->m_scroller && candidate->m_scroller->IsStarted()) {
-      return candidate->m_scroller;
+    if (candidate->m_scroller && candidate->m_scroller->is_started()) {
+      return candidate->m_scroller.get();
     }
-    candidate = candidate->GetParent();
+    candidate = candidate->parent();
   }
   return nullptr;
 }
@@ -597,20 +597,20 @@ parts::Scroller* Element::GetReadyScroller(bool scroll_x, bool scroll_y) {
   // We didn't have any active scroller, so create one for the nearest
   // scrollable parent.
   if (Element* scrollable_element = FindScrollableElement(scroll_x, scroll_y)) {
-    return scrollable_element->GetScroller();
+    return scrollable_element->scroller();
   }
   return nullptr;
 }
 
-parts::Scroller* Element::GetScroller() {
+parts::Scroller* Element::scroller() {
   if (!m_scroller) {
-    m_scroller = new parts::Scroller(this);
+    m_scroller = std::make_unique<parts::Scroller>(this);
   }
-  return m_scroller;
+  return m_scroller.get();
 }
 
 void Element::ScrollToSmooth(int x, int y) {
-  ScrollInfo info = GetScrollInfo();
+  ScrollInfo info = scroll_info();
   int dx = x - info.x;
   int dy = y - info.y;
   if (auto scroller = GetReadyScroller(dx != 0, dy != 0)) {
@@ -633,16 +633,16 @@ void Element::ScrollBySmooth(int dx, int dy) {
 }
 
 void Element::ScrollBy(int dx, int dy) {
-  ScrollInfo info = GetScrollInfo();
+  ScrollInfo info = scroll_info();
   ScrollTo(info.x + dx, info.y + dy);
 }
 
 void Element::ScrollByRecursive(int& dx, int& dy) {
   Element* tmp = this;
   while (tmp) {
-    ScrollInfo old_info = tmp->GetScrollInfo();
+    ScrollInfo old_info = tmp->scroll_info();
     tmp->ScrollTo(old_info.x + dx, old_info.y + dy);
-    ScrollInfo new_info = tmp->GetScrollInfo();
+    ScrollInfo new_info = tmp->scroll_info();
     dx -= new_info.x - old_info.x;
     dy -= new_info.y - old_info.y;
     if (!dx && !dy) {
@@ -664,11 +664,11 @@ void Element::ScrollIntoViewRecursive() {
 }
 
 void Element::ScrollIntoView(const Rect& rect) {
-  const ScrollInfo info = GetScrollInfo();
+  const ScrollInfo info = scroll_info();
   int new_x = info.x;
   int new_y = info.y;
 
-  const Rect visible_rect = GetPaddingRect().Offset(info.x, info.y);
+  const Rect visible_rect = padding_rect().Offset(info.x, info.y);
 
   if (rect.y <= visible_rect.y) {
     new_y = rect.y;
@@ -685,23 +685,23 @@ void Element::ScrollIntoView(const Rect& rect) {
   ScrollTo(new_x, new_y);
 }
 
-bool Element::SetFocus(FocusReason reason, InvokeInfo info) {
+bool Element::set_focus(FocusReason reason, InvokeInfo info) {
   if (focused_element == this) return true;
-  if (GetDisabled() || !GetIsFocusable() || !GetVisibilityCombined() ||
-      GetIsDying()) {
+  if (!is_enabled() || !is_focusable() || !computed_visibility() ||
+      is_dying()) {
     return false;
   }
 
   // Update windows last focus.
-  Window* window = GetParentWindow();
+  Window* window = parent_window();
   if (window) {
-    window->SetLastFocus(this);
+    window->set_last_focus(this);
     // If not active, just return. We should get focus when the window is
     // activated.
     // Exception for windows that doesn't activate. They may contain focusable
     // elements.
     if (!window->IsActive() &&
-        any(window->GetSettings() & WindowSettings::kCanActivate)) {
+        any(window->settings() & WindowSettings::kCanActivate)) {
       return true;
     }
   }
@@ -726,18 +726,18 @@ bool Element::SetFocus(FocusReason reason, InvokeInfo info) {
     // OnFocusChanged.
     // Take some precaution and detect if it change again after
     // OnFocusChanged(false).
-    if (Element* old = old_focus.Get()) {
+    if (Element* old = old_focus.get()) {
       // The currently focused element still has the pressed state set by the
       // emulated click (by keyboard), so unset it before we unfocus it so it's
       // not stuck in pressed state.
       if (old->m_packed.has_key_pressed_state) {
-        old->SetState(Element::State::kPressed, false);
+        old->set_state(Element::State::kPressed, false);
         old->m_packed.has_key_pressed_state = false;
       }
       old->OnFocusChanged(false);
     }
-    if (old_focus.Get()) {
-      ElementListener::InvokeElementFocusChanged(old_focus.Get(), false);
+    if (old_focus.get()) {
+      ElementListener::InvokeElementFocusChanged(old_focus.get(), false);
     }
     if (focused_element && focused_element == this) {
       focused_element->OnFocusChanged(true);
@@ -751,9 +751,9 @@ bool Element::SetFocus(FocusReason reason, InvokeInfo info) {
 
 bool Element::SetFocusRecursive(FocusReason reason) {
   // Search for a child element that accepts focus.
-  Element* child = GetFirstChild();
+  Element* child = first_child();
   while (child) {
-    if (child->SetFocus(FocusReason::kUnknown)) {
+    if (child->set_focus(FocusReason::kUnknown)) {
       return true;
     }
     child = child->GetNextDeep(this);
@@ -767,9 +767,9 @@ bool Element::MoveFocus(bool forward) {
     origin = this;
   }
 
-  Element* root = origin->GetParentWindow();
+  Element* root = origin->parent_window();
   if (!root) {
-    root = origin->GetParentRoot();
+    root = origin->parent_root();
   }
 
   Element* current = origin;
@@ -777,14 +777,14 @@ bool Element::MoveFocus(bool forward) {
     current = forward ? current->GetNextDeep() : current->GetPrevDeep();
     // Wrap around if we reach the end/beginning.
     if (!current || !root->IsAncestorOf(current)) {
-      current = forward ? root->GetFirstChild() : root->GetLastLeaf();
+      current = forward ? root->first_child() : root->GetLastLeaf();
     }
     // Break if we reached the origin again (we're not finding anything else).
     if (current == origin) {
       break;
     }
     // Try to focus what we found.
-    if (current && current->SetFocus(FocusReason::kNavigation)) {
+    if (current && current->set_focus(FocusReason::kNavigation)) {
       return true;
     }
   }
@@ -793,7 +793,7 @@ bool Element::MoveFocus(bool forward) {
 
 Element* Element::GetNextDeep(const Element* bounding_ancestor) const {
   if (m_children.GetFirst()) {
-    return GetFirstChild();
+    return first_child();
   }
   for (const Element* element = this; element != bounding_ancestor;
        element = element->m_parent) {
@@ -808,29 +808,29 @@ Element* Element::GetPrevDeep() const {
   if (!prev) return m_parent;
   Element* element = GetPrev();
   while (element->m_children.GetLast()) {
-    element = element->GetLastChild();
+    element = element->last_child();
   }
   return element;
 }
 
 Element* Element::GetLastLeaf() const {
-  if (Element* element = GetLastChild()) {
-    while (element->GetLastChild()) {
-      element = element->GetLastChild();
+  if (Element* element = last_child()) {
+    while (element->last_child()) {
+      element = element->last_child();
     }
     return element;
   }
   return nullptr;
 }
 
-bool Element::GetIsInteractable() const {
-  return !(m_opacity == 0 || GetIgnoreInput() ||
-           GetState(Element::State::kDisabled) || GetIsDying() ||
-           GetVisibility() != Visibility::kVisible);
+bool Element::is_interactable() const {
+  return !(m_opacity == 0 || is_ignoring_input() ||
+           has_state(Element::State::kDisabled) || is_dying() ||
+           visibility() != Visibility::kVisible);
 }
 
 HitStatus Element::GetHitStatus(int x, int y) {
-  if (!GetIsInteractable()) return HitStatus::kNoHit;
+  if (!is_interactable()) return HitStatus::kNoHit;
   return x >= 0 && y >= 0 && x < m_rect.w && y < m_rect.h ? HitStatus::kHit
                                                           : HitStatus::kNoHit;
 }
@@ -841,7 +841,7 @@ Element* Element::GetElementAt(int x, int y, bool include_children) const {
   x -= child_translation_x;
   y -= child_translation_y;
 
-  Element* tmp = GetFirstChild();
+  Element* tmp = first_child();
   Element* last_match = nullptr;
   while (tmp) {
     HitStatus hit_status =
@@ -864,16 +864,16 @@ Element* Element::GetElementAt(int x, int y, bool include_children) const {
 
 Element* Element::GetChildFromIndex(int index) const {
   int i = 0;
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
     if (i++ == index) return child;
   }
   return nullptr;
 }
 
 int Element::GetIndexFromChild(Element* child) const {
-  assert(child->GetParent() == this);
+  assert(child->parent() == this);
   int i = 0;
-  for (Element* tmp = GetFirstChild(); tmp; tmp = tmp->GetNext(), ++i) {
+  for (Element* tmp = first_child(); tmp; tmp = tmp->GetNext(), ++i) {
     if (tmp == child) {
       return i;
     }
@@ -896,12 +896,12 @@ bool Element::IsEventDestinationFor(Element* other_element) const {
     if (other_element == this) {
       return true;
     }
-    other_element = other_element->GetEventDestination();
+    other_element = other_element->event_destination();
   }
   return false;
 }
 
-Element* Element::GetParentRoot() {
+Element* Element::parent_root() {
   Element* tmp = this;
   while (tmp->m_parent) {
     tmp = tmp->m_parent;
@@ -909,7 +909,7 @@ Element* Element::GetParentRoot() {
   return tmp;
 }
 
-Window* Element::GetParentWindow() {
+Window* Element::parent_window() {
   Element* tmp = this;
   while (tmp && !tmp->IsOfType<Window>()) {
     tmp = tmp->m_parent;
@@ -937,10 +937,10 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   GetChildTranslation(child_translation_x, child_translation_y);
   Renderer::get()->Translate(child_translation_x, child_translation_y);
 
-  Rect clip_rect = Renderer::get()->GetClipRect();
+  Rect clip_rect = Renderer::get()->clip_rect();
 
   // Invoke paint on all children that are in the current visible rect.
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
     if (clip_rect.intersects(child->m_rect)) {
       child->InvokePaint(paint_props);
     }
@@ -948,25 +948,25 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
 
   // Invoke paint of overlay elements on all children that are in the current
   // visible rect.
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
     if (clip_rect.intersects(child->m_rect) &&
-        child->GetVisibility() == Visibility::kVisible) {
-      auto skin_element = child->GetSkinBgElement();
-      if (skin_element && skin_element->HasOverlayElements()) {
+        child->visibility() == Visibility::kVisible) {
+      auto skin_element = child->background_skin_element();
+      if (skin_element && skin_element->has_overlay_elements()) {
         // Update the renderer with the elements opacity.
-        Element::State state = child->GetAutoState();
-        float old_opacity = Renderer::get()->GetOpacity();
+        Element::State state = child->computed_state();
+        float old_opacity = Renderer::get()->opacity();
         float opacity =
             old_opacity * child->CalculateOpacityInternal(state, skin_element);
         if (opacity > 0) {
-          Renderer::get()->SetOpacity(opacity);
+          Renderer::get()->set_opacity(opacity);
 
           ElementSkinConditionContext context(child);
           Skin::get()->PaintSkinOverlay(child->m_rect, skin_element,
                                         static_cast<Element::State>(state),
                                         context);
 
-          Renderer::get()->SetOpacity(old_opacity);
+          Renderer::get()->set_opacity(old_opacity);
         }
       }
     }
@@ -977,10 +977,10 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   // painted.
   if (focused_element && focused_element->m_parent == this) {
     ElementSkinConditionContext context(focused_element);
-    auto skin_element = focused_element->GetSkinBgElement();
+    auto skin_element = focused_element->background_skin_element();
     if (!skin_element ||
-        !skin_element->HasState(Element::State::kFocused, context)) {
-      Element::State state = focused_element->GetAutoState();
+        !skin_element->has_state(Element::State::kFocused, context)) {
+      Element::State state = focused_element->computed_state();
       if (any(state & Element::State::kFocused)) {
         Skin::get()->PaintSkin(focused_element->m_rect, TBIDC("generic_focus"),
                                static_cast<Element::State>(state), context);
@@ -994,8 +994,8 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
 void Element::OnResized(int old_w, int old_h) {
   int dw = m_rect.w - old_w;
   int dh = m_rect.h - old_h;
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (child->GetVisibility() == Visibility::kGone) continue;
+  for (Element* child = first_child(); child; child = child->GetNext()) {
+    if (child->visibility() == Visibility::kGone) continue;
     Rect rect = child->m_rect;
     if (any(child->m_gravity & Gravity::kLeft) &&
         any(child->m_gravity & Gravity::kRight)) {
@@ -1014,13 +1014,13 @@ void Element::OnResized(int old_w, int old_h) {
 }
 
 void Element::OnInflateChild(Element* child) {
-  if (child->GetVisibility() == Visibility::kGone) return;
+  if (child->visibility() == Visibility::kGone) return;
 
   // If the child pull towards only one edge (per axis), stick to that edge
   // and use the preferred size. Otherwise fill up all available space.
-  Rect padding_rect = GetPaddingRect();
+  Rect padding_rect = this->padding_rect();
   Rect child_rect = padding_rect;
-  Gravity gravity = child->GetGravity();
+  Gravity gravity = child->gravity();
   bool fill_x = any(gravity & Gravity::kLeft) && any(gravity & Gravity::kRight);
   bool fill_y = any(gravity & Gravity::kTop) && any(gravity & Gravity::kBottom);
   if (!fill_x || !fill_y) {
@@ -1041,9 +1041,16 @@ void Element::OnInflateChild(Element* child) {
   child->set_rect(child_rect);
 }
 
-Rect Element::GetPaddingRect() {
+void Element::set_text_format(const char* format, ...) {
+  va_list va;
+  va_start(va, format);
+  set_text(tb::util::format_string(format, va));
+  va_end(va);
+}
+
+Rect Element::padding_rect() {
   Rect padding_rect(0, 0, m_rect.w, m_rect.h);
-  if (auto e = GetSkinBgElement()) {
+  if (auto e = background_skin_element()) {
     padding_rect.x += e->padding_left;
     padding_rect.y += e->padding_top;
     padding_rect.w -= e->padding_left + e->padding_right;
@@ -1067,7 +1074,7 @@ PreferredSize Element::OnCalculatePreferredContentSize(
   bool has_layouting_children = false;
   PreferredSize ps;
 
-  auto bg_skin = GetSkinBgElement();
+  auto bg_skin = background_skin_element();
   int horizontal_padding =
       bg_skin ? bg_skin->padding_left + bg_skin->padding_right : 0;
   int vertical_padding =
@@ -1075,8 +1082,8 @@ PreferredSize Element::OnCalculatePreferredContentSize(
   SizeConstraints inner_sc =
       constraints.ConstrainByPadding(horizontal_padding, vertical_padding);
 
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (child->GetVisibility() == Visibility::kGone) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
+    if (child->visibility() == Visibility::kGone) {
       continue;
     }
     if (!has_layouting_children) {
@@ -1107,7 +1114,7 @@ PreferredSize Element::OnCalculatePreferredSize(
   assert(ps.pref_w >= ps.min_w);
   assert(ps.pref_h >= ps.min_h);
 
-  auto e = GetSkinBgElement();
+  auto e = background_skin_element();
   if (!e) {
     return ps;
   }
@@ -1116,9 +1123,9 @@ PreferredSize Element::OnCalculatePreferredSize(
   // specified.
   // If not set by the element, calculate based on the intrinsic size of the
   // skin.
-  const int skin_intrinsic_w = e->GetIntrinsicWidth();
-  if (e->GetPrefWidth() != kSkinValueNotSpecified) {
-    ps.pref_w = e->GetPrefWidth();
+  const int skin_intrinsic_w = e->intrinsic_width();
+  if (e->preferred_width() != kSkinValueNotSpecified) {
+    ps.pref_w = e->preferred_width();
   } else if (ps.pref_w == 0 && skin_intrinsic_w != kSkinValueNotSpecified) {
     ps.pref_w = skin_intrinsic_w;
   } else {
@@ -1127,9 +1134,9 @@ PreferredSize Element::OnCalculatePreferredSize(
     ps.pref_w += e->padding_left + e->padding_right;
   }
 
-  const int skin_intrinsic_h = e->GetIntrinsicHeight();
-  if (e->GetPrefHeight() != kSkinValueNotSpecified) {
-    ps.pref_h = e->GetPrefHeight();
+  const int skin_intrinsic_h = e->intrinsic_height();
+  if (e->preferred_height() != kSkinValueNotSpecified) {
+    ps.pref_h = e->preferred_height();
   } else if (ps.pref_h == 0 && skin_intrinsic_h != kSkinValueNotSpecified) {
     ps.pref_h = skin_intrinsic_h;
   } else {
@@ -1138,26 +1145,26 @@ PreferredSize Element::OnCalculatePreferredSize(
     ps.pref_h += e->padding_top + e->padding_bottom;
   }
 
-  if (e->GetMinWidth() != kSkinValueNotSpecified) {
-    ps.min_w = e->GetMinWidth();
+  if (e->min_width() != kSkinValueNotSpecified) {
+    ps.min_w = e->min_width();
   } else {
-    ps.min_w = std::max(ps.min_w, e->GetIntrinsicMinWidth());
+    ps.min_w = std::max(ps.min_w, e->intrinsic_min_width());
   }
 
-  if (e->GetMinHeight() != kSkinValueNotSpecified) {
-    ps.min_h = e->GetMinHeight();
+  if (e->min_height() != kSkinValueNotSpecified) {
+    ps.min_h = e->min_height();
   } else {
-    ps.min_h = std::max(ps.min_h, e->GetIntrinsicMinHeight());
+    ps.min_h = std::max(ps.min_h, e->intrinsic_min_height());
   }
 
-  if (e->GetMaxWidth() != kSkinValueNotSpecified) {
-    ps.max_w = e->GetMaxWidth();
+  if (e->max_width() != kSkinValueNotSpecified) {
+    ps.max_w = e->max_width();
   } else {
     ps.max_w += e->padding_left + e->padding_right;
   }
 
-  if (e->GetMaxHeight() != kSkinValueNotSpecified) {
-    ps.max_h = e->GetMaxHeight();
+  if (e->max_height() != kSkinValueNotSpecified) {
+    ps.max_h = e->max_height();
   } else {
     ps.max_h += e->padding_top + e->padding_bottom;
   }
@@ -1219,9 +1226,9 @@ PreferredSize Element::GetPreferredSize(const SizeConstraints& in_constraints) {
   return m_cached_ps;
 }
 
-void Element::SetLayoutParams(const LayoutParams& lp) {
+void Element::set_layout_params(const LayoutParams& lp) {
   if (!m_layout_params) {
-    m_layout_params = new LayoutParams();
+    m_layout_params = std::make_unique<LayoutParams>();
   }
   *m_layout_params = lp;
   m_packed.is_cached_ps_valid = 0;
@@ -1230,7 +1237,7 @@ void Element::SetLayoutParams(const LayoutParams& lp) {
 
 void Element::InvalidateLayout(InvalidationMode il) {
   m_packed.is_cached_ps_valid = 0;
-  if (GetVisibility() == Visibility::kGone) {
+  if (visibility() == Visibility::kGone) {
     return;
   }
   Invalidate();
@@ -1255,7 +1262,7 @@ void Element::InvokeSkinUpdatesInternal(bool force_update) {
   // changed.
   // If that happens, call OnSkinChanged so the element can react to that, and
   // invalidate layout to apply new skin properties.
-  if (auto skin_elm = GetSkinBgElement()) {
+  if (auto skin_elm = background_skin_element()) {
     if (skin_elm->id != m_skin_bg_expected) {
       OnSkinChanged();
       m_skin_bg_expected = skin_elm->id;
@@ -1263,7 +1270,7 @@ void Element::InvokeSkinUpdatesInternal(bool force_update) {
     }
   }
 
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
     child->InvokeSkinUpdatesInternal(true);
   }
 }
@@ -1271,7 +1278,7 @@ void Element::InvokeSkinUpdatesInternal(bool force_update) {
 void Element::InvokeProcessInternal() {
   OnProcess();
 
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
     child->InvokeProcessInternal();
   }
 
@@ -1286,7 +1293,7 @@ void Element::InvokeProcessStates(bool force_update) {
 
   OnProcessStates();
 
-  for (Element* child = GetFirstChild(); child; child = child->GetNext())
+  for (Element* child = first_child(); child; child = child->GetNext())
     child->InvokeProcessStates(true);
 }
 
@@ -1297,7 +1304,7 @@ float Element::CalculateOpacityInternal(Element::State state,
     opacity *= skin_element->opacity;
   }
   if (any(state & Element::State::kDisabled)) {
-    opacity *= Skin::get()->GetDefaultDisabledOpacity();
+    opacity *= Skin::get()->default_disabled_opacity();
   }
   return opacity;
 }
@@ -1305,21 +1312,21 @@ float Element::CalculateOpacityInternal(Element::State state,
 void Element::InvokePaint(const PaintProps& parent_paint_props) {
   // Don't paint invisible elements
   if (m_opacity == 0 || m_rect.empty() ||
-      GetVisibility() != Visibility::kVisible) {
+      visibility() != Visibility::kVisible) {
     return;
   }
 
-  Element::State state = GetAutoState();
-  auto skin_element = GetSkinBgElement();
+  Element::State state = computed_state();
+  auto skin_element = background_skin_element();
 
   // Multiply current opacity with element opacity, skin opacity and state
   // opacity.
-  float old_opacity = Renderer::get()->GetOpacity();
+  float old_opacity = Renderer::get()->opacity();
   float opacity = old_opacity * CalculateOpacityInternal(state, skin_element);
   if (opacity == 0) return;
 
   // FIX: This does not give the correct result! Must use a new render target!
-  Renderer::get()->SetOpacity(opacity);
+  Renderer::get()->set_opacity(opacity);
 
   int trns_x = m_rect.x, trns_y = m_rect.y;
   Renderer::get()->Translate(trns_x, trns_y);
@@ -1378,7 +1385,7 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   }
 
   Renderer::get()->Translate(-trns_x, -trns_y);
-  Renderer::get()->SetOpacity(old_opacity);
+  Renderer::get()->set_opacity(old_opacity);
 }
 
 bool Element::InvokeEvent(ElementEvent& ev) {
@@ -1390,7 +1397,7 @@ bool Element::InvokeEvent(ElementEvent& ev) {
   WeakElementPointer this_element(this);
   if (ElementListener::InvokeElementInvokeEvent(this, ev)) return true;
 
-  if (!this_element.Get()) {
+  if (!this_element.get()) {
     return true;  // We got removed so we actually handled this event.
   }
 
@@ -1399,7 +1406,7 @@ bool Element::InvokeEvent(ElementEvent& ev) {
     m_connection.SyncFromElement(this);
   }
 
-  if (!this_element.Get()) {
+  if (!this_element.get()) {
     return true;  // We got removed so we actually handled this event.
   }
 
@@ -1421,21 +1428,17 @@ bool Element::InvokeEvent(ElementEvent& ev) {
   bool handled = false;
   Element* tmp = this;
   while (tmp && !(handled = tmp->OnEvent(ev))) {
-    tmp = tmp->GetEventDestination();
+    tmp = tmp->event_destination();
   }
   return handled;
 }
 
 void Element::StartLongClickTimer(bool touch) {
   StopLongClickTimer();
-  m_long_click_timer = new LongClickTimer(this, touch);
+  m_long_click_timer = std::make_unique<LongClickTimer>(this, touch);
 }
 
-void Element::StopLongClickTimer() {
-  if (!m_long_click_timer) return;
-  delete m_long_click_timer;
-  m_long_click_timer = nullptr;
-}
+void Element::StopLongClickTimer() { m_long_click_timer.reset(); }
 
 bool Element::InvokePointerDown(int x, int y, int click_count,
                                 ModifierKeys modifierkeys, bool touch) {
@@ -1447,16 +1450,16 @@ bool Element::InvokePointerDown(int x, int y, int click_count,
     // captured_button = button;
 
     // Hide focus when we use the pointer, if it's not on the focused element.
-    if (focused_element != captured_element) SetAutoFocusState(false);
+    if (focused_element != captured_element) set_auto_focus_state(false);
 
     // Start long click timer. Only for touch events for now.
-    if (touch && captured_element && captured_element->GetWantLongClick()) {
+    if (touch && captured_element && captured_element->is_long_clickable()) {
       captured_element->StartLongClickTimer(touch);
     }
 
     // Get the closest parent window and bring it to the top.
     Window* window =
-        captured_element ? captured_element->GetParentWindow() : nullptr;
+        captured_element ? captured_element->parent_window() : nullptr;
     if (window) {
       window->Activate();
     }
@@ -1465,21 +1468,21 @@ bool Element::InvokePointerDown(int x, int y, int click_count,
     // Check if there's any started scroller that should be stopped.
     Element* tmp = captured_element;
     while (tmp) {
-      if (tmp->m_scroller && tmp->m_scroller->IsStarted()) {
+      if (tmp->m_scroller && tmp->m_scroller->is_started()) {
         // When we touch down to stop a scroller, we don't
         // want the touch to end up causing a click.
         cancel_click = true;
         tmp->m_scroller->Stop();
         break;
       }
-      tmp = tmp->GetParent();
+      tmp = tmp->parent();
     }
 
     // Focus the captured element or the closest focusable parent if it isn't
     // focusable.
     Element* focus_target = captured_element;
     while (focus_target) {
-      if (focus_target->SetFocus(FocusReason::kPointer)) {
+      if (focus_target->set_focus(FocusReason::kPointer)) {
         break;
       }
       focus_target = focus_target->m_parent;
@@ -1601,8 +1604,8 @@ void Element::HandlePanningOnMove(int x, int y) {
     }
 
     int old_translation_x = 0, old_translation_y = 0;
-    captured_element->GetScrollRoot()->GetChildTranslation(old_translation_x,
-                                                           old_translation_y);
+    captured_element->scroll_root()->GetChildTranslation(old_translation_x,
+                                                         old_translation_y);
 
     if (scroller->OnPan(dx + start_compensation_x, dy + start_compensation_y)) {
       // Scroll delta changed, so we are now panning!
@@ -1613,8 +1616,8 @@ void Element::HandlePanningOnMove(int x, int y) {
       // compensate the pointer down coordinates so we won't accumulate the
       // difference the following pan.
       int new_translation_x = 0, new_translation_y = 0;
-      captured_element->GetScrollRoot()->GetChildTranslation(new_translation_x,
-                                                             new_translation_y);
+      captured_element->scroll_root()->GetChildTranslation(new_translation_x,
+                                                           new_translation_y);
       pointer_down_element_x +=
           new_translation_x - old_translation_x + start_compensation_x;
       pointer_down_element_y +=
@@ -1647,15 +1650,16 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
   bool handled = false;
   if (focused_element) {
     // Emulate a click on the focused element when pressing space or enter.
-    if (!any(modifierkeys) && focused_element->GetClickByKey() &&
-        !focused_element->GetDisabled() && !focused_element->GetIsDying() &&
+    if (!any(modifierkeys) && focused_element->is_click_by_key() &&
+        focused_element->is_enabled() && !focused_element->is_dying() &&
         (special_key == SpecialKey::kEnter || key == ' ')) {
       // Set the pressed state while the key is down, if it didn't already have
       // the pressed state.
       static bool check_pressed_state = true;
       static bool had_pressed_state = false;
       if (down && check_pressed_state) {
-        had_pressed_state = focused_element->GetState(Element::State::kPressed);
+        had_pressed_state =
+            focused_element->has_state(Element::State::kPressed);
         check_pressed_state = false;
       }
       if (!down) {
@@ -1663,7 +1667,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
       }
 
       if (!had_pressed_state) {
-        focused_element->SetState(Element::State::kPressed, down);
+        focused_element->set_state(Element::State::kPressed, down);
         focused_element->m_packed.has_key_pressed_state = down;
       }
 
@@ -1689,7 +1693,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
 
     // Show the focus when we move it by keyboard.
     if (handled) {
-      SetAutoFocusState(true);
+      set_auto_focus_state(true);
     }
   }
   return handled;
@@ -1738,7 +1742,7 @@ void Element::SetHoveredElement(Element* element, bool touch) {
   if (Element::hovered_element == element) {
     return;
   }
-  if (element && element->GetState(Element::State::kDisabled)) {
+  if (element && element->has_state(Element::State::kDisabled)) {
     return;
   }
 
@@ -1766,7 +1770,7 @@ void Element::SetCapturedElement(Element* element) {
   if (Element::captured_element == element) {
     return;
   }
-  if (element && element->GetState(Element::State::kDisabled)) {
+  if (element && element->has_state(Element::State::kDisabled)) {
     return;
   }
 
@@ -1805,7 +1809,7 @@ void Element::SetCapturedElement(Element* element) {
   }
 }
 
-bool Element::SetFontDescription(const FontDescription& font_desc) {
+bool Element::set_font_description(const FontDescription& font_desc) {
   if (m_font_desc == font_desc) return true;
 
   // Set the font description only if we have a matching font, or succeed
@@ -1826,26 +1830,26 @@ void Element::InvokeFontChanged() {
   OnFontChanged();
 
   // Recurse to children that inherit the font.
-  for (Element* child = GetFirstChild(); child; child = child->GetNext()) {
-    if (child->m_font_desc.GetFontFaceID() == 0) {
+  for (Element* child = first_child(); child; child = child->GetNext()) {
+    if (child->m_font_desc.font_face_id() == 0) {
       child->InvokeFontChanged();
     }
   }
 }
 
-FontDescription Element::GetCalculatedFontDescription() const {
+FontDescription Element::computed_font_description() const {
   const Element* tmp = this;
   while (tmp) {
-    if (tmp->m_font_desc.GetFontFaceID() != 0) {
+    if (tmp->m_font_desc.font_face_id() != 0) {
       return tmp->m_font_desc;
     }
     tmp = tmp->m_parent;
   }
-  return text::FontManager::get()->GetDefaultFontDescription();
+  return text::FontManager::get()->default_font_description();
 }
 
-text::FontFace* Element::GetFont() const {
-  return text::FontManager::get()->GetFontFace(GetCalculatedFontDescription());
+text::FontFace* Element::computed_font() const {
+  return text::FontManager::get()->GetFontFace(computed_font_description());
 }
 
 using tb::SkinCondition;
@@ -1858,15 +1862,14 @@ bool ElementSkinConditionContext::GetCondition(
     case SkinTarget::kThis:
       return GetCondition(m_element, info);
     case SkinTarget::kParent:
-      return m_element->GetParent() &&
-             GetCondition(m_element->GetParent(), info);
+      return m_element->parent() && GetCondition(m_element->parent(), info);
     case SkinTarget::kAncestors: {
-      Element* element = m_element->GetParent();
+      Element* element = m_element->parent();
       while (element) {
         if (GetCondition(element, info)) {
           return true;
         }
-        element = element->GetParent();
+        element = element->parent();
       }
     }
     case SkinTarget::kPrevSibling:
@@ -1881,24 +1884,24 @@ bool ElementSkinConditionContext::GetCondition(
     Element* element, const SkinCondition::ConditionInfo& info) {
   switch (info.prop) {
     case SkinProperty::kSkin:
-      return element->GetSkinBg() == info.value;
+      return element->background_skin() == info.value;
     case SkinProperty::kWindowActive:
-      if (Window* window = element->GetParentWindow()) {
+      if (Window* window = element->parent_window()) {
         return window->IsActive();
       }
       return false;
     case SkinProperty::kAxis:
-      return TBID(element->GetAxis() == Axis::kX ? "x" : "y") == info.value;
+      return TBID(element->axis() == Axis::kX ? "x" : "y") == info.value;
     case SkinProperty::kAlign:
       if (auto tc = util::SafeCast<elements::TabContainer>(element)) {
         TBID element_align;
-        if (tc->GetAlignment() == Align::kLeft) {
+        if (tc->alignment() == Align::kLeft) {
           element_align = TBIDC("left");
-        } else if (tc->GetAlignment() == Align::kTop) {
+        } else if (tc->alignment() == Align::kTop) {
           element_align = TBIDC("top");
-        } else if (tc->GetAlignment() == Align::kRight) {
+        } else if (tc->alignment() == Align::kRight) {
           element_align = TBIDC("right");
-        } else if (tc->GetAlignment() == Align::kBottom) {
+        } else if (tc->alignment() == Align::kBottom) {
           element_align = TBIDC("bottom");
         }
         return element_align == info.value;
@@ -1907,9 +1910,9 @@ bool ElementSkinConditionContext::GetCondition(
     case SkinProperty::kId:
       return element->id() == info.value;
     case SkinProperty::kState:
-      return !!(uint32_t(element->GetAutoState()) & info.value);
+      return !!(uint32_t(element->computed_state()) & info.value);
     case SkinProperty::kValue:
-      return element->GetValue() == (int)info.value;
+      return element->value() == (int)info.value;
     case SkinProperty::kHover:
       return Element::hovered_element &&
              element->IsAncestorOf(Element::hovered_element);

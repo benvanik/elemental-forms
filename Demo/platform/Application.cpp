@@ -27,5 +27,5 @@ void Application::RenderFrame(int window_w, int window_h) {
   graphics::Renderer::get()->EndPaint();
 
   // If animations are running, reinvalidate immediately
-  if (AnimationManager::HasAnimationsRunning()) GetRoot()->Invalidate();
+  if (AnimationManager::has_running_animations()) GetRoot()->Invalidate();
 }

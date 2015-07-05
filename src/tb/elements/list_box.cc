@@ -12,7 +12,6 @@
 #include "tb/elements/menu_window.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/string.h"
-#include "tb/util/string_builder.h"
 #include "tb/util/string_table.h"
 #include "tb/window.h"
 
@@ -24,32 +23,33 @@ void ListBox::RegisterInflater() {
 }
 
 ListBox::ListBox() : m_header_lng_string_id(TBIDC("ListBox.header")) {
-  SetSource(&m_default_source);
-  SetIsFocusable(true);
-  SetSkinBg(TBIDC("ListBox"), InvokeInfo::kNoCallbacks);
-  m_container.SetGravity(Gravity::kAll);
-  m_container.set_rect(GetPaddingRect());
+  set_source(&m_default_source);
+  set_focusable(true);
+  set_background_skin(TBIDC("ListBox"), InvokeInfo::kNoCallbacks);
+  m_container.set_gravity(Gravity::kAll);
+  m_container.set_rect(padding_rect());
   AddChild(&m_container);
-  m_layout.SetGravity(Gravity::kAll);
-  m_layout.SetAxis(Axis::kY);
-  m_layout.SetSpacing(0);
-  m_layout.SetLayoutPosition(LayoutPosition::kLeftTop);
-  m_layout.SetLayoutDistributionPosition(LayoutDistributionPosition::kLeftTop);
-  m_layout.SetLayoutSize(LayoutSize::kAvailable);
-  m_container.GetContentRoot()->AddChild(&m_layout);
-  m_container.SetScrollMode(ScrollMode::kAutoY);
-  m_container.SetAdaptContentSize(true);
+  m_layout.set_gravity(Gravity::kAll);
+  m_layout.set_axis(Axis::kY);
+  m_layout.set_spacing(0);
+  m_layout.set_layout_position(LayoutPosition::kLeftTop);
+  m_layout.set_layout_distribution_position(
+      LayoutDistributionPosition::kLeftTop);
+  m_layout.set_layout_size(LayoutSize::kAvailable);
+  m_container.content_root()->AddChild(&m_layout);
+  m_container.set_scroll_mode(ScrollMode::kAutoY);
+  m_container.set_adapt_content_size(true);
 }
 
 ListBox::~ListBox() {
-  m_container.GetContentRoot()->RemoveChild(&m_layout);
+  m_container.content_root()->RemoveChild(&m_layout);
   RemoveChild(&m_container);
-  SetSource(nullptr);
+  set_source(nullptr);
 }
 
 void ListBox::OnInflate(const parsing::InflateInfo& info) {
   // Read items (if there is any) into the default source.
-  GenericStringItemSource::ReadItemNodes(info.node, GetDefaultSource());
+  GenericStringItemSource::ReadItemNodes(info.node, default_source());
   Element::OnInflate(info);
 }
 
@@ -69,13 +69,13 @@ void ListBox::OnItemChanged(size_t index) {
 
   // Replace the old element representing the item, with a new one. Preserve its
   // state.
-  auto old_state = old_element->GetStateRaw();
+  auto old_state = old_element->state_raw();
 
   if (Element* element = CreateAndAddItemAfter(index, old_element)) {
-    element->SetStateRaw(old_state);
+    element->set_state_raw(old_state);
   }
 
-  old_element->GetParent()->RemoveChild(old_element);
+  old_element->parent()->RemoveChild(old_element);
   delete old_element;
 }
 
@@ -106,7 +106,7 @@ void ListBox::OnAllItemsRemoved() {
   m_value = -1;
 }
 
-void ListBox::SetFilter(const char* filter) {
+void ListBox::set_filter(const char* filter) {
   std::string new_filter;
   if (filter && *filter) {
     new_filter = filter;
@@ -118,7 +118,7 @@ void ListBox::SetFilter(const char* filter) {
   InvalidateList();
 }
 
-void ListBox::SetHeaderString(const TBID& id) {
+void ListBox::set_header_string(const TBID& id) {
   if (m_header_lng_string_id == id) return;
   m_header_lng_string_id = id;
   InvalidateList();
@@ -136,8 +136,8 @@ void ListBox::ValidateList() {
   // FIX: Could delete and create only the changed items (faster filter change).
 
   // Remove old items.
-  while (Element* child = m_layout.GetContentRoot()->GetFirstChild()) {
-    child->GetParent()->RemoveChild(child);
+  while (Element* child = m_layout.content_root()->first_child()) {
+    child->parent()->RemoveChild(child);
     delete child;
   }
   if (!m_source || !m_source->size()) {
@@ -146,8 +146,8 @@ void ListBox::ValidateList() {
 
   // Create a sorted list of the items we should include using the current
   // filter.
-  util::StringBuilder sort_buf(m_source->size() * sizeof(int));
-  int* sorted_index = (int*)sort_buf.GetData();
+  std::vector<int> sorted_index;
+  sorted_index.resize(m_source->size());
 
   // Populate the sorted index list.
   int num_sorted_items = 0;
@@ -158,27 +158,26 @@ void ListBox::ValidateList() {
   }
 
   // Sort.
-  if (m_source->GetSort() != Sort::kNone) {
-    std::sort(&sorted_index[0], &sorted_index[num_sorted_items],
-              [&](const int a, const int b) {
-                int value = strcmp(m_source->GetItemString(a),
-                                   m_source->GetItemString(b));
-                return m_source->GetSort() == Sort::kDescending ? value > 0
-                                                                : value < 0;
-              });
+  if (m_source->sort() != Sort::kNone) {
+    std::sort(
+        &sorted_index[0], &sorted_index[num_sorted_items],
+        [&](const int a, const int b) {
+          int value =
+              strcmp(m_source->GetItemString(a), m_source->GetItemString(b));
+          return m_source->sort() == Sort::kDescending ? value > 0 : value < 0;
+        });
   }
 
   // Show header if we only show a subset of all items.
   if (!m_filter.empty()) {
     Element* element = new Label();
     auto fmt = util::GetString(m_header_lng_string_id);
-    element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
-                                             m_source->size()));
-    element->SetSkinBg(TBIDC("ListBox.header"));
-    element->SetState(Element::State::kDisabled, true);
-    element->SetGravity(Gravity::kAll);
+    element->set_text_format(fmt.c_str(), num_sorted_items, m_source->size());
+    element->set_background_skin(TBIDC("ListBox.header"));
+    element->set_state(Element::State::kDisabled, true);
+    element->set_gravity(Gravity::kAll);
     element->data.set_integer(-1);
-    m_layout.GetContentRoot()->AddChild(element);
+    m_layout.content_root()->AddChild(element);
   }
 
   // Create new items.
@@ -197,14 +196,14 @@ Element* ListBox::CreateAndAddItemAfter(size_t index, Element* reference) {
   if (Element* element = m_source->CreateItemElement(index, this)) {
     // Use item data as element to index lookup.
     element->data.set_integer(int(index));
-    m_layout.GetContentRoot()->AddChildRelative(element, ElementZRel::kAfter,
-                                                reference);
+    m_layout.content_root()->AddChildRelative(element, ElementZRel::kAfter,
+                                              reference);
     return element;
   }
   return nullptr;
 }
 
-void ListBox::SetValue(int value) {
+void ListBox::set_value(int value) {
   if (value == m_value) return;
 
   ListItem(m_value, false);
@@ -219,22 +218,22 @@ void ListBox::SetValue(int value) {
   InvokeEvent(ev);
 }
 
-TBID ListBox::GetSelectedItemID() {
+TBID ListBox::selected_item_id() {
   if (m_source && m_value >= 0 && m_value < m_source->size()) {
-    return m_source->GetItemID(m_value);
+    return m_source->GetItemId(m_value);
   }
   return TBID();
 }
 
 void ListBox::ListItem(size_t index, bool selected) {
   if (Element* element = GetItemElement(index)) {
-    element->SetState(Element::State::kSelected, selected);
+    element->set_state(Element::State::kSelected, selected);
   }
 }
 
 Element* ListBox::GetItemElement(size_t index) {
   if (index == -1) return nullptr;
-  for (Element* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
+  for (Element* tmp = m_layout.content_root()->first_child(); tmp;
        tmp = tmp->GetNext()) {
     if (tmp->data.as_integer() == index) return tmp;
   }
@@ -254,7 +253,7 @@ void ListBox::ScrollToSelectedItem() {
   }
 }
 
-void ListBox::OnSkinChanged() { m_container.set_rect(GetPaddingRect()); }
+void ListBox::OnSkinChanged() { m_container.set_rect(padding_rect()); }
 
 void ListBox::OnProcess() { ValidateList(); }
 
@@ -266,27 +265,27 @@ void ListBox::OnProcessAfterChildren() {
 
 bool ListBox::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
-      ev.target->GetParent() == m_layout.GetContentRoot()) {
+      ev.target->parent() == m_layout.content_root()) {
     // SetValue (EventType::kChanged) might cause something to delete this (f.ex
     // closing the dropdown menu. We want to sent another event, so ensure we're
     // still around.
     WeakElementPointer this_element(this);
 
     size_t index = ev.target->data.as_integer();
-    SetValue(int(index));
+    set_value(int(index));
 
     // If we're still around, invoke the click event too.
-    if (this_element.Get()) {
+    if (this_element.get()) {
       ListBox* target_list = this;
       // If the parent window is a MenuWindow, we will iterate up the event
       // destination chain to find the top MenuWindow and invoke the event
       // there.
       // That way events in submenus will reach the caller properly, and seem
       // like it was invoked on the top menu.
-      Window* window = GetParentWindow();
+      Window* window = parent_window();
       while (auto menu_win = util::SafeCast<MenuWindow>(window)) {
-        target_list = menu_win->GetList();
-        window = menu_win->GetEventDestination()->GetParentWindow();
+        target_list = menu_win->list_box();
+        window = menu_win->event_destination()->parent_window();
       }
 
       // Invoke the click event on the target list.
@@ -306,7 +305,7 @@ bool ListBox::OnEvent(const ElementEvent& ev) {
     // scroll. This matters if the list itself is focused instead of
     // some child view of any select item (since that would have passed
     // the container already)
-    if (GetScrollContainer()->OnEvent(ev)) {
+    if (scroll_container()->OnEvent(ev)) {
       return true;
     }
   }
@@ -314,7 +313,7 @@ bool ListBox::OnEvent(const ElementEvent& ev) {
 }
 
 bool ListBox::ChangeValue(SpecialKey key) {
-  if (!m_source || !m_layout.GetContentRoot()->GetFirstChild()) {
+  if (!m_source || !m_layout.content_root()->first_child()) {
     return false;
   }
 
@@ -327,26 +326,26 @@ bool ListBox::ChangeValue(SpecialKey key) {
     return false;
   }
 
-  Element* item_root = m_layout.GetContentRoot();
+  Element* item_root = m_layout.content_root();
   Element* current = GetItemElement(m_value);
   Element* origin = nullptr;
   if (key == SpecialKey::kHome || (!current && key == SpecialKey::kDown)) {
-    current = item_root->GetFirstChild();
+    current = item_root->first_child();
   } else if (key == SpecialKey::kEnd || (!current && key == SpecialKey::kUp)) {
-    current = item_root->GetLastChild();
+    current = item_root->last_child();
   } else {
     origin = current;
   }
 
   while (current) {
-    if (current != origin && !current->GetDisabled()) {
+    if (current != origin && current->is_enabled()) {
       break;
     }
     current = forward ? current->GetNext() : current->GetPrev();
   }
   // Select and focus what we found.
   if (current) {
-    SetValue(current->data.as_integer());
+    set_value(current->data.as_integer());
     return true;
   }
   return false;

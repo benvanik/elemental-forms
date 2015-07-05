@@ -16,7 +16,7 @@ namespace tb {
 namespace elements {
 
 Rect PopupAlignment::GetAlignedRect(Element* popup, Element* target) const {
-  Element* root = target->GetParentRoot();
+  Element* root = target->parent_root();
 
   SizeConstraints sc(root->rect().w, root->rect().h);
 
@@ -73,17 +73,17 @@ Rect PopupAlignment::GetAlignedRect(Element* popup, Element* target) const {
 
 PopupWindow::PopupWindow(Element* target) : m_target(target) {
   ElementListener::AddGlobalListener(this);
-  SetSkinBg(TBIDC("PopupWindow"), InvokeInfo::kNoCallbacks);
-  SetSettings(WindowSettings::kNone);
+  set_background_skin(TBIDC("PopupWindow"), InvokeInfo::kNoCallbacks);
+  set_settings(WindowSettings::kNone);
 }
 
 PopupWindow::~PopupWindow() { ElementListener::RemoveGlobalListener(this); }
 
 bool PopupWindow::Show(const PopupAlignment& alignment) {
   // Calculate and set a good size for the popup window
-  set_rect(alignment.GetAlignedRect(this, m_target.Get()));
+  set_rect(alignment.GetAlignedRect(this, m_target.get()));
 
-  Element* root = m_target.Get()->GetParentRoot();
+  Element* root = m_target.get()->parent_root();
   root->AddChild(this);
   return true;
 }
@@ -114,14 +114,14 @@ bool PopupWindow::OnElementInvokeEvent(Element* element,
 
 void PopupWindow::OnElementDelete(Element* element) {
   // If the target element is deleted, close!
-  if (!m_target.Get()) {
+  if (!m_target.get()) {
     Close();
   }
 }
 
 bool PopupWindow::OnElementDying(Element* element) {
   // If the target element or an ancestor of it is dying, close!
-  if (element == m_target.Get() || element->IsAncestorOf(m_target.Get())) {
+  if (element == m_target.get() || element->IsAncestorOf(m_target.get())) {
     Close();
   }
   return false;

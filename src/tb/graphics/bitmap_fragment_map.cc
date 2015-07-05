@@ -97,7 +97,7 @@ std::unique_ptr<BitmapFragment> BitmapFragmentMap::CreateNewFragment(
   }
   // If the row is unused, create a smaller row to only consume needed height
   // for fragment.
-  if (best_row->IsAllAvailable() && needed_h < best_row->height) {
+  if (best_row->empty() && needed_h < best_row->height) {
     auto row = std::make_unique<BitmapFragmentSpaceAllocator>(
         best_row->y + needed_h, m_bitmap_w, best_row->height - needed_h);
     // Keep the rows sorted from top to bottom.
@@ -145,13 +145,13 @@ void BitmapFragmentMap::FreeFragmentSpace(BitmapFragment* frag) {
 
   // If the row is now empty, merge empty rows so larger fragments
   // have a chance of allocating the space.
-  if (frag->m_row->IsAllAvailable()) {
+  if (frag->m_row->empty()) {
     for (size_t i = 0; i < m_rows.size() - 1; ++i) {
       assert(i >= 0);
       assert(i < m_rows.size() - 1);
       auto row = m_rows[i].get();
       auto next_row = m_rows[i + 1].get();
-      if (row->IsAllAvailable() && next_row->IsAllAvailable()) {
+      if (row->empty() && next_row->empty()) {
         row->height += next_row->height;
         m_rows.erase(m_rows.begin() + i + 1);
         i--;
@@ -207,7 +207,7 @@ Bitmap* BitmapFragmentMap::GetBitmap(Validate validate_type) {
 bool BitmapFragmentMap::ValidateBitmap() {
   if (m_need_update) {
     if (m_bitmap) {
-      m_bitmap->SetData(m_bitmap_data);
+      m_bitmap->set_data(m_bitmap_data);
     } else {
       m_bitmap =
           Renderer::get()->CreateBitmap(m_bitmap_w, m_bitmap_h, m_bitmap_data);

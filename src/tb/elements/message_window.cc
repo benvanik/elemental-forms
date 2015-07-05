@@ -25,15 +25,15 @@ MessageWindow::MessageWindow(Element* target, TBID id) : m_target(target) {
 
 MessageWindow::~MessageWindow() {
   ElementListener::RemoveGlobalListener(this);
-  if (Element* dimmer = m_dimmer.Get()) {
-    dimmer->GetParent()->RemoveChild(dimmer);
+  if (Element* dimmer = m_dimmer.get()) {
+    dimmer->parent()->RemoveChild(dimmer);
     delete dimmer;
   }
 }
 
 bool MessageWindow::Show(const std::string& title, const std::string& message,
                          MessageWindowSettings* settings) {
-  Element* target = m_target.Get();
+  Element* target = m_target.get();
   if (!target) return false;
 
   MessageWindowSettings default_settings;
@@ -41,7 +41,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
     settings = &default_settings;
   }
 
-  Element* root = target->GetParentRoot();
+  Element* root = target->parent_root();
 
   const char* source =
       "LayoutBox: axis: y, distribution: available\n"
@@ -49,18 +49,18 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
       "		IconBox: id: 2\n"
       "		TextBox: multiline: 1, readonly: 1, id: 1\n"
       "	LayoutBox: distribution-position: right bottom, id: 3\n";
-  if (!GetContentRoot()->LoadData(source)) {
+  if (!content_root()->LoadData(source)) {
     return false;
   }
 
-  SetText(title);
+  set_text(title);
 
-  GetElementByIDAndType<IconBox>(2)->SetSkinBg(settings->icon_skin);
+  GetElementByIdAndType<IconBox>(2)->set_background_skin(settings->icon_skin);
 
-  TextBox* text_box = GetElementByIDAndType<TextBox>(1);
-  text_box->SetStyling(settings->styling);
-  text_box->SetText(message);
-  text_box->SetSkinBg("");
+  TextBox* text_box = GetElementByIdAndType<TextBox>(1);
+  text_box->set_styled(settings->styling);
+  text_box->set_text(message);
+  text_box->set_background_skin("");
 
   // Create buttons.
   if (settings->msg == MessageWindowButtons::kOk) {
@@ -82,13 +82,13 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   // FIX: It would be better to use adapt-to-content on the text_box to achieve
   // the most optimal size.
   // At least when we do full blown multi pass size checking.
-  rect.h += text_box->GetTextView()->GetOverflowY();
+  rect.h += text_box->text_view()->GetOverflowY();
 
   // Create background dimmer.
   if (settings->dimmer) {
     auto dimmer = new parts::Dimmer();
     root->AddChild(dimmer);
-    m_dimmer.Set(dimmer);
+    m_dimmer.reset(dimmer);
   }
 
   // Center and size to the new height.
@@ -99,14 +99,14 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 }
 
 void MessageWindow::AddButton(TBID id, bool focused) {
-  auto layout = GetElementByIDAndType<LayoutBox>(3);
+  auto layout = GetElementByIdAndType<LayoutBox>(3);
   if (!layout) return;
   Button* btn = new Button();
   btn->set_id(id);
-  btn->SetText(util::GetString(btn->id()));
+  btn->set_text(util::GetString(btn->id()));
   layout->AddChild(btn);
   if (focused) {
-    btn->SetFocus(FocusReason::kUnknown);
+    btn->set_focus(FocusReason::kUnknown);
   }
 }
 
@@ -120,7 +120,7 @@ bool MessageWindow::OnEvent(const ElementEvent& ev) {
     InvokeEvent(target_ev);
 
     // If target got deleted, close.
-    if (this_element.Get()) {
+    if (this_element.get()) {
       Close();
     }
     return true;
@@ -134,21 +134,21 @@ bool MessageWindow::OnEvent(const ElementEvent& ev) {
 }
 
 void MessageWindow::OnDie() {
-  if (Element* dimmer = m_dimmer.Get()) {
+  if (Element* dimmer = m_dimmer.get()) {
     dimmer->Die();
   }
 }
 
 void MessageWindow::OnElementDelete(Element* element) {
   // If the target element is deleted, close!
-  if (!m_target.Get()) {
+  if (!m_target.get()) {
     Close();
   }
 }
 
 bool MessageWindow::OnElementDying(Element* element) {
   // If the target element or an ancestor of it is dying, close!
-  if (element == m_target.Get() || element->IsAncestorOf(m_target.Get())) {
+  if (element == m_target.get() || element->IsAncestorOf(m_target.get())) {
     Close();
   }
   return false;

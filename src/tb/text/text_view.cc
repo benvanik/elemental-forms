@@ -27,7 +27,7 @@ TextView::TextView() {
   selection.style_edit = this;
   packed.show_whitespace = kShowWhitespace;
 
-  font_desc = tb::text::FontManager::get()->GetDefaultFontDescription();
+  font_desc = tb::text::FontManager::get()->default_font_description();
   font = tb::text::FontManager::get()->GetFontFace(font_desc);
 
 // TODO(benvanik): make a runtime per-textbox option.
@@ -290,7 +290,7 @@ void TextView::InsertText(const char* text, size_t len, bool after_last,
   if (clear_undo_redo) {
     undo_stack.Clear(true, true);
   } else {
-    undo_stack.Commit(this, caret.GetGlobalOffset(), len_inserted, text, true);
+    undo_stack.Commit(this, caret.global_offset(), len_inserted, text, true);
   }
 
   caret.Place(caret.pos.block, caret.pos.ofs + len, false);
@@ -326,7 +326,7 @@ bool TextView::KeyDown(int key, SpecialKey special_key,
   }
 
   TextOffset old_caret_pos = caret.pos;
-  TextFragment* old_caret_elm = caret.GetFragment();
+  TextFragment* old_caret_elm = caret.fragment();
 
   if ((special_key == SpecialKey::kUp || special_key == SpecialKey::kDown) &&
       any(modifierkeys & ModifierKeys::kCtrl)) {
@@ -553,11 +553,11 @@ void TextView::Focus(bool focus) {
   selection.Invalidate();
 }
 
-void TextView::SetText(const char* text, CaretPosition pos) {
-  SetText(text, strlen(text), pos);
+void TextView::set_text(const char* text, CaretPosition pos) {
+  set_text(text, strlen(text), pos);
 }
 
-void TextView::SetText(const char* text, size_t text_len, CaretPosition pos) {
+void TextView::set_text(const char* text, size_t text_len, CaretPosition pos) {
   if (!text || !*text) {
     Clear(true);
     caret.UpdateWantedX();
@@ -588,14 +588,14 @@ bool TextView::Load(const char* filename) {
   std::vector<char> str(num_bytes + 1);
   num_bytes = file->Read(str.data(), 1, num_bytes);
   str[num_bytes] = 0;
-  SetText(str.data());
+  set_text(str.data());
   return true;
 }
 
-std::string TextView::GetText() {
+std::string TextView::text() {
   TextSelection tmp_selection(this);
   tmp_selection.SelectAll();
-  return tmp_selection.GetText();
+  return tmp_selection.text();
 }
 
 bool TextView::empty() const {
@@ -603,7 +603,7 @@ bool TextView::empty() const {
          blocks.GetFirst()->str.empty();
 }
 
-void TextView::SetAlign(TextAlign align) {
+void TextView::set_alignment(TextAlign align) {
   this->align = align;
   // Call SetAlign on all blocks currently selected, or the block of the current
   // caret position.
@@ -612,26 +612,30 @@ void TextView::SetAlign(TextAlign align) {
   TextBlock* stop =
       selection.IsSelected() ? selection.stop.block : caret.pos.block;
   while (start && start != stop->GetNext()) {
-    start->SetAlign(align);
+    start->set_alignment(align);
     start = start->GetNext();
   }
 }
 
-void TextView::SetMultiline(bool multiline) { packed.multiline_on = multiline; }
+void TextView::set_multiline(bool multiline) {
+  packed.multiline_on = multiline;
+}
 
-void TextView::SetStyling(bool styling) { packed.styling_on = styling; }
+void TextView::set_styled(bool styling) { packed.styling_on = styling; }
 
-void TextView::SetReadOnly(bool readonly) { packed.read_only = readonly; }
+void TextView::set_read_only(bool readonly) { packed.read_only = readonly; }
 
-void TextView::SetSelection(bool selection) { packed.selection_on = selection; }
+void TextView::set_selection(bool selection) {
+  packed.selection_on = selection;
+}
 
-void TextView::SetPassword(bool password) {
+void TextView::set_password(bool password) {
   if (packed.password_on == password) return;
   packed.password_on = password;
   Reformat(true);
 }
 
-void TextView::SetWrapping(bool wrapping) {
+void TextView::set_wrapping(bool wrapping) {
   if (packed.wrapping == wrapping) return;
   packed.wrapping = wrapping;
   Reformat(false);

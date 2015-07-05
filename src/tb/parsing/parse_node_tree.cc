@@ -24,7 +24,7 @@ ParseNodeTree::~ParseNodeTree() { s_ref_trees.Remove(this); }
 
 Value& ParseNodeTree::GetValue(const char* request) {
   if (ParseNode* node = m_node.GetNodeFollowRef(request)) {
-    return node->GetValue();
+    return node->value();
   }
   TBDebugOut("ParseNodeTree::GetValue - request not found: %s\n", request);
   static Value nullval;
@@ -35,10 +35,10 @@ Value& ParseNodeTree::GetValue(const char* request) {
 Value& ParseNodeTree::GetValueFromTree(const char* request) {
   assert(*request == '@');
   ParseNode tmp;
-  tmp.GetValue().set_string(request, Value::Set::kAsStatic);
+  tmp.value().set_string(request, Value::Set::kAsStatic);
   ParseNode* node = ParseNodeTree::FollowNodeRef(&tmp);
   if (node != &tmp) {
-    return node->GetValue();
+    return node->value();
   }
   static Value nullval;
   return nullval;
@@ -48,7 +48,7 @@ void ParseNodeTree::SetValue(const char* request, const Value& value) {
   if (ParseNode* node =
           m_node.GetNode(request, ParseNode::MissingPolicy::kCreate)) {
     // FIX: Only invoke the listener if it really changed.
-    node->GetValue().Copy(value);
+    node->value().Copy(value);
     InvokeChangeListenersInternal(request);
   }
 }
@@ -63,7 +63,7 @@ void ParseNodeTree::InvokeChangeListenersInternal(const char* request) {
 // static
 ParseNodeTree* ParseNodeTree::GetRefTree(const char* name, size_t name_len) {
   for (ParseNodeTree* rt = s_ref_trees.GetFirst(); rt; rt = rt->GetNext()) {
-    if (strncmp(rt->GetName().c_str(), name, name_len) == 0) {
+    if (strncmp(rt->name().c_str(), name, name_len) == 0) {
       return rt;
     }
   }
@@ -82,9 +82,9 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
   uint32_t cycle_id = ++s_cycle_id;
   ParseNode* start_node = node;
 
-  while (node->GetValue().is_string()) {
+  while (node->value().is_string()) {
     // If not a reference at all, we're done.
-    const char* node_str = node->GetValue().as_string();
+    const char* node_str = node->value().as_string();
     if (*node_str != '@') {
       break;
     }
@@ -102,8 +102,8 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
     // We have a "@>noderequest" string. Go ahead and do a local look up.
     if (*name_start == '>') {
       ParseNode* local_root = node;
-      while (local_root->GetParent()) {
-        local_root = local_root->GetParent();
+      while (local_root->parent()) {
+        local_root = local_root->parent();
       }
       next_node =
           local_root->GetNode(name_start + 1, ParseNode::MissingPolicy::kNull);
@@ -118,7 +118,7 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
       TBDebugOut(
           "ParseNodeTree::ResolveNode - No tree found for request \"%s\" from "
           "node \"%s\"\n",
-          node_str, node->GetValue().as_string());
+          node_str, node->value().as_string());
       break;
     }
 
@@ -138,7 +138,7 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
       TBDebugOut(
           "ParseNodeTree::ResolveNode - Reference loop detected on request "
           "\"%s\" from node \"%s\"\n",
-          node_str, node->GetValue().as_string());
+          node_str, node->value().as_string());
       return start_node;
     }
   }
@@ -148,15 +148,15 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
 // static
 void ParseNodeTree::ResolveConditions(ParseNode* parent_node) {
   bool condition_ret = false;
-  ParseNode* node = parent_node->GetFirstChild();
+  ParseNode* node = parent_node->first_child();
   while (node) {
     bool delete_node = false;
     bool move_children = false;
-    if (strcmp(node->GetName(), "@if") == 0) {
+    if (strcmp(node->name(), "@if") == 0) {
       condition_ret = node->GetValueFollowRef().as_integer() ? true : false;
       if (condition_ret) move_children = true;
       delete_node = true;
-    } else if (strcmp(node->GetName(), "@else") == 0) {
+    } else if (strcmp(node->name(), "@else") == 0) {
       condition_ret = !condition_ret;
       if (condition_ret) move_children = true;
       delete_node = true;
@@ -168,7 +168,7 @@ void ParseNodeTree::ResolveConditions(ParseNode* parent_node) {
     if (move_children) {
       // Resolve the branch first, since we'll skip it.
       ResolveConditions(node);
-      while (ParseNode* content = node->GetLastChild()) {
+      while (ParseNode* content = node->last_child()) {
         node->Remove(content);
         parent_node->AddAfter(content, node);
       }

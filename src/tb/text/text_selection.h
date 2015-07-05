@@ -58,7 +58,7 @@ class TextSelection {
   bool IsFragmentSelected(TextFragment* elm) const;
   bool IsSelected() const;
   void RemoveContent();
-  std::string GetText() const;
+  std::string text() const;
 
  public:
   TextView* style_edit;

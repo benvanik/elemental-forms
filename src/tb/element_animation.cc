@@ -43,21 +43,21 @@ void OpacityElementAnimation::OnAnimationStart() {
   // FIX: fix this properly
   m_element->Invalidate();
 
-  m_element->SetOpacity(m_src_opacity);
+  m_element->set_opacity(m_src_opacity);
 }
 
 void OpacityElementAnimation::OnAnimationUpdate(float progress) {
-  m_element->SetOpacity(Lerp(m_src_opacity, m_dst_opacity, progress));
+  m_element->set_opacity(Lerp(m_src_opacity, m_dst_opacity, progress));
 }
 
 void OpacityElementAnimation::OnAnimationStop(bool aborted) {
   // If we're aborted, it may be because the element is being deleted
   if (m_die && !aborted) {
     WeakElementPointer the_element(m_element);
-    if (m_element->GetParent()) m_element->GetParent()->RemoveChild(m_element);
-    if (the_element.Get()) delete the_element.Get();
+    if (m_element->parent()) m_element->parent()->RemoveChild(m_element);
+    if (the_element.get()) delete the_element.get();
   } else
-    m_element->SetOpacity(m_dst_opacity);
+    m_element->set_opacity(m_dst_opacity);
 }
 
 RectElementAnimation::RectElementAnimation(Element* element,

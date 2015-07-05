@@ -100,8 +100,8 @@ bool SFontRenderer::Load(const char* filename, int size) {
 FontFace* SFontRenderer::Create(FontManager* font_manager, const char* filename,
                                 const FontDescription& font_desc) {
   SFontRenderer* fr = new SFontRenderer();
-  if (fr->Load(filename, (int)font_desc.GetSize())) {
-    FontFace* font = new FontFace(font_manager->GetGlyphCache(), fr, font_desc);
+  if (fr->Load(filename, (int)font_desc.size())) {
+    FontFace* font = new FontFace(font_manager->glyph_cache(), fr, font_desc);
     return font;
   }
   delete fr;

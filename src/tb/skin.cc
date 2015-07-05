@@ -54,7 +54,7 @@ Skin::Skin() {
   Renderer::get()->AddListener(this);
 
   // Avoid filtering artifacts at edges when we draw fragments stretched.
-  m_frag_manager.SetAddBorder(true);
+  m_frag_manager.set_has_border(true);
 }
 
 bool Skin::Load(const char* skin_file, const char* override_skin_file) {
@@ -85,9 +85,9 @@ bool Skin::LoadInternal(const char* skin_file) {
     int supported_dpi = base_dpi;
     if (ParseNode* supported_dpi_node =
             node.GetNode("description>supported-dpi")) {
-      assert(supported_dpi_node->GetValue().is_array() ||
-             supported_dpi_node->GetValue().as_integer() == base_dpi);
-      if (ValueArray* arr = supported_dpi_node->GetValue().as_array()) {
+      assert(supported_dpi_node->value().is_array() ||
+             supported_dpi_node->value().as_integer() == base_dpi);
+      if (ValueArray* arr = supported_dpi_node->value().as_array()) {
         int screen_dpi = util::GetDPI();
         int best_supported_dpi = 0;
         for (size_t i = 0; i < arr->size(); ++i) {
@@ -121,15 +121,14 @@ bool Skin::LoadInternal(const char* skin_file) {
   if (!elements) {
     return true;
   }
-  ParseNode* n = elements->GetFirstChild();
+  ParseNode* n = elements->first_child();
   while (n) {
     // If we have a "clone" node, clone all children from that node
     // into this node.
     while (ParseNode* clone = n->GetNode("clone")) {
       n->Remove(clone);
 
-      ParseNode* clone_source =
-          elements->GetNode(clone->GetValue().as_string());
+      ParseNode* clone_source = elements->GetNode(clone->value().as_string());
       if (clone_source) {
         n->CloneChildren(clone_source);
       }
@@ -139,14 +138,14 @@ bool Skin::LoadInternal(const char* skin_file) {
 
     // If the skin element already exist, we will call Load on it again.
     // This will patch the element with any new data from the node.
-    TBID element_id(n->GetName());
-    SkinElement* element = GetSkinElement(element_id);
+    TBID element_id(n->name());
+    SkinElement* element = GetSkinElementById(element_id);
     if (!element) {
       element = new SkinElement();
       m_elements.emplace(element_id, std::unique_ptr<SkinElement>(element));
     }
 
-    element->Load(n, this, skin_path.GetData());
+    element->Load(n, this, skin_path.c_str());
     if (m_listener) {
       m_listener->OnSkinElementLoaded(this, element, n);
     }
@@ -199,7 +198,7 @@ bool Skin::ReloadBitmapsInternal() {
       if (m_dim_conv.NeedConversion()) {
         m_dim_conv.GetDstDPIFilename(element->bitmap_file, &filename_dst_DPI);
         element->bitmap = m_frag_manager.GetFragmentFromFile(
-            filename_dst_DPI.GetData(), dedicated_map);
+            filename_dst_DPI.c_str(), dedicated_map);
         if (element->bitmap) {
           bitmap_dpi = m_dim_conv.GetDstDPI();
         }
@@ -222,7 +221,7 @@ bool Skin::ReloadBitmapsInternal() {
 
 Skin::~Skin() { Renderer::get()->RemoveListener(this); }
 
-SkinElement* Skin::GetSkinElement(const TBID& skin_id) const {
+SkinElement* Skin::GetSkinElementById(const TBID& skin_id) const {
   if (!skin_id) return nullptr;
   auto& it = m_elements.find(skin_id);
   return it != m_elements.end() ? it->second.get() : nullptr;
@@ -230,7 +229,7 @@ SkinElement* Skin::GetSkinElement(const TBID& skin_id) const {
 
 SkinElement* Skin::GetSkinElementStrongOverride(
     const TBID& skin_id, SkinState state, SkinConditionContext& context) const {
-  if (SkinElement* skin_element = GetSkinElement(skin_id)) {
+  if (SkinElement* skin_element = GetSkinElementById(skin_id)) {
     // Avoid eternal recursion when overrides refer to elements referring back.
     if (skin_element->is_getting) {
       return nullptr;
@@ -239,7 +238,7 @@ SkinElement* Skin::GetSkinElementStrongOverride(
 
     // Check if there's any strong overrides for this element with the given
     // state.
-    SkinElementState* override_state =
+    auto override_state =
         skin_element->m_strong_override_elements.GetStateElement(state,
                                                                  context);
     if (override_state) {
@@ -258,7 +257,7 @@ SkinElement* Skin::GetSkinElementStrongOverride(
 
 SkinElement* Skin::PaintSkin(const Rect& dst_rect, const TBID& skin_id,
                              SkinState state, SkinConditionContext& context) {
-  return PaintSkin(dst_rect, GetSkinElement(skin_id), state, context);
+  return PaintSkin(dst_rect, GetSkinElementById(skin_id), state, context);
 }
 
 SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
@@ -274,7 +273,7 @@ SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
   TB_IF_DEBUG(bool paint_error_highlight = false);
 
   // If there's any override for this state, paint it.
-  SkinElementState* override_state =
+  auto override_state =
       element->m_override_elements.GetStateElement(state, context);
   if (override_state) {
     if (SkinElement* used_override =
@@ -297,9 +296,8 @@ SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
 
   // Paint all child elements that matches the state (or should be painted for
   // all states).
-  if (element->m_child_elements.HasStateElements()) {
-    const SkinElementState* state_element =
-        element->m_child_elements.GetFirstElement();
+  if (element->m_child_elements.has_state_elements()) {
+    auto state_element = element->m_child_elements.first_element();
     while (state_element) {
       if (state_element->IsMatch(state, context)) {
         PaintSkin(dst_rect, state_element->element_id,
@@ -328,8 +326,7 @@ void Skin::PaintSkinOverlay(const Rect& dst_rect, SkinElement* element,
 
   // Paint all overlay elements that matches the state (or should be painted for
   // all states).
-  const SkinElementState* state_element =
-      element->m_overlay_elements.GetFirstElement();
+  auto state_element = element->m_overlay_elements.first_element();
   while (state_element) {
     if (state_element->IsMatch(state, context)) {
       PaintSkin(dst_rect, state_element->element_id,
@@ -378,7 +375,7 @@ void Skin::PaintElementBGColor(const Rect& dst_rect, SkinElement* element) {
 }
 
 void Skin::PaintElementImage(const Rect& dst_rect, SkinElement* element) {
-  Rect src_rect(0, 0, element->bitmap->Width(), element->bitmap->Height());
+  Rect src_rect(0, 0, element->bitmap->width(), element->bitmap->height());
   Rect rect = dst_rect.Expand(element->expand, element->expand);
   rect.reset(rect.x + element->img_ofs_x +
                  (rect.w - src_rect.w) * element->img_position_x / 100,
@@ -399,7 +396,7 @@ void Skin::PaintElementStretchImage(const Rect& dst_rect,
   if (dst_rect.empty()) return;
   Rect rect = dst_rect.Expand(element->expand, element->expand);
   Rect src_rect = GetFlippedRect(
-      Rect(0, 0, element->bitmap->Width(), element->bitmap->Height()), element);
+      Rect(0, 0, element->bitmap->width(), element->bitmap->height()), element);
   Renderer::get()->DrawBitmap(rect, src_rect, element->bitmap);
 }
 
@@ -416,8 +413,8 @@ void Skin::PaintElementStretchBox(const Rect& dst_rect, SkinElement* element,
   int cut = element->cut;
   int dst_cut_w = std::min(cut, rect.w / 2);
   int dst_cut_h = std::min(cut, rect.h / 2);
-  int bw = element->bitmap->Width();
-  int bh = element->bitmap->Height();
+  int bw = element->bitmap->width();
+  int bh = element->bitmap->height();
 
   bool has_left_right_edges = rect.h > dst_cut_h * 2;
   bool has_top_bottom_edges = rect.w > dst_cut_w * 2;
@@ -485,10 +482,10 @@ int GetFadeoutSize(int scrolled_distance, int fadeout_length) {
 
 void Skin::DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y,
                            int left, int top, int right, int bottom) {
-  if (auto skin = Skin::get()->GetSkinElement(skin_x)) {
+  if (auto skin = Skin::get()->GetSkinElementById(skin_x)) {
     if (skin->bitmap) {
-      int bw = skin->bitmap->Width();
-      int bh = skin->bitmap->Height();
+      int bw = skin->bitmap->width();
+      int bh = skin->bitmap->height();
       int dw;
       if ((dw = GetFadeoutSize(left, bw)) > 0) {
         Renderer::get()->DrawBitmap(
@@ -502,10 +499,10 @@ void Skin::DrawEdgeFadeout(const Rect& dst_rect, TBID skin_x, TBID skin_y,
       }
     }
   }
-  if (auto skin = Skin::get()->GetSkinElement(skin_y)) {
+  if (auto skin = Skin::get()->GetSkinElementById(skin_y)) {
     if (skin->bitmap) {
-      int bw = skin->bitmap->Width();
-      int bh = skin->bitmap->Height();
+      int bw = skin->bitmap->width();
+      int bh = skin->bitmap->height();
       int dh;
       if ((dh = GetFadeoutSize(top, bh)) > 0) {
         Renderer::get()->DrawBitmap(
@@ -539,7 +536,7 @@ void Skin::OnContextRestored() {
 }
 
 int Skin::GetPxFromNode(ParseNode* node, int def_value) const {
-  return node ? m_dim_conv.GetPxFromValue(&node->GetValue(), def_value)
+  return node ? m_dim_conv.GetPxFromValue(&node->value(), def_value)
               : def_value;
 }
 
@@ -547,37 +544,37 @@ SkinElement::SkinElement() = default;
 
 SkinElement::~SkinElement() = default;
 
-int SkinElement::GetIntrinsicMinWidth() const {
+int SkinElement::intrinsic_min_width() const {
   // Sizes below the skin cut size would start to shrink the skin below pretty,
   // so assume that's the default minimum size if it's not specified (minus
   // expansion).
   return cut * 2 - expand * 2;
 }
 
-int SkinElement::GetIntrinsicMinHeight() const {
+int SkinElement::intrinsic_min_height() const {
   // Sizes below the skin cut size would start to shrink the skin below pretty,
   // so assume that's the default minimum size if it's not specified (minus
   // expansion).
   return cut * 2 - expand * 2;
 }
 
-int SkinElement::GetIntrinsicWidth() const {
-  if (width != kSkinValueNotSpecified) {
-    return width;
+int SkinElement::intrinsic_width() const {
+  if (width_ != kSkinValueNotSpecified) {
+    return width_;
   }
   if (bitmap) {
-    return bitmap->Width() - expand * 2;
+    return bitmap->width() - expand * 2;
   }
   // FIX: We may want to check child elements etc.
   return kSkinValueNotSpecified;
 }
 
-int SkinElement::GetIntrinsicHeight() const {
-  if (height != kSkinValueNotSpecified) {
-    return height;
+int SkinElement::intrinsic_height() const {
+  if (height_ != kSkinValueNotSpecified) {
+    return height_;
   }
   if (bitmap) {
-    return bitmap->Height() - expand * 2;
+    return bitmap->height() - expand * 2;
   }
   // FIX: We may want to check child elements etc.
   return kSkinValueNotSpecified;
@@ -608,7 +605,7 @@ void SkinElement::SetBitmapDPI(const util::DimensionConverter& dim_conv,
   this->bitmap_dpi = bitmap_dpi;
 }
 
-bool SkinElement::HasState(SkinState state, SkinConditionContext& context) {
+bool SkinElement::has_state(SkinState state, SkinConditionContext& context) {
   return m_override_elements.GetStateElement(
              state, context, SkinElementState::MatchRule::kOnlySpecificState) ||
          m_child_elements.GetStateElement(
@@ -629,13 +626,13 @@ void SkinElement::Load(ParseNode* n, Skin* skin, const char* skin_path) {
   cut = n->GetValueInt("cut", cut);
   expand = n->GetValueInt("expand", expand);
 
-  name = n->GetName();
-  id = n->GetName();
+  name = n->name();
+  id = n->name();
 
-  auto dim_conv = skin->GetDimensionConverter();
+  auto dim_conv = skin->dimension_converter();
 
   if (ParseNode* padding_node = n->GetNode("padding")) {
-    Value& val = padding_node->GetValue();
+    Value& val = padding_node->value();
     if (val.array_size() == 4) {
       padding_top = dim_conv->GetPxFromValue(val.as_array()->at(0), 0);
       padding_right = dim_conv->GetPxFromValue(val.as_array()->at(1), 0);
@@ -651,15 +648,15 @@ void SkinElement::Load(ParseNode* n, Skin* skin, const char* skin_path) {
           dim_conv->GetPxFromValue(&val, 0);
     }
   }
-  width = skin->GetPxFromNode(n->GetNode("width"), width);
-  height = skin->GetPxFromNode(n->GetNode("height"), height);
-  pref_width = skin->GetPxFromNode(n->GetNode("pref-width"), pref_width);
-  pref_height = skin->GetPxFromNode(n->GetNode("pref-height"), pref_height);
-  min_width = skin->GetPxFromNode(n->GetNode("min-width"), min_width);
-  min_height = skin->GetPxFromNode(n->GetNode("min-height"), min_height);
-  max_width = skin->GetPxFromNode(n->GetNode("max-width"), max_width);
-  max_height = skin->GetPxFromNode(n->GetNode("max-height"), max_height);
-  spacing = skin->GetPxFromNode(n->GetNode("spacing"), spacing);
+  width_ = skin->GetPxFromNode(n->GetNode("width"), width_);
+  height_ = skin->GetPxFromNode(n->GetNode("height"), height_);
+  pref_width_ = skin->GetPxFromNode(n->GetNode("pref-width"), pref_width_);
+  pref_height_ = skin->GetPxFromNode(n->GetNode("pref-height"), pref_height_);
+  min_width_ = skin->GetPxFromNode(n->GetNode("min-width"), min_width_);
+  min_height_ = skin->GetPxFromNode(n->GetNode("min-height"), min_height_);
+  max_width_ = skin->GetPxFromNode(n->GetNode("max-width"), max_width_);
+  max_height_ = skin->GetPxFromNode(n->GetNode("max-height"), max_height_);
+  spacing_ = skin->GetPxFromNode(n->GetNode("spacing"), spacing_);
   content_ofs_x =
       skin->GetPxFromNode(n->GetNode("content-ofs-x"), content_ofs_x);
   content_ofs_y =
@@ -769,20 +766,20 @@ void SkinElementStateList::Load(ParseNode* n) {
   if (!n) return;
 
   // For each node, create a new state element.
-  ParseNode* element_node = n->GetFirstChild();
+  ParseNode* element_node = n->first_child();
   while (element_node) {
     SkinElementState* state = new SkinElementState();
 
     // By default, a state element applies to all combinations of states.
     state->state = SkinState::kAll;
-    state->element_id.reset(element_node->GetValue().as_string());
+    state->element_id.reset(element_node->value().as_string());
 
     // Loop through all nodes, read state and create all found conditions.
-    for (ParseNode* condition_node = element_node->GetFirstChild();
+    for (ParseNode* condition_node = element_node->first_child();
          condition_node; condition_node = condition_node->GetNext()) {
-      if (strcmp(condition_node->GetName(), "state") == 0) {
-        state->state = StringToState(condition_node->GetValue().as_string());
-      } else if (strcmp(condition_node->GetName(), "condition") == 0) {
+      if (strcmp(condition_node->name(), "state") == 0) {
+        state->state = StringToState(condition_node->value().as_string());
+      } else if (strcmp(condition_node->name(), "condition") == 0) {
         auto target = from_string(condition_node->GetValueString("target", ""),
                                   SkinTarget::kThis);
 
@@ -798,12 +795,11 @@ void SkinElementStateList::Load(ParseNode* n) {
           // Set the it to number or string. If it's a state, we must first
           // convert the state string to the SkinState state combo.
           if (prop == SkinProperty::kState) {
-            value.reset(
-                uint32_t(StringToState(value_n->GetValue().as_string())));
-          } else if (value_n->GetValue().is_string()) {
-            value.reset(value_n->GetValue().as_string());
+            value.reset(uint32_t(StringToState(value_n->value().as_string())));
+          } else if (value_n->value().is_string()) {
+            value.reset(value_n->value().as_string());
           } else {
-            value.reset(value_n->GetValue().as_integer());
+            value.reset(value_n->value().as_integer());
           }
         }
 

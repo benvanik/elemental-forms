@@ -47,8 +47,8 @@ class BitmapFragmentSpaceAllocator : public util::SpaceAllocator {
 // Bitmaps to reduce texture switching.
 class BitmapFragment {
  public:
-  int Width() const { return m_rect.w; }
-  int Height() const { return m_rect.h; }
+  int width() const { return m_rect.w; }
+  int height() const { return m_rect.h; }
 
   // Returns the bitmap for this fragment.
   // By default, the bitmap is validated if needed before returning (See
@@ -58,7 +58,7 @@ class BitmapFragment {
   // Returns the height allocated to this fragment. This may be larger than
   // Height() depending of the internal allocation of fragments in a map. It
   // should rarely be used.
-  int GetAllocatedHeight() const { return m_row_height; }
+  int allocated_height() const { return m_row_height; }
 
  public:
   BitmapFragmentMap* m_map = nullptr;

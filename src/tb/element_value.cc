@@ -54,15 +54,15 @@ void ElementValue::SetFromElement(Element* source_element) {
   // Get the value in the format.
   switch (m_value.type()) {
     case Value::Type::kString:
-      m_value.set_string(source_element->GetText());
+      m_value.set_string(source_element->text());
       break;
     case Value::Type::kNull:
     case Value::Type::kInt:
-      m_value.set_integer(source_element->GetValue());
+      m_value.set_integer(source_element->value());
       break;
     case Value::Type::kFloat:
       // FIX: Value should use double instead of float?
-      m_value.set_float(float(source_element->GetValueDouble()));
+      m_value.set_float(float(source_element->double_value()));
       break;
     default:
       assert(!"Unsupported value type!");
@@ -93,15 +93,15 @@ void ElementValue::SyncToElement(Element* dst_element) {
   m_syncing = true;
   switch (m_value.type()) {
     case Value::Type::kString:
-      dst_element->SetText(m_value.as_string());
+      dst_element->set_text(m_value.as_string());
       break;
     case Value::Type::kNull:
     case Value::Type::kInt:
-      dst_element->SetValue(m_value.as_integer());
+      dst_element->set_value(m_value.as_integer());
       break;
     case Value::Type::kFloat:
       // FIX: Value should use double instead of float?
-      dst_element->SetValueDouble(m_value.as_float());
+      dst_element->set_double_value(m_value.as_float());
       break;
     default:
       assert(!"Unsupported value type!");
@@ -115,12 +115,12 @@ void ElementValue::set_integer(int value) {
   SyncToElements(nullptr);
 }
 
-void ElementValue::SetText(const char* text) {
+void ElementValue::set_text(const char* text) {
   m_value.set_string(text, Value::Set::kNewCopy);
   SyncToElements(nullptr);
 }
 
-void ElementValue::SetDouble(double value) {
+void ElementValue::set_double(double value) {
   // FIX: Value should use double instead of float?
   m_value.set_float(float(value));
   SyncToElements(nullptr);

@@ -42,7 +42,7 @@ class TextProps {
   void Pop();
 
   // Gets the font face from the current font description.
-  FontFace* GetFont();
+  FontFace* computed_font();
 
  public:
   tb::util::AutoDeleteIntrusiveList<Data> data_list;
@@ -58,7 +58,7 @@ class TextBlock : public tb::util::IntrusiveListEntry<TextBlock> {
 
   void Clear();
   void Set(const char* newstr, size_t len);
-  void SetAlign(TextAlign align);
+  void set_alignment(TextAlign align);
 
   size_t InsertText(size_t ofs, const char* text, size_t len,
                     bool allow_line_recurse);

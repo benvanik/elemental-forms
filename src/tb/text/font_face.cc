@@ -32,7 +32,7 @@ FontFace::FontFace(FontGlyphCache* glyph_cache,
     m_metrics = m_font_renderer->GetMetrics();
   } else {
     // Invent some metrics for the test font.
-    int size = m_font_desc.GetSize();
+    int size = m_font_desc.size();
     m_metrics.ascent = size - size / 4;
     m_metrics.descent = size / 4;
     m_metrics.height = size;
@@ -102,7 +102,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
     if (!glyph_dsta_src && result_glyph_data->data8) {
       m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
                             sizeof(uint32_t));
-      glyph_dsta_src = (uint32_t*)m_temp_buffer.GetData();
+      glyph_dsta_src = (uint32_t*)m_temp_buffer.data();
       for (int y = 0; y < result_glyph_data->h; y++) {
         for (int x = 0; x < result_glyph_data->w; x++) {
           glyph_dsta_src[x + y * result_glyph_data->w] = Color(
@@ -135,7 +135,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
 }
 
 TBID FontFace::GetHashId(UCS4 cp) const {
-  return cp * 31 + m_font_desc.GetFontFaceID();
+  return cp * 31 + m_font_desc.font_face_id();
 }
 
 FontGlyph* FontFace::GetGlyph(UCS4 cp, bool render_if_needed) {
@@ -165,9 +165,9 @@ void FontFace::DrawString(int x, int y, const Color& color, const char* str,
     if (cp == 0xFFFF) continue;
     if (FontGlyph* glyph = GetGlyph(cp, true)) {
       if (glyph->frag) {
-        Rect dst_rect(x + glyph->metrics.x, y + glyph->metrics.y + GetAscent(),
-                      glyph->frag->Width(), glyph->frag->Height());
-        Rect src_rect(0, 0, glyph->frag->Width(), glyph->frag->Height());
+        Rect dst_rect(x + glyph->metrics.x, y + glyph->metrics.y + ascent(),
+                      glyph->frag->width(), glyph->frag->height());
+        Rect src_rect(0, 0, glyph->frag->width(), glyph->frag->height());
         if (glyph->has_rgb) {
           Renderer::get()->DrawBitmap(dst_rect, src_rect, glyph->frag);
         } else {

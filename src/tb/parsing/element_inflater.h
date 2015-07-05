@@ -86,7 +86,7 @@ class ElementInflater {
         : tb::parsing::ElementInflater(#classname, sync_type) {}           \
     tb::Element* Create(tb::parsing::InflateInfo* info) override {         \
       auto element = new classname();                                      \
-      element->GetContentRoot()->SetZInflate(add_child_z);                 \
+      element->content_root()->set_z_inflate(add_child_z);                 \
       return element;                                                      \
     }                                                                      \
   };                                                                       \
