@@ -12,13 +12,14 @@
 
 #include "tb_tab_container.h"
 
+#include "tb/elements/button.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {
 namespace elements {
 
 void TabLayout::OnChildAdded(Element* child) {
-  if (Button* button = util::SafeCast<Button>(child)) {
+  if (auto button = util::SafeCast<Button>(child)) {
     button->SetSqueezable(true);
     button->SetSkinBg(TBIDC("TabContainer.tab"));
     button->set_id(TBIDC("tab"));

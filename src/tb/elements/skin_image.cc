@@ -7,14 +7,25 @@
  ******************************************************************************
  */
 
-#include "tb/elements/radio_button.h"
+#include <cassert>
+
+#include "tb/elements/skin_image.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {
 namespace elements {
 
-void RadioButton::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(RadioButton, Value::Type::kInt, ElementZ::kTop);
+void SkinImage::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SkinImage, Value::Type::kNull, ElementZ::kTop);
+}
+
+PreferredSize SkinImage::OnCalculatePreferredSize(
+    const SizeConstraints& constraints) {
+  PreferredSize ps = Element::OnCalculatePreferredSize(constraints);
+  // FIX: Make it stretched proportionally if shrunk.
+  ps.max_w = ps.pref_w;
+  ps.max_h = ps.pref_h;
+  return ps;
 }
 
 }  // namespace elements

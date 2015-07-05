@@ -7,8 +7,6 @@
  ******************************************************************************
  */
 
-#include "elements/tb_widgets_common.h"
-
 #include "tb/animation_manager.h"
 #include "tb/element.h"
 #include "tb/element_animation.h"

@@ -7,15 +7,25 @@
  ******************************************************************************
  */
 
-#include "tb/elements/radio_button.h"
-#include "tb/parsing/element_inflater.h"
+#ifndef TB_ELEMENTS_SEPARATOR_H_
+#define TB_ELEMENTS_SEPARATOR_H_
+
+#include "tb/element.h"
 
 namespace tb {
 namespace elements {
 
-void RadioButton::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(RadioButton, Value::Type::kInt, ElementZ::kTop);
-}
+// A element only showing a skin.
+// It is disabled by default.
+class Separator : public Element {
+ public:
+  TBOBJECT_SUBCLASS(Separator, Element);
+  static void RegisterInflater();
+
+  Separator();
+};
 
 }  // namespace elements
 }  // namespace tb
+
+#endif  // TB_ELEMENTS_SEPARATOR_H_

@@ -10,7 +10,9 @@
 #ifndef TB_TOGGLE_CONTAINER_H
 #define TB_TOGGLE_CONTAINER_H
 
-#include "tb_widgets_common.h"
+#include "tb/element.h"
+#include "tb/elements/button.h"
+#include "tb_layout.h"
 
 namespace tb {
 namespace elements {

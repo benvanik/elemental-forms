@@ -48,6 +48,14 @@ enum class Align {
 };
 MAKE_ORDERED_ENUM_STRING_UTILS(Align, "left", "top", "right", "bottom");
 
+// TextAlign specifies horizontal text alignment.
+enum class TextAlign {
+  kLeft,
+  kRight,
+  kCenter,
+};
+MAKE_ORDERED_ENUM_STRING_UTILS(TextAlign, "left", "right", "center");
+
 // Element gravity (may be combined).
 // Gravity gives hints about positioning and sizing preferences.
 enum class Gravity {

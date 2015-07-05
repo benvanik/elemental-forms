@@ -12,12 +12,18 @@
 
 #include "tb/element.h"
 
+#include "tb/elements/button.h"
 #include "tb/elements/check_box.h"
+#include "tb/elements/label.h"
+#include "tb/elements/label_container.h"
 #include "tb/elements/menu_window.h"
 #include "tb/elements/message_window.h"
 #include "tb/elements/popup_window.h"
+#include "tb/elements/progress_spinner.h"
 #include "tb/elements/radio_button.h"
 #include "tb/elements/scroll_bar.h"
+#include "tb/elements/separator.h"
+#include "tb/elements/skin_image.h"
 #include "tb/elements/slider.h"
 
 #include "tb/elements/tb_image_widget.h"
@@ -29,6 +35,5 @@
 #include "tb/elements/tb_tab_container.h"
 #include "tb/elements/tb_text_box.h"
 #include "tb/elements/tb_toggle_container.h"
-#include "tb/elements/tb_widgets_common.h"
 
 #endif  // TB_ELEMENTS_H_

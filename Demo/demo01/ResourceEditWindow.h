@@ -2,7 +2,6 @@
 #define ResourceEditWindow_H
 
 #include "tb/elements/tb_select.h"
-#include "tb/elements/tb_widgets_common.h"
 #include "tb/elements/tb_text_box.h"
 
 #include "tb/element.h"

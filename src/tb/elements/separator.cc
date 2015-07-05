@@ -7,14 +7,19 @@
  ******************************************************************************
  */
 
-#include "tb/elements/radio_button.h"
+#include "tb/elements/separator.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {
 namespace elements {
 
-void RadioButton::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(RadioButton, Value::Type::kInt, ElementZ::kTop);
+void Separator::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(Separator, Value::Type::kNull, ElementZ::kTop);
+}
+
+Separator::Separator() {
+  SetSkinBg(TBIDC("Separator"), InvokeInfo::kNoCallbacks);
+  SetState(Element::State::kDisabled, true);
 }
 
 }  // namespace elements

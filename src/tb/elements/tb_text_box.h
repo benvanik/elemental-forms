@@ -11,10 +11,10 @@
 #define TB_EDITFIELD_H
 
 #include "tb_style_edit.h"
-#include "tb_widgets_common.h"
 
 #include "tb/element.h"
 #include "tb/message_handler.h"
+#include "tb/elements/label.h"
 #include "tb/elements/scroll_bar.h"
 #include "tb/types.h"
 

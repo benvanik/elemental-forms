@@ -10,9 +10,9 @@
 #ifndef TB_WINDOW_H_
 #define TB_WINDOW_H_
 
-#include "elements/tb_widgets_common.h"
-
 #include "tb/element_listener.h"
+#include "tb/elements/button.h"
+#include "tb/elements/label.h"
 #include "tb/parts/mover.h"
 #include "tb/parts/resizer.h"
 

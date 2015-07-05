@@ -11,6 +11,7 @@
 #include <cstdlib>
 
 #include "tb_inline_select.h"
+#include "tb/elements/skin_image.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/math.h"
 

@@ -12,6 +12,7 @@
 
 #include "tb_scroll_container.h"
 #include "tb_select_item.h"
+#include "tb/elements/skin_image.h"
 #include "tb/window.h"
 
 namespace tb {

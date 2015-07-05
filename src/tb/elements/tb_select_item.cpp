@@ -14,6 +14,7 @@
 #include "tb_select_item.h"
 
 #include "tb/elements/menu_window.h"
+#include "tb/elements/separator.h"
 #include "tb/parsing/parse_node.h"
 #include "tb/util/debug.h"
 #include "tb/util/string.h"

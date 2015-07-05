@@ -12,6 +12,7 @@
 #include "tb_text_box.h"
 
 #include "tb/elements/message_window.h"
+#include "tb/elements/skin_image.h"
 #include "tb/parts/dimmer.h"
 #include "tb/util/string_table.h"
 

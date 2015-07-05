@@ -19,7 +19,6 @@
 
 #include "tb_style_edit.h"
 #include "tb_style_edit_content.h"
-#include "tb_widgets_common.h"
 
 namespace tb {
 namespace elements {

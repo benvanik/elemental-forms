@@ -10,8 +10,11 @@
 #ifndef TB_INLINE_SELECT_H
 #define TB_INLINE_SELECT_H
 
+#include "tb_layout.h"
 #include "tb_select_item.h"
 #include "tb_text_box.h"
+
+#include "tb/elements/button.h"
 
 namespace tb {
 namespace elements {

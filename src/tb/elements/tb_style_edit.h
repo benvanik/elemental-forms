@@ -14,8 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "tb_widgets_common.h"
-
+#include "tb/color.h"
+#include "tb/font_description.h"
+#include "tb/element.h"
 #include "tb/util/link_list.h"
 #include "tb/util/rect_region.h"
 
@@ -31,8 +32,8 @@ class RectRegion;
 namespace tb {
 namespace elements {
 
-class TextBlock;
 class StyleEdit;
+class TextBlock;
 class TextFragment;
 class TextFragmentContent;
 class TextFragmentContentFactory;
