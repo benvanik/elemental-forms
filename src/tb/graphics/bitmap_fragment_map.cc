@@ -153,7 +153,7 @@ void BitmapFragmentMap::FreeFragmentSpace(BitmapFragment* frag) {
       assert(i >= 0);
       assert(i < m_rows.size() - 1);
       auto row = m_rows[i].get();
-      auto next_row = m_rows[i].get();
+      auto next_row = m_rows[i + 1].get();
       if (row->IsAllAvailable() && next_row->IsAllAvailable()) {
         row->height += next_row->height;
         m_rows.erase(m_rows.begin() + i + 1);
