@@ -85,15 +85,15 @@ ScrollBar
 Slider
 	min <number>
 	max <number>
-SelectInline
+SpinBox
 	min <number>
 	max <number>
-SelectList
+ListBox
 	items
 		item
 			text <string/lngstring>
 			id <id>
-SelectDropdown
+DropDownButton
 	items
 		item
 			text <string/lngstring>

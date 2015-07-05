@@ -7,29 +7,31 @@
  ******************************************************************************
  */
 
-#ifndef TB_INLINE_SELECT_H
-#define TB_INLINE_SELECT_H
+#ifndef TB_ELEMENTS_SPIN_BOX_H_
+#define TB_ELEMENTS_SPIN_BOX_H_
 
 #include "tb_layout.h"
 #include "tb_select_item.h"
 #include "tb_text_box.h"
 
+#include "tb/element.h"
 #include "tb/elements/button.h"
 
 namespace tb {
 namespace elements {
 
-// InlineSelect is a select element with no popups. Instead it has two arrow
-// buttons that cycle between the choices. By default it is a number element.
-// FIX: Should also be possible to set a list of strings that will be shown
-// instead of numbers.
-class SelectInline : public Element {
+// TODO(benvanik): also support a list of strings that will be shown instead of
+// numbers.
+
+// A select element with no popups. Instead it has two arrow buttons that cycle
+// between the choices. By default it is a number element.
+class SpinBox : public Element {
  public:
-  TBOBJECT_SUBCLASS(SelectInline, Element);
+  TBOBJECT_SUBCLASS(SpinBox, Element);
   static void RegisterInflater();
 
-  SelectInline();
-  ~SelectInline() override;
+  SpinBox();
+  ~SpinBox() override;
 
   // Sets along which axis the content should layout.
   void SetAxis(Axis axis) override { m_layout.SetAxis(axis); }
@@ -60,4 +62,4 @@ class SelectInline : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_INLINE_SELECT_H
+#endif  // TB_ELEMENTS_SPIN_BOX_H_

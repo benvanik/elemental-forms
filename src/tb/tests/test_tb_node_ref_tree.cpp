@@ -83,7 +83,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     Element root;
     root.LoadData(
-        "SelectInline: id: 'select', value: '@test_bar>bar_value'\n"
+        "SpinBox: id: 'select', value: '@test_bar>bar_value'\n"
         "Button: id: 'button_circular', text: '@test_bar>bar_circular'\n"
         "Button: id: 'button_broken_node', text: "
         "'@test_bar>bar_broken_node'\n"

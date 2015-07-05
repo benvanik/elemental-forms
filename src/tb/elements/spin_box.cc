@@ -10,8 +10,8 @@
 #include <cassert>
 #include <cstdlib>
 
-#include "tb_inline_select.h"
 #include "tb/elements/skin_image.h"
+#include "tb/elements/spin_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/math.h"
 
@@ -21,12 +21,12 @@ namespace elements {
 // FIX: axis should affect the buttons arrow skin!
 // FIX: unfocus should set the correct text!
 
-void SelectInline::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(SelectInline, Value::Type::kInt, ElementZ::kTop);
+void SpinBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(SpinBox, Value::Type::kInt, ElementZ::kTop);
 }
 
-SelectInline::SelectInline() {
-  SetSkinBg(TBIDC("SelectInline"));
+SpinBox::SpinBox() {
+  SetSkinBg(TBIDC("SpinBox"));
   AddChild(&m_layout);
   m_layout.AddChild(&m_buttons[0]);
   m_layout.AddChild(&m_text_box);
@@ -49,28 +49,28 @@ SelectInline::SelectInline() {
   m_text_box.SetText("0");
 }
 
-SelectInline::~SelectInline() {
+SpinBox::~SpinBox() {
   m_layout.RemoveChild(&m_buttons[1]);
   m_layout.RemoveChild(&m_text_box);
   m_layout.RemoveChild(&m_buttons[0]);
   RemoveChild(&m_layout);
 }
 
-void SelectInline::OnInflate(const parsing::InflateInfo& info) {
+void SpinBox::OnInflate(const parsing::InflateInfo& info) {
   int min = info.node->GetValueInt("min", GetMinValue());
   int max = info.node->GetValueInt("max", GetMaxValue());
   SetLimits(min, max);
   Element::OnInflate(info);
 }
 
-void SelectInline::SetLimits(int min, int max) {
+void SpinBox::SetLimits(int min, int max) {
   assert(min <= max);
   m_min = min;
   m_max = max;
   SetValue(m_value);
 }
 
-void SelectInline::SetValueInternal(int value, bool update_text) {
+void SpinBox::SetValueInternal(int value, bool update_text) {
   value = util::Clamp(value, m_min, m_max);
   if (value == m_value) return;
   m_value = value;
@@ -86,9 +86,9 @@ void SelectInline::SetValueInternal(int value, bool update_text) {
   //          If needed, check if we are alive using a safe pointer first.
 }
 
-void SelectInline::OnSkinChanged() { m_layout.set_rect(GetPaddingRect()); }
+void SpinBox::OnSkinChanged() { m_layout.set_rect(GetPaddingRect()); }
 
-bool SelectInline::OnEvent(const ElementEvent& ev) {
+bool SpinBox::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kUp ||
         ev.special_key == SpecialKey::kDown) {

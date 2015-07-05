@@ -69,7 +69,7 @@ class SelectItemObserver : public util::TBLinkOf<SelectItemObserver> {
   SelectItemSource* m_source = nullptr;
 };
 
-// An item provider interface for list elements (SelectList and SelectDropdown).
+// An item provider interface for list elements (ListBox and DropDownButton).
 // Instead of feeding all list elements with all items all the time, the list
 // elements will ask SelectItemSource when it needs it. The list elements may
 // also apply filtering so only a subset of all the items are shown.
@@ -131,7 +131,7 @@ class SelectItemSource {
   Sort m_sort = Sort::kNone;
 };
 
-// An item provider for list elements (SelectList and SelectDropdown).
+// An item provider for list elements (ListBox and DropDownButton).
 // It stores items of the type specified by the template in an array.
 template <class T>
 class SelectItemSourceList : public SelectItemSource {

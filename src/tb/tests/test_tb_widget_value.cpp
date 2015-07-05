@@ -9,11 +9,10 @@
 
 #include "tb_test.h"
 #include "elements/tb_text_box.h"
-#include "elements/tb_select.h"
-#include "elements/tb_inline_select.h"
 #include "tb/element_value.h"
 #include "tb/elements/check_box.h"
 #include "tb/elements/slider.h"
+#include "tb/elements/spin_box.h"
 
 #ifdef TB_UNIT_TESTING
 
@@ -82,12 +81,12 @@ TB_TEST_GROUP(tb_widget_value_int) {
   ElementValue element_val(TBIDC("test value int"));
   Slider* a;
   ScrollBar* b;
-  SelectInline* c;
+  SpinBox* c;
 
   TB_TEST(Init) {
     TB_VERIFY(a = new Slider);
     TB_VERIFY(b = new ScrollBar);
-    TB_VERIFY(c = new SelectInline);
+    TB_VERIFY(c = new SpinBox);
     a->SetLimits(0, 1000);
     b->SetLimits(0, 1000, 1);
     c->SetLimits(0, 1000);

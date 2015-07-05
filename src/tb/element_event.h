@@ -42,7 +42,7 @@ enum class EventType {
   kPointerMove,
   kWheel,
   // Invoked after changing text in a Label, changing selected item in a
-  // SelectList etc. Invoking this event trigs synchronization with connected
+  // ListBox etc. Invoking this event trigs synchronization with connected
   // ElementValue and other elements connected to it.
   kChanged,
   kKeyDown,

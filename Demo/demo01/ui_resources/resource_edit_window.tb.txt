@@ -22,7 +22,7 @@ Layout
 			placeholder @search
 			type search
 			id element_list_search
-		SelectList
+		ListBox
 			id element_list
 	Layout
 		distribution available

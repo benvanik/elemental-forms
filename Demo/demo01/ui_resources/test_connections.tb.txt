@@ -7,7 +7,7 @@ Layout
 	Container
 		gravity all
 		Layout
-			SelectInline
+			SpinBox
 				connection master-volume
 				min 0
 				max 100

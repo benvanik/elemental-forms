@@ -10,6 +10,6 @@ Layout
 		gravity left right
 		placeholder @search
 		type search
-	SelectList
+	ListBox
 		id list
 		gravity all

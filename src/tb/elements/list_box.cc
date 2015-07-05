@@ -7,28 +7,26 @@
  ******************************************************************************
  */
 
-#include <algorithm>
-
-#include "tb_select.h"
-
-#include "tb/element_listener.h"
+#include "tb/elements/label.h"
+#include "tb/elements/list_box.h"
 #include "tb/elements/menu_window.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/util/string.h"
 #include "tb/util/string_builder.h"
 #include "tb/util/string_table.h"
+#include "tb/window.h"
 
 namespace tb {
 namespace elements {
 
-void SelectList::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(SelectList, Value::Type::kInt, ElementZ::kTop);
+void ListBox::RegisterInflater() {
+  TB_REGISTER_ELEMENT_INFLATER(ListBox, Value::Type::kInt, ElementZ::kTop);
 }
 
-SelectList::SelectList() : m_header_lng_string_id(TBIDC("SelectList.header")) {
+ListBox::ListBox() : m_header_lng_string_id(TBIDC("ListBox.header")) {
   SetSource(&m_default_source);
   SetIsFocusable(true);
-  SetSkinBg(TBIDC("SelectList"), InvokeInfo::kNoCallbacks);
+  SetSkinBg(TBIDC("ListBox"), InvokeInfo::kNoCallbacks);
   m_container.SetGravity(Gravity::kAll);
   m_container.set_rect(GetPaddingRect());
   AddChild(&m_container);
@@ -43,21 +41,21 @@ SelectList::SelectList() : m_header_lng_string_id(TBIDC("SelectList.header")) {
   m_container.SetAdaptContentSize(true);
 }
 
-SelectList::~SelectList() {
+ListBox::~ListBox() {
   m_container.GetContentRoot()->RemoveChild(&m_layout);
   RemoveChild(&m_container);
   SetSource(nullptr);
 }
 
-void SelectList::OnInflate(const parsing::InflateInfo& info) {
+void ListBox::OnInflate(const parsing::InflateInfo& info) {
   // Read items (if there is any) into the default source.
   GenericStringItemSource::ReadItemNodes(info.node, GetDefaultSource());
   Element::OnInflate(info);
 }
 
-void SelectList::OnSourceChanged() { InvalidateList(); }
+void ListBox::OnSourceChanged() { InvalidateList(); }
 
-void SelectList::OnItemChanged(size_t index) {
+void ListBox::OnItemChanged(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -81,7 +79,7 @@ void SelectList::OnItemChanged(size_t index) {
   delete old_element;
 }
 
-void SelectList::OnItemAdded(size_t index) {
+void ListBox::OnItemAdded(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -92,7 +90,7 @@ void SelectList::OnItemAdded(size_t index) {
   InvalidateList();
 }
 
-void SelectList::OnItemRemoved(size_t index) {
+void ListBox::OnItemRemoved(size_t index) {
   if (m_list_is_invalid) {
     // We're updating all elements soon.
     return;
@@ -103,12 +101,12 @@ void SelectList::OnItemRemoved(size_t index) {
   InvalidateList();
 }
 
-void SelectList::OnAllItemsRemoved() {
+void ListBox::OnAllItemsRemoved() {
   InvalidateList();
   m_value = -1;
 }
 
-void SelectList::SetFilter(const char* filter) {
+void ListBox::SetFilter(const char* filter) {
   std::string new_filter;
   if (filter && *filter) {
     new_filter = filter;
@@ -120,19 +118,19 @@ void SelectList::SetFilter(const char* filter) {
   InvalidateList();
 }
 
-void SelectList::SetHeaderString(const TBID& id) {
+void ListBox::SetHeaderString(const TBID& id) {
   if (m_header_lng_string_id == id) return;
   m_header_lng_string_id = id;
   InvalidateList();
 }
 
-void SelectList::InvalidateList() {
+void ListBox::InvalidateList() {
   if (m_list_is_invalid) return;
   m_list_is_invalid = true;
   Invalidate();
 }
 
-void SelectList::ValidateList() {
+void ListBox::ValidateList() {
   if (!m_list_is_invalid) return;
   m_list_is_invalid = false;
   // FIX: Could delete and create only the changed items (faster filter change).
@@ -176,7 +174,7 @@ void SelectList::ValidateList() {
     auto fmt = util::GetString(m_header_lng_string_id);
     element->SetText(tb::util::format_string(fmt.c_str(), num_sorted_items,
                                              m_source->size()));
-    element->SetSkinBg(TBIDC("SelectList.header"));
+    element->SetSkinBg(TBIDC("ListBox.header"));
     element->SetState(Element::State::kDisabled, true);
     element->SetGravity(Gravity::kAll);
     element->data.set_integer(-1);
@@ -195,7 +193,7 @@ void SelectList::ValidateList() {
   m_scroll_to_current = true;
 }
 
-Element* SelectList::CreateAndAddItemAfter(size_t index, Element* reference) {
+Element* ListBox::CreateAndAddItemAfter(size_t index, Element* reference) {
   if (Element* element = m_source->CreateItemElement(index, this)) {
     // Use item data as element to index lookup.
     element->data.set_integer(int(index));
@@ -206,7 +204,7 @@ Element* SelectList::CreateAndAddItemAfter(size_t index, Element* reference) {
   return nullptr;
 }
 
-void SelectList::SetValue(int value) {
+void ListBox::SetValue(int value) {
   if (value == m_value) return;
 
   SelectItem(m_value, false);
@@ -221,20 +219,20 @@ void SelectList::SetValue(int value) {
   InvokeEvent(ev);
 }
 
-TBID SelectList::GetSelectedItemID() {
+TBID ListBox::GetSelectedItemID() {
   if (m_source && m_value >= 0 && m_value < m_source->size()) {
     return m_source->GetItemID(m_value);
   }
   return TBID();
 }
 
-void SelectList::SelectItem(size_t index, bool selected) {
+void ListBox::SelectItem(size_t index, bool selected) {
   if (Element* element = GetItemElement(index)) {
     element->SetState(Element::State::kSelected, selected);
   }
 }
 
-Element* SelectList::GetItemElement(size_t index) {
+Element* ListBox::GetItemElement(size_t index) {
   if (index == -1) return nullptr;
   for (Element* tmp = m_layout.GetContentRoot()->GetFirstChild(); tmp;
        tmp = tmp->GetNext()) {
@@ -243,7 +241,7 @@ Element* SelectList::GetItemElement(size_t index) {
   return nullptr;
 }
 
-void SelectList::ScrollToSelectedItem() {
+void ListBox::ScrollToSelectedItem() {
   if (m_list_is_invalid) {
     m_scroll_to_current = true;
     return;
@@ -256,17 +254,17 @@ void SelectList::ScrollToSelectedItem() {
   }
 }
 
-void SelectList::OnSkinChanged() { m_container.set_rect(GetPaddingRect()); }
+void ListBox::OnSkinChanged() { m_container.set_rect(GetPaddingRect()); }
 
-void SelectList::OnProcess() { ValidateList(); }
+void ListBox::OnProcess() { ValidateList(); }
 
-void SelectList::OnProcessAfterChildren() {
+void ListBox::OnProcessAfterChildren() {
   if (m_scroll_to_current) {
     ScrollToSelectedItem();
   }
 }
 
-bool SelectList::OnEvent(const ElementEvent& ev) {
+bool ListBox::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->GetParent() == m_layout.GetContentRoot()) {
     // SetValue (EventType::kChanged) might cause something to delete this (f.ex
@@ -279,14 +277,14 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
 
     // If we're still around, invoke the click event too.
     if (this_element.Get()) {
-      SelectList* target_list = this;
+      ListBox* target_list = this;
       // If the parent window is a MenuWindow, we will iterate up the event
       // destination chain to find the top MenuWindow and invoke the event
       // there.
       // That way events in submenus will reach the caller properly, and seem
       // like it was invoked on the top menu.
       Window* window = GetParentWindow();
-      while (MenuWindow* menu_win = util::SafeCast<MenuWindow>(window)) {
+      while (auto menu_win = util::SafeCast<MenuWindow>(window)) {
         target_list = menu_win->GetList();
         window = menu_win->GetEventDestination()->GetParentWindow();
       }
@@ -315,7 +313,7 @@ bool SelectList::OnEvent(const ElementEvent& ev) {
   return false;
 }
 
-bool SelectList::ChangeValue(SpecialKey key) {
+bool ListBox::ChangeValue(SpecialKey key) {
   if (!m_source || !m_layout.GetContentRoot()->GetFirstChild()) {
     return false;
   }
@@ -350,114 +348,6 @@ bool SelectList::ChangeValue(SpecialKey key) {
   if (current) {
     SetValue(current->data.as_integer());
     return true;
-  }
-  return false;
-}
-
-void SelectDropdown::RegisterInflater() {
-  TB_REGISTER_ELEMENT_INFLATER(SelectDropdown, Value::Type::kInt,
-                               ElementZ::kTop);
-}
-
-SelectDropdown::SelectDropdown() {
-  SetSource(&m_default_source);
-  SetSkinBg(TBIDC("SelectDropdown"), InvokeInfo::kNoCallbacks);
-  m_arrow.SetSkinBg(TBIDC("SelectDropdown.arrow"), InvokeInfo::kNoCallbacks);
-  GetContentRoot()->AddChild(&m_arrow);
-}
-
-SelectDropdown::~SelectDropdown() {
-  GetContentRoot()->RemoveChild(&m_arrow);
-  SetSource(nullptr);
-  CloseWindow();
-}
-
-void SelectDropdown::OnInflate(const parsing::InflateInfo& info) {
-  // Read items (if there is any) into the default source.
-  GenericStringItemSource::ReadItemNodes(info.node, GetDefaultSource());
-  Element::OnInflate(info);
-}
-
-void SelectDropdown::OnSourceChanged() {
-  m_value = -1;
-  if (m_source && m_source->size()) {
-    SetValue(0);
-  }
-}
-
-void SelectDropdown::OnItemChanged(size_t index) {}
-
-void SelectDropdown::SetValue(int value) {
-  if (value == m_value || !m_source) return;
-  m_value = value;
-
-  if (m_value < 0) {
-    SetText("");
-  } else if (m_value < m_source->size()) {
-    SetText(m_source->GetItemString(m_value));
-  }
-
-  ElementEvent ev(EventType::kChanged);
-  InvokeEvent(ev);
-}
-
-TBID SelectDropdown::GetSelectedItemID() {
-  if (m_source && m_value >= 0 && m_value < m_source->size()) {
-    return m_source->GetItemID(m_value);
-  }
-  return TBID();
-}
-
-void SelectDropdown::OpenWindow() {
-  if (!m_source || !m_source->size() || m_window_pointer.Get()) {
-    return;
-  }
-
-  MenuWindow* window = new MenuWindow(this, TBIDC("SelectDropdown.window"));
-  m_window_pointer.Set(window);
-  window->SetSkinBg(TBIDC("SelectDropdown.window"));
-  window->Show(m_source, PopupAlignment(), GetValue());
-}
-
-void SelectDropdown::CloseWindow() {
-  if (MenuWindow* window = GetMenuIfOpen()) {
-    window->Close();
-  }
-}
-
-MenuWindow* SelectDropdown::GetMenuIfOpen() const {
-  return util::SafeCast<MenuWindow>(m_window_pointer.Get());
-}
-
-bool SelectDropdown::OnEvent(const ElementEvent& ev) {
-  if (ev.target == this && ev.type == EventType::kClick) {
-    // Open the menu, or set the value and close it if already open (this will
-    // happen when clicking by keyboard since that will call click on this
-    // button).
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      WeakElementPointer tmp(this);
-      int value = menu_window->GetList()->GetValue();
-      menu_window->Die();
-      if (tmp.Get()) {
-        SetValue(value);
-      }
-    } else {
-      OpenWindow();
-    }
-    return true;
-  } else if (ev.target->id() == TBIDC("SelectDropdown.window") &&
-             ev.type == EventType::kClick) {
-    // Set the value of the clicked item.
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      SetValue(menu_window->GetList()->GetValue());
-    }
-    return true;
-  } else if (ev.target == this && m_source && ev.IsKeyEvent()) {
-    if (MenuWindow* menu_window = GetMenuIfOpen()) {
-      // Redirect the key strokes to the list.
-      ElementEvent redirected_ev(ev);
-      return menu_window->GetList()->InvokeEvent(redirected_ev);
-    }
   }
   return false;
 }

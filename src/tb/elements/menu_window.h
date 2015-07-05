@@ -10,14 +10,13 @@
 #ifndef TB_ELEMENTS_MENU_WINDOW_H_
 #define TB_ELEMENTS_MENU_WINDOW_H_
 
-#include "tb_select.h"
-
+#include "tb/elements/list_box.h"
 #include "tb/elements/popup_window.h"
 
 namespace tb {
 namespace elements {
 
-// MenuWindow is a popup window that shows a list of items (SelectList).
+// MenuWindow is a popup window that shows a list of items (ListBox).
 // When selected it will invoke a click with the id given to the menu,
 // and the id of the clicked item as ref_id, and then close itself.
 // It may open sub items as new windows at the same time as this window is open.
@@ -31,12 +30,12 @@ class MenuWindow : public PopupWindow {
   bool Show(SelectItemSource* source, const PopupAlignment& alignment,
             int initial_value = -1);
 
-  SelectList* GetList() { return &m_select_list; }
+  ListBox* GetList() { return &m_select_list; }
 
   bool OnEvent(const ElementEvent& ev) override;
 
  private:
-  SelectList m_select_list;
+  ListBox m_select_list;
 };
 
 }  // namespace elements

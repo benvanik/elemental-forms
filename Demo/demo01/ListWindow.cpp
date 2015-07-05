@@ -1,6 +1,7 @@
 #include "ListWindow.h"
 
 #include "tb/elements/check_box.h"
+#include "tb/elements/list_box.h"
 #include "tb/util/string.h"
 
 using namespace tb::elements;
@@ -64,7 +65,7 @@ Element* AdvancedItemSource::CreateItemElement(size_t index,
 
 ListWindow::ListWindow(SelectItemSource* source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select.tb.txt");
-  if (SelectList* select = GetElementByIDAndType<SelectList>("list")) {
+  if (ListBox* select = GetElementByIDAndType<ListBox>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoY);
   }
@@ -72,7 +73,7 @@ ListWindow::ListWindow(SelectItemSource* source) {
 
 bool ListWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged && ev.target->id() == TBIDC("filter")) {
-    SelectList* select = GetElementByIDAndType<SelectList>("list");
+    ListBox* select = GetElementByIDAndType<ListBox>("list");
     select->SetFilter(ev.target->GetText());
     return true;
   }
@@ -85,14 +86,14 @@ bool ListWindow::OnEvent(const ElementEvent& ev) {
 AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
     : m_source(source) {
   LoadResourceFile("Demo/demo01/ui_resources/test_select_advanced.tb.txt");
-  if (SelectList* select = GetElementByIDAndType<SelectList>("list")) {
+  if (ListBox* select = GetElementByIDAndType<ListBox>("list")) {
     select->SetSource(source);
     select->GetScrollContainer()->SetScrollMode(ScrollMode::kAutoXAutoY);
   }
 }
 
 bool AdvancedListWindow::OnEvent(const ElementEvent& ev) {
-  SelectList* select = GetElementByIDAndType<SelectList>("list");
+  ListBox* select = GetElementByIDAndType<ListBox>("list");
   if (select && ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("filter")) {
     select->SetFilter(ev.target->GetText());

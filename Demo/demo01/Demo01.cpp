@@ -249,8 +249,8 @@ bool LayoutWindow::OnEvent(const ElementEvent& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
-    if (SelectDropdown* select =
-            GetElementByIDAndType<SelectDropdown>(TBIDC("select position")))
+    if (DropDownButton* select =
+            GetElementByIDAndType<DropDownButton>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->GetValue());
     for (int i = 0; i < 3; i++)
       if (Layout* layout = GetElementByIDAndType<Layout>(i + 1))
@@ -338,12 +338,12 @@ bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
 ScrollContainerWindow::ScrollContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scrollcontainer.tb.txt");
 
-  if (SelectDropdown* select =
-          GetElementByIDAndType<SelectDropdown>(TBIDC("name dropdown")))
+  if (DropDownButton* select =
+          GetElementByIDAndType<DropDownButton>(TBIDC("name dropdown")))
     select->SetSource(&name_source);
 
-  if (SelectDropdown* select =
-          GetElementByIDAndType<SelectDropdown>(TBIDC("advanced dropdown")))
+  if (DropDownButton* select =
+          GetElementByIDAndType<DropDownButton>(TBIDC("advanced dropdown")))
     select->SetSource(&advanced_source);
 }
 
@@ -455,11 +455,10 @@ void AnimationsWindow::Animate() {
   uint64_t duration = 500;
   bool fade = true;
 
-  if (SelectList* curve_select = GetElementByIDAndType<SelectList>("curve")) {
+  if (ListBox* curve_select = GetElementByIDAndType<ListBox>("curve")) {
     curve = static_cast<AnimationCurve>(curve_select->GetValue());
   }
-  if (SelectInline* duration_select =
-          GetElementByIDAndType<SelectInline>("duration")) {
+  if (SpinBox* duration_select = GetElementByIDAndType<SpinBox>("duration")) {
     duration = uint64_t(duration_select->GetValueDouble());
   }
   if (CheckBox* fade_check = GetElementByIDAndType<CheckBox>("fade")) {
@@ -686,7 +685,7 @@ bool DemoApplication::Init() {
   // Run unit tests
   int num_failed_tests = TBRunTests();
 
-  // SelectList and SelectDropdown elements have a default item source that
+  // ListBox and DropDownButton elements have a default item source that
   // are fed with any items
   // specified in the resource files. But it is also possible to set any source
   // which can save memory

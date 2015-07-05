@@ -1,10 +1,10 @@
 #include <cstdio>
 
 #include "ResourceEditWindow.h"
-#include "elements/tb_select.h"
 #include "elements/tb_text_box.h"
 #include "elements/tb_scroll_container.h"
 
+#include "tb/elements/list_box.h"
 #include "tb/elements/message_window.h"
 #include "tb/util/file.h"
 #include "tb/util/string.h"
@@ -36,7 +36,7 @@ ResourceEditWindow::ResourceEditWindow()
   m_build_container = m_scroll_container->GetContentRoot();
   m_source_text_box = GetElementByIDAndType<TextBox>(TBIDC("source_edit"));
 
-  m_element_list = GetElementByIDAndType<SelectList>(TBIDC("element_list"));
+  m_element_list = GetElementByIDAndType<ListBox>(TBIDC("element_list"));
   m_element_list->SetSource(&m_element_list_source);
 
   set_rect({100, 50, 900, 600});

@@ -7,34 +7,32 @@
  ******************************************************************************
  */
 
-#ifndef TB_SELECT_H
-#define TB_SELECT_H
+#ifndef TB_ELEMENTS_LIST_BOX_H_
+#define TB_ELEMENTS_LIST_BOX_H_
 
+#include "tb_layout.h"
 #include "tb_scroll_container.h"
 #include "tb_select_item.h"
-#include "tb/elements/skin_image.h"
-#include "tb/window.h"
+#include "tb/element.h"
 
 namespace tb {
 namespace elements {
 
-class MenuWindow;
-
 // Shows a scrollable list of items provided by a SelectItemSource.
-class SelectList : public Element, public SelectItemObserver {
+class ListBox : public Element, public SelectItemObserver {
  public:
-  TBOBJECT_SUBCLASS(SelectList, Element);
+  TBOBJECT_SUBCLASS(ListBox, Element);
   static void RegisterInflater();
 
-  SelectList();
-  ~SelectList() override;
+  ListBox();
+  ~ListBox() override;
 
   // Gets the default item source for this element.
   // This source can be used to add items of type GenericStringItem to this
   // element.
   // It is the item source that is fed from resource files.
   // If you need to add other types of items, or if you want to share item
-  // sources between several SelectDropdown/SelectList elements, use SetSource
+  // sources between several DropDownButton/ListBox elements, use SetSource
   // using a external item source.
   GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
 
@@ -113,58 +111,7 @@ class SelectList : public Element, public SelectItemObserver {
   Element* CreateAndAddItemAfter(size_t index, Element* reference);
 };
 
-// Shows a button that opens a popup with a SelectList with items provided by a
-// SelectItemSource.
-class SelectDropdown : public Button, public SelectItemObserver {
- public:
-  TBOBJECT_SUBCLASS(SelectDropdown, Button);
-  static void RegisterInflater();
-
-  SelectDropdown();
-  ~SelectDropdown() override;
-
-  // Gets the default item source for this element.
-  // This source can be used to add items of type GenericStringItem to this
-  // element.
-  // It is the item source that is fed from resource files.
-  // If you need to add other types of items, or if you want to share item
-  // sources between several SelectDropdown/SelectList elements, use SetSource
-  // using a external item source.
-  GenericStringItemSource* GetDefaultSource() { return &m_default_source; }
-
-  // Sets the selected item.
-  void SetValue(int value) override;
-  int GetValue() override { return m_value; }
-
-  // Gets the ID of the selected item, or 0 if there is no item selected.
-  TBID GetSelectedItemID();
-
-  // Opens the window if the model has items.
-  void OpenWindow();
-
-  // Closes the window if it is open.
-  void CloseWindow();
-
-  // Returns the menu window if it's open, or nullptr.
-  MenuWindow* GetMenuIfOpen() const;
-
-  void OnInflate(const parsing::InflateInfo& info) override;
-  bool OnEvent(const ElementEvent& ev) override;
-
-  void OnSourceChanged() override;
-  void OnItemChanged(size_t index) override;
-  void OnItemAdded(size_t index) override {}
-  void OnItemRemoved(size_t index) override {}
-  void OnAllItemsRemoved() override {}
-
- protected:
-  GenericStringItemSource m_default_source;
-  SkinImage m_arrow;
-  int m_value = -1;
-  WeakElementPointer m_window_pointer;  // Dropdown window, if opened.
-};
-
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_SELECT_H
+#endif  // TB_ELEMENTS_LIST_BOX_H_

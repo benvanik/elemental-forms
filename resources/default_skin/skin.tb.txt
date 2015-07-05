@@ -362,14 +362,14 @@ elements
 		bitmap fadeout_x.png
 	Layout.fadeout_y
 		bitmap fadeout_y.png
-	SelectList
+	ListBox
 		clone TextBox
 		padding 2
-	SelectDropdown
+	DropDownButton
 		clone Button
-	SelectDropdown.arrow
+	DropDownButton.arrow
 		clone arrow.down
-	SelectDropdown.window
+	DropDownButton.window
 		clone PopupWindow
 	PopupWindow
 		clone Window
@@ -440,7 +440,7 @@ elements
 
 	Resizer
 		bitmap resizer.png
-	SelectInline
+	SpinBox
 		max-width 110
 	Dimmer
 		background-color #00000088
@@ -451,8 +451,8 @@ elements
 	ProgressSpinner.fg
 		bitmap progress_spinner_strip.png
 
-	# The SelectList header is always disabled, thus gets slightly less opacity default.
-	SelectList.header
+	# The ListBox header is always disabled, thus gets slightly less opacity default.
+	ListBox.header
 
 	arrow.left: type: Image, bitmap: arrow_left.png, min-width: 5, min-height: 10
 	arrow.right: type: Image, bitmap: arrow_right.png, min-width: 5, min-height: 10

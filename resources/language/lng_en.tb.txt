@@ -9,7 +9,7 @@ MessageWindow.ok Ok
 MessageWindow.cancel Cancel
 MessageWindow.yes Yes
 MessageWindow.no No
-SelectList.header Showing %d of %d
+ListBox.header Showing %d of %d
 new New
 save Save
 close Close

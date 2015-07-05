@@ -218,7 +218,7 @@ class SkinElement {
   ~SkinElement();
 
   TBID id;           // ID of the skin element.
-  std::string name;  // Name of the skin element, f.ex "SelectDropdown.arrow".
+  std::string name;  // Name of the skin element, f.ex "DropDownButton.arrow".
   std::string bitmap_file;  // File name of the bitmap (might be empty).
   graphics::BitmapFragment* bitmap =
       nullptr;      // Bitmap fragment containing the graphics, or nullptr.

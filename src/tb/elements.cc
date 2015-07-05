@@ -20,11 +20,11 @@ void RegisterBuiltinElementInflaters() {
   using namespace tb::elements;
 
   ImageElement::RegisterInflater();
-  SelectInline::RegisterInflater();
+  SpinBox::RegisterInflater();
   Layout::RegisterInflater();
   ScrollContainer::RegisterInflater();
-  SelectDropdown::RegisterInflater();
-  SelectList::RegisterInflater();
+  DropDownButton::RegisterInflater();
+  ListBox::RegisterInflater();
   TabContainer::RegisterInflater();
   TextBox::RegisterInflater();
   Section::RegisterInflater();

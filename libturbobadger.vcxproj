@@ -15,6 +15,7 @@
     <ClCompile Include="src\tb\elements.cc" />
     <ClCompile Include="src\tb\elements\button.cc" />
     <ClCompile Include="src\tb\elements\check_box.cc" />
+    <ClCompile Include="src\tb\elements\drop_down_button.cc" />
     <ClCompile Include="src\tb\elements\label.cc" />
     <ClCompile Include="src\tb\elements\label_container.cc" />
     <ClCompile Include="src\tb\elements\menu_window.cc" />
@@ -31,11 +32,11 @@
     <ClCompile Include="src\tb\parts\resizer.cc" />
     <ClCompile Include="src\tb\elements\popup_window.cc" />
     <ClCompile Include="src\tb\elements\tb_image_widget.cpp" />
-    <ClCompile Include="src\tb\elements\tb_inline_select.cpp" />
+    <ClCompile Include="src\tb\elements\spin_box.cc" />
     <ClCompile Include="src\tb\elements\tb_layout.cpp" />
     <ClCompile Include="src\tb\elements\tb_scroller.cpp" />
     <ClCompile Include="src\tb\elements\tb_scroll_container.cpp" />
-    <ClCompile Include="src\tb\elements\tb_select.cpp" />
+    <ClCompile Include="src\tb\elements\list_box.cc" />
     <ClCompile Include="src\tb\elements\tb_select_item.cpp" />
     <ClCompile Include="src\tb\elements\tb_style_edit.cpp" />
     <ClCompile Include="src\tb\elements\tb_style_edit_content.cpp" />
@@ -112,6 +113,7 @@
     <ClInclude Include="src\tb\elements.h" />
     <ClInclude Include="src\tb\elements\button.h" />
     <ClInclude Include="src\tb\elements\check_box.h" />
+    <ClInclude Include="src\tb\elements\drop_down_button.h" />
     <ClInclude Include="src\tb\elements\label.h" />
     <ClInclude Include="src\tb\elements\label_container.h" />
     <ClInclude Include="src\tb\elements\menu_window.h" />
@@ -128,11 +130,11 @@
     <ClInclude Include="src\tb\parts\resizer.h" />
     <ClInclude Include="src\tb\elements\popup_window.h" />
     <ClInclude Include="src\tb\elements\tb_image_widget.h" />
-    <ClInclude Include="src\tb\elements\tb_inline_select.h" />
+    <ClInclude Include="src\tb\elements\spin_box.h" />
     <ClInclude Include="src\tb\elements\tb_layout.h" />
     <ClInclude Include="src\tb\elements\tb_scroller.h" />
     <ClInclude Include="src\tb\elements\tb_scroll_container.h" />
-    <ClInclude Include="src\tb\elements\tb_select.h" />
+    <ClInclude Include="src\tb\elements\list_box.h" />
     <ClInclude Include="src\tb\elements\tb_select_item.h" />
     <ClInclude Include="src\tb\elements\tb_style_edit.h" />
     <ClInclude Include="src\tb\elements\tb_style_edit_content.h" />

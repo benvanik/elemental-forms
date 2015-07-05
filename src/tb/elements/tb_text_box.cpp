@@ -9,7 +9,6 @@
 
 #include <algorithm>
 
-#include "tb_select.h"
 #include "tb_style_edit_content.h"
 #include "tb_text_box.h"
 

@@ -24,7 +24,7 @@ test_layout_content
 Layout
 	axis y
 	Layout
-		SelectDropdown
+		DropDownButton
 			text Select position
 			id select position
 			items

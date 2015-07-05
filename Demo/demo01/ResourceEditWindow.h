@@ -1,11 +1,13 @@
 #ifndef ResourceEditWindow_H
 #define ResourceEditWindow_H
 
-#include "tb/elements/tb_select.h"
 #include "tb/elements/tb_text_box.h"
 
 #include "tb/element.h"
 #include "tb/element_listener.h"
+#include "tb/elements/list_box.h"
+#include "tb/message_handler.h"
+#include "tb/window.h"
 
 using namespace tb;
 
@@ -56,7 +58,7 @@ class ResourceEditWindow : public Window,
   virtual void OnElementRemove(Element* parent, Element* child);
 
  private:
-  elements::SelectList* m_element_list;
+  elements::ListBox* m_element_list;
   elements::SelectItemSourceList<ResourceItem> m_element_list_source;
   elements::ScrollContainer* m_scroll_container;
   Element* m_build_container;
