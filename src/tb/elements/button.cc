@@ -9,7 +9,7 @@
 
 #include "tb/element_listener.h"
 #include "tb/elements/button.h"
-#include "tb/elements/parts/toggle_button_base.h"
+#include "tb/elements/parts/base_radio_check_box.h"
 #include "tb/parsing/element_inflater.h"
 
 namespace tb {

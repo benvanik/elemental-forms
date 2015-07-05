@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
-#define TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
+#ifndef TB_ELEMENTS_PARTS_BASE_RADIO_CHECK_BOX_H_
+#define TB_ELEMENTS_PARTS_BASE_RADIO_CHECK_BOX_H_
 
 #include "tb/element.h"
 
@@ -42,4 +42,4 @@ class BaseRadioCheckBox : public Element {
 }  // namespace elements
 }  // namespace tb
 
-#endif  // TB_ELEMENTS_PARTS_TOGGLE_BUTTON_BASE_H_
+#endif  // TB_ELEMENTS_PARTS_BASE_RADIO_CHECK_BOX_H_

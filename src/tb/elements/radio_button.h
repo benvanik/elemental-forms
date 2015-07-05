@@ -11,7 +11,7 @@
 #define TB_ELEMENTS_RADIO_BUTTON_H_
 
 #include "tb/element.h"
-#include "tb/elements/parts/toggle_button_base.h"
+#include "tb/elements/parts/base_radio_check_box.h"
 
 namespace tb {
 namespace elements {

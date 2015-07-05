@@ -58,7 +58,7 @@
     <ClCompile Include="src\tb\graphics\image_loader_stb.cc" />
     <ClCompile Include="src\tb\graphics\image_manager.cc" />
     <ClCompile Include="src\tb\graphics\renderer.cc" />
-    <ClCompile Include="src\tb\elements\parts\toggle_button_base.cc" />
+    <ClCompile Include="src\tb\elements\parts\base_radio_check_box.cc" />
     <ClCompile Include="src\tb\rect.cc" />
     <ClCompile Include="src\tb\animation.cc" />
     <ClCompile Include="src\tb\parsing\element_factory.cc" />
@@ -163,7 +163,7 @@
     <ClInclude Include="src\tb\graphics\renderer.h" />
     <ClInclude Include="src\tb\message.h" />
     <ClInclude Include="src\tb\parsing\element_inflater.h" />
-    <ClInclude Include="src\tb\elements\parts\toggle_button_base.h" />
+    <ClInclude Include="src\tb\elements\parts\base_radio_check_box.h" />
     <ClInclude Include="src\tb\rect.h" />
     <ClInclude Include="src\tb\animation.h" />
     <ClInclude Include="src\tb\parsing\element_factory.h" />
