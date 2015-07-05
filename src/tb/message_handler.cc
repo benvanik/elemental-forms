@@ -16,9 +16,9 @@
 namespace tb {
 
 // List of all delayed messages.
-util::TBLinkListOf<MessageLink> g_all_delayed_messages;
+util::IntrusiveList<MessageLink> g_all_delayed_messages;
 // List of all nondelayed messages.
-util::TBLinkListOf<MessageLink> g_all_normal_messages;
+util::IntrusiveList<MessageLink> g_all_normal_messages;
 
 MessageHandler::MessageHandler() = default;
 

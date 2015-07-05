@@ -30,7 +30,7 @@ using UCS4 = tb::text::utf8::UCS4;
 }  // namespace
 
 // Renders glyphs from a font file.
-class FontRenderer : public util::TBLinkOf<FontRenderer> {
+class FontRenderer {
  public:
   virtual ~FontRenderer() = default;
 

@@ -20,7 +20,7 @@ class Element;
 // Base class for element animations. This animation object will be deleted
 // automatically if the element is deleted.
 class ElementAnimation : public Animation,
-                         public util::TBLinkOf<ElementAnimation> {
+                         public util::IntrusiveListEntry<ElementAnimation> {
  public:
   TBOBJECT_SUBCLASS(ElementAnimation, Animation);
 

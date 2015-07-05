@@ -19,7 +19,7 @@ namespace tb {
 
 using tb::util::SafeCast;
 
-util::TBLinkListOf<ElementAnimation> element_animations;
+util::IntrusiveList<ElementAnimation> element_animations;
 ElementAnimationManager elements_animation_manager;
 
 void ElementAnimationManager::Init() {

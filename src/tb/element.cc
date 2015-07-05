@@ -489,7 +489,7 @@ void Element::AddChildRelative(Element* child, ElementZRel z,
 }
 
 void Element::RemoveChild(Element* child, InvokeInfo info) {
-  assert(child->m_parent);
+  assert(child->m_parent == this);
 
   if (info == InvokeInfo::kNormal) {
     // If we're not being deleted and delete the focused element, try
@@ -511,10 +511,14 @@ void Element::RemoveChild(Element* child, InvokeInfo info) {
   InvalidateSkinStates();
 }
 
+void Element::DeleteChild(Element* child, InvokeInfo info) {
+  RemoveChild(child);
+  delete child;
+}
+
 void Element::DeleteAllChildren() {
   while (Element* child = GetFirstChild()) {
-    RemoveChild(child);
-    delete child;
+    DeleteChild(child);
   }
 }
 

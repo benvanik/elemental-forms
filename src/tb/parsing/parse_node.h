@@ -11,7 +11,7 @@
 #define TB_PARSING_PARSE_NODE_H_
 
 #include "tb/types.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/value.h"
 
 namespace tb {
@@ -33,7 +33,7 @@ MAKE_ENUM_FLAG_COMBO(ReadFlags);
 //
 // During ReadFile/ReadData, it may also select which branches to include or
 // exclude conditionally by lookup up values in ParseNodeTree.
-class ParseNode : public util::TBLinkOf<ParseNode> {
+class ParseNode : public util::IntrusiveListEntry<ParseNode> {
  public:
   ParseNode() = default;
   ~ParseNode();
@@ -159,7 +159,7 @@ class ParseNode : public util::TBLinkOf<ParseNode> {
 
   char* m_name = nullptr;
   Value m_value;
-  util::TBLinkListOf<ParseNode> m_children;
+  util::AutoDeleteIntrusiveList<ParseNode> m_children;
   ParseNode* m_parent = nullptr;
   uint32_t m_cycle_id = 0;  // Used to detect circular references.
 };

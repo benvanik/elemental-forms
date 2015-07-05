@@ -172,8 +172,8 @@ FontFace* FreetypeFontRenderer::Create(FontManager* font_manager,
 }
 
 void register_freetype_font_renderer() {
-  FreetypeFontRenderer* fr = new FreetypeFontRenderer();
-  FontManager::get()->AddRenderer(fr);
+  FontManager::get()->RegisterRenderer(
+      std::make_unique<FreetypeFontRenderer>());
 }
 
 #endif  // TB_FONT_RENDERER_FREETYPE

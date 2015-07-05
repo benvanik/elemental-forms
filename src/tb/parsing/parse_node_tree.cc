@@ -14,7 +14,7 @@ namespace tb {
 namespace parsing {
 
 // static
-util::TBLinkListOf<ParseNodeTree> ParseNodeTree::s_ref_trees;
+util::IntrusiveList<ParseNodeTree> ParseNodeTree::s_ref_trees;
 
 ParseNodeTree::ParseNodeTree(const char* name) : m_name(name), m_name_id(name) {
   s_ref_trees.AddLast(this);

@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "tb/id.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/object.h"
 #include "tb/value.h"
 
@@ -38,12 +38,12 @@ struct MessageData : public util::TypedObject {
 // Should never be created or subclassed anywhere except in Message.
 // It's only purpose is to add a extra typed link for Message, since it needs
 // to be added in multiple lists.
-class MessageLink : public util::TBLinkOf<MessageLink> {};
+class MessageLink : public util::IntrusiveListEntry<MessageLink> {};
 
 // A message created and owned by MessageHandler.
 // It carries a message id, and may also carry a MessageData with additional
 // parameters.
-class Message : public util::TBLinkOf<Message>, public MessageLink {
+class Message : public util::IntrusiveListEntry<Message>, public MessageLink {
  public:
   Message(TBID message_id, std::unique_ptr<MessageData> data,
           uint64_t fire_time_millis, MessageHandler* message_handler)

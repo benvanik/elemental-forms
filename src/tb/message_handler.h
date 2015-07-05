@@ -14,7 +14,7 @@
 
 #include "tb/id.h"
 #include "tb/message.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 
@@ -83,7 +83,7 @@ class MessageHandler {
   static uint64_t GetNextMessageFireTime();
 
  private:
-  util::TBLinkListOf<Message> m_messages;
+  util::IntrusiveList<Message> m_messages;
 };
 
 }  // namespace tb

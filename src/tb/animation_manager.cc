@@ -15,7 +15,7 @@
 
 namespace tb {
 
-util::TBLinkListOf<Animation> AnimationManager::animating_objects;
+util::IntrusiveList<Animation> AnimationManager::animating_objects;
 int AnimationManager::block_animations_counter = 0;
 
 inline float SmoothStep(float x) { return x * x * (3.0f - 2.0f * x); }

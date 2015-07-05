@@ -18,7 +18,7 @@
 #include "tb/graphics/renderer.h"
 #include "tb/types.h"
 #include "tb/util/dimension_converter.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/value.h"
 
 namespace tb {
@@ -115,7 +115,7 @@ MAKE_ORDERED_ENUM_STRING_UTILS(SkinProperty, "skin", "window active", "axis",
 // Checks if a condition is true for a given SkinConditionContext.
 // This is used to apply different state elements depending on what is currently
 // painting the skin.
-class SkinCondition : public util::TBLinkOf<SkinCondition> {
+class SkinCondition : public util::IntrusiveListEntry<SkinCondition> {
  public:
   // Defines if the condition tested should be equal or not for the condition to
   // be true.
@@ -157,7 +157,7 @@ class SkinConditionContext {
 
 // SkinElementState has a skin element id that should be used if its state and
 // condition matches that which is being painted.
-class SkinElementState : public util::TBLinkOf<SkinElementState> {
+class SkinElementState : public util::IntrusiveListEntry<SkinElementState> {
  public:
   // Defines how to match states.
   enum class MatchRule {
@@ -175,7 +175,7 @@ class SkinElementState : public util::TBLinkOf<SkinElementState> {
 
   TBID element_id;
   SkinState state;
-  util::TBLinkListAutoDeleteOf<SkinCondition> conditions;
+  util::AutoDeleteIntrusiveList<SkinCondition> conditions;
 };
 
 // List of state elements in a SkinElement.
@@ -201,7 +201,7 @@ class SkinElementStateList {
   void Load(parsing::ParseNode* n);
 
  private:
-  util::TBLinkListOf<SkinElementState> m_state_elements;
+  util::IntrusiveList<SkinElementState> m_state_elements;
 };
 
 // Skin element.

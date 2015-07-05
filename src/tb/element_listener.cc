@@ -12,7 +12,7 @@
 
 namespace tb {
 
-util::TBLinkListOf<ElementListenerGlobalLink> g_listeners;
+util::IntrusiveList<ElementListenerGlobalLink> g_listeners;
 
 void ElementListener::AddGlobalListener(ElementListener* listener) {
   g_listeners.AddLast(listener);

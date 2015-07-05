@@ -14,7 +14,7 @@
 using namespace tb;
 
 TB_TEST_GROUP(tb_linklist) {
-  class Apple : public util::TBLinkOf<Apple> {
+  class Apple : public util::IntrusiveListEntry<Apple> {
    public:
     Apple() : id(0) { total_apple_count++; }
     Apple(int id) : id(id) { total_apple_count++; }
@@ -26,7 +26,7 @@ TB_TEST_GROUP(tb_linklist) {
   };
   int Apple::total_apple_count = 0;
 
-  util::TBLinkListOf<Apple> list;
+  util::AutoDeleteIntrusiveList<Apple> list;
 
   bool AddAppless(int num_apples) {
     for (int i = 0; i < num_apples; i++) list.AddLast(new Apple(i + 1));
@@ -42,7 +42,7 @@ TB_TEST_GROUP(tb_linklist) {
   TB_TEST(Shutdown) { list.DeleteAll(); }
 
   TB_TEST(iteration_while_delete_all) {
-    util::TBLinkListOf<Apple>::Iterator iterator = list.IterateForward();
+    auto iterator = list.IterateForward();
     while (Apple* apple = iterator.GetAndStep()) {
       apple->eat();
       // Lets pretend we do something with apple
@@ -54,7 +54,7 @@ TB_TEST_GROUP(tb_linklist) {
   }
 
   TB_TEST(iteration_while_delete) {
-    util::TBLinkListOf<Apple>::Iterator iterator = list.IterateForward();
+    auto iterator = list.IterateForward();
     while (Apple* apple = iterator.GetAndStep()) {
       // Lets pretend we do something with apple
       // that trig deletion of both apple and next apple!
@@ -68,7 +68,7 @@ TB_TEST_GROUP(tb_linklist) {
   TB_TEST(iteration_while_list_delete) {
     // Allocate a list that does not own its apples.
     // We need the apples to survive their list to test this fully.
-    util::TBLinkListOf<Apple>* apple_refs = new util::TBLinkListOf<Apple>;
+    auto apple_refs = new util::IntrusiveList<Apple>;
     Apple apples[3];
     for (int i = 0; i < 3; i++) apple_refs->AddLast(&apples[i]);
 
@@ -77,7 +77,7 @@ TB_TEST_GROUP(tb_linklist) {
     TB_VERIFY(apples[2].IsInList());
 
     // Lets pretend we do some iteration in a list...
-    util::TBLinkListOf<Apple>::Iterator iterator = apple_refs->IterateForward();
+    auto iterator = apple_refs->IterateForward();
     TB_VERIFY(iterator.Get());
 
     // Now the list itself gets deallocated.
@@ -94,7 +94,7 @@ TB_TEST_GROUP(tb_linklist) {
   }
 
   TB_TEST(forward_iterator) {
-    util::TBLinkListOf<Apple>::Iterator i = list.IterateForward();
+    auto i = list.IterateForward();
     TB_VERIFY(i.Get()->id == 1);
 
     TB_VERIFY(i.GetAndStep()->id == 1);
@@ -107,7 +107,7 @@ TB_TEST_GROUP(tb_linklist) {
   }
 
   TB_TEST(backward_iterator) {
-    util::TBLinkListOf<Apple>::Iterator i = list.IterateBackward();
+    auto i = list.IterateBackward();
     TB_VERIFY(i.Get()->id == 3);
 
     TB_VERIFY(i.GetAndStep()->id == 3);
@@ -120,8 +120,8 @@ TB_TEST_GROUP(tb_linklist) {
   }
 
   TB_TEST(multiple_iterators_assign) {
-    util::TBLinkListOf<Apple>::Iterator iA = list.IterateForward();
-    util::TBLinkListOf<Apple>::Iterator iB = list.IterateBackward();
+    auto iA = list.IterateForward();
+    auto iB = list.IterateBackward();
 
     TB_VERIFY(iA.Get()->id == 1);
     TB_VERIFY(iB.Get()->id == 3);
@@ -133,11 +133,11 @@ TB_TEST_GROUP(tb_linklist) {
   }
 
   TB_TEST(multiple_iterators_assign_swap_list) {
-    util::TBLinkListAutoDeleteOf<Apple> other_list;
+    util::AutoDeleteIntrusiveList<Apple> other_list;
     other_list.AddLast(new Apple(42));
 
-    util::TBLinkListOf<Apple>::Iterator iA = list.IterateForward();
-    util::TBLinkListOf<Apple>::Iterator iB = other_list.IterateForward();
+    auto iA = list.IterateForward();
+    auto iB = other_list.IterateForward();
 
     TB_VERIFY(iA.Get()->id == 1);
     TB_VERIFY(iB.Get()->id == 42);
@@ -150,9 +150,9 @@ TB_TEST_GROUP(tb_linklist) {
   TB_TEST(autodelete) {
     // Check that the apples really are destroyed.
     int old_total_apple_count = Apple::total_apple_count;
-    // Scope for util::TBLinkListAutoDeleteOf
+    // Scope for util::AutoDeleteIntrusiveList
     {
-      util::TBLinkListAutoDeleteOf<Apple> autodelete_list;
+      util::AutoDeleteIntrusiveList<Apple> autodelete_list;
       autodelete_list.AddLast(new Apple(1));
       autodelete_list.AddLast(new Apple(2));
       TB_VERIFY(Apple::total_apple_count == old_total_apple_count + 2);

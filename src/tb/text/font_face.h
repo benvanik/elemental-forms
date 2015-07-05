@@ -16,7 +16,7 @@
 #include "tb/font_description.h"
 #include "tb/text/font_effect.h"
 #include "tb/text/utf8.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
@@ -65,7 +65,7 @@ class FontMetrics {
 // Holds glyph metrics and bitmap fragment.
 // There's one of these for all rendered (both successful and missing) glyphs in
 // FontFace.
-class FontGlyph : public util::TBLinkOf<FontGlyph> {
+class FontGlyph : public util::IntrusiveListEntry<FontGlyph> {
  public:
   FontGlyph(const TBID& hash_id, UCS4 cp);
   TBID hash_id;

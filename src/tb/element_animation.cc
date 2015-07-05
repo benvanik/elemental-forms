@@ -16,7 +16,7 @@ namespace tb {
 
 using tb::util::SafeCast;
 
-extern util::TBLinkListOf<ElementAnimation> element_animations;
+extern util::IntrusiveList<ElementAnimation> element_animations;
 
 inline float Lerp(float src, float dst, float progress) {
   return src + (dst - src) * progress;

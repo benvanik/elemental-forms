@@ -10,7 +10,7 @@
 #ifndef TB_UTIL_SPACE_ALLOCATOR_H_
 #define TB_UTIL_SPACE_ALLOCATOR_H_
 
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 namespace util {
@@ -18,7 +18,7 @@ namespace util {
 // Allocates of space out of a given available space.
 class SpaceAllocator {
  public:
-  struct Space : public TBLinkOf<Space> {
+  struct Space : public IntrusiveListEntry<Space> {
     int x;
     int width;
   };
@@ -38,8 +38,8 @@ class SpaceAllocator {
   Space* GetSmallestAvailableSpace(int needed_w);
 
   int m_available_space;
-  TBLinkListAutoDeleteOf<Space> m_free_space_list;
-  TBLinkListAutoDeleteOf<Space> m_used_space_list;
+  AutoDeleteIntrusiveList<Space> m_free_space_list;
+  AutoDeleteIntrusiveList<Space> m_used_space_list;
 };
 
 }  // namespace util

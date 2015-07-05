@@ -566,8 +566,7 @@ TextFragmentContentElement::TextFragmentContentElement(Element* parent,
 }
 
 TextFragmentContentElement::~TextFragmentContentElement() {
-  m_element->GetParent()->RemoveChild(m_element);
-  delete m_element;
+  m_element->GetParent()->DeleteChild(m_element);
 }
 
 void TextFragmentContentElement::UpdatePos(int x, int y) {

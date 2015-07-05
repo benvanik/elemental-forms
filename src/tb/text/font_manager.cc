@@ -184,8 +184,8 @@ FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
 
   // Iterate through font renderers until we find one capable of creating a font
   // for this file.
-  for (FontRenderer* fr = m_font_renderers.GetFirst(); fr; fr = fr->GetNext()) {
-    auto font = fr->Create(this, fi->GetFilename(), font_desc);
+  for (auto& font_renderer : m_font_renderers) {
+    auto font = font_renderer->Create(this, fi->GetFilename(), font_desc);
     if (font) {
       auto font_ptr = font.get();
       m_fonts.emplace(font_desc.GetFontFaceID(), std::move(font));

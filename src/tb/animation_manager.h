@@ -13,7 +13,7 @@
 #include <cstdint>
 
 #include "tb/animation.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/object.h"
 
 namespace tb {
@@ -21,7 +21,7 @@ namespace tb {
 // System class that manages all animated object.
 class AnimationManager {
  private:
-  static util::TBLinkListOf<Animation> animating_objects;
+  static util::IntrusiveList<Animation> animating_objects;
   static int block_animations_counter;
 
  public:

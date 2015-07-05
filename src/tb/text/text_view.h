@@ -20,7 +20,7 @@
 #include "tb/text/caret.h"
 #include "tb/text/text_fragment.h"
 #include "tb/text/undo_stack.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/rect_region.h"
 
 namespace tb {
@@ -152,7 +152,7 @@ class TextView {
   int32_t content_width = 0;
   int32_t content_height = 0;
 
-  tb::util::TBLinkListOf<TextBlock> blocks;
+  tb::util::AutoDeleteIntrusiveList<TextBlock> blocks;
 
   Caret caret = Caret(nullptr);
   TextSelection selection = TextSelection(nullptr);

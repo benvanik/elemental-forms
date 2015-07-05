@@ -109,8 +109,7 @@ FontFace* SFontRenderer::Create(FontManager* font_manager, const char* filename,
 }
 
 void register_stb_font_renderer() {
-  SFontRenderer* fr = new SFontRenderer();
-  FontManager::get()->AddRenderer(fr);
+  FontManager::get()->RegisterRenderer(std::make_unique<SFontRenderer>());
 }
 
 #endif  // TB_FONT_RENDERER_STB

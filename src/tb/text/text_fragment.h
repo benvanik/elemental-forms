@@ -15,7 +15,7 @@
 #include "tb/color.h"
 #include "tb/element.h"
 #include "tb/font_description.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/rect_region.h"
 
 namespace tb {
@@ -30,7 +30,7 @@ class TextFragmentContentFactory;
 // A stack of properties used during layout & paint of TextView.
 class TextProps {
  public:
-  class Data : public tb::util::TBLinkOf<Data> {
+  class Data : public tb::util::IntrusiveListEntry<Data> {
    public:
     FontDescription font_desc;
     Color text_color;
@@ -45,13 +45,13 @@ class TextProps {
   FontFace* GetFont();
 
  public:
-  tb::util::TBLinkListOf<Data> data_list;
+  tb::util::AutoDeleteIntrusiveList<Data> data_list;
   Data base_data;
   Data* data;
 };
 
 // A block of text (a line, that might be wrapped).
-class TextBlock : public tb::util::TBLinkOf<TextBlock> {
+class TextBlock : public tb::util::IntrusiveListEntry<TextBlock> {
  public:
   TextBlock(TextView* style_edit);
   ~TextBlock();
@@ -102,7 +102,7 @@ class TextBlock : public tb::util::TBLinkOf<TextBlock> {
 
  public:
   TextView* style_edit;
-  tb::util::TBLinkListOf<TextFragment> fragments;
+  tb::util::AutoDeleteIntrusiveList<TextFragment> fragments;
 
   int32_t ypos = 0;
   int16_t height = 0;
@@ -117,7 +117,7 @@ class TextBlock : public tb::util::TBLinkOf<TextBlock> {
 };
 
 // The text fragment base class for TextView.
-class TextFragment : public tb::util::TBLinkOf<TextFragment> {
+class TextFragment : public tb::util::IntrusiveListEntry<TextFragment> {
   // TODO: This object is allocated on vast amounts and need
   // to shrink in size.Remove all cached positioning
   // and implement a fragment traverser(for TextBlock).

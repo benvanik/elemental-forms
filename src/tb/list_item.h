@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "tb/id.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/value.h"
 
 namespace tb {
@@ -34,7 +34,7 @@ enum class Sort {
 // An observer for items provided by ListItemSource.
 // There can be multiple observers for each source. The observer will recieve
 // callbacks when the source is changed, so it can update itself.
-class ListItemObserver : public util::TBLinkOf<ListItemObserver> {
+class ListItemObserver : public util::IntrusiveListEntry<ListItemObserver> {
  public:
   ListItemObserver() = default;
   virtual ~ListItemObserver() = default;
@@ -122,7 +122,7 @@ class ListItemSource {
 
  private:
   friend class ListItemObserver;
-  util::TBLinkListOf<ListItemObserver> m_observers;
+  util::IntrusiveList<ListItemObserver> m_observers;
   Sort m_sort = Sort::kNone;
 };
 

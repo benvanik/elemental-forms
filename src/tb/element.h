@@ -20,7 +20,7 @@
 #include "tb/rect.h"
 #include "tb/skin.h"
 #include "tb/types.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/object.h"
 
 namespace tb {
@@ -258,7 +258,8 @@ enum class HitStatus {
 //
 // NOTE: When you subclass a element, use the TBOBJECT_SUBCLASS macro to define
 // the type casting functions instead of implementing those manually.
-class Element : public util::TypedObject, public util::TBLinkOf<Element> {
+class Element : public util::TypedObject,
+                public util::IntrusiveListEntry<Element> {
  public:
   TBOBJECT_SUBCLASS(Element, util::TypedObject);
   static void RegisterInflater();
@@ -418,6 +419,9 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // Removes child from this element without deleting it.
   void RemoveChild(Element* child, InvokeInfo info = InvokeInfo::kNormal);
 
+  // Removes child from this element and deletes it.
+  void DeleteChild(Element* child, InvokeInfo info = InvokeInfo::kNormal);
+
   // Removes and deletes all children in this element.
   // NOTE: This won't invoke Die so there's no chance for elements to survive or
   // animate. They will be instantly removed and deleted.
@@ -556,10 +560,10 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   Element* GetLastLeaf() const;
   inline Element* GetFirstChild() const { return m_children.GetFirst(); }
   inline Element* GetLastChild() const { return m_children.GetLast(); }
-  util::TBLinkListOf<Element>::Iterator GetIteratorForward() {
+  util::IntrusiveList<Element>::Iterator GetIteratorForward() {
     return m_children.IterateForward();
   }
-  util::TBLinkListOf<Element>::Iterator GetIteratorBackward() {
+  util::IntrusiveList<Element>::Iterator GetIteratorBackward() {
     return m_children.IterateBackward();
   }
 
@@ -999,9 +1003,9 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
                             // condition changes.
   // The rectangle of this element, relative to the parent. See set_rect.
   Rect m_rect;
-  util::TBLinkListOf<Element> m_children;
+  util::IntrusiveList<Element> m_children;
   ElementValueConnection m_connection;
-  util::TBLinkListOf<ElementListener> m_listeners;
+  util::IntrusiveList<ElementListener> m_listeners;
   // Opacity 0-1. See SetOpacity.
   float m_opacity = 1.0f;
   // The element state (excluding any auto states).

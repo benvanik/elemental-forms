@@ -14,7 +14,7 @@
 #include <unordered_map>
 
 #include "tb/id.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/value.h"
 
 namespace tb {
@@ -24,7 +24,8 @@ class ElementValue;
 class ElementValueGroup;
 
 // Maintains a connection between Element and ElementValue.
-class ElementValueConnection : public util::TBLinkOf<ElementValueConnection> {
+class ElementValueConnection
+    : public util::IntrusiveListEntry<ElementValueConnection> {
  public:
   ElementValueConnection() = default;
   ~ElementValueConnection() { Disconnect(); }
@@ -94,7 +95,7 @@ class ElementValue {
 
   TBID m_name;
   Value m_value;
-  util::TBLinkListOf<ElementValueConnection> m_connections;
+  util::IntrusiveList<ElementValueConnection> m_connections;
   bool m_syncing = false;
 };
 
@@ -102,7 +103,7 @@ class ElementValue {
 // is
 // changed.
 class ElementValueGroupListener
-    : public util::TBLinkOf<ElementValueGroupListener> {
+    : public util::IntrusiveListEntry<ElementValueGroupListener> {
  public:
   virtual ~ElementValueGroupListener() {
     if (linklist) {
@@ -149,7 +150,7 @@ class ElementValueGroup {
   static ElementValueGroup value_group_singleton_;
 
   std::unordered_map<uint32_t, std::unique_ptr<ElementValue>> m_values;
-  util::TBLinkListOf<ElementValueGroupListener> m_listeners;
+  util::IntrusiveList<ElementValueGroupListener> m_listeners;
 };
 
 }  // namespace tb

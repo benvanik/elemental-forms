@@ -96,7 +96,7 @@
 
 #include "tb/config.h"
 #include "tb/types.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 
@@ -144,7 +144,7 @@ int TBRunTests(uint32_t settings = TB_TEST_VERBOSE);
 #define TB_TEST_FILE(filename) tb_get_test_file_name(__FILE__, filename)
 
 /** TBCall is used to execute callbacks for tests in TBTestGroup. */
-class TBCall : public util::TBLinkOf<TBCall> {
+class TBCall : public util::IntrusiveListEntry<TBCall> {
  public:
   /** return the name of the call */
   virtual const char* name() = 0;
@@ -160,12 +160,12 @@ class TBTestGroup {
   bool IsSpecialTest(TBCall* call) const { return !call->linklist; }
 
  public:
-  const char* name;                  // Test group name.
-  TBCall* setup;                     // Setup call, or nullptr.
-  TBCall* cleanup;                   // Cleanup call, or nullptr.
-  TBCall* init;                      // Init call, or nullptr.
-  TBCall* shutdown;                  // Shutdown call, or nullptr.
-  util::TBLinkListOf<TBCall> calls;  // All test calls to call.
+  const char* name;                   // Test group name.
+  TBCall* setup;                      // Setup call, or nullptr.
+  TBCall* cleanup;                    // Cleanup call, or nullptr.
+  TBCall* init;                       // Init call, or nullptr.
+  TBCall* shutdown;                   // Shutdown call, or nullptr.
+  util::IntrusiveList<TBCall> calls;  // All test calls to call.
   TBTestGroup* next_test_group;
 };
 

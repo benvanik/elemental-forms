@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 #include "tb/util/object.h"
 
 namespace tb {
@@ -51,7 +51,7 @@ enum class AnimationTime {
 };
 
 // Listens to the progress of Animation.
-class AnimationListener : public util::TBLinkOf<AnimationListener> {
+class AnimationListener : public util::IntrusiveListEntry<AnimationListener> {
  public:
   virtual ~AnimationListener() = default;
 
@@ -69,7 +69,8 @@ class AnimationListener : public util::TBLinkOf<AnimationListener> {
 };
 
 // Base class for all animated objects.
-class Animation : public util::TypedObject, public util::TBLinkOf<Animation> {
+class Animation : public util::TypedObject,
+                  public util::IntrusiveListEntry<Animation> {
  public:
   const static AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
   const static uint64_t kDefaultDuration = 200;
@@ -114,7 +115,7 @@ class Animation : public util::TypedObject, public util::TBLinkOf<Animation> {
 
  private:
   friend class AnimationManager;
-  util::TBLinkListOf<AnimationListener> m_listeners;
+  util::IntrusiveList<AnimationListener> m_listeners;
   void InvokeOnAnimationStart();
   void InvokeOnAnimationUpdate(float progress);
   void InvokeOnAnimationStop(bool aborted);

@@ -15,7 +15,7 @@
 
 #include "tb/color.h"
 #include "tb/rect.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 namespace graphics {
@@ -23,7 +23,7 @@ namespace graphics {
 class BitmapFragment;
 
 // RendererListener is a listener for Renderer.
-class RendererListener : public util::TBLinkOf<RendererListener> {
+class RendererListener : public util::IntrusiveListEntry<RendererListener> {
  public:
   virtual ~RendererListener() = default;
 
@@ -171,7 +171,7 @@ class Renderer {
  private:
   static Renderer* renderer_singleton_;
 
-  util::TBLinkListOf<RendererListener> listeners_;
+  util::IntrusiveList<RendererListener> listeners_;
 };
 
 }  // namespace graphics

@@ -10,7 +10,7 @@
 #ifndef TB_ELEMENT_LISTENER_H_
 #define TB_ELEMENT_LISTENER_H_
 
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 
@@ -21,13 +21,13 @@ class ElementEvent;
 // It's only purpose is to add a extra typed link for ElementListener, since it
 // needs to be added in multiple lists.
 class ElementListenerGlobalLink
-    : public util::TBLinkOf<ElementListenerGlobalLink> {};
+    : public util::IntrusiveListEntry<ElementListenerGlobalLink> {};
 
 // Listens to some callbacks from Element.
 // It may either listen to all elements globally, or one specific element.
 // Local listeners (added with Element:AddListener) will be invoked before
 // global listeners (added with ElementListener::AddGlobalListener).
-class ElementListener : public util::TBLinkOf<ElementListener>,
+class ElementListener : public util::IntrusiveListEntry<ElementListener>,
                         public ElementListenerGlobalLink {
  public:
   // Adds a listener to all elements.

@@ -12,7 +12,7 @@
 
 #include "tb/id.h"
 #include "tb/parsing/parse_node.h"
-#include "tb/util/link_list.h"
+#include "tb/util/intrusive_list.h"
 
 namespace tb {
 namespace parsing {
@@ -26,7 +26,7 @@ class ParseNodeTreeListener;
 // tree.
 // While parsing, the values can be used for branch conditions or branches of
 // nodes can be included.
-class ParseNodeTree : public util::TBLinkOf<ParseNodeTree> {
+class ParseNodeTree : public util::IntrusiveListEntry<ParseNodeTree> {
  public:
   ParseNodeTree(const char* name);
   virtual ~ParseNodeTree();
@@ -81,14 +81,15 @@ class ParseNodeTree : public util::TBLinkOf<ParseNodeTree> {
   ParseNode m_node;
   std::string m_name;
   TBID m_name_id;
-  util::TBLinkListOf<ParseNodeTreeListener> m_listeners;
-  static util::TBLinkListOf<ParseNodeTree> s_ref_trees;
+  util::IntrusiveList<ParseNodeTreeListener> m_listeners;
+  static util::IntrusiveList<ParseNodeTree> s_ref_trees;
 };
 
 // Receives OnDataChanged when the value of a node in a ParseNodeTree is
 // changed.
 // FIX: The listener can currently only listen to one tree.
-class ParseNodeTreeListener : public util::TBLinkOf<ParseNodeTreeListener> {
+class ParseNodeTreeListener
+    : public util::IntrusiveListEntry<ParseNodeTreeListener> {
  public:
   // Called when the value is changed for the given node in the given ref tree.
   // The request is without tree name.

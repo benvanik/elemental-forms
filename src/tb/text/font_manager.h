@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "tb/font_description.h"
 #include "tb/graphics/bitmap_fragment.h"
@@ -81,7 +82,7 @@ class FontGlyphCache : private graphics::RendererListener {
 
   graphics::BitmapFragmentManager m_frag_manager;
   std::unordered_map<uint32_t, std::unique_ptr<FontGlyph>> m_glyphs;
-  util::TBLinkListOf<FontGlyph> m_all_rendered_glyphs;
+  util::IntrusiveList<FontGlyph> m_all_rendered_glyphs;
 };
 
 // Creates and owns font faces (FontFace) which are looked up from
@@ -104,12 +105,8 @@ class FontManager {
   ~FontManager();
 
   // Adds a renderer so fonts supported by the renderer can be created.
-  // Ownership of the renderer is taken, until calling RemoveRenderer.
-  void AddRenderer(FontRenderer* renderer) {
-    m_font_renderers.AddLast(renderer);
-  }
-  void RemoveRenderer(FontRenderer* renderer) {
-    m_font_renderers.Remove(renderer);
+  void RegisterRenderer(std::unique_ptr<FontRenderer> renderer) {
+    m_font_renderers.emplace_back(std::move(renderer));
   }
 
   // Adds FontInfo for the given font filename, so it can be loaded and
@@ -153,7 +150,7 @@ class FontManager {
 
   std::unordered_map<uint32_t, std::unique_ptr<FontInfo>> m_font_info;
   std::unordered_map<uint32_t, std::unique_ptr<FontFace>> m_fonts;
-  util::TBLinkListAutoDeleteOf<FontRenderer> m_font_renderers;
+  std::vector<std::unique_ptr<FontRenderer>> m_font_renderers;
   FontGlyphCache m_glyph_cache;
   FontDescription m_default_font_desc;
   FontDescription m_test_font_desc;

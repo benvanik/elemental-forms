@@ -289,8 +289,7 @@ std::unique_ptr<FontFace> TBBFRenderer::Create(
 }
 
 void register_tbbf_font_renderer() {
-  TBBFRenderer* fr = new TBBFRenderer();
-  FontManager::get()->AddRenderer(fr);
+  FontManager::get()->RegisterRenderer(std::make_unique<TBBFRenderer>());
 }
 
 #endif  // TB_FONT_RENDERER_TBBF
