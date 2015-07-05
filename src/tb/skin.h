@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_RESOURCES_SKIN_H_
-#define TB_RESOURCES_SKIN_H_
+#ifndef TB_SKIN_H_
+#define TB_SKIN_H_
 
 #include <memory>
 
@@ -22,16 +22,12 @@
 #include "tb/value.h"
 
 namespace tb {
-namespace parsing {
-class ParseNode;
-}  // namespace parsing
-}  // namespace tb
-
-namespace tb {
-namespace resources {
 
 class Skin;
 class SkinConditionContext;
+namespace parsing {
+class ParseNode;
+}  // namespace parsing
 
 // Used for some values in SkinElement if they has not been specified in the
 // skin.
@@ -494,7 +490,6 @@ class Skin : private graphics::RendererListener {
   int16_t m_default_spacing = 0;
 };
 
-}  // namespace resources
 }  // namespace tb
 
-#endif  // TB_RESOURCES_SKIN_H_
+#endif  // TB_SKIN_H_

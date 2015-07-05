@@ -40,6 +40,7 @@
 namespace tb {
 
 // TODO(benvanik): using all the elements to bring them into tb?
+using namespace tb::elements;
 
 using tb::elements::to_string;
 

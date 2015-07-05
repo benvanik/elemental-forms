@@ -13,7 +13,7 @@
 #include "tb/elements/text_box.h"
 #include "tb/parsing/element_inflater.h"
 #include "tb/resources/font_face.h"
-#include "tb/resources/skin.h"
+#include "tb/skin.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_table.h"
 
@@ -87,9 +87,8 @@ void TextBox::OnInflate(const parsing::InflateInfo& info) {
           : false);
   if (const char* virtual_width =
           info.node->GetValueString("virtual-width", nullptr)) {
-    SetVirtualWidth(
-        resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
-            virtual_width, GetVirtualWidth()));
+    SetVirtualWidth(Skin::get()->GetDimensionConverter()->GetPxFromString(
+        virtual_width, GetVirtualWidth()));
   }
   if (const char* text = info.node->GetValueString("placeholder", nullptr)) {
     SetPlaceholderText(text);
@@ -168,8 +167,7 @@ void TextBox::SetEditType(EditType type) {
   Element::Invalidate();
 }
 
-bool TextBox::GetCustomSkinCondition(
-    const resources::SkinCondition::ConditionInfo& info) {
+bool TextBox::GetCustomSkinCondition(const SkinCondition::ConditionInfo& info) {
   if (info.custom_prop == TBIDC("edit-type")) {
     switch (m_edit_type) {
       case EditType::kText:
@@ -316,8 +314,8 @@ void TextBox::OnPaint(const PaintProps& paint_props) {
   // If empty, draw placeholder text with some opacity.
   if (m_style_edit.empty()) {
     float old_opacity = Renderer::get()->GetOpacity();
-    Renderer::get()->SetOpacity(
-        old_opacity * resources::Skin::get()->GetDefaultPlaceholderOpacity());
+    Renderer::get()->SetOpacity(old_opacity *
+                                Skin::get()->GetDefaultPlaceholderOpacity());
     Rect placeholder_rect(visible_rect.x, visible_rect.y, visible_rect.w,
                           GetFont()->height());
     m_placeholder.Paint(this, placeholder_rect, paint_props.text_color);
@@ -334,7 +332,7 @@ void TextBox::OnPaintChildren(const PaintProps& paint_props) {
   Element::OnPaintChildren(paint_props);
 
   // Draw fadeout skin at the needed edges.
-  resources::Skin::DrawEdgeFadeout(
+  Skin::DrawEdgeFadeout(
       GetVisibleRect(), TBIDC("TextBox.fadeout_x"), TBIDC("TextBox.fadeout_y"),
       m_scrollbar_x.GetValue(), m_scrollbar_y.GetValue(),
       int(m_scrollbar_x.GetMaxValue() - m_scrollbar_x.GetValueDouble()),
@@ -477,16 +475,14 @@ void TextBox::DrawRectFill(const Rect& rect, const Color& color) {
 
 void TextBox::DrawTextSelectionBg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  resources::Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
-                                    static_cast<Element::State>(GetAutoState()),
-                                    context);
+  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                         static_cast<Element::State>(GetAutoState()), context);
 }
 
 void TextBox::DrawContentSelectionFg(const Rect& rect) {
   ElementSkinConditionContext context(this);
-  resources::Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
-                                    static_cast<Element::State>(GetAutoState()),
-                                    context);
+  Skin::get()->PaintSkin(rect, TBIDC("TextBox.selection"),
+                         static_cast<Element::State>(GetAutoState()), context);
 }
 
 void TextBox::DrawCaret(const Rect& rect) {

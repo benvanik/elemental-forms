@@ -13,13 +13,12 @@
 #include <string>
 
 #include "tb/parsing/parse_node.h"
-#include "tb/resources/skin.h"
+#include "tb/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 #include "tb/util/string_builder.h"
 
 namespace tb {
-namespace resources {
 
 using graphics::Renderer;
 using parsing::ParseNode;
@@ -827,5 +826,4 @@ void SkinElementStateList::Load(ParseNode* n) {
   }
 }
 
-}  // namespace resources
 }  // namespace tb

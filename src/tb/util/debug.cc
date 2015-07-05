@@ -98,7 +98,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
 
     // Draw skin bitmap fragments.
     if (TB_DEBUG_SETTING(util::DebugInfo::Setting::kDrawSkinBitmapFragments)) {
-      resources::Skin::get()->Debug();
+      Skin::get()->Debug();
     }
 
     // Draw font glyph fragments (the font of the hovered element).

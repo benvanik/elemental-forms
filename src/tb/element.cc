@@ -60,7 +60,7 @@ class LongClickTimer : private MessageHandler {
 Element::PaintProps::PaintProps() {
   // Set the default properties, used for the root elements
   // calling InvokePaint. The base values for all inheritance.
-  text_color = resources::Skin::get()->GetDefaultTextColor();
+  text_color = Skin::get()->GetDefaultTextColor();
 }
 
 void Element::RegisterInflater() {
@@ -195,7 +195,7 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
     if (GetLayoutParams()) {
       layout_params = *GetLayoutParams();
     }
-    auto dc = resources::Skin::get()->GetDimensionConverter();
+    auto dc = Skin::get()->GetDimensionConverter();
     if (const char* str = lp->GetValueString("width", nullptr)) {
       layout_params.set_width(
           dc->GetPxFromString(str, LayoutParams::kUnspecified));
@@ -240,9 +240,8 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
   if (auto font = info.node->GetNode("font")) {
     FontDescription fd = GetCalculatedFontDescription();
     if (const char* size = font->GetValueString("size", nullptr)) {
-      int new_size =
-          resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
-              size, fd.GetSize());
+      int new_size = Skin::get()->GetDimensionConverter()->GetPxFromString(
+          size, fd.GetSize());
       fd.SetSize(new_size);
     }
     if (const char* name = font->GetValueString("name", nullptr)) {
@@ -254,7 +253,7 @@ void Element::OnInflate(const parsing::InflateInfo& info) {
   info.target->OnInflateChild(this);
 
   if (auto rect_node = info.node->GetNode("rect")) {
-    auto dc = resources::Skin::get()->GetDimensionConverter();
+    auto dc = Skin::get()->GetDimensionConverter();
     Value& val = rect_node->GetValue();
     if (val.array_size() == 4) {
       set_rect({dc->GetPxFromValue(val.as_array()->at(0), 0),
@@ -558,10 +557,10 @@ void Element::SetSkinBg(const TBID& skin_bg, InvokeInfo info) {
   }
 }
 
-resources::SkinElement* Element::GetSkinBgElement() {
+SkinElement* Element::GetSkinBgElement() {
   ElementSkinConditionContext context(this);
   Element::State state = GetAutoState();
-  return resources::Skin::get()->GetSkinElementStrongOverride(
+  return Skin::get()->GetSkinElementStrongOverride(
       m_skin_bg, static_cast<Element::State>(state), context);
 }
 
@@ -959,9 +958,9 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
           Renderer::get()->SetOpacity(opacity);
 
           ElementSkinConditionContext context(child);
-          resources::Skin::get()->PaintSkinOverlay(
-              child->m_rect, skin_element, static_cast<Element::State>(state),
-              context);
+          Skin::get()->PaintSkinOverlay(child->m_rect, skin_element,
+                                        static_cast<Element::State>(state),
+                                        context);
 
           Renderer::get()->SetOpacity(old_opacity);
         }
@@ -979,9 +978,8 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
         !skin_element->HasState(Element::State::kFocused, context)) {
       Element::State state = focused_element->GetAutoState();
       if (any(state & Element::State::kFocused)) {
-        resources::Skin::get()->PaintSkin(
-            focused_element->m_rect, TBIDC("generic_focus"),
-            static_cast<Element::State>(state), context);
+        Skin::get()->PaintSkin(focused_element->m_rect, TBIDC("generic_focus"),
+                               static_cast<Element::State>(state), context);
       }
     }
   }
@@ -1109,8 +1107,6 @@ PreferredSize Element::OnCalculatePreferredSize(
   if (!e) {
     return ps;
   }
-
-  using resources::kSkinValueNotSpecified;
 
   // Override the elements preferences with skin attributes that has been
   // specified.
@@ -1290,14 +1286,14 @@ void Element::InvokeProcessStates(bool force_update) {
     child->InvokeProcessStates(true);
 }
 
-float Element::CalculateOpacityInternal(
-    Element::State state, resources::SkinElement* skin_element) const {
+float Element::CalculateOpacityInternal(Element::State state,
+                                        SkinElement* skin_element) const {
   float opacity = m_opacity;
   if (skin_element) {
     opacity *= skin_element->opacity;
   }
   if (any(state & Element::State::kDisabled)) {
-    opacity *= resources::Skin::get()->GetDefaultDisabledOpacity();
+    opacity *= Skin::get()->GetDefaultDisabledOpacity();
   }
   return opacity;
 }
@@ -1327,7 +1323,7 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   // Paint background skin.
   Rect local_rect(0, 0, m_rect.w, m_rect.h);
   ElementSkinConditionContext context(this);
-  auto used_element = resources::Skin::get()->PaintSkin(
+  auto used_element = Skin::get()->PaintSkin(
       local_rect, skin_element, static_cast<Element::State>(state), context);
   assert(!!used_element == !!skin_element);
 
@@ -1849,9 +1845,9 @@ resources::FontFace* Element::GetFont() const {
       GetCalculatedFontDescription());
 }
 
-using tb::resources::SkinCondition;
-using tb::resources::SkinProperty;
-using tb::resources::SkinTarget;
+using tb::SkinCondition;
+using tb::SkinProperty;
+using tb::SkinTarget;
 
 bool ElementSkinConditionContext::GetCondition(
     SkinTarget target, const SkinCondition::ConditionInfo& info) {

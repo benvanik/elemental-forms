@@ -78,7 +78,7 @@ void DemoWindow::LoadResource(ParseNode& node) {
   SetText(node.GetValueString("WindowInfo>title", ""));
 
   const Rect parent_rect(0, 0, GetParent()->rect().w, GetParent()->rect().h);
-  auto dc = resources::Skin::get()->GetDimensionConverter();
+  auto dc = Skin::get()->GetDimensionConverter();
   Rect window_rect = GetResizeToFitContentRect();
 
   // Use specified size or adapt to the preferred content size.
@@ -561,7 +561,7 @@ bool MainWindow::OnEvent(const ElementEvent& ev) {
       int reload_count = 10;
       uint64_t t1 = util::GetTimeMS();
       for (int i = 0; i < reload_count; ++i) {
-        resources::Skin::get()->ReloadBitmaps();
+        Skin::get()->ReloadBitmaps();
       }
       uint64_t t2 = util::GetTimeMS();
 
@@ -800,8 +800,8 @@ int app_main() {
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.
-  resources::Skin::get()->Load("resources/default_skin/skin.tb.txt",
-                               "Demo/demo01/skin/skin.tb.txt");
+  Skin::get()->Load("resources/default_skin/skin.tb.txt",
+                    "Demo/demo01/skin/skin.tb.txt");
 
 // Register font renderers.
 #ifdef TB_FONT_RENDERER_TBBF
@@ -838,7 +838,7 @@ int app_main() {
 #else
   fd.set_id(TBIDC("Vera"));
 #endif
-  fd.SetSize(resources::Skin::get()->GetDimensionConverter()->DpToPx(14));
+  fd.SetSize(Skin::get()->GetDimensionConverter()->DpToPx(14));
   font_manager->SetDefaultFontDescription(fd);
 
   // Create the font now.

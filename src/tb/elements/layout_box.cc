@@ -9,7 +9,7 @@
 
 #include "tb/elements/layout_box.h"
 #include "tb/parsing/element_inflater.h"
-#include "tb/resources/skin.h"
+#include "tb/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/metrics.h"
 
@@ -33,7 +33,7 @@ LayoutBox::LayoutBox(Axis axis) : m_axis(axis) {
 
 void LayoutBox::OnInflate(const parsing::InflateInfo& info) {
   if (const char* spacing = info.node->GetValueString("spacing", nullptr)) {
-    SetSpacing(resources::Skin::get()->GetDimensionConverter()->GetPxFromString(
+    SetSpacing(Skin::get()->GetDimensionConverter()->GetPxFromString(
         spacing, kSpacingFromSkin));
   }
   SetGravity(Gravity::kAll);
@@ -234,9 +234,9 @@ int LayoutBox::CalculateSpacing() {
     if (auto el = GetSkinBgElement()) {
       spacing = el->spacing;
     }
-    assert(kSpacingFromSkin == resources::kSkinValueNotSpecified);
+    assert(kSpacingFromSkin == kSkinValueNotSpecified);
     if (spacing == kSpacingFromSkin /*|| spacing == kSkinValueNotSpecified*/) {
-      spacing = resources::Skin::get()->GetDefaultSpacing();
+      spacing = Skin::get()->GetDefaultSpacing();
     }
   }
   return spacing;
@@ -481,9 +481,9 @@ void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {
       skin_y = TBIDC("Layout.fadeout_y");
     }
 
-    resources::Skin::DrawEdgeFadeout(
-        padding_rect, skin_x, skin_y, m_overflow_scroll, m_overflow_scroll,
-        m_overflow - m_overflow_scroll, m_overflow - m_overflow_scroll);
+    Skin::DrawEdgeFadeout(padding_rect, skin_x, skin_y, m_overflow_scroll,
+                          m_overflow_scroll, m_overflow - m_overflow_scroll,
+                          m_overflow - m_overflow_scroll);
   }
 
   // Restore clipping

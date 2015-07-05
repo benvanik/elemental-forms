@@ -64,7 +64,7 @@
     <ClCompile Include="src\tb\resources\font_renderer_stb.cc" />
     <ClCompile Include="src\tb\resources\font_renderer_tbbf.cc" />
     <ClCompile Include="src\tb\color.cc" />
-    <ClCompile Include="src\tb\resources\skin.cc" />
+    <ClCompile Include="src\tb\skin.cc" />
     <ClCompile Include="src\tb\parsing\text_parser.cc" />
     <ClCompile Include="src\tb\parsing\text_parser_stream.cc" />
     <ClCompile Include="src\tb\turbo_badger.cc" />
@@ -163,7 +163,7 @@
     <ClInclude Include="src\tb\resources\font_face.h" />
     <ClInclude Include="src\tb\resources\font_manager.h" />
     <ClInclude Include="src\tb\resources\font_renderer.h" />
-    <ClInclude Include="src\tb\resources\skin.h" />
+    <ClInclude Include="src\tb\skin.h" />
     <ClInclude Include="src\tb\parsing\text_parser.h" />
     <ClInclude Include="src\tb\parsing\text_parser_stream.h" />
     <ClInclude Include="src\tb\tooltip_manager.h" />

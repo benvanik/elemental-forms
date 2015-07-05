@@ -101,7 +101,7 @@ class TextBox : public Element,
   //     "multiline", matching 1 if multiline mode is enabled.
   //     "readonly", matching 1 if readonly mode is enabled.
   bool GetCustomSkinCondition(
-      const tb::resources::SkinCondition::ConditionInfo& info) override;
+      const tb::SkinCondition::ConditionInfo& info) override;
 
   // Sets which alignment the text should have if the space given when painting
   // is larger than the text.

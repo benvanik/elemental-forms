@@ -18,7 +18,7 @@
 #include "tb/element_value.h"
 #include "tb/font_description.h"
 #include "tb/rect.h"
-#include "tb/resources/skin.h"
+#include "tb/skin.h"
 #include "tb/types.h"
 #include "tb/util/link_list.h"
 #include "tb/util/object.h"
@@ -347,7 +347,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
     return (T*)GetElementByIDInternal(id, GetTypeId<T>());
   }
 
-  using State = resources::SkinState;
+  using State = SkinState;
 
   // Enables or disables the given state(s).
   // The state affects which skin state is used when drawing.
@@ -464,7 +464,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   TBID GetSkinBg() const { return m_skin_bg; }
 
   // Returns the skin background element, or nullptr.
-  resources::SkinElement* GetSkinBgElement();
+  SkinElement* GetSkinBgElement();
 
   // Sets if this element is a group root.
   // Grouped elements (such as RadioButton) will toggle all other elements with
@@ -695,7 +695,7 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   // This can be used to extend the skin conditions support with properties
   // specific to different elements.
   virtual bool GetCustomSkinCondition(
-      const resources::SkinCondition::ConditionInfo& info) {
+      const SkinCondition::ConditionInfo& info) {
     return false;
   }
 
@@ -1091,21 +1091,18 @@ class Element : public util::TypedObject, public util::TBLinkOf<Element> {
   void MaybeInvokeLongClickOrContextMenu(bool touch);
   // Returns the opacity for this element multiplied with its skin opacity and
   // state opacity.
-  float CalculateOpacityInternal(State state,
-                                 resources::SkinElement* skin_element) const;
+  float CalculateOpacityInternal(State state, SkinElement* skin_element) const;
 };
 
 // Check if a condition is true for a element when painting a skin.
-class ElementSkinConditionContext : public resources::SkinConditionContext {
+class ElementSkinConditionContext : public SkinConditionContext {
  public:
   ElementSkinConditionContext(Element* element) : m_element(element) {}
-  bool GetCondition(
-      resources::SkinTarget target,
-      const resources::SkinCondition::ConditionInfo& info) override;
+  bool GetCondition(SkinTarget target,
+                    const SkinCondition::ConditionInfo& info) override;
 
  private:
-  bool GetCondition(Element* element,
-                    const resources::SkinCondition::ConditionInfo& info);
+  bool GetCondition(Element* element, const SkinCondition::ConditionInfo& info);
   Element* m_element = nullptr;
 };
 

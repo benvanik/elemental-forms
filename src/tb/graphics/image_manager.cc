@@ -8,7 +8,7 @@
  */
 
 #include "tb/graphics/image_manager.h"
-#include "tb/resources/skin.h"
+#include "tb/skin.h"
 #include "tb/util/debug.h"
 #include "tb/util/hash.h"
 #include "tb/util/string_builder.h"
@@ -99,7 +99,7 @@ Image ImageManager::GetImage(const char* filename) {
   if (!image_rep) {
     // Load a fragment. Load a destination DPI bitmap if available.
     BitmapFragment* fragment = nullptr;
-    auto dimension_converter = resources::Skin::get()->GetDimensionConverter();
+    auto dimension_converter = Skin::get()->GetDimensionConverter();
     if (dimension_converter->NeedConversion()) {
       util::StringBuilder filename_dst_DPI;
       dimension_converter->GetDstDPIFilename(filename, &filename_dst_DPI);
