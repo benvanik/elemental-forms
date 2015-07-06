@@ -513,14 +513,14 @@ void TextBox::UpdateScrollbars() {
 
 void TextBox::CaretBlinkStart() {
   // Post the delayed blink message if we don't already have one
-  if (!GetMessageByID(TBIDC("blink"))) {
+  if (!GetMessageById(TBIDC("blink"))) {
     PostMessageDelayed(TBIDC("blink"), nullptr, kCaretBlinkTimeMillis);
   }
 }
 
 void TextBox::CaretBlinkStop() {
   // Remove the blink message if we have one
-  if (Message* msg = GetMessageByID(TBIDC("blink"))) {
+  if (Message* msg = GetMessageById(TBIDC("blink"))) {
     DeleteMessage(msg);
   }
 }

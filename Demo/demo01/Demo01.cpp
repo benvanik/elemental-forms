@@ -517,8 +517,8 @@ bool MainWindow::OnEvent(const Event& ev) {
     } else if (ev.target->id() == TBIDC("busymsg")) {
       if (ev.target->value() == 1) {
         // Post the first "busy" message when we check the checkbox.
-        assert(!GetMessageByID(TBIDC("busy")));
-        if (!GetMessageByID(TBIDC("busy"))) {
+        assert(!GetMessageById(TBIDC("busy")));
+        if (!GetMessageById(TBIDC("busy"))) {
           PostMessage(TBIDC("busy"), nullptr);
           MessageWindow* msg_win =
               new MessageWindow(this, TBIDC("test_dialog"));
@@ -530,8 +530,8 @@ bool MainWindow::OnEvent(const Event& ev) {
         }
       } else {
         // Remove any pending "busy" message when we uncheck the checkbox.
-        assert(GetMessageByID(TBIDC("busy")));
-        if (Message* busymsg = GetMessageByID(TBIDC("busy")))
+        assert(GetMessageById(TBIDC("busy")));
+        if (Message* busymsg = GetMessageById(TBIDC("busy")))
           DeleteMessage(busymsg);
       }
       return true;
@@ -817,7 +817,15 @@ int app_main() {
 
 // Add fonts we can use to the font manager.
 #if defined(TB_FONT_RENDERER_STB) || defined(TB_FONT_RENDERER_FREETYPE)
-  font_manager->AddFontInfo("resources/vera.ttf", "Vera");
+  font_manager->AddFontInfo("resources/fonts/vera.ttf", "Vera");
+  font_manager->AddFontInfo("resources/fonts/vera-mono.ttf", "Vera Mono");
+  font_manager->AddFontInfo("resources/fonts/vera-mono-bold.ttf",
+                            "Vera Mono Bold");
+  font_manager->AddFontInfo("resources/fonts/vera-mono-bold-italic.ttf",
+                            "Vera Mono Bold Italic");
+  font_manager->AddFontInfo("resources/fonts/vera-mono-italic.ttf",
+                            "Vera Mono Italic");
+  font_manager->AddFontInfo("resources/fonts/ProggyClean.ttf", "ProggyClean");
 #endif
 #ifdef TB_FONT_RENDERER_TBBF
   font_manager->AddFontInfo(
@@ -832,10 +840,11 @@ int app_main() {
   FontDescription fd;
 #ifdef TB_FONT_RENDERER_TBBF
   fd.set_id(TBIDC("Segoe"));
-#else
-  fd.set_id(TBIDC("Vera"));
-#endif
   fd.set_size(Skin::get()->dimension_converter()->DpToPx(14));
+#else
+  fd.set_id(TBIDC("ProggyClean"));
+  fd.set_size(Skin::get()->dimension_converter()->DpToPx(10));
+#endif
   font_manager->set_default_font_description(fd);
 
   // Create the font now.

@@ -254,7 +254,7 @@ void Scroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
   }
 
   // Post the pan message if we don't already have one.
-  if (!GetMessageByID(TBIDC("scroll"))) {
+  if (!GetMessageById(TBIDC("scroll"))) {
     // Update expected translation.
     GetTargetChildTranslation(m_expected_scroll_x, m_expected_scroll_y);
 
@@ -263,7 +263,7 @@ void Scroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
 }
 
 bool Scroller::IsScrolling() {
-  return GetMessageByID(TBIDC("scroll")) ? true : false;
+  return GetMessageById(TBIDC("scroll")) ? true : false;
 }
 
 void Scroller::GetTargetChildTranslation(int& x, int& y) const {

@@ -31,13 +31,13 @@ void ProgressSpinner::set_value(int value) {
   m_value = value;
   if (value > 0) {
     // Start animation.
-    if (!GetMessageByID(TBID(1))) {
+    if (!GetMessageById(TBID(1))) {
       m_frame = 0;
       PostMessageDelayed(TBID(1), nullptr, kSpinSpeed);
     }
   } else {
     // Stop animation.
-    if (Message* msg = GetMessageByID(TBID(1))) {
+    if (Message* msg = GetMessageById(TBID(1))) {
       DeleteMessage(msg);
     }
   }

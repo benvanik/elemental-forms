@@ -8,12 +8,15 @@
  */
 
 #include "tb/graphics/renderer.h"
+#include "tb/text/font_face.h"
+#include "tb/text/font_manager.h"
 #include "tb/text/font_renderer.h"
+#include "tb/util/file.h"
 
 #ifdef TB_FONT_RENDERER_STB
 
-using namespace tb;
-using namespace tb::resources;
+namespace tb {
+namespace text {
 
 #define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate
                                      // implementation
@@ -28,13 +31,13 @@ class SFontRenderer : public FontRenderer {
 
   bool Load(const char* filename, int size);
 
-  virtual FontFace* Create(FontManager* font_manager,
-                           const std::string& filename,
-                           const FontDescription& font_desc);
+  std::unique_ptr<FontFace> Create(FontManager* font_manager,
+                                   const std::string& filename,
+                                   const FontDescription& font_desc) override;
 
-  virtual FontMetrics GetMetrics();
-  virtual bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp);
-  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp);
+  bool RenderGlyph(FontGlyphData* dst_bitmap, UCS4 cp) override;
+  void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) override;
+  FontMetrics GetMetrics() override;
 
  private:
   stbtt_fontinfo font;
@@ -49,16 +52,6 @@ SFontRenderer::SFontRenderer() : ttf_buffer(nullptr), render_data(nullptr) {}
 SFontRenderer::~SFontRenderer() {
   delete[] ttf_buffer;
   delete[] render_data;
-}
-
-FontMetrics SFontRenderer::GetMetrics() {
-  FontMetrics metrics;
-  int ascent, descent, lineGap;
-  stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
-  metrics.ascent = (int)(ascent * scale + 0.5f);
-  metrics.descent = (int)((-descent) * scale + 0.5f);
-  metrics.height = (int)((ascent - descent + lineGap) * scale + 0.5f);
-  return metrics;
 }
 
 bool SFontRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
@@ -81,6 +74,16 @@ void SFontRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   metrics->y = iy0;
 }
 
+FontMetrics SFontRenderer::GetMetrics() {
+  FontMetrics metrics;
+  int ascent, descent, lineGap;
+  stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
+  metrics.ascent = (int)(ascent * scale + 0.5f);
+  metrics.descent = (int)((-descent) * scale + 0.5f);
+  metrics.height = (int)((ascent - descent + lineGap) * scale + 0.5f);
+  return metrics;
+}
+
 bool SFontRenderer::Load(const char* filename, int size) {
   auto file = util::File::Open(filename, util::File::Mode::kRead);
   if (!file) return false;
@@ -97,19 +100,23 @@ bool SFontRenderer::Load(const char* filename, int size) {
   return true;
 }
 
-FontFace* SFontRenderer::Create(FontManager* font_manager, const char* filename,
-                                const FontDescription& font_desc) {
-  SFontRenderer* fr = new SFontRenderer();
-  if (fr->Load(filename, (int)font_desc.size())) {
-    FontFace* font = new FontFace(font_manager->glyph_cache(), fr, font_desc);
-    return font;
+std::unique_ptr<FontFace> SFontRenderer::Create(
+    FontManager* font_manager, const std::string& filename,
+    const FontDescription& font_desc) {
+  auto font_renderer = std::make_unique<SFontRenderer>();
+  if (font_renderer->Load(filename.c_str(), (int)font_desc.size())) {
+    return std::make_unique<FontFace>(font_manager->glyph_cache(),
+                                      std::move(font_renderer), font_desc);
   }
-  delete fr;
   return nullptr;
 }
 
+}  // namespace text
+}  // namespace tb
+
 void register_stb_font_renderer() {
-  FontManager::get()->RegisterRenderer(std::make_unique<SFontRenderer>());
+  tb::text::FontManager::get()->RegisterRenderer(
+      std::make_unique<tb::text::SFontRenderer>());
 }
 
 #endif  // TB_FONT_RENDERER_STB

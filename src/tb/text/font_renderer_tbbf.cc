@@ -21,13 +21,16 @@
 
 #ifdef TB_FONT_RENDERER_TBBF
 
-using namespace tb;
-using namespace tb::parsing;
-using namespace tb::text;
+namespace tb {
+namespace text {
 
+using namespace tb::parsing;
+
+namespace {
 struct GLYPH {
   int x, w;
 };
+}  // namespace
 
 /** TBBFRenderer renders a bitmap font.
 
@@ -288,8 +291,12 @@ std::unique_ptr<FontFace> TBBFRenderer::Create(
                                     font_desc);
 }
 
+}  // namespace text
+}  // namespace tb
+
 void register_tbbf_font_renderer() {
-  FontManager::get()->RegisterRenderer(std::make_unique<TBBFRenderer>());
+  tb::text::FontManager::get()->RegisterRenderer(
+      std::make_unique<tb::text::TBBFRenderer>());
 }
 
 #endif  // TB_FONT_RENDERER_TBBF

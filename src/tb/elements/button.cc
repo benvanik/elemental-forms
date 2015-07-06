@@ -74,7 +74,7 @@ void Button::OnCaptureChanged(bool captured) {
     PostMessageDelayed(TBIDC("auto_click"), nullptr,
                        kAutoClickFirstDelayMillis);
   } else if (!captured) {
-    if (Message* msg = GetMessageByID(TBIDC("auto_click"))) {
+    if (Message* msg = GetMessageById(TBIDC("auto_click"))) {
       DeleteMessage(msg);
     }
   }

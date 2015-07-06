@@ -90,7 +90,7 @@ void ResourceEditWindow::RefreshFromSource() {
 void ResourceEditWindow::UpdateElementList(bool immediately) {
   if (!immediately) {
     TBID id = TBIDC("update_element_list");
-    if (!GetMessageByID(id)) PostMessage(id, nullptr);
+    if (!GetMessageById(id)) PostMessage(id, nullptr);
   } else {
     m_element_list_source.clear();
     AddElementListItemsRecursive(m_build_container, 0);

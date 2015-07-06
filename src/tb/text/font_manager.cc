@@ -17,13 +17,18 @@ namespace text {
 
 using graphics::Renderer;
 
+// The dimensions of the font glyph cache bitmap. Must be a power of two.
+constexpr int kDefaultGlyphCacheMapWidth = 512;
+constexpr int kDefaultGlyphCacheMapHeight = 512;
+
 std::unique_ptr<FontManager> FontManager::font_manager_singleton_;
 
 FontGlyphCache::FontGlyphCache() {
   // Only use one map for the font face. The glyph cache will start forgetting
   // glyphs that haven't been used for a while if the map gets full.
   m_frag_manager.SetNumMapsLimit(1);
-  m_frag_manager.SetDefaultMapSize(TB_GLYPH_CACHE_WIDTH, TB_GLYPH_CACHE_HEIGHT);
+  m_frag_manager.SetDefaultMapSize(kDefaultGlyphCacheMapWidth,
+                                   kDefaultGlyphCacheMapHeight);
 
   Renderer::get()->AddListener(this);
 }
@@ -60,7 +65,8 @@ graphics::BitmapFragment* FontGlyphCache::CreateFragment(FontGlyph* glyph,
                                                          uint32_t* data) {
   assert(GetGlyph(glyph->hash_id, glyph->cp));
   // Don't bother if the requested glyph is too large.
-  if (w > TB_GLYPH_CACHE_WIDTH || h > TB_GLYPH_CACHE_HEIGHT) {
+  if (w > m_frag_manager.default_map_width() ||
+      h > m_frag_manager.default_map_height()) {
     return nullptr;
   }
 

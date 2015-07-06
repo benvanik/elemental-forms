@@ -13,8 +13,6 @@
 #include "tb/graphics/image_loader.h"
 #include "tb/util/file.h"
 
-#ifdef TB_IMAGE_LOADER_STB
-
 namespace tb {
 namespace graphics {
 
@@ -74,5 +72,3 @@ std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
 
 }  // namespace graphics
 }  // namespace tb
-
-#endif  // TB_IMAGE_LOADER_STB

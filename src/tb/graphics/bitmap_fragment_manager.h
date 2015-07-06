@@ -83,6 +83,8 @@ class BitmapFragmentManager {
   // reached, the fragment creation will fail. Set to 0 for unlimited (default).
   void SetNumMapsLimit(int num_maps_limit);
 
+  int default_map_width() const { return m_default_map_w; }
+  int default_map_height() const { return m_default_map_h; }
   // Sets the default size of new fragment maps. These must be power of two.
   void SetDefaultMapSize(int w, int h);
 

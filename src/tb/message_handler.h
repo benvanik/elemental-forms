@@ -55,7 +55,7 @@ class MessageHandler {
   // Checks if this messagehandler has a pending message with the given id.
   // Returns the message if found, or nullptr.
   // If you want to delete the message, call DeleteMessage.
-  Message* GetMessageByID(TBID message_id);
+  Message* GetMessageById(TBID message_id);
 
   // Deletes the message from this message handler.
   void DeleteMessage(Message* msg);
@@ -64,7 +64,7 @@ class MessageHandler {
   void DeleteAllMessages();
 
   // Called when a message is delivered.
-  // This message won't be found using GetMessageByID. It is already removed
+  // This message won't be found using GetMessageById. It is already removed
   // from the list.
   // You should not call DeleteMessage on this message. That is done
   // automatically after this method exit.

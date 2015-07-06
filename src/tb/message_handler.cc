@@ -85,7 +85,7 @@ void MessageHandler::PostMessage(TBID message_id,
   }
 }
 
-Message* MessageHandler::GetMessageByID(TBID message_id) {
+Message* MessageHandler::GetMessageById(TBID message_id) {
   auto iter = m_messages.IterateForward();
   while (Message* msg = iter.GetAndStep()) {
     if (msg->message_id() == message_id) {

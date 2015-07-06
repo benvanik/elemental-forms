@@ -46,16 +46,4 @@
         as long as it compiles. */
 //#define TB_FONT_RENDERER_STB
 
-/** Enable to support image loading using stb_image.c (http://nothings.org/).
-        It's a *very unsafe* image library. Use only with images distributed
-   with
-        your app, that you know work! */
-#define TB_IMAGE_LOADER_STB
-
-/** The width of the font glyph cache. Must be a power of two. */
-#define TB_GLYPH_CACHE_WIDTH 512
-
-/** The height of the font glyph cache. Must be a power of two. */
-#define TB_GLYPH_CACHE_HEIGHT 512
-
 #endif  // TB_CONFIG_H_

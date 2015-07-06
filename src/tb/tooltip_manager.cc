@@ -146,7 +146,7 @@ void TooltipManager::KillToolTip() {
 
 void TooltipManager::DeleteShowMessages() {
   Message* msg;
-  while ((msg = GetMessageByID(messageShow)) != nullptr) {
+  while ((msg = GetMessageById(messageShow)) != nullptr) {
     DeleteMessage(msg);
   }
 }
