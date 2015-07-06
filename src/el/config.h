@@ -18,12 +18,14 @@
 // Enables for some handy runtime debugging, enabled by modifying the various
 // settings in DebugInfo::get()-> A settings window can be shown by calling
 // ShowDebugInfoSettingsWindow.
+#ifndef NDEBUG
 #define EL_RUNTIME_DEBUG_INFO
+#endif  // !NDEBUG
 
 #ifdef CHECKED
 // Enables compilation of unit tests.
 #define EL_UNIT_TESTING
-#endif
+#endif  // CHECKED
 
 /** Enable if the focus state should automatically be set on edit fields even
         when using the pointer. It is normally set only while moving focus by
