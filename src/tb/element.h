@@ -381,8 +381,7 @@ class Element : public util::TypedObject,
   // SkinState::kPressed, SkinState::kHovered, SkinState::kFocused.
   //
   // RE SkinState::kFocused: may also be controlled by calling
-  // set_auto_focus_state
-  // and the define TB_ALWAYS_SHOW_EDIT_FOCUS.
+  // set_auto_focus_state and the define TB_ALWAYS_SHOW_EDIT_FOCUS.
   State computed_state() const;
 
   // Sets whether the state SkinState::kFocused should be set automatically for

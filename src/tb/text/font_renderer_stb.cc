@@ -20,7 +20,7 @@ namespace text {
 
 #define STB_TRUETYPE_IMPLEMENTATION  // force following include to generate
                                      // implementation
-#include "thirdparty/stb_truetype.h"
+#include "third_party/stb/stb_truetype.h"
 
 /** SFontRenderer renders fonts using stb_truetype.h (http://nothings.org/) */
 

@@ -212,6 +212,8 @@
     <ClInclude Include="src\tb\util\string_table.h" />
     <ClInclude Include="src\tb\util\timer.h" />
     <ClInclude Include="src\tb\text\utf8.h" />
+    <ClInclude Include="src\third_party\stb\stb_image.h" />
+    <ClInclude Include="src\third_party\stb\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="integration.txt" />

@@ -30,7 +30,7 @@ namespace graphics {
 // Should not be used for content not distributed with your app (May not be
 // secure and doesn't
 // support all formats fully)
-#include "thirdparty/stb_image.h"
+#include "third_party/stb/stb_image.h"
 
 class StbiImageLoader : public ImageLoader {
  public:
