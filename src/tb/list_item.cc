@@ -70,13 +70,9 @@ SimpleBoxItemElement::SimpleBoxItemElement(TBID image, ListItemSource* source,
 }
 
 SimpleBoxItemElement::~SimpleBoxItemElement() {
-  if (m_image_arrow.parent()) {
-    RemoveChild(&m_image_arrow);
-  }
+  m_image_arrow.RemoveFromParent();
   RemoveChild(&m_textfield);
-  if (m_image.parent()) {
-    RemoveChild(&m_image);
-  }
+  m_image.RemoveFromParent();
   CloseSubMenu();
 }
 

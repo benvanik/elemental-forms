@@ -122,7 +122,7 @@ bool DemoWindow::OnEvent(const Event& ev) {
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
     Event click_ev(EventType::kClick);
-    m_close_button.InvokeEvent(click_ev);
+    title_close_button_.InvokeEvent(click_ev);
     return true;
   }
   return Window::OnEvent(ev);

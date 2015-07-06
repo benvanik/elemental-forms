@@ -19,13 +19,15 @@
 namespace tb {
 
 enum class WindowSettings {
-  kNone = 0,         // Chrome less window without any other settings.
-  kTitleBar = 1,     // Show a title bar that can also move the window.
-  kResizable = 2,    // Show a element for resizing the window.
-  kCloseButton = 4,  // Show a element for closing the window.
-  kCanActivate = 8,  // Can be activated and deactivate other windows.
+  kNone = 0,           // Chrome less window without any other settings.
+  kTitleBar = 1,       // Show a title bar that can also move the window.
+  kResizable = 2,      // Show an element for resizing the window.
+  kCloseButton = 4,    // Show an element for closing the window.
+  kCanActivate = 8,    // Can be activated and deactivate other windows.
+  kDesignButton = 16,  // Show an element for opening a designer for the window.
 
-  kDefault = kTitleBar | kResizable | kCloseButton | kCanActivate,
+  kDefault =
+      kTitleBar | kResizable | kCloseButton | kCanActivate | kDesignButton,
 };
 MAKE_ENUM_FLAG_COMBO(WindowSettings);
 
@@ -45,7 +47,7 @@ class Window : public Element {
   void Close();
 
   // Returns true if this window is active.
-  bool IsActive() const;
+  bool is_active() const;
 
   // Activates this window if it's not already activated.
   // This will deactivate any currently activated window..
@@ -66,9 +68,11 @@ class Window : public Element {
   // time.
   // This should not be used to change focus. Call Element::SetFocus to focus,
   // which will call this method if the window is inactive!
-  void set_last_focus(Element* last_focus) { m_last_focus.reset(last_focus); }
+  void set_last_focus(Element* last_focus) {
+    last_focus_element_.reset(last_focus);
+  }
 
-  WindowSettings settings() const { return m_settings; }
+  WindowSettings settings() const { return window_settings_; }
   // Sets settings for how this window should look and behave.
   void set_settings(WindowSettings settings);
 
@@ -89,9 +93,9 @@ class Window : public Element {
   // set_rect(GetResizeToFitContentRect(fit)).
   void ResizeToFitContent(ResizeFit fit = ResizeFit::kPreferred);
 
-  std::string text() override { return m_textfield.text(); }
+  std::string text() override { return title_label_.text(); }
   // Sets the window title.
-  void set_text(const char* text) override { m_textfield.set_text(text); }
+  void set_text(const char* text) override { title_label_.set_text(text); }
   using Element::set_text;
 
   // Gets the height of the title bar (or 0 if the WindowSettings say this
@@ -108,17 +112,20 @@ class Window : public Element {
   void OnChildAdded(Element* child) override;
   void OnResized(int old_w, int old_h) override;
 
+  void OpenDesigner();
+
  protected:
   Window* GetTopMostOtherWindow(bool only_activable_windows);
   void SetWindowActiveState(bool active);
   void Deactivate();
 
-  elements::Mover m_mover;
-  elements::Resizer m_resizer;
-  elements::Label m_textfield;
-  elements::Button m_close_button;
-  WindowSettings m_settings = WindowSettings::kDefault;
-  WeakElementPointer m_last_focus;
+  elements::Mover title_mover_;
+  elements::Resizer title_resizer_;
+  elements::Label title_label_;
+  elements::Button title_design_button_;
+  elements::Button title_close_button_;
+  WindowSettings window_settings_ = WindowSettings::kDefault;
+  WeakElementPointer last_focus_element_;
 };
 
 }  // namespace tb

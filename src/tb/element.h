@@ -411,6 +411,9 @@ class Element : public util::TypedObject,
   // Sets whether the element is enabled (default) or disabled.
   void set_enabled(bool value) { set_state(Element::State::kDisabled, !value); }
 
+  // Removes the element from its parent, if it is currently in one.
+  void RemoveFromParent();
+
   // Adds a child to this element.
   // The child element will automatically be deleted when this element is
   // deleted unless the child is removed again with RemoveChild.

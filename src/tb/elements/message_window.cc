@@ -127,7 +127,7 @@ bool MessageWindow::OnEvent(const Event& ev) {
   } else if (ev.type == EventType::kKeyDown &&
              ev.special_key == SpecialKey::kEsc) {
     Event click_ev(EventType::kClick);
-    m_close_button.InvokeEvent(click_ev);
+    title_close_button_.InvokeEvent(click_ev);
     return true;
   }
   return Window::OnEvent(ev);

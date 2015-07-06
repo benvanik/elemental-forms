@@ -89,10 +89,12 @@ class WeakElementPointer : private ElementListener {
   ~WeakElementPointer() { reset(nullptr); }
 
   // Sets the element pointer that should be nulled if deleted.
-  void reset(Element* element);
+  void reset(Element* element = nullptr);
 
   // Returns the element, or nullptr if it has been deleted.
   Element* get() const { return m_element; }
+
+  operator bool() { return m_element != nullptr; }
 
  private:
   void OnElementDelete(Element* element) override;

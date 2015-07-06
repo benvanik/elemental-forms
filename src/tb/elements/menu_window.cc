@@ -27,12 +27,12 @@ MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
 
 MenuWindow::~MenuWindow() { RemoveChild(&m_select_list); }
 
-bool MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
+void MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
                       int initial_value) {
   m_select_list.set_value(initial_value);
   m_select_list.set_source(source);
   m_select_list.ValidateList();
-  return PopupWindow::Show(alignment);
+  PopupWindow::Show(alignment);
 }
 
 bool MenuWindow::OnEvent(const Event& ev) {

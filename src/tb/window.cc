@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cassert>
 
+#include "tb/design/designer_window.h"
 #include "tb/util/math.h"
 #include "tb/window.h"
 
@@ -17,29 +18,28 @@ namespace tb {
 
 Window::Window() {
   set_background_skin(TBIDC("Window"), InvokeInfo::kNoCallbacks);
-  AddChild(&m_mover);
-  AddChild(&m_resizer);
-  m_mover.set_background_skin(TBIDC("Window.mover"));
-  m_mover.AddChild(&m_textfield);
-  m_textfield.set_ignoring_input(true);
-  m_mover.AddChild(&m_close_button);
-  m_close_button.set_background_skin(TBIDC("Window.close"));
-  m_close_button.set_focusable(false);
-  m_close_button.set_id(TBIDC("Window.close"));
+  AddChild(&title_mover_);
+  AddChild(&title_resizer_);
+  title_mover_.set_background_skin(TBIDC("Window.mover"));
+  title_mover_.AddChild(&title_label_);
+  title_label_.set_ignoring_input(true);
+  title_mover_.AddChild(&title_design_button_);
+  title_design_button_.set_background_skin(TBIDC("Window.close"));
+  title_design_button_.set_focusable(false);
+  title_design_button_.set_id(TBIDC("Window.design"));
+  title_mover_.AddChild(&title_close_button_);
+  title_close_button_.set_background_skin(TBIDC("Window.close"));
+  title_close_button_.set_focusable(false);
+  title_close_button_.set_id(TBIDC("Window.close"));
   set_group_root(true);
 }
 
 Window::~Window() {
-  if (m_resizer.parent()) {
-    RemoveChild(&m_resizer);
-  }
-  if (m_mover.parent()) {
-    RemoveChild(&m_mover);
-  }
-  if (m_close_button.parent()) {
-    m_mover.RemoveChild(&m_close_button);
-  }
-  m_mover.RemoveChild(&m_textfield);
+  title_resizer_.RemoveFromParent();
+  title_mover_.RemoveFromParent();
+  title_design_button_.RemoveFromParent();
+  title_close_button_.RemoveFromParent();
+  title_mover_.RemoveChild(&title_label_);
 }
 
 Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
@@ -66,7 +66,7 @@ void Window::ResizeToFitContent(ResizeFit fit) {
 
 void Window::Close() { Die(); }
 
-bool Window::IsActive() const { return has_state(Element::State::kSelected); }
+bool Window::is_active() const { return has_state(Element::State::kSelected); }
 
 Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
   Window* other_window = nullptr;
@@ -76,7 +76,7 @@ Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
       other_window = util::SafeCast<Window>(sibling);
     }
     if (only_activable_windows && other_window &&
-        !any(other_window->m_settings & WindowSettings::kCanActivate)) {
+        !any(other_window->window_settings_ & WindowSettings::kCanActivate)) {
       other_window = nullptr;
     }
     sibling = sibling->GetPrev();
@@ -85,10 +85,10 @@ Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
 }
 
 void Window::Activate() {
-  if (!parent() || !any(m_settings & WindowSettings::kCanActivate)) {
+  if (!parent() || !any(window_settings_ & WindowSettings::kCanActivate)) {
     return;
   }
-  if (IsActive()) {
+  if (is_active()) {
     // Already active, but we may still have lost focus, so ensure it comes back
     // to us.
     EnsureFocus();
@@ -115,8 +115,8 @@ bool Window::EnsureFocus() {
 
   // Focus last focused element (if we have one)
   bool success = false;
-  if (m_last_focus.get()) {
-    success = m_last_focus.get()->set_focus(FocusReason::kUnknown);
+  if (last_focus_element_.get()) {
+    success = last_focus_element_.get()->set_focus(FocusReason::kUnknown);
   }
   // We didn't have one or failed, so try focus any child.
   if (!success) {
@@ -126,45 +126,46 @@ bool Window::EnsureFocus() {
 }
 
 void Window::Deactivate() {
-  if (!IsActive()) return;
+  if (!is_active()) return;
   SetWindowActiveState(false);
 }
 
 void Window::SetWindowActiveState(bool active) {
   set_state(Element::State::kSelected, active);
-  m_mover.set_state(Element::State::kSelected, active);
+  title_mover_.set_state(Element::State::kSelected, active);
 }
 
 void Window::set_settings(WindowSettings settings) {
-  if (settings == m_settings) return;
-  m_settings = settings;
+  if (settings == window_settings_) return;
+  window_settings_ = settings;
 
   if (any(settings & WindowSettings::kTitleBar)) {
-    if (!m_mover.parent()) {
-      AddChild(&m_mover);
+    if (!title_mover_.parent()) {
+      AddChild(&title_mover_);
     }
   } else {
-    if (m_mover.parent()) {
-      RemoveChild(&m_mover);
-    }
+    title_mover_.RemoveFromParent();
   }
   if (any(settings & WindowSettings::kResizable)) {
-    if (!m_resizer.parent()) {
-      AddChild(&m_resizer);
+    if (!title_resizer_.parent()) {
+      AddChild(&title_resizer_);
     }
   } else {
-    if (m_resizer.parent()) {
-      RemoveChild(&m_resizer);
+    title_resizer_.RemoveFromParent();
+  }
+  if (any(settings & WindowSettings::kDesignButton)) {
+    if (!title_design_button_.parent()) {
+      title_mover_.AddChild(&title_design_button_);
     }
+  } else {
+    title_design_button_.RemoveFromParent();
   }
   if (any(settings & WindowSettings::kCloseButton)) {
-    if (!m_close_button.parent()) {
-      m_mover.AddChild(&m_close_button);
+    if (!title_close_button_.parent()) {
+      title_mover_.AddChild(&title_close_button_);
     }
   } else {
-    if (m_close_button.parent()) {
-      m_mover.RemoveChild(&m_close_button);
-    }
+    title_close_button_.RemoveFromParent();
   }
 
   // FIX: invalidate layout / resize window!
@@ -172,8 +173,8 @@ void Window::set_settings(WindowSettings settings) {
 }
 
 int Window::title_bar_height() {
-  if (any(m_settings & WindowSettings::kTitleBar)) {
-    return m_mover.GetPreferredSize().pref_h;
+  if (any(window_settings_ & WindowSettings::kTitleBar)) {
+    return title_mover_.GetPreferredSize().pref_h;
   }
   return 0;
 }
@@ -205,11 +206,16 @@ PreferredSize Window::OnCalculatePreferredSize(
 }
 
 bool Window::OnEvent(const Event& ev) {
-  if (ev.target == &m_close_button) {
+  if (ev.target == &title_close_button_) {
     if (ev.type == EventType::kClick) {
       Close();
+      return true;
     }
-    return true;
+  } else if (ev.target == &title_design_button_) {
+    if (ev.type == EventType::kClick) {
+      OpenDesigner();
+      return true;
+    }
   }
   return Element::OnEvent(ev);
 }
@@ -229,7 +235,9 @@ void Window::OnRemove() {
     active_window->Activate();
 }
 
-void Window::OnChildAdded(Element* child) { m_resizer.set_z(ElementZ::kTop); }
+void Window::OnChildAdded(Element* child) {
+  title_resizer_.set_z(ElementZ::kTop);
+}
 
 void Window::OnResized(int old_w, int old_h) {
   // Apply gravity on children.
@@ -237,18 +245,31 @@ void Window::OnResized(int old_w, int old_h) {
   // Manually move our own decoration children.
   // FIX: Put a layout in the Mover so we can add things there nicely.
   int title_height = title_bar_height();
-  m_mover.set_rect({0, 0, rect().w, title_height});
-  PreferredSize ps = m_resizer.GetPreferredSize();
-  m_resizer.set_rect(
+  title_mover_.set_rect({0, 0, rect().w, title_height});
+  PreferredSize ps = title_resizer_.GetPreferredSize();
+  title_resizer_.set_rect(
       {rect().w - ps.pref_w, rect().h - ps.pref_h, ps.pref_w, ps.pref_h});
-  Rect mover_rect = m_mover.padding_rect();
-  int button_size = mover_rect.h;
-  m_close_button.set_rect({mover_rect.x + mover_rect.w - button_size,
-                           mover_rect.y, button_size, button_size});
-  if (any(m_settings & WindowSettings::kCloseButton)) {
-    mover_rect.w -= button_size;
+  Rect title_mover_rect = title_mover_.padding_rect();
+  int button_size = title_mover_rect.h;
+  title_design_button_.set_rect(
+      {title_mover_rect.x + title_mover_rect.w - button_size * 2,
+       title_mover_rect.y, button_size, button_size});
+  title_close_button_.set_rect(
+      {title_mover_rect.x + title_mover_rect.w - button_size,
+       title_mover_rect.y, button_size, button_size});
+  if (any(window_settings_ & WindowSettings::kDesignButton)) {
+    title_mover_rect.w -= button_size;
   }
-  m_textfield.set_rect(mover_rect);
+  if (any(window_settings_ & WindowSettings::kCloseButton)) {
+    title_mover_rect.w -= button_size;
+  }
+  title_label_.set_rect(title_mover_rect);
+}
+
+void Window::OpenDesigner() {
+  auto designer_window = new design::DesignerWindow();
+  designer_window->BindContent(this);
+  designer_window->Show(this);
 }
 
 }  // namespace tb

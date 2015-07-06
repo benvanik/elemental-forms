@@ -74,10 +74,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
 
 void ResourceEditWindow::RefreshFromSource() {
   // Clear old elements
-  while (Element* child = m_build_container->first_child()) {
-    m_build_container->RemoveChild(child);
-    delete child;
-  }
+  m_build_container->DeleteAllChildren();
 
   // Create new elements from source
   m_build_container->LoadData(m_source_text_box->text());

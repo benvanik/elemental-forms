@@ -452,6 +452,12 @@ bool Element::is_enabled() const {
   return true;
 }
 
+void Element::RemoveFromParent() {
+  if (parent()) {
+    parent()->RemoveChild(this);
+  }
+}
+
 void Element::AddChild(Element* child, ElementZ z, InvokeInfo info) {
   AddChildRelative(
       child, z == ElementZ::kTop ? ElementZRel::kAfter : ElementZRel::kBefore,
@@ -702,7 +708,7 @@ bool Element::set_focus(FocusReason reason, InvokeInfo info) {
     // activated.
     // Exception for windows that doesn't activate. They may contain focusable
     // elements.
-    if (!window->IsActive() &&
+    if (!window->is_active() &&
         any(window->settings() & WindowSettings::kCanActivate)) {
       return true;
     }
@@ -1907,7 +1913,7 @@ bool ElementSkinConditionContext::GetCondition(
       return element->background_skin() == info.value;
     case SkinProperty::kWindowActive:
       if (Window* window = element->parent_window()) {
-        return window->IsActive();
+        return window->is_active();
       }
       return false;
     case SkinProperty::kAxis:

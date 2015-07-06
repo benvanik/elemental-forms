@@ -66,7 +66,7 @@ class PopupWindow : public Window, private ElementListener {
   PopupWindow(Element* target);
   ~PopupWindow() override;
 
-  bool Show(const PopupAlignment& alignment);
+  void Show(const PopupAlignment& alignment);
 
   Element* event_destination() override { return m_target.get(); }
 

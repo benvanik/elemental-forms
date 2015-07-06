@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\tb\animation_manager.cc" />
+    <ClCompile Include="src\tb\design\designer_window.cc" />
     <ClCompile Include="src\tb\elements.cc" />
     <ClCompile Include="src\tb\elements\button.cc" />
     <ClCompile Include="src\tb\elements\check_box.cc" />
@@ -119,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tb\animation_manager.h" />
+    <ClInclude Include="src\tb\design\designer_window.h" />
     <ClInclude Include="src\tb\elements.h" />
     <ClInclude Include="src\tb\elements\button.h" />
     <ClInclude Include="src\tb\elements\check_box.h" />

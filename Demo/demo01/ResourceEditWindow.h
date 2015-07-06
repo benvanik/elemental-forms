@@ -26,7 +26,7 @@ class ResourceEditWindow : public Window,
   TBOBJECT_SUBCLASS(ResourceEditWindow, Window);
 
   ResourceEditWindow();
-  ~ResourceEditWindow();
+  ~ResourceEditWindow() override;
 
   void UpdateElementList(bool immediately);
 

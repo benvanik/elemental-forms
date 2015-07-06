@@ -79,13 +79,12 @@ PopupWindow::PopupWindow(Element* target) : m_target(target) {
 
 PopupWindow::~PopupWindow() { ElementListener::RemoveGlobalListener(this); }
 
-bool PopupWindow::Show(const PopupAlignment& alignment) {
+void PopupWindow::Show(const PopupAlignment& alignment) {
   // Calculate and set a good size for the popup window
   set_rect(alignment.GetAlignedRect(this, m_target.get()));
 
   Element* root = m_target.get()->parent_root();
   root->AddChild(this);
-  return true;
 }
 
 bool PopupWindow::OnEvent(const Event& ev) {
