@@ -1,15 +1,90 @@
+# ==============================================================================
+# Misc system junk
+# ==============================================================================
+
 .DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.com.apple.*
 Thumbs.db
+Desktop.ini
+.svn
 
-*~
-*.swp
-*.#*
-*.ilk
-*.ncb
-*.opt
-*.opensdf
-*.sdf
+# ==============================================================================
+# Projects/IDE files
+# ==============================================================================
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# VIM
+.*.sw[a-z]
+*.un~
+Session.vim
+
+# TextMate
+*.tmproj
+*.tmproject
+tmtags
+
+# Eclipse
+.project
+.metadata
+
+# WebStorm
+.idea
+
+# VS
+.vs
 *.user
-*.suo
+*.sdf
+*.opensdf
+bin/
+obj/
 
-build/
+# ==============================================================================
+# Temp generated code
+# ==============================================================================
+
+*.py[co]
+.coverage
+*.o
+
+# ==============================================================================
+# Logs and dumps
+# ==============================================================================
+
+npm-debug.log
+private/
+*.trace
+imgui.ini
+
+# ==============================================================================
+# Build system output
+# ==============================================================================
+
+# npm/node
+.lock-wscript
+node_modules/
+node_modules/**/build/
+node_modules/.bin/
+
+# coverage/etc
+scratch/
+
+.anvil-cache
+.build-cache/
+build/bin/
+build/obj/
+build-out/
+build-gen/
+build-bin/
+build-test/
+
+# ==============================================================================
+# Local-only paths
+# ==============================================================================
+
+.vagrant

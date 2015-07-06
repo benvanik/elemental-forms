@@ -1,5 +1,5 @@
 #
-# List of supported resource attributes for all default elements in Turbo Badger.
+# List of supported resource attributes for all default elements in Elemental.
 # All elements of course support the attributes read by the classes they inherit (such as Element).
 #
 # <bool> 				- 0 or 1

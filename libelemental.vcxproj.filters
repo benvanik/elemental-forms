@@ -1,0 +1,684 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="third_party\stb\stb_image.h">
+      <Filter>third_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\stb\stb_truetype.h">
+      <Filter>third_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\animation.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\animation_manager.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\color.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\config.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\element.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\element_animation.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\element_animation_manager.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\element_listener.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\element_value.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\event.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\event_handler.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\font_description.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\id.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\list_item.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\message.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\message_handler.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\rect.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\skin.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\tooltip_manager.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\types.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\value.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\window.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\clipboard.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\debug.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\dimension_converter.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\file.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\hash.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\intrusive_list.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\math.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\metrics.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\object.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\rect_region.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\space_allocator.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\string.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\string_builder.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\string_table.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\util\timer.h">
+      <Filter>src\el\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\caret.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\font_effect.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\font_face.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\font_manager.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\font_renderer.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\text_fragment.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\text_fragment_content.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\text_selection.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\text_view.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\undo_stack.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\text\utf8.h">
+      <Filter>src\el\text</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\element_factory.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\element_inflater.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\parse_node.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\parse_node_tree.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\text_parser.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\parsing\text_parser_stream.h">
+      <Filter>src\el\parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\batching_renderer.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\bitmap_fragment.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\bitmap_fragment_manager.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\bitmap_fragment_map.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\gles_1_renderer.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\image_loader.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\image_manager.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\graphics\renderer.h">
+      <Filter>src\el\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\button.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\check_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\dimmer.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\drop_down_button.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\group_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\icon_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\image_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\label.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\label_container.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\layout_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\list_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\menu_window.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\message_window.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\mover.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\popup_window.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\progress_spinner.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\radio_button.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\resizer.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\scroll_bar.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\scroll_container.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\separator.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\slider.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\spin_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\tab_container.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\text_box.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\toggle_container.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\parts\base_radio_check_box.h">
+      <Filter>src\el\elements\parts</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elements\parts\scroller.h">
+      <Filter>src\el\elements\parts</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\design\designer_window.h">
+      <Filter>src\el\design</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\testing\testing.h">
+      <Filter>src\el\testing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\elemental_forms.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{467cb313-19f6-4e70-8091-b61bf9f3276c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el">
+      <UniqueIdentifier>{27a10b56-321a-4bfc-8c4b-9c53d385744d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{96cc6df4-c6c7-40f0-95cc-9308164eebcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{ff3900aa-ce03-4b52-a448-2b7e74367ebc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\stb">
+      <UniqueIdentifier>{68283e7a-15ce-4522-8ad1-f642779c54c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\util">
+      <UniqueIdentifier>{5d9e6d5d-86df-4ac8-accb-737f7dcc58e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\text">
+      <UniqueIdentifier>{0b80577e-9c5a-4abb-a5fa-17ab90b78eed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\parsing">
+      <UniqueIdentifier>{30296124-ae4c-4ad6-8a85-807735880157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\graphics">
+      <UniqueIdentifier>{fcd18e14-8fae-46d4-b56b-4bec46b248d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\elements">
+      <UniqueIdentifier>{6e8070c3-fa87-4a04-8f2a-7dc4dc845308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\elements\parts">
+      <UniqueIdentifier>{057ebf78-93ba-48e6-8fcb-16f10b32bd41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\design">
+      <UniqueIdentifier>{8a9a2c3a-0c6b-47ea-aa25-d41d51f832c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\testing">
+      <UniqueIdentifier>{bbc4aa34-03d7-4914-bf24-99705850bb0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\testing\data">
+      <UniqueIdentifier>{5afa01c4-e060-4bb3-87d8-b25df2e269de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="docs">
+      <UniqueIdentifier>{359ef005-5775-41a3-8965-5f7aeaa23b45}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\el\animation.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\animation_manager.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\color.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\element.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\element_animation.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\element_animation_manager.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\element_listener.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\element_value.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\event_handler.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\id.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\list_item.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\message_handler.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\rect.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\skin.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\tooltip_manager.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\value.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\window.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\clipboard_win.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\debug.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\debug_posix.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\debug_win.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\dimension_converter.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\file_posix.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\intrusive_list.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\metrics_linux.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\metrics_win.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\rect_region.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\space_allocator.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\string.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\string_builder.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\util\string_table.cc">
+      <Filter>src\el\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\caret.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_effect.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_face.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_manager.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_renderer_freetype.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_renderer_stb.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\font_renderer_tbbf.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\text_fragment.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\text_fragment_content.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\text_selection.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\text_view.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\undo_stack.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\text\utf8.cc">
+      <Filter>src\el\text</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\parsing\element_factory.cc">
+      <Filter>src\el\parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\parsing\parse_node.cc">
+      <Filter>src\el\parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\parsing\parse_node_tree.cc">
+      <Filter>src\el\parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\parsing\text_parser.cc">
+      <Filter>src\el\parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\parsing\text_parser_stream.cc">
+      <Filter>src\el\parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\batching_renderer.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\bitmap_fragment.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\bitmap_fragment_manager.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\bitmap_fragment_map.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\gles_1_renderer.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\image_loader_stb.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\image_manager.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\graphics\renderer.cc">
+      <Filter>src\el\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\button.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\check_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\dimmer.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\drop_down_button.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\group_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\icon_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\image_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\label.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\label_container.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\layout_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\list_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\menu_window.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\message_window.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\mover.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\popup_window.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\progress_spinner.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\radio_button.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\resizer.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\scroll_bar.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\scroll_container.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\separator.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\slider.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\spin_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\tab_container.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\text_box.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\toggle_container.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\parts\base_radio_check_box.cc">
+      <Filter>src\el\elements\parts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\parts\scroller.cc">
+      <Filter>src\el\elements\parts</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\design\designer_window.cc">
+      <Filter>src\el\design</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_color.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_dimension.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_geometry.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_linklist.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_node_ref_tree.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_object.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_parser.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_space_allocator.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_style_edit.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_tempbuffer.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_test.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_value.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\test_tb_widget_value.cpp">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\testing\testing.cc">
+      <Filter>src\el\testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elemental_forms.cc">
+      <Filter>src\el</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\el\testing\data\glass.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\quickbrown.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\test_tb_parser.tb.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\test_tb_parser_definitions.tb.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\test_tb_parser_included.tb.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\TeX.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+    <Text Include="src\el\testing\data\UTF-8-demo.txt">
+      <Filter>src\el\testing\data</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="LICENSE" />
+    <None Include="README.md" />
+    <None Include="docs\integration.md">
+      <Filter>docs</Filter>
+    </None>
+  </ItemGroup>
+</Project>

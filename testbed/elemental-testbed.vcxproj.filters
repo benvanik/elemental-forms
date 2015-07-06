@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\third_party\glfw\src\winmm_joystick.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\win32_init.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\win32_monitor.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\win32_time.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\win32_tls.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\win32_window.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\window.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\wgl_context.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\monitor.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\input.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\init.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\third_party\glfw\src\context.c">
+      <Filter>third_party\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="scratch\code_text_box.cc">
+      <Filter>testbed\scratch</Filter>
+    </ClCompile>
+    <ClCompile Include="list_window.cc">
+      <Filter>testbed</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_edit_window.cc">
+      <Filter>testbed</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\glfw_extra_win.cc">
+      <Filter>testbed\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\port_glfw.cc">
+      <Filter>testbed\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="testbed_application.cc">
+      <Filter>testbed</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\glfw_extra_linux.cc">
+      <Filter>testbed\platform</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\third_party\glfw\src\win32_platform.h">
+      <Filter>third_party\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\testbed\platform\glfw_extra.h">
+      <Filter>testbed\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="scratch\code_text_box.h">
+      <Filter>testbed\scratch</Filter>
+    </ClInclude>
+    <ClInclude Include="list_window.h">
+      <Filter>testbed</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_edit_window.h">
+      <Filter>testbed</Filter>
+    </ClInclude>
+    <ClInclude Include="testbed_application.h">
+      <Filter>testbed</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{b74779a3-352e-4f31-b7f5-8eda5c39f59e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\glfw">
+      <UniqueIdentifier>{91439c39-0776-4b67-9e86-0575ca5e0e8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testbed">
+      <UniqueIdentifier>{91c3d6a1-ce88-4d1f-b19c-5ce8db0499ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testbed\platform">
+      <UniqueIdentifier>{fba48d9e-7b52-4963-8e73-ee575661a7b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testbed\resources">
+      <UniqueIdentifier>{b9f218aa-02c3-4933-b544-bbe6ec06de12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testbed\scratch">
+      <UniqueIdentifier>{d2c9cf31-544f-47f5-8cc2-bef96809ada1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

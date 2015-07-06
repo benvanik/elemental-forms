@@ -1,9 +1,11 @@
-This is a fork of [TurboBadger](https://github.com/fruxo/turbobadger) by
-[Emil Segerås](http://fiffigt.com) specifically tailored for the xenia project.
+IN PROGRESS
 
-If you're looking for an awesome UI framework, please checkout the main
-[TurboBadger](https://github.com/fruxo/turbobadger) project, as this one has
-removed and tweaked many aspects in ways that are likely not what you want.
+This is a heavy forking of [Turbo Badger](https://github.com/fruxo/turbobadger)
+by [Emil Segerås](http://fiffigt.com). Emil did amazing work and came up with a
+brilliant design and implementation that impressed me so much that I began
+obsessing over it. This is my rendition of his work to turn it into the UI
+system I'd been looking for.
 
-This may only be built from within the xenia repository, as it depends on build
-configuration files present there.
+This may only be buildable from within the xenia repository, as it depends on
+build configuration files present there.
+TODO: find a way around that!
