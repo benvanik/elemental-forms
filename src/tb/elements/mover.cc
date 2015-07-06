@@ -22,7 +22,7 @@ Mover::Mover() {
   set_background_skin(TBIDC("Mover"), InvokeInfo::kNoCallbacks);
 }
 
-bool Mover::OnEvent(const ElementEvent& ev) {
+bool Mover::OnEvent(const Event& ev) {
   Element* target = parent();
   if (!target) return false;
   if (ev.type == EventType::kPointerMove && captured_element == this) {
@@ -39,7 +39,7 @@ bool Mover::OnEvent(const ElementEvent& ev) {
     target->set_rect(rect);
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 }  // namespace elements

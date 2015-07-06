@@ -429,14 +429,16 @@ PreferredSize LayoutBox::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool LayoutBox::OnEvent(const ElementEvent& ev) {
+bool LayoutBox::OnEvent(const Event& ev) {
   if (ev.type == EventType::kWheel && ev.modifierkeys == ModifierKeys::kNone) {
     int old_scroll = overflow_scroll();
     set_overflow_scroll(m_overflow_scroll +
                         ev.delta_y * util::GetPixelsPerLine());
-    return m_overflow_scroll != old_scroll;
+    if (m_overflow_scroll != old_scroll) {
+      return true;
+    }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void LayoutBox::OnPaintChildren(const PaintProps& paint_props) {

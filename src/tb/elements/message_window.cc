@@ -55,9 +55,9 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 
   set_text(title);
 
-  GetElementByIdAndType<IconBox>(2)->set_background_skin(settings->icon_skin);
+  GetElementById<IconBox>(2)->set_background_skin(settings->icon_skin);
 
-  TextBox* text_box = GetElementByIdAndType<TextBox>(1);
+  TextBox* text_box = GetElementById<TextBox>(1);
   text_box->set_styled(settings->styling);
   text_box->set_text(message);
   text_box->set_background_skin("");
@@ -99,7 +99,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
 }
 
 void MessageWindow::AddButton(TBID id, bool focused) {
-  auto layout = GetElementByIdAndType<LayoutBox>(3);
+  auto layout = GetElementById<LayoutBox>(3);
   if (!layout) return;
   Button* btn = new Button();
   btn->set_id(id);
@@ -110,12 +110,12 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   }
 }
 
-bool MessageWindow::OnEvent(const ElementEvent& ev) {
+bool MessageWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<Button>()) {
     WeakElementPointer this_element(this);
 
     // Invoke the click on the target.
-    ElementEvent target_ev(EventType::kClick);
+    Event target_ev(EventType::kClick);
     target_ev.ref_id = ev.target->id();
     InvokeEvent(target_ev);
 
@@ -126,7 +126,7 @@ bool MessageWindow::OnEvent(const ElementEvent& ev) {
     return true;
   } else if (ev.type == EventType::kKeyDown &&
              ev.special_key == SpecialKey::kEsc) {
-    ElementEvent click_ev(EventType::kClick);
+    Event click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }

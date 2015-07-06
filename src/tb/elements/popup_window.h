@@ -70,13 +70,13 @@ class PopupWindow : public Window, private ElementListener {
 
   Element* event_destination() override { return m_target.get(); }
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
   const WeakElementPointer& target_element() { return m_target; }
 
  private:
   void OnElementFocusChanged(Element* element, bool focused) override;
-  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override;
+  bool OnElementInvokeEvent(Element* element, const Event& ev) override;
   void OnElementDelete(Element* element) override;
   bool OnElementDying(Element* element) override;
 

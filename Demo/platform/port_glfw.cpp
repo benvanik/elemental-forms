@@ -154,7 +154,7 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
   else
     return false;
 
-  ElementEvent ev(EventType::kShortcut);
+  Event ev(EventType::kShortcut);
   ev.modifierkeys = modifierkeys;
   ev.ref_id = id;
   return Element::focused_element->InvokeEvent(ev);
@@ -265,7 +265,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
       break;
     case GLFW_KEY_MENU:
       if (Element::focused_element && !down) {
-        ElementEvent ev(EventType::kContextMenu);
+        Event ev(EventType::kContextMenu);
         ev.modifierkeys = modifier;
         Element::focused_element->InvokeEvent(ev);
       }
@@ -334,7 +334,7 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
                                                      ShouldEmulateTouchEvent());
     if (Element::hovered_element) {
       Element::hovered_element->ConvertFromRoot(x, y);
-      ElementEvent ev(EventType::kContextMenu, x, y, false, modifier);
+      Event ev(EventType::kContextMenu, x, y, false, modifier);
       Element::hovered_element->InvokeEvent(ev);
     }
   }
@@ -435,7 +435,7 @@ static void drop_callback(GLFWwindow* window, int count,
   if (!target) target = Element::focused_element;
   if (!target) target = backend->GetRoot();
   if (target) {
-    ElementEventFileDrop ev;
+    FileDropEvent ev;
     for (int i = 0; i < count; ++i) {
       ev.files.push_back(files_utf8[i]);
     }

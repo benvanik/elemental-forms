@@ -104,8 +104,7 @@ TooltipManager::~TooltipManager() {
   ElementListener::RemoveGlobalListener(this);
 }
 
-bool TooltipManager::OnElementInvokeEvent(Element* element,
-                                          const ElementEvent& ev) {
+bool TooltipManager::OnElementInvokeEvent(Element* element, const Event& ev) {
   if (ev.type == EventType::kPointerMove && !Element::captured_element) {
     Element* tipped_element = GetTippedElement();
     if (m_last_tipped_element != tipped_element && tipped_element) {

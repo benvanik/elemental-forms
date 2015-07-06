@@ -76,7 +76,7 @@ void SpinBox::SetValueInternal(int value, bool update_text) {
     m_text_box.set_text(std::to_string(m_value));
   }
 
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 
   // Warning: Do nothing here since the event might have deleted us.
@@ -85,7 +85,7 @@ void SpinBox::SetValueInternal(int value, bool update_text) {
 
 void SpinBox::OnSkinChanged() { m_layout.set_rect(padding_rect()); }
 
-bool SpinBox::OnEvent(const ElementEvent& ev) {
+bool SpinBox::OnEvent(const Event& ev) {
   if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kUp ||
         ev.special_key == SpecialKey::kDown) {
@@ -102,8 +102,9 @@ bool SpinBox::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kChanged && ev.target == &m_text_box) {
     auto text = m_text_box.text();
     SetValueInternal(atoi(text.c_str()), false);
+    // Just taking the data - don't eat the event.
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 }  // namespace elements

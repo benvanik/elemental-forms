@@ -40,7 +40,7 @@ class TooltipManager : private ElementListener, public MessageHandler {
   uint32_t tooltip_hide_point_dist = 40;
 
  private:
-  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override;
+  bool OnElementInvokeEvent(Element* element, const Event& ev) override;
   void OnMessageReceived(Message* msg) override;
   void KillToolTip();
 

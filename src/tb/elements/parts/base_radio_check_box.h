@@ -28,7 +28,7 @@ class BaseRadioCheckBox : public Element {
 
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
   // Makes sure all elements sharing the same group as new_leader are set to
   // value 0.

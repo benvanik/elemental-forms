@@ -48,7 +48,7 @@ class TabContainer : public Element {
   Element* current_page_element() const;
 
   void OnInflate(const parsing::InflateInfo& info) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnProcess() override;
 
   Element* content_root() override { return &m_content_root; }

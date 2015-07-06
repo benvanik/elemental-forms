@@ -139,7 +139,7 @@ class TextBox : public Element,
   Element::ScrollInfo scroll_info() override;
   Element* scroll_root() override { return &m_root; }
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnPaint(const PaintProps& paint_props) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnInflate(const parsing::InflateInfo& info) override;

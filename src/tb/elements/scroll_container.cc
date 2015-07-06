@@ -233,7 +233,7 @@ PreferredSize ScrollContainer::OnCalculatePreferredContentSize(
   return ps;
 }
 
-bool ScrollContainer::OnEvent(const ElementEvent& ev) {
+bool ScrollContainer::OnEvent(const Event& ev) {
   if (ev.type == EventType::kChanged &&
       (ev.target == &m_scrollbar_x || ev.target == &m_scrollbar_y)) {
     Invalidate();
@@ -247,8 +247,10 @@ bool ScrollContainer::OnEvent(const ElementEvent& ev) {
     double old_val_x = m_scrollbar_x.double_value();
     m_scrollbar_x.set_double_value(old_val_x +
                                    ev.delta_x * util::GetPixelsPerLine());
-    return (m_scrollbar_x.double_value() != old_val_x ||
-            m_scrollbar_y.double_value() != old_val_y);
+    if (m_scrollbar_x.double_value() != old_val_x ||
+        m_scrollbar_y.double_value() != old_val_y) {
+      return true;
+    }
   } else if (ev.type == EventType::kKeyDown) {
     if (ev.special_key == SpecialKey::kLeft &&
         m_scrollbar_x.can_scroll_negative()) {
@@ -273,11 +275,11 @@ bool ScrollContainer::OnEvent(const ElementEvent& ev) {
     } else if (ev.special_key == SpecialKey::kEnd) {
       ScrollToSmooth(m_scrollbar_x.value(), (int)m_scrollbar_y.max_value());
     } else {
-      return false;
+      return Element::OnEvent(ev);
     }
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void ScrollContainer::OnProcess() {

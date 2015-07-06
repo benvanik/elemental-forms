@@ -120,7 +120,7 @@ bool Window::EnsureFocus() {
   }
   // We didn't have one or failed, so try focus any child.
   if (!success) {
-    success = SetFocusRecursive(FocusReason::kUnknown);
+    success = set_focus_recursive(FocusReason::kUnknown);
   }
   return success;
 }
@@ -204,14 +204,14 @@ PreferredSize Window::OnCalculatePreferredSize(
   return ps;
 }
 
-bool Window::OnEvent(const ElementEvent& ev) {
+bool Window::OnEvent(const Event& ev) {
   if (ev.target == &m_close_button) {
     if (ev.type == EventType::kClick) {
       Close();
     }
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void Window::OnAdded() {

@@ -48,7 +48,7 @@ class Slider : public Element {
   void set_value(int value) override { set_double_value(value); }
 
   void OnInflate(const parsing::InflateInfo& info) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnResized(int old_w, int old_h) override;
 
  protected:

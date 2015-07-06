@@ -19,7 +19,7 @@ GroupBox::Header::Header() {
   set_toggle_mode(true);
 }
 
-bool GroupBox::Header::OnEvent(const ElementEvent& ev) {
+bool GroupBox::Header::OnEvent(const Event& ev) {
   if (ev.target == this && ev.type == EventType::kChanged &&
       parent()->parent()) {
     if (GroupBox* section = util::SafeCast<GroupBox>(parent()->parent())) {

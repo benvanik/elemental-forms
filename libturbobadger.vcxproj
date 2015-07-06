@@ -42,6 +42,7 @@
     <ClCompile Include="src\tb\elements\parts\scroller.cc" />
     <ClCompile Include="src\tb\elements\scroll_container.cc" />
     <ClCompile Include="src\tb\elements\list_box.cc" />
+    <ClCompile Include="src\tb\event_handler.cc" />
     <ClCompile Include="src\tb\list_item.cc" />
     <ClCompile Include="src\tb\text\caret.cc" />
     <ClCompile Include="src\tb\text\text_view.cc" />
@@ -144,6 +145,7 @@
     <ClInclude Include="src\tb\elements\parts\scroller.h" />
     <ClInclude Include="src\tb\elements\scroll_container.h" />
     <ClInclude Include="src\tb\elements\list_box.h" />
+    <ClInclude Include="src\tb\event_handler.h" />
     <ClInclude Include="src\tb\list_item.h" />
     <ClInclude Include="src\tb\text\caret.h" />
     <ClInclude Include="src\tb\text\text_view.h" />
@@ -152,7 +154,7 @@
     <ClInclude Include="src\tb\elements\text_box.h" />
     <ClInclude Include="src\tb\elements\group_box.h" />
     <ClInclude Include="src\tb\element_animation_manager.h" />
-    <ClInclude Include="src\tb\element_event.h" />
+    <ClInclude Include="src\tb\event.h" />
     <ClInclude Include="src\tb\graphics\batching_renderer.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment.h" />
     <ClInclude Include="src\tb\graphics\bitmap_fragment_manager.h" />

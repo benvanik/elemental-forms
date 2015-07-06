@@ -82,7 +82,7 @@ void ElementListener::InvokeElementFocusChanged(Element* element,
 }
 
 bool ElementListener::InvokeElementInvokeEvent(Element* element,
-                                               const ElementEvent& ev) {
+                                               const Event& ev) {
   bool handled = false;
   auto global_i = g_listeners.IterateForward();
   auto local_i = element->m_listeners.IterateForward();

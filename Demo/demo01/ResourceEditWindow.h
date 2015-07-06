@@ -43,7 +43,7 @@ class ResourceEditWindow : public Window,
 
   // == Window
   // ======================================================================
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
   virtual void OnPaintChildren(const PaintProps& paint_props);
 
   // == MessageHandler
@@ -52,7 +52,7 @@ class ResourceEditWindow : public Window,
 
   // == ElementListener
   // ========================================================
-  virtual bool OnElementInvokeEvent(Element* element, const ElementEvent& ev);
+  virtual bool OnElementInvokeEvent(Element* element, const Event& ev);
   virtual void OnElementAdded(Element* parent, Element* child);
   virtual void OnElementRemove(Element* parent, Element* child);
 
@@ -65,7 +65,7 @@ class ResourceEditWindow : public Window,
   std::string m_resource_filename;
   WeakElementPointer m_selected_element;
   void AddElementListItemsRecursive(Element* element, int depth);
-  bool OnDropFileEvent(const ElementEvent& ev);
+  bool OnDropFileEvent(const Event& ev);
 };
 
 #endif  // ResourceEditWindow_H

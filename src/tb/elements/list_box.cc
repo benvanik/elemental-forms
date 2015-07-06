@@ -211,7 +211,7 @@ void ListBox::set_value(int value) {
   ListItem(m_value, true);
   ScrollToSelectedItem();
 
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   if (Element* element = GetItemElement(m_value)) {
     ev.ref_id = element->id();
   }
@@ -263,7 +263,7 @@ void ListBox::OnProcessAfterChildren() {
   }
 }
 
-bool ListBox::OnEvent(const ElementEvent& ev) {
+bool ListBox::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->parent() == m_layout.content_root()) {
     // SetValue (EventType::kChanged) might cause something to delete this (f.ex
@@ -289,7 +289,7 @@ bool ListBox::OnEvent(const ElementEvent& ev) {
       }
 
       // Invoke the click event on the target list.
-      ElementEvent ev(EventType::kClick);
+      Event ev(EventType::kClick);
       if (Element* element = GetItemElement(m_value)) {
         ev.ref_id = element->id();
       }
@@ -309,7 +309,7 @@ bool ListBox::OnEvent(const ElementEvent& ev) {
       return true;
     }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 bool ListBox::ChangeValue(SpecialKey key) {

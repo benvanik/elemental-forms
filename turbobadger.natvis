@@ -18,7 +18,7 @@
 	<Type Name="tb::ValueArray">
 		<DisplayString>{m_list}</DisplayString>
 	</Type>
-	<Type Name="tb::ElementEvent">
+	<Type Name="tb::Event">
 		<DisplayString>type={type}</DisplayString>
 	</Type>
 </AutoVisualizer>

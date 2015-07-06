@@ -83,11 +83,11 @@ void ScrollBar::set_double_value(double value) {
   m_value = value;
 
   UpdateHandle();
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool ScrollBar::OnEvent(const ElementEvent& ev) {
+bool ScrollBar::OnEvent(const Event& ev) {
   if (ev.type == EventType::kPointerMove && captured_element == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_element_x;
@@ -106,9 +106,11 @@ bool ScrollBar::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kWheel) {
     double old_val = m_value;
     set_double_value(m_value + ev.delta_y * util::GetPixelsPerLine());
-    return m_value != old_val;
+    if (m_value != old_val) {
+      return true;
+    }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void ScrollBar::UpdateHandle() {

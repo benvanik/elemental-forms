@@ -64,7 +64,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     Element root;
     root.LoadData("Button: id: 'fire', skin: '@test_styles>FireButton>skin'");
 
-    Element* button = root.GetElementById(TBIDC("fire"));
+    auto button = root.GetElementById<Element>(TBIDC("fire"));
     TB_VERIFY(button->background_skin() == TBIDC("FireButtonSkin"));
   }
 
@@ -90,11 +90,12 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "Button: id: 'button_broken_tree', text: '@test_bad_tree>foo'\n");
 
     // Reference from resource to one tree to another tree.
-    Element* select = root.GetElementById(TBIDC("select"));
+    auto select = root.GetElementById<Element>(TBIDC("select"));
     TB_VERIFY(select->value() == 42);
 
     // Reference in a circular loop. Should not freeze.
-    Element* button_circular = root.GetElementById(TBIDC("button_circular"));
+    auto button_circular =
+        root.GetElementById<Element>(TBIDC("button_circular"));
     TB_VERIFY_STR(button_circular->text(), "@test_bar>bar_circular");
 
     // Reference in a circular loop. Should not freeze.
@@ -106,11 +107,13 @@ TB_TEST_GROUP(tb_node_ref_tree) {
                   .type() == Value::Type::kNull);
 
     // Reference that is broken (has no matching node).
-    Element* button_broken1 = root.GetElementById(TBIDC("button_broken_node"));
+    auto button_broken1 =
+        root.GetElementById<Element>(TBIDC("button_broken_node"));
     TB_VERIFY_STR(button_broken1->text(), "@test_foo>foo_broken_node");
 
     // Reference that is broken (has no matching tree).
-    Element* button_broken2 = root.GetElementById(TBIDC("button_broken_tree"));
+    auto button_broken2 =
+        root.GetElementById<Element>(TBIDC("button_broken_tree"));
     TB_VERIFY_STR(button_broken2->text(), "@test_bad_tree>foo");
   }
 
@@ -125,7 +128,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
     root.LoadData(
         "TextBox: id: 'edit'\n"
         "	@include @test_styles>VeryNice");
-    auto edit = root.GetElementByIdAndType<TextBox>(TBIDC("edit"));
+    auto edit = root.GetElementById<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->background_skin() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->text(), "hello");
   }
@@ -138,7 +141,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
         "	text: 'hello'\n"
         "TextBox: id: 'edit'\n"
         "	@include SomeDeclarations");
-    auto edit = root.GetElementByIdAndType<TextBox>(TBIDC("edit"));
+    auto edit = root.GetElementById<TextBox>(TBIDC("edit"));
     TB_VERIFY(edit->background_skin() == TBIDC("SpecialSkin"));
     TB_VERIFY_STR(edit->text(), "hello");
   }
@@ -164,7 +167,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root1.LoadData(layout_str);
-    auto layout1 = root1.GetElementByIdAndType<LayoutBox>(TBIDC("layout"));
+    auto layout1 = root1.GetElementById<LayoutBox>(TBIDC("layout"));
     TB_VERIFY(layout1->axis() == Axis::kX);
     TB_VERIFY(layout1->spacing() == 100);
     TB_VERIFY(layout1->gravity() == Gravity::kAll);
@@ -174,7 +177,7 @@ TB_TEST_GROUP(tb_node_ref_tree) {
 
     // Inflate & check
     root2.LoadData(layout_str);
-    auto layout2 = root2.GetElementByIdAndType<LayoutBox>(TBIDC("layout"));
+    auto layout2 = root2.GetElementById<LayoutBox>(TBIDC("layout"));
     TB_VERIFY(layout2->axis() == Axis::kY);
     TB_VERIFY(layout2->spacing() == 200);
     TB_VERIFY(layout2->gravity() == Gravity::kAll);

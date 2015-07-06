@@ -15,7 +15,7 @@
 namespace tb {
 
 class Element;
-class ElementEvent;
+class Event;
 
 // Should never be created or subclassed anywhere except in ElementListener.
 // It's only purpose is to add a extra typed link for ElementListener, since it
@@ -66,7 +66,7 @@ class ElementListener : public util::IntrusiveListEntry<ElementListener>,
   // returning true).
   // Note, if returning true, other global listeners will still also be
   // notified.
-  virtual bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) {
+  virtual bool OnElementInvokeEvent(Element* element, const Event& ev) {
     return false;
   }
 
@@ -77,8 +77,7 @@ class ElementListener : public util::IntrusiveListEntry<ElementListener>,
   static void InvokeElementAdded(Element* parent, Element* child);
   static void InvokeElementRemove(Element* parent, Element* child);
   static void InvokeElementFocusChanged(Element* element, bool focused);
-  static bool InvokeElementInvokeEvent(Element* element,
-                                       const ElementEvent& ev);
+  static bool InvokeElementInvokeEvent(Element* element, const Event& ev);
 };
 
 // Keeps a pointer to a element that will be set to nullptr if the element is

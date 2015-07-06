@@ -25,7 +25,7 @@ class Resizer : public Element {
   Resizer();
 
   HitStatus GetHitStatus(int x, int y) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 };
 
 }  // namespace elements

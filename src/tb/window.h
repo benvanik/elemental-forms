@@ -102,7 +102,7 @@ class Window : public Element {
   PreferredSize OnCalculatePreferredSize(
       const SizeConstraints& constraints) override;
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnAdded() override;
   void OnRemove() override;
   void OnChildAdded(Element* child) override;

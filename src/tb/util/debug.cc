@@ -55,7 +55,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     AddCheckbox(DebugInfo::Setting::kDrawImageBitmapFragments,
                 "Render image bitmap fragments");
 
-    output = GetElementByIdAndType<elements::TextBox>(TBIDC("output"));
+    output = GetElementById<elements::TextBox>(TBIDC("output"));
 
     Rect bounds(0, 0, root->rect().w, root->rect().h);
     set_rect(GetResizeToFitContentRect().CenterIn(bounds).MoveIn(bounds).Clip(
@@ -78,10 +78,10 @@ class DebugSettingsWindow : public Window, public ElementListener {
     label->set_text(str);
     label->content_root()->AddChild(check, ElementZ::kBottom);
 
-    GetElementById(TBIDC("container"))->AddChild(label);
+    GetElementById<Element>(TBIDC("container"))->AddChild(label);
   }
 
-  bool OnEvent(const ElementEvent& ev) override {
+  bool OnEvent(const Event& ev) override {
     if (ev.type == EventType::kClick && ev.target->id() == TBIDC("check")) {
       // Update setting and invalidate.
       DebugInfo::get()->settings[ev.target->data.as_integer()] =
@@ -129,7 +129,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     return str;
   }
 
-  bool OnElementInvokeEvent(Element* element, const ElementEvent& ev) override {
+  bool OnElementInvokeEvent(Element* element, const Event& ev) override {
     // Skip these events for now.
     if (ev.is_pointer_event()) {
       return false;

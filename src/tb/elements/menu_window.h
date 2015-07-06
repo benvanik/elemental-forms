@@ -32,7 +32,7 @@ class MenuWindow : public PopupWindow {
 
   ListBox* list_box() { return &m_select_list; }
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  private:
   ListBox m_select_list;

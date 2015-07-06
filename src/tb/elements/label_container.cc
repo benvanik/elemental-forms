@@ -32,11 +32,11 @@ LabelContainer::~LabelContainer() {
   RemoveChild(&m_layout);
 }
 
-bool LabelContainer::OnEvent(const ElementEvent& ev) {
+bool LabelContainer::OnEvent(const Event& ev) {
   // Get a element from the layout that isn't the textfield, or just bail out
   // if we only have the textfield.
   if (m_layout.first_child() == m_layout.last_child()) {
-    return false;
+    return Element::OnEvent(ev);
   }
   Element* click_target = m_layout.first_child() == &m_textfield
                               ? m_layout.last_child()
@@ -58,12 +58,14 @@ bool LabelContainer::OnEvent(const ElementEvent& ev) {
 
     click_target->set_state(Element::State::kPressed, pressed_state);
 
-    ElementEvent target_ev(ev.type, ev.target_x - click_target->rect().x,
-                           ev.target_y - click_target->rect().y, ev.touch,
-                           ev.modifierkeys);
-    return click_target->InvokeEvent(target_ev);
+    Event target_ev(ev.type, ev.target_x - click_target->rect().x,
+                    ev.target_y - click_target->rect().y, ev.touch,
+                    ev.modifierkeys);
+    if (click_target->InvokeEvent(target_ev)) {
+      return true;
+    }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 }  // namespace elements

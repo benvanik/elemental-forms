@@ -42,7 +42,7 @@ void BaseRadioCheckBox::set_value(int value) {
 
   set_state(Element::State::kSelected, value ? true : false);
 
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 
   if (value && group_id()) UpdateGroupElements(this);
@@ -56,14 +56,14 @@ PreferredSize BaseRadioCheckBox::OnCalculatePreferredSize(
   return ps;
 }
 
-bool BaseRadioCheckBox::OnEvent(const ElementEvent& ev) {
+bool BaseRadioCheckBox::OnEvent(const Event& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Toggle the value, if it's not a grouped element with value on.
     if (!(group_id() && value())) {
       set_value(!value());
     }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 }  // namespace parts

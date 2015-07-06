@@ -55,7 +55,7 @@ class MessageWindow : public Window, private ElementListener {
 
   Element* event_destination() override { return m_target.get(); }
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnDie() override;
 
  private:

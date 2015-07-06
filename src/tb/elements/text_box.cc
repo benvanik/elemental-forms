@@ -212,7 +212,7 @@ Element::ScrollInfo TextBox::scroll_info() {
   return info;
 }
 
-bool TextBox::OnEvent(const ElementEvent& ev) {
+bool TextBox::OnEvent(const Event& ev) {
   if (ev.type == EventType::kChanged && ev.target == &m_scrollbar_x) {
     m_style_edit.SetScrollPos(m_scrollbar_x.value(), m_style_edit.scroll_y);
     OnScroll(m_scrollbar_x.value(), m_style_edit.scroll_y);
@@ -225,7 +225,9 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
              ev.modifierkeys == ModifierKeys::kNone) {
     int old_val = m_scrollbar_y.value();
     m_scrollbar_y.set_value(old_val + ev.delta_y * util::GetPixelsPerLine());
-    return m_scrollbar_y.value() != old_val;
+    if (m_scrollbar_y.value() != old_val) {
+      return true;
+    }
   } else if (ev.type == EventType::kPointerDown && ev.target == this) {
     Rect padding_rect = this->padding_rect();
     if (m_style_edit.MouseDown(
@@ -238,15 +240,21 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
     }
   } else if (ev.type == EventType::kPointerMove && ev.target == this) {
     Rect padding_rect = this->padding_rect();
-    return m_style_edit.MouseMove(
-        Point(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y));
+    if (m_style_edit.MouseMove(Point(ev.target_x - padding_rect.x,
+                                     ev.target_y - padding_rect.y))) {
+      return true;
+    }
   } else if (ev.type == EventType::kPointerUp && ev.target == this) {
     Rect padding_rect = this->padding_rect();
-    return m_style_edit.MouseUp(
-        Point(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y), 1,
-        ModifierKeys::kNone, ev.touch);
+    if (m_style_edit.MouseUp(
+            Point(ev.target_x - padding_rect.x, ev.target_y - padding_rect.y),
+            1, ModifierKeys::kNone, ev.touch)) {
+      return true;
+    }
   } else if (ev.type == EventType::kKeyDown) {
-    return m_style_edit.KeyDown(ev.key, ev.special_key, ev.modifierkeys);
+    if (m_style_edit.KeyDown(ev.key, ev.special_key, ev.modifierkeys)) {
+      return true;
+    }
   } else if (ev.type == EventType::kKeyUp) {
     return true;
   } else if ((ev.type == EventType::kClick &&
@@ -267,7 +275,7 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
     } else if (ev.ref_id == TBIDC("selectall")) {
       m_style_edit.selection.SelectAll();
     } else {
-      return false;
+      return Element::OnEvent(ev);
     }
     return true;
   } else if (ev.type == EventType::kContextMenu && ev.target == this) {
@@ -276,21 +284,21 @@ bool TextBox::OnEvent(const ElementEvent& ev) {
 
     MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->list_box()->default_source();
-    source->AddItem(std::make_unique<GenericStringItem>(
+    source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("cut")), TBIDC("cut")));
-    source->AddItem(std::make_unique<GenericStringItem>(
+    source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("copy")), TBIDC("copy")));
-    source->AddItem(std::make_unique<GenericStringItem>(
+    source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("paste")), TBIDC("paste")));
-    source->AddItem(std::make_unique<GenericStringItem>(
+    source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("delete")), TBIDC("delete")));
-    source->AddItem(std::make_unique<GenericStringItem>("-"));
-    source->AddItem(std::make_unique<GenericStringItem>(
+    source->push_back(std::make_unique<GenericStringItem>("-"));
+    source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("selectall")), TBIDC("selectall")));
     menu->Show(source, PopupAlignment(pos_in_root), -1);
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void TextBox::OnPaint(const PaintProps& paint_props) {
@@ -449,7 +457,7 @@ void TextBox::OnChange() {
     InvalidateLayout(InvalidationMode::kRecursive);
   }
 
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 

@@ -65,7 +65,7 @@ class GroupBox : public Element {
    public:
     TBOBJECT_SUBCLASS(Header, Button);
     Header();
-    bool OnEvent(const ElementEvent& ev) override;
+    bool OnEvent(const Event& ev) override;
   };
 
   LayoutBox m_layout;

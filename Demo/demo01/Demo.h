@@ -22,13 +22,13 @@ class DemoWindow : public Window {
   void LoadResourceData(const char* data);
   void LoadResource(parsing::ParseNode& node);
 
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class MainWindow : public DemoWindow, public MessageHandler {
  public:
   MainWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 
   // Implement MessageHandler
   virtual void OnMessageReceived(Message* msg);
@@ -37,14 +37,14 @@ class MainWindow : public DemoWindow, public MessageHandler {
 class ImageWindow : public DemoWindow {
  public:
   ImageWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class PageWindow : public DemoWindow,
                    public elements::parts::ScrollerSnapListener {
  public:
   PageWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
   virtual void OnScrollSnap(Element* target_element, int& target_x,
                             int& target_y);
 };
@@ -53,31 +53,31 @@ class AnimationsWindow : public DemoWindow {
  public:
   AnimationsWindow();
   void Animate();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class LayoutWindow : public DemoWindow {
  public:
   LayoutWindow(const std::string& filename);
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class TabContainerWindow : public DemoWindow {
  public:
   TabContainerWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class ConnectionWindow : public DemoWindow {
  public:
   ConnectionWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 };
 
 class ScrollContainerWindow : public DemoWindow, public MessageHandler {
  public:
   ScrollContainerWindow();
-  virtual bool OnEvent(const ElementEvent& ev);
+  virtual bool OnEvent(const Event& ev);
 
   // Implement MessageHandler
   virtual void OnMessageReceived(Message* msg);

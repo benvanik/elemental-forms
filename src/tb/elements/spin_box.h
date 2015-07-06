@@ -45,7 +45,7 @@ class SpinBox : public Element {
 
   void OnInflate(const parsing::InflateInfo& info) override;
   void OnSkinChanged() override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  protected:
   void SetValueInternal(int value, bool update_text);

@@ -88,7 +88,7 @@ bool PopupWindow::Show(const PopupAlignment& alignment) {
   return true;
 }
 
-bool PopupWindow::OnEvent(const ElementEvent& ev) {
+bool PopupWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     Close();
     return true;
@@ -102,8 +102,7 @@ void PopupWindow::OnElementFocusChanged(Element* element, bool focused) {
   }
 }
 
-bool PopupWindow::OnElementInvokeEvent(Element* element,
-                                       const ElementEvent& ev) {
+bool PopupWindow::OnElementInvokeEvent(Element* element, const Event& ev) {
   if ((ev.type == EventType::kPointerDown ||
        ev.type == EventType::kContextMenu) &&
       !IsEventDestinationFor(ev.target)) {

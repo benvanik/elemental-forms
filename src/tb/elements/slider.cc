@@ -68,11 +68,11 @@ void Slider::set_double_value(double value) {
   m_value = value;
 
   UpdateHandle();
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
-bool Slider::OnEvent(const ElementEvent& ev) {
+bool Slider::OnEvent(const Event& ev) {
   if (ev.type == EventType::kPointerMove && captured_element == &m_handle) {
     if (m_to_pixel_factor > 0) {
       int dx = ev.target_x - pointer_down_element_x;
@@ -85,7 +85,9 @@ bool Slider::OnEvent(const ElementEvent& ev) {
     double old_val = m_value;
     double step = (m_axis == Axis::kX ? small_step() : -small_step());
     set_double_value(m_value + step * ev.delta_y);
-    return m_value != old_val;
+    if (m_value != old_val) {
+      return true;
+    }
   } else if (ev.type == EventType::kKeyDown) {
     double step = (m_axis == Axis::kX ? small_step() : -small_step());
     if (ev.special_key == SpecialKey::kLeft ||
@@ -95,7 +97,7 @@ bool Slider::OnEvent(const ElementEvent& ev) {
                ev.special_key == SpecialKey::kDown) {
       set_double_value(double_value() + step);
     } else {
-      return false;
+      return Element::OnEvent(ev);
     }
     return true;
   } else if (ev.type == EventType::kKeyUp) {
@@ -106,7 +108,7 @@ bool Slider::OnEvent(const ElementEvent& ev) {
       return true;
     }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void Slider::UpdateHandle() {

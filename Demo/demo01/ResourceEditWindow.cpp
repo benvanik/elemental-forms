@@ -32,11 +32,11 @@ ResourceEditWindow::ResourceEditWindow()
   LoadFile("Demo/demo01/ui_resources/resource_edit_window.tb.txt");
 
   m_scroll_container =
-      GetElementByIdAndType<ScrollContainer>(TBIDC("scroll_container"));
+      GetElementById<ScrollContainer>(TBIDC("scroll_container"));
   m_build_container = m_scroll_container->content_root();
-  m_source_text_box = GetElementByIdAndType<TextBox>(TBIDC("source_edit"));
+  m_source_text_box = GetElementById<TextBox>(TBIDC("source_edit"));
 
-  m_element_list = GetElementByIdAndType<ListBox>(TBIDC("element_list"));
+  m_element_list = GetElementById<ListBox>(TBIDC("element_list"));
   m_element_list->set_source(&m_element_list_source);
 
   set_rect({100, 50, 900, 600});
@@ -92,7 +92,7 @@ void ResourceEditWindow::UpdateElementList(bool immediately) {
     TBID id = TBIDC("update_element_list");
     if (!GetMessageByID(id)) PostMessage(id, nullptr);
   } else {
-    m_element_list_source.DeleteAllItems();
+    m_element_list_source.clear();
     AddElementListItemsRecursive(m_build_container, 0);
 
     m_element_list->InvalidateList();
@@ -110,7 +110,7 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
     }
     auto str = tb::util::format_string("% *s%s", depth - 1, "", classname);
     auto item = std::make_unique<ResourceItem>(element, str.c_str());
-    m_element_list_source.AddItem(std::move(item));
+    m_element_list_source.push_back(std::move(item));
   }
 
   for (Element* child = element->first_child(); child;
@@ -123,9 +123,9 @@ ResourceEditWindow::ITEM_INFO ResourceEditWindow::GetItemFromElement(
     Element* element) {
   ITEM_INFO item_info = {nullptr, -1};
   for (int i = 0; i < m_element_list_source.size(); i++)
-    if (m_element_list_source.GetItem(i)->GetElement() == element) {
+    if (m_element_list_source[i]->GetElement() == element) {
       item_info.index = i;
-      item_info.item = m_element_list_source.GetItem(i);
+      item_info.item = m_element_list_source[i];
       break;
     }
   return item_info;
@@ -137,7 +137,7 @@ void ResourceEditWindow::SetSelectedElement(Element* element) {
   if (item_info.item) m_element_list->set_value(item_info.index);
 }
 
-bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
+bool ResourceEditWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("element_list_search")) {
     m_element_list->set_filter(ev.target->text());
@@ -145,8 +145,7 @@ bool ResourceEditWindow::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kChanged && ev.target == m_element_list) {
     if (m_element_list->value() >= 0 &&
         m_element_list->value() < m_element_list_source.size())
-      if (ResourceItem* item =
-              m_element_list_source.GetItem(m_element_list->value()))
+      if (ResourceItem* item = m_element_list_source[m_element_list->value()])
         SetSelectedElement(item->GetElement());
   } else if (ev.type == EventType::kChanged && ev.target == m_source_text_box) {
     RefreshFromSource();
@@ -192,7 +191,7 @@ void ResourceEditWindow::OnMessageReceived(Message* msg) {
 }
 
 bool ResourceEditWindow::OnElementInvokeEvent(Element* element,
-                                              const ElementEvent& ev) {
+                                              const Event& ev) {
   // Intercept all events to elements in the build container
   if (m_build_container->IsAncestorOf(ev.target)) {
     // Let events through if alt is pressed so we can test some
@@ -218,8 +217,8 @@ void ResourceEditWindow::OnElementRemove(Element* parent, Element* child) {
     UpdateElementList(false);
 }
 
-bool ResourceEditWindow::OnDropFileEvent(const ElementEvent& ev) {
-  auto fd_event = util::SafeCast<ElementEventFileDrop>(&ev);
+bool ResourceEditWindow::OnDropFileEvent(const Event& ev) {
+  auto fd_event = util::SafeCast<FileDropEvent>(&ev);
   if (fd_event->files.size() > 0) {
     Load(fd_event->files[0].c_str());
   }

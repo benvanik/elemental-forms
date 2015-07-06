@@ -115,13 +115,13 @@ void DemoWindow::LoadResource(ParseNode& node) {
   EnsureFocus();
 }
 
-bool DemoWindow::OnEvent(const ElementEvent& ev) {
+bool DemoWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     // We could call Die() to fade away and die, but click the close button
     // instead.
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
-    ElementEvent click_ev(EventType::kClick);
+    Event click_ev(EventType::kClick);
     m_close_button.InvokeEvent(click_ev);
     return true;
   }
@@ -138,22 +138,22 @@ class EditWindow : public DemoWindow {
   virtual void OnProcessStates() {
     // Update the disabled state of undo/redo buttons, and caret info.
 
-    if (TextBox* edit = GetElementByIdAndType<TextBox>(TBIDC("text_box"))) {
-      if (Element* undo = GetElementById("undo"))
+    if (TextBox* edit = GetElementById<TextBox>(TBIDC("text_box"))) {
+      if (auto undo = GetElementById<Element>("undo"))
         undo->set_state(Element::State::kDisabled,
                         !edit->text_view()->CanUndo());
-      if (Element* redo = GetElementById("redo"))
+      if (auto redo = GetElementById<Element>("redo"))
         redo->set_state(Element::State::kDisabled,
                         !edit->text_view()->CanRedo());
-      if (Label* info = GetElementByIdAndType<Label>(TBIDC("info"))) {
+      if (auto info = GetElementById<Label>(TBIDC("info"))) {
         info->set_text_format("Caret ofs: %d",
                               edit->text_view()->caret.global_offset());
       }
     }
   }
-  virtual bool OnEvent(const ElementEvent& ev) {
+  virtual bool OnEvent(const Event& ev) {
     if (ev.type == EventType::kClick) {
-      TextBox* edit = GetElementByIdAndType<TextBox>(TBIDC("text_box"));
+      TextBox* edit = GetElementById<TextBox>(TBIDC("text_box"));
       if (!edit) return false;
 
       if (ev.target->id() == TBIDC("clear")) {
@@ -168,28 +168,28 @@ class EditWindow : public DemoWindow {
       } else if (ev.target->id() == TBIDC("menu")) {
         static GenericStringItemSource source;
         if (!source.size()) {
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "Default font", TBIDC("default font")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "Default font (larger)", TBIDC("large font")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "RGB font (Neon)", TBIDC("rgb font Neon")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "RGB font (Orangutang)", TBIDC("rgb font Orangutang")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "RGB font (Orange)", TBIDC("rgb font Orange")));
-          source.AddItem(std::make_unique<GenericStringItem>("-"));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>("-"));
+          source.push_back(std::make_unique<GenericStringItem>(
               "Glyph cache stresstest (CJK)", TBIDC("CJK")));
-          source.AddItem(std::make_unique<GenericStringItem>("-"));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>("-"));
+          source.push_back(std::make_unique<GenericStringItem>(
               "Toggle wrapping", TBIDC("toggle wrapping")));
-          source.AddItem(std::make_unique<GenericStringItem>("-"));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>("-"));
+          source.push_back(std::make_unique<GenericStringItem>(
               "Align left", TBIDC("align left")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "Align center", TBIDC("align center")));
-          source.AddItem(std::make_unique<GenericStringItem>(
+          source.push_back(std::make_unique<GenericStringItem>(
               "Align right", TBIDC("align right")));
         }
 
@@ -245,25 +245,25 @@ LayoutWindow::LayoutWindow(const std::string& filename) {
   LoadResourceFile(filename);
 }
 
-bool LayoutWindow::OnEvent(const ElementEvent& ev) {
+bool LayoutWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kChanged &&
       ev.target->id() == TBIDC("select position")) {
     LayoutPosition pos = LayoutPosition::kCenter;
     if (DropDownButton* select =
-            GetElementByIdAndType<DropDownButton>(TBIDC("select position")))
+            GetElementById<DropDownButton>(TBIDC("select position")))
       pos = static_cast<LayoutPosition>(select->value());
     for (int i = 0; i < 3; i++)
-      if (auto layout = GetElementByIdAndType<LayoutBox>(i + 1))
+      if (auto layout = GetElementById<LayoutBox>(i + 1))
         layout->set_layout_position(pos);
     return true;
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("toggle axis")) {
     static Axis axis = Axis::kY;
     for (int i = 0; i < 3; i++)
-      if (auto layout = GetElementByIdAndType<LayoutBox>(i + 1))
+      if (auto layout = GetElementById<LayoutBox>(i + 1))
         layout->set_axis(axis);
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
-    if (auto layout = GetElementByIdAndType<LayoutBox>(TBIDC("switch_layout")))
+    if (auto layout = GetElementById<LayoutBox>(TBIDC("switch_layout")))
       layout->set_axis(axis);
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
     return true;
@@ -278,10 +278,9 @@ TabContainerWindow::TabContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_tabcontainer01.tb.txt");
 }
 
-bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
+bool TabContainerWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("set_align")) {
-    if (TabContainer* tc =
-            GetElementByIdAndType<TabContainer>(TBIDC("tabcontainer")))
+    if (TabContainer* tc = GetElementById<TabContainer>(TBIDC("tabcontainer")))
       tc->set_alignment(static_cast<Align>(ev.target->data.as_integer()));
     ResizeToFitContent(ResizeFit::kCurrentOrNeeded);
   } else if (ev.type == EventType::kClick &&
@@ -289,7 +288,7 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
     static Axis axis = Axis::kX;
     axis = axis == Axis::kX ? Axis::kY : Axis::kX;
     if (TabContainer* tc =
-            GetElementByIdAndType<TabContainer>(TBIDC("tabcontainer"))) {
+            GetElementById<TabContainer>(TBIDC("tabcontainer"))) {
       for (Element* child = tc->tab_bar()->first_child(); child;
            child = child->GetNext()) {
         if (Button* button = util::SafeCast<Button>(child)) {
@@ -301,12 +300,12 @@ bool TabContainerWindow::OnEvent(const ElementEvent& ev) {
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("start_spinner")) {
     if (ProgressSpinner* spinner =
-            GetElementByIdAndType<ProgressSpinner>(TBIDC("spinner")))
+            GetElementById<ProgressSpinner>(TBIDC("spinner")))
       spinner->set_value(1);
   } else if (ev.type == EventType::kClick &&
              ev.target->id() == TBIDC("stop_spinner")) {
     if (ProgressSpinner* spinner =
-            GetElementByIdAndType<ProgressSpinner>(TBIDC("spinner")))
+            GetElementById<ProgressSpinner>(TBIDC("spinner")))
       spinner->set_value(0);
   }
   return DemoWindow::OnEvent(ev);
@@ -318,7 +317,7 @@ ConnectionWindow::ConnectionWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_connections.tb.txt");
 }
 
-bool ConnectionWindow::OnEvent(const ElementEvent& ev) {
+bool ConnectionWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick &&
       ev.target->id() == TBIDC("reset-master-volume")) {
     if (ElementValue* val =
@@ -339,15 +338,15 @@ ScrollContainerWindow::ScrollContainerWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scrollcontainer.tb.txt");
 
   if (DropDownButton* select =
-          GetElementByIdAndType<DropDownButton>(TBIDC("name dropdown")))
+          GetElementById<DropDownButton>(TBIDC("name dropdown")))
     select->set_source(&name_source);
 
   if (DropDownButton* select =
-          GetElementByIdAndType<DropDownButton>(TBIDC("advanced dropdown")))
+          GetElementById<DropDownButton>(TBIDC("advanced dropdown")))
     select->set_source(&advanced_source);
 }
 
-bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
+bool ScrollContainerWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->id() == TBIDC("add img")) {
       Button* button = util::SafeCast<Button>(ev.target);
@@ -393,7 +392,7 @@ bool ScrollContainerWindow::OnEvent(const ElementEvent& ev) {
 
 void ScrollContainerWindow::OnMessageReceived(Message* msg) {
   if (msg->message_id() == TBIDC("new button") && msg->data()) {
-    if (Element* target = GetElementById(msg->data()->id1)) {
+    if (auto target = GetElementById<Element>(msg->data()->id1)) {
       Button* button = new Button;
       button->set_id(TBIDC("remove button"));
       button->set_text(
@@ -409,7 +408,7 @@ ImageWindow::ImageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_image_widget.tb.txt");
 }
 
-bool ImageWindow::OnEvent(const ElementEvent& ev) {
+bool ImageWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("remove")) {
     Element* image = ev.target->parent();
     image->parent()->RemoveChild(image);
@@ -425,13 +424,11 @@ PageWindow::PageWindow() {
   LoadResourceFile("Demo/demo01/ui_resources/test_scroller_snap.tb.txt");
 
   // Listen to the pagers scroller
-  if (Element* pager = GetElementById(TBIDC("page-scroller")))
+  if (auto pager = GetElementById<Element>(TBIDC("page-scroller")))
     pager->scroller()->SetSnapListener(this);
 }
 
-bool PageWindow::OnEvent(const ElementEvent& ev) {
-  return DemoWindow::OnEvent(ev);
-}
+bool PageWindow::OnEvent(const Event& ev) { return DemoWindow::OnEvent(ev); }
 
 void PageWindow::OnScrollSnap(Element* target_element, int& target_x,
                               int& target_y) {
@@ -455,13 +452,13 @@ void AnimationsWindow::Animate() {
   uint64_t duration = 500;
   bool fade = true;
 
-  if (ListBox* curve_select = GetElementByIdAndType<ListBox>("curve")) {
+  if (ListBox* curve_select = GetElementById<ListBox>("curve")) {
     curve = static_cast<AnimationCurve>(curve_select->value());
   }
-  if (SpinBox* duration_select = GetElementByIdAndType<SpinBox>("duration")) {
+  if (SpinBox* duration_select = GetElementById<SpinBox>("duration")) {
     duration = uint64_t(duration_select->double_value());
   }
-  if (CheckBox* fade_check = GetElementByIdAndType<CheckBox>("fade")) {
+  if (CheckBox* fade_check = GetElementById<CheckBox>("fade")) {
     fade = fade_check->value() ? true : false;
   }
 
@@ -477,7 +474,7 @@ void AnimationsWindow::Animate() {
   }
 }
 
-bool AnimationsWindow::OnEvent(const ElementEvent& ev) {
+bool AnimationsWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("Animate!"))
     Animate();
   return DemoWindow::OnEvent(ev);
@@ -508,7 +505,7 @@ void MainWindow::OnMessageReceived(Message* msg) {
   }
 }
 
-bool MainWindow::OnEvent(const ElementEvent& ev) {
+bool MainWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick) {
     if (ev.target->id() == TBIDC("new")) {
       new MainWindow();
@@ -694,33 +691,33 @@ bool DemoApplication::Init() {
   // for elements that occur many times in a UI, always with the same items.
   // Here we prepare the name source, that is used in a few places.
   for (int i = 0; boy_names[i]; i++)
-    advanced_source.AddItem(std::make_unique<AdvancedItem>(
+    advanced_source.push_back(std::make_unique<AdvancedItem>(
         boy_names[i++], TBIDC("boy_item"), true));
   for (int i = 0; girl_names[i]; i++)
-    advanced_source.AddItem(std::make_unique<AdvancedItem>(
+    advanced_source.push_back(std::make_unique<AdvancedItem>(
         girl_names[i++], TBIDC("girl_item"), false));
   for (int i = 0; girl_names[i]; i++)
-    name_source.AddItem(std::make_unique<GenericStringItem>(
+    name_source.push_back(std::make_unique<GenericStringItem>(
         girl_names[i++], TBIDC("girl_item")));
   for (int i = 0; boy_names[i]; i++)
-    name_source.AddItem(
+    name_source.push_back(
         std::make_unique<GenericStringItem>(boy_names[i++], TBIDC("boy_item")));
   advanced_source.set_sort(Sort::kAscending);
   name_source.set_sort(Sort::kAscending);
 
   // Prepare a source with submenus (with eternal recursion) so we can test sub
   // menu support.
-  popup_menu_source.AddItem(
+  popup_menu_source.push_back(
       std::make_unique<GenericStringItem>("Option 1", TBIDC("opt 1")));
-  popup_menu_source.AddItem(
+  popup_menu_source.push_back(
       std::make_unique<GenericStringItem>("Option 2", TBIDC("opt 2")));
-  popup_menu_source.AddItem(std::make_unique<GenericStringItem>("-"));
-  popup_menu_source.AddItem(
+  popup_menu_source.push_back(std::make_unique<GenericStringItem>("-"));
+  popup_menu_source.push_back(
       std::make_unique<GenericStringItem>("Same submenu", &popup_menu_source));
-  popup_menu_source.AddItem(
+  popup_menu_source.push_back(
       std::make_unique<GenericStringItem>("Long submenu", &name_source));
   // Give the first item a skin image
-  popup_menu_source.GetItem(0)->set_icon(TBIDC("Icon16"));
+  popup_menu_source[0]->set_icon(TBIDC("Icon16"));
 
   new MainWindow();
 

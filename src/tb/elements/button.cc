@@ -52,13 +52,15 @@ void Button::set_text(const char* text) {
   UpdateLabelVisibility();
 }
 
+int Button::value() { return has_state(Element::State::kPressed); }
+
 void Button::set_value(int new_value) {
   if (new_value == value()) return;
   set_state(Element::State::kPressed, new_value ? true : false);
 
   if (can_toggle()) {
     // Invoke a changed event.
-    ElementEvent ev(EventType::kChanged);
+    Event ev(EventType::kChanged);
     InvokeEvent(ev);
   }
 
@@ -66,8 +68,6 @@ void Button::set_value(int new_value) {
     parts::BaseRadioCheckBox::UpdateGroupElements(this);
   }
 }
-
-int Button::value() { return has_state(Element::State::kPressed); }
 
 void Button::OnCaptureChanged(bool captured) {
   if (captured && m_auto_repeat_click) {
@@ -82,7 +82,7 @@ void Button::OnCaptureChanged(bool captured) {
 
 void Button::OnSkinChanged() { m_layout.set_rect(padding_rect()); }
 
-bool Button::OnEvent(const ElementEvent& ev) {
+bool Button::OnEvent(const Event& ev) {
   if (can_toggle() && ev.type == EventType::kClick && ev.target == this) {
     WeakElementPointer this_element(this);
 
@@ -107,8 +107,8 @@ void Button::OnMessageReceived(Message* msg) {
     if (!cancel_click &&
         GetHitStatus(pointer_move_element_x, pointer_move_element_y) !=
             HitStatus::kNoHit) {
-      ElementEvent ev(EventType::kClick, pointer_move_element_x,
-                      pointer_move_element_y, true);
+      Event ev(EventType::kClick, pointer_move_element_x,
+               pointer_move_element_y, true);
       captured_element->InvokeEvent(ev);
     }
     if (kAutoClickRepeattDelayMillis) {

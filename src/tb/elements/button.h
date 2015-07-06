@@ -64,7 +64,7 @@ class Button : public Element, protected MessageHandler {
   void OnInflate(const parsing::InflateInfo& info) override;
   void OnCaptureChanged(bool captured) override;
   void OnSkinChanged() override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   HitStatus GetHitStatus(int x, int y) override;
   PreferredSize OnCalculatePreferredContentSize(
       const SizeConstraints& constraints) override {

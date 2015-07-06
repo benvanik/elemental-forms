@@ -30,9 +30,11 @@ HitStatus Resizer::GetHitStatus(int x, int y) {
   return Element::GetHitStatus(x, y);
 }
 
-bool Resizer::OnEvent(const ElementEvent& ev) {
+bool Resizer::OnEvent(const Event& ev) {
   Element* target = parent();
-  if (!target) return false;
+  if (!target) {
+    return Element::OnEvent(ev);
+  }
   if (ev.type == EventType::kPointerMove && captured_element == this) {
     int dx = ev.target_x - pointer_down_element_x;
     int dy = ev.target_y - pointer_down_element_y;
@@ -44,10 +46,10 @@ bool Resizer::OnEvent(const ElementEvent& ev) {
     rect.w = std::max(rect.w, 50);
     rect.h = std::max(rect.h, 50);
     target->set_rect(rect);
+    return true;
   } else {
-    return false;
+    return Element::OnEvent(ev);
   }
-  return true;
 }
 
 }  // namespace elements

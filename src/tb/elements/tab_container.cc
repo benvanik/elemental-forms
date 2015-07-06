@@ -145,14 +145,14 @@ void TabContainer::set_alignment(Align align) {
   m_align = align;
 }
 
-bool TabContainer::OnEvent(const ElementEvent& ev) {
+bool TabContainer::OnEvent(const Event& ev) {
   if ((ev.type == EventType::kClick || ev.type == EventType::kPointerDown) &&
       ev.target->id() == TBIDC("tab") && ev.target->parent() == &m_tab_bar) {
     int clicked_index = m_tab_bar.GetIndexFromChild(ev.target);
     set_value(clicked_index);
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void TabContainer::OnProcess() {

@@ -23,7 +23,7 @@ class Mover : public Element {
 
   Mover();
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 };
 
 }  // namespace elements

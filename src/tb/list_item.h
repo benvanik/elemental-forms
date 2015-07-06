@@ -132,18 +132,16 @@ template <class T>
 class ListItemSourceList : public ListItemSource {
  public:
   ListItemSourceList() = default;
-  ~ListItemSourceList() override { DeleteAllItems(); }
+  ~ListItemSourceList() override { clear(); }
 
   const char* GetItemString(size_t index) override {
-    return GetItem(index)->str.c_str();
+    return at(index)->str.c_str();
   }
   ListItemSource* GetItemSubSource(size_t index) override {
-    return GetItem(index)->sub_source;
+    return at(index)->sub_source;
   }
-  TBID GetItemImage(size_t index) override {
-    return GetItem(index)->skin_image;
-  }
-  TBID GetItemId(size_t index) override { return GetItem(index)->id; }
+  TBID GetItemImage(size_t index) override { return at(index)->skin_image; }
+  TBID GetItemId(size_t index) override { return at(index)->id; }
   size_t size() override { return items_.size(); }
 
   Element* CreateItemElement(size_t index,
@@ -157,22 +155,24 @@ class ListItemSourceList : public ListItemSource {
   }
 
   // Adds a new item at the given index.
-  void InsertItem(size_t index, std::unique_ptr<T> item) {
+  void insert(size_t index, std::unique_ptr<T> item) {
     items_.insert(index, std::move(item));
     InvokeItemAdded(index);
   }
 
   // Adds a new item list.
-  void AddItem(std::unique_ptr<T> item) {
+  void push_back(std::unique_ptr<T> item) {
     items_.push_back(std::move(item));
     InvokeItemAdded(items_.size() - 1);
   }
 
   // Gets the item at the given index.
-  T* GetItem(size_t index) { return items_[index].get(); }
+  T* at(size_t index) { return items_[index].get(); }
+
+  T* operator[](size_t index) const { return items_[index].get(); }
 
   // Deletes the item at the given index.
-  void DeleteItem(size_t index) {
+  void erase(size_t index) {
     if (items_.empty()) {
       return;
     }
@@ -181,7 +181,7 @@ class ListItemSourceList : public ListItemSource {
   }
 
   // Deletes all items.
-  void DeleteAllItems() {
+  void clear() {
     if (items_.empty()) {
       return;
     }

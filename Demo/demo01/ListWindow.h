@@ -2,6 +2,7 @@
 #define LISTWINDOW_DEMO_H
 
 #include "Demo.h"
+#include "tb/event_handler.h"
 #include "tb/list_item.h"
 
 class AdvancedItemSource;
@@ -10,14 +11,15 @@ class AdvancedItemSource;
 class ListWindow : public DemoWindow {
  public:
   ListWindow(ListItemSource* source);
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
+  EventHandler eh_ = EventHandler(this);
 };
 
 /** Shows a list of items from a source of type AdvancedItemSource. */
 class AdvancedListWindow : public DemoWindow {
  public:
   AdvancedListWindow(AdvancedItemSource* source);
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  private:
   AdvancedItemSource* m_source;
@@ -54,7 +56,7 @@ class AdvancedItemElement : public elements::LayoutBox {
  public:
   AdvancedItemElement(AdvancedItem* item, AdvancedItemSource* source,
                       ListItemObserver* source_viewer, size_t index);
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  private:
   AdvancedItemSource* m_source;

@@ -61,7 +61,7 @@ void DropDownButton::set_value(int value) {
     set_text(m_source->GetItemString(m_value));
   }
 
-  ElementEvent ev(EventType::kChanged);
+  Event ev(EventType::kChanged);
   InvokeEvent(ev);
 }
 
@@ -93,7 +93,7 @@ MenuWindow* DropDownButton::menu_if_open() const {
   return util::SafeCast<MenuWindow>(m_window_pointer.get());
 }
 
-bool DropDownButton::OnEvent(const ElementEvent& ev) {
+bool DropDownButton::OnEvent(const Event& ev) {
   if (ev.target == this && ev.type == EventType::kClick) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
@@ -119,11 +119,11 @@ bool DropDownButton::OnEvent(const ElementEvent& ev) {
   } else if (ev.target == this && m_source && ev.is_key_event()) {
     if (MenuWindow* menu_window = menu_if_open()) {
       // Redirect the key strokes to the list.
-      ElementEvent redirected_ev(ev);
+      Event redirected_ev(ev);
       return menu_window->list_box()->InvokeEvent(redirected_ev);
     }
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 }  // namespace elements

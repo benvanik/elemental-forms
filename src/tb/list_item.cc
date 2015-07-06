@@ -30,7 +30,7 @@ class SimpleBoxItemElement : public LayoutBox, private ElementListener {
   SimpleBoxItemElement(TBID image, ListItemSource* source, const char* str);
   ~SimpleBoxItemElement() override;
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  private:
   void OnElementDelete(Element* element) override;
@@ -80,12 +80,12 @@ SimpleBoxItemElement::~SimpleBoxItemElement() {
   CloseSubMenu();
 }
 
-bool SimpleBoxItemElement::OnEvent(const ElementEvent& ev) {
+bool SimpleBoxItemElement::OnEvent(const Event& ev) {
   if (m_source && ev.type == EventType::kClick && ev.target == this) {
     OpenSubMenu();
     return true;
   }
-  return false;
+  return Element::OnEvent(ev);
 }
 
 void SimpleBoxItemElement::OnElementDelete(Element* element) {
@@ -215,7 +215,7 @@ void GenericStringItemSource::ReadItemNodes(
       Element::SetIdFromNode(item_id, id_node);
     }
     auto item = std::make_unique<GenericStringItem>(text, item_id);
-    target_source->AddItem(std::move(item));
+    target_source->push_back(std::move(item));
   }
 }
 

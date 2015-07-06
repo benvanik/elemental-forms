@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef TB_ELEMENT_EVENT_H_
-#define TB_ELEMENT_EVENT_H_
+#ifndef TB_EVENT_H_
+#define TB_EVENT_H_
 
 #include <string>
 #include <vector>
@@ -59,7 +59,7 @@ enum class EventType {
   // handles the long click event.
   kContextMenu,
   // Invoked by the platform when one or multiple files has been dropped on the
-  // element. The event is guaranteed to be a ElementEventFileDrop.
+  // element. The event is guaranteed to be a FileDropEvent.
   kFileDrop,
   // Custom event. Not used internally.
   // ref_id may be used for additional type info.
@@ -110,9 +110,9 @@ enum class SpecialKey {
   kF12,
 };
 
-class ElementEvent : public util::TypedObject {
+class Event : public util::TypedObject {
  public:
-  TBOBJECT_SUBCLASS(ElementEvent, util::TypedObject);
+  TBOBJECT_SUBCLASS(Event, util::TypedObject);
 
   EventType type;
   // The element that invoked the event.
@@ -138,10 +138,10 @@ class ElementEvent : public util::TypedObject {
   // on screen).
   bool touch = false;
 
-  ElementEvent(EventType type) : type(type) {}
+  Event(EventType type) : type(type) {}
 
-  ElementEvent(EventType type, int x, int y, bool touch,
-               ModifierKeys modifierkeys = ModifierKeys::kNone)
+  Event(EventType type, int x, int y, bool touch,
+        ModifierKeys modifierkeys = ModifierKeys::kNone)
       : type(type),
         target_x(x),
         target_y(y),
@@ -165,15 +165,15 @@ class ElementEvent : public util::TypedObject {
 
 // An event of type EventType::kFileDrop.
 // It contains a list of filenames of the files that was dropped.
-class ElementEventFileDrop : public ElementEvent {
+class FileDropEvent : public Event {
  public:
-  TBOBJECT_SUBCLASS(ElementEventFileDrop, ElementEvent);
+  TBOBJECT_SUBCLASS(FileDropEvent, Event);
 
   std::vector<std::string> files;
 
-  ElementEventFileDrop() : ElementEvent(EventType::kFileDrop) {}
+  FileDropEvent() : Event(EventType::kFileDrop) {}
 };
 
 }  // namespace tb
 
-#endif  // TB_ELEMENT_EVENT_H_
+#endif  // TB_EVENT_H_

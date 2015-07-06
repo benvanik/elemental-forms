@@ -136,7 +136,7 @@ class LayoutBox : public Element {
       const SizeConstraints& constraints) override;
 
   void OnInflate(const parsing::InflateInfo& info) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
   void OnPaintChildren(const PaintProps& paint_props) override;
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;

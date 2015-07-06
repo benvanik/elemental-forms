@@ -35,12 +35,12 @@ bool MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
   return PopupWindow::Show(alignment);
 }
 
-bool MenuWindow::OnEvent(const ElementEvent& ev) {
+bool MenuWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && &m_select_list == ev.target) {
     WeakElementPointer this_element(this);
 
     // Invoke the click on the target.
-    ElementEvent target_ev(EventType::kClick);
+    Event target_ev(EventType::kClick);
     target_ev.ref_id = ev.ref_id;
     InvokeEvent(target_ev);
 

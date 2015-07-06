@@ -44,7 +44,7 @@ class LabelContainer : public Element {
 
   Element* content_root() override { return &m_layout; }
 
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
  protected:
   LayoutBox m_layout;

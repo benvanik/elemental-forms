@@ -56,7 +56,7 @@ class DropDownButton : public Button, public ListItemObserver {
   MenuWindow* menu_if_open() const;
 
   void OnInflate(const parsing::InflateInfo& info) override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(size_t index) override;

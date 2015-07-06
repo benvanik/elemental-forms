@@ -14,6 +14,7 @@
 #include "tb/elements/parts/scroller.h"
 #include "tb/elements/tab_container.h"
 #include "tb/elements/text_box.h"
+#include "tb/event_handler.h"
 #include "tb/graphics/renderer.h"
 #include "tb/list_item.h"
 #include "tb/parsing/element_inflater.h"
@@ -326,14 +327,14 @@ Element* Element::GetElementByIdInternal(const TBID& id,
 }
 
 std::string Element::GetTextById(const TBID& id) {
-  if (Element* element = GetElementById(id)) {
+  if (auto element = GetElementById<Element>(id)) {
     return element->text();
   }
   return "";
 }
 
 int Element::GetValueById(const TBID& id) {
-  if (Element* element = GetElementById(id)) {
+  if (auto element = GetElementById<Element>(id)) {
     return element->value();
   }
   return 0;
@@ -750,7 +751,7 @@ bool Element::set_focus(FocusReason reason, InvokeInfo info) {
   return true;
 }
 
-bool Element::SetFocusRecursive(FocusReason reason) {
+bool Element::set_focus_recursive(FocusReason reason) {
   // Search for a child element that accepts focus.
   Element* child = first_child();
   while (child) {
@@ -928,6 +929,24 @@ void Element::RemoveListener(ElementListener* listener) {
 
 bool Element::HasListener(ElementListener* listener) const {
   return m_listeners.ContainsLink(listener);
+}
+
+void Element::AddEventHandler(EventHandler* event_handler) {
+  event_handlers_.AddLast(event_handler);
+}
+
+void Element::RemoveEventHandler(EventHandler* event_handler) {
+  event_handlers_.Remove(event_handler);
+}
+
+bool Element::OnEvent(const Event& ev) {
+  auto it = event_handlers_.IterateForward();
+  while (auto event_handler = it.GetAndStep()) {
+    if (event_handler->OnEvent(ev)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void Element::OnPaintChildren(const PaintProps& paint_props) {
@@ -1389,14 +1408,16 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   Renderer::get()->set_opacity(old_opacity);
 }
 
-bool Element::InvokeEvent(ElementEvent& ev) {
+bool Element::InvokeEvent(Event& ev) {
   ev.target = this;
 
   // First call the global listener about this event.
   // Who knows, maybe some listener will block the event or cause us
   // to be deleted.
   WeakElementPointer this_element(this);
-  if (ElementListener::InvokeElementInvokeEvent(this, ev)) return true;
+  if (ElementListener::InvokeElementInvokeEvent(this, ev)) {
+    return true;
+  }
 
   if (!this_element.get()) {
     return true;  // We got removed so we actually handled this event.
@@ -1493,7 +1514,7 @@ bool Element::InvokePointerDown(int x, int y, int click_count,
     captured_element->ConvertFromRoot(x, y);
     pointer_move_element_x = pointer_down_element_x = x;
     pointer_move_element_y = pointer_down_element_y = y;
-    ElementEvent ev(EventType::kPointerDown, x, y, touch, modifierkeys);
+    Event ev(EventType::kPointerDown, x, y, touch, modifierkeys);
     ev.count = click_count;
     captured_element->InvokeEvent(ev);
     return true;
@@ -1508,8 +1529,8 @@ bool Element::InvokePointerUp(int x, int y, ModifierKeys modifierkeys,
   // up event was handled
   if (captured_element) {
     captured_element->ConvertFromRoot(x, y);
-    ElementEvent ev_up(EventType::kPointerUp, x, y, touch, modifierkeys);
-    ElementEvent ev_click(EventType::kClick, x, y, touch, modifierkeys);
+    Event ev_up(EventType::kPointerUp, x, y, touch, modifierkeys);
+    Event ev_click(EventType::kClick, x, y, touch, modifierkeys);
     captured_element->InvokeEvent(ev_up);
     if (!cancel_click && captured_element &&
         captured_element->GetHitStatus(x, y) != HitStatus::kNoHit) {
@@ -1531,15 +1552,13 @@ void Element::MaybeInvokeLongClickOrContextMenu(bool touch) {
                                      pointer_move_element_y) !=
           HitStatus::kNoHit) {
     // Invoke long click.
-    ElementEvent ev_long_click(EventType::kLongClick, pointer_move_element_x,
-                               pointer_move_element_y, touch,
-                               ModifierKeys::kNone);
+    Event ev_long_click(EventType::kLongClick, pointer_move_element_x,
+                        pointer_move_element_y, touch, ModifierKeys::kNone);
     bool handled = captured_element->InvokeEvent(ev_long_click);
     if (!handled) {
       // Long click not handled so invoke a context menu event instead.
-      ElementEvent ev_context_menu(
-          EventType::kContextMenu, pointer_move_element_x,
-          pointer_move_element_y, touch, ModifierKeys::kNone);
+      Event ev_context_menu(EventType::kContextMenu, pointer_move_element_x,
+                            pointer_move_element_y, touch, ModifierKeys::kNone);
       handled = captured_element->InvokeEvent(ev_context_menu);
     }
     // If any event was handled, suppress click when releasing pointer.
@@ -1559,7 +1578,7 @@ void Element::InvokePointerMove(int x, int y, ModifierKeys modifierkeys,
     pointer_move_element_x = x;
     pointer_move_element_y = y;
 
-    ElementEvent ev(EventType::kPointerMove, x, y, touch, modifierkeys);
+    Event ev(EventType::kPointerMove, x, y, touch, modifierkeys);
     if (target->InvokeEvent(ev)) {
       return;
     }
@@ -1639,7 +1658,7 @@ bool Element::InvokeWheel(int x, int y, int delta_x, int delta_y,
   target->ConvertFromRoot(x, y);
   pointer_move_element_x = x;
   pointer_move_element_y = y;
-  ElementEvent ev(EventType::kWheel, x, y, true, modifierkeys);
+  Event ev(EventType::kWheel, x, y, true, modifierkeys);
   ev.delta_x = delta_x;
   ev.delta_y = delta_y;
   target->InvokeEvent(ev);
@@ -1674,13 +1693,13 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
 
       // Invoke the click event.
       if (!down) {
-        ElementEvent ev(EventType::kClick, m_rect.w / 2, m_rect.h / 2, true);
+        Event ev(EventType::kClick, m_rect.w / 2, m_rect.h / 2, true);
         focused_element->InvokeEvent(ev);
       }
       handled = true;
     } else {
       // Invoke the key event on the focused element.
-      ElementEvent ev(down ? EventType::kKeyDown : EventType::kKeyUp);
+      Event ev(down ? EventType::kKeyDown : EventType::kKeyUp);
       ev.key = key;
       ev.special_key = special_key;
       ev.modifierkeys = modifierkeys;

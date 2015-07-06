@@ -89,7 +89,7 @@ class ListBox : public Element, public ListItemObserver {
   void OnSkinChanged() override;
   void OnProcess() override;
   void OnProcessAfterChildren() override;
-  bool OnEvent(const ElementEvent& ev) override;
+  bool OnEvent(const Event& ev) override;
 
   void OnSourceChanged() override;
   void OnItemChanged(size_t index) override;

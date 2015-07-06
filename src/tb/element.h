@@ -15,8 +15,8 @@
 #include <string>
 #include <vector>
 
-#include "tb/element_event.h"
 #include "tb/element_value.h"
+#include "tb/event.h"
 #include "tb/font_description.h"
 #include "tb/rect.h"
 #include "tb/skin.h"
@@ -28,6 +28,7 @@ namespace tb {
 
 class Element;
 class ElementListener;
+class EventHandler;
 class GenericStringItemSource;
 class LongClickTimer;
 class Window;
@@ -340,15 +341,17 @@ class Element : public util::TypedObject,
   // automatically changed when one change its value.
   void set_group_id(const TBID& id) { m_group_id = id; }
 
-  // Gets this element or any child element with a matching id, or nullptr if
-  // none is found.
-  Element* GetElementById(const TBID& id) { return GetElementByIdInternal(id); }
-
   // Gets this element or any child element with a matching id and type, or
   // nullptr if none is found.
-  template <class T>
-  T* GetElementByIdAndType(const TBID& id) {
-    return (T*)GetElementByIdInternal(id, GetTypeId<T>());
+  template <typename T>
+  T* GetElementById(const TBID& id) {
+    return reinterpret_cast<T*>(GetElementByIdInternal(id, GetTypeId<T>()));
+  }
+  // Gets this element or any child element with a matching id, or nullptr if
+  // none is found.
+  template <>
+  Element* GetElementById<Element>(const TBID& id) {
+    return GetElementByIdInternal(id);
   }
 
   using State = SkinState;
@@ -406,6 +409,8 @@ class Element : public util::TypedObject,
   // Returns false if this element or any of its parents are disabled (has state
   // SkinState::kDisabled).
   bool is_enabled() const;
+  // Sets whether the element is enabled (default) or disabled.
+  void set_enabled(bool value) { set_state(Element::State::kDisabled, !value); }
 
   // Adds a child to this element.
   // The child element will automatically be deleted when this element is
@@ -415,7 +420,7 @@ class Element : public util::TypedObject,
 
   // Adds a child to this element.
   // See AddChild for adding a child to the top or bottom.
-  // This takes a relative Z and insert the child before or after the given
+  // This takes a relative Z and inserts the child before or after the given
   // reference element.
   void AddChildRelative(Element* child, ElementZRel z, Element* reference,
                         InvokeInfo info = InvokeInfo::kNormal);
@@ -526,7 +531,7 @@ class Element : public util::TypedObject,
   // Calls SetFocus on all children and their children, until a element is found
   // that accepts it.
   // Returns true if some child was successfully focused.
-  bool SetFocusRecursive(FocusReason reason);
+  bool set_focus_recursive(FocusReason reason);
 
   // Moves focus from the currently focused element to another focusable
   // element.
@@ -586,10 +591,14 @@ class Element : public util::TypedObject,
   void RemoveListener(ElementListener* listener);
   bool HasListener(ElementListener* listener) const;
 
+  void AddEventHandler(EventHandler* event_handler);
+  void RemoveEventHandler(EventHandler* event_handler);
+
   // Callback for handling events.
   // Return true if the event is handled and should not continue to be handled
   // by any parent elements.
-  virtual bool OnEvent(const ElementEvent& ev) { return false; }
+  // Subclasses overriding Element must call the default Element version.
+  virtual bool OnEvent(const Event& ev);
 
   // Callback for doing anything that might be needed before paint.
   // F.ex Updating invalid layout, formatting text etc.
@@ -939,7 +948,7 @@ class Element : public util::TypedObject,
   // NOTE: remember that this elements may be deleted after this call! So if you
   // really must do something after this call and are not sure what the event
   // will cause, use WeakElementPointer to detect self deletion.
-  bool InvokeEvent(ElementEvent& ev);
+  bool InvokeEvent(Event& ev);
 
   bool InvokePointerDown(int x, int y, int click_count,
                          ModifierKeys modifierkeys, bool touch);
@@ -1009,6 +1018,7 @@ class Element : public util::TypedObject,
   util::IntrusiveList<Element> m_children;
   ElementValueConnection m_connection;
   util::IntrusiveList<ElementListener> m_listeners;
+  util::IntrusiveList<EventHandler> event_handlers_;
   // Opacity 0-1. See SetOpacity.
   float m_opacity = 1.0f;
   // The element state (excluding any auto states).
