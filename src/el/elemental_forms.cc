@@ -28,13 +28,12 @@ using graphics::Renderer;
 // From elements.cc:
 void RegisterBuiltinElementInflaters();
 
-bool Initialize(Renderer* renderer, const char* language_file) {
+bool Initialize(Renderer* renderer) {
   assert(!is_initialized());
 
   Renderer::set(renderer);
 
   util::StringTable::set(std::make_unique<util::StringTable>());
-  util::StringTable::get()->Load(language_file);
   text::FontManager::set(std::make_unique<text::FontManager>());
   Skin::set(std::make_unique<Skin>());
   parsing::ElementFactory::set(std::make_unique<parsing::ElementFactory>());

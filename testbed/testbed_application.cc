@@ -26,6 +26,7 @@
 #include "el/util/metrics.h"
 #include "el/util/string.h"
 #include "el/util/string_builder.h"
+#include "el/util/string_table.h"
 #include "testbed/list_window.h"
 #include "testbed/resource_edit_window.h"
 #include "testbed/scratch/code_text_box.h"
@@ -210,9 +211,10 @@ int app_main() {
       ApplicationBackend::Create(application, 1280, 700, "Demo");
   if (!application_backend) return 1;
 
-  el::Initialize(application_backend->GetRenderer(),
-                 "resources/language/lng_en.tb.txt");
+  el::Initialize(application_backend->GetRenderer());
   CodeTextBox::RegisterInflater();
+
+  util::StringTable::get()->Load("resources/language/lng_en.tb.txt");
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.

@@ -25,7 +25,7 @@ namespace el {
 using el::util::format_string;
 
 // Initializes Elemental Forms. Call this before using any elemental API.
-bool Initialize(graphics::Renderer* renderer, const char* language_file);
+bool Initialize(graphics::Renderer* renderer);
 
 // Shuts down Elemental Forms. Call this after deleting the last element, to
 // free libelemental internals.
