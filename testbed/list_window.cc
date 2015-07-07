@@ -29,7 +29,7 @@ AdvancedItemElement::AdvancedItemElement(AdvancedItem* item,
   set_layout_distribution_position(LayoutDistributionPosition::kLeftTop);
   set_paint_overflow_fadeout(false);
 
-  content_root()->LoadFile("testbed/resources/test_list_item.tb.txt");
+  content_root()->LoadFile("test_list_item.tb.txt");
   CheckBox* checkbox = GetElementById<CheckBox>(TBIDC("check"));
   Label* name = GetElementById<Label>(TBIDC("name"));
   Label* info = GetElementById<Label>(TBIDC("info"));
@@ -75,7 +75,7 @@ Element* AdvancedItemSource::CreateItemElement(size_t index,
 // == ListWindow ==============================================================
 
 ListWindow::ListWindow(ListItemSource* source) {
-  LoadResourceFile("testbed/resources/test_select.tb.txt");
+  LoadResourceFile("test_select.tb.txt");
   if (ListBox* select = GetElementById<ListBox>("list")) {
     select->set_source(source);
     select->scroll_container()->set_scroll_mode(ScrollMode::kAutoY);
@@ -107,7 +107,7 @@ bool ListWindow::OnEvent(const Event& ev) {
 
 AdvancedListWindow::AdvancedListWindow(AdvancedItemSource* source)
     : m_source(source) {
-  LoadResourceFile("testbed/resources/test_select_advanced.tb.txt");
+  LoadResourceFile("test_select_advanced.tb.txt");
   if (ListBox* select = GetElementById<ListBox>("list")) {
     select->set_source(source);
     select->scroll_container()->set_scroll_mode(ScrollMode::kAutoXAutoY);

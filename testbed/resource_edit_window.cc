@@ -36,7 +36,7 @@ ResourceEditWindow::ResourceEditWindow()
   // Register as global listener to intercept events in the build container
   ElementListener::AddGlobalListener(this);
 
-  LoadFile("testbed/resources/resource_edit_window.tb.txt");
+  LoadFile("resource_edit_window.tb.txt");
 
   m_scroll_container =
       GetElementById<ScrollContainer>(TBIDC("scroll_container"));

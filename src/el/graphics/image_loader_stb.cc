@@ -52,6 +52,9 @@ std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
     const std::string& filename) {
   // Load directly from file.
   auto buffer = io::FileManager::ReadContents(filename);
+  if (!buffer) {
+    return nullptr;
+  }
 
   int w, h, comp;
   auto img_data = stbi_load_from_memory(buffer->data(), int(buffer->size()), &w,

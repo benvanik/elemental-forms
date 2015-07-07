@@ -57,11 +57,8 @@ Skin::Skin() {
   m_frag_manager.set_has_border(true);
 }
 
-bool Skin::Load(const char* skin_file, const char* override_skin_file) {
+bool Skin::Load(const char* skin_file) {
   if (!LoadInternal(skin_file)) {
-    return false;
-  }
-  if (override_skin_file && !LoadInternal(override_skin_file)) {
     return false;
   }
   return ReloadBitmaps();

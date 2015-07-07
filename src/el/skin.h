@@ -354,13 +354,13 @@ class Skin : private graphics::RendererListener {
   void set_listener(SkinListener* listener) { m_listener = listener; }
 
   // Loads the skin file and the bitmaps it refers to.
-  // If override_skin_file is specified, it will also be loaded into this skin
-  // after loading skin_file. Elements using the same name will override any
-  // previosly read data for the same element.
+  // This can be called multiple times to append the skin settings. Elements
+  // using the same name will override any previosly read data for the same
+  // element.
   // Known limitation: Clone can currently only clone elements in the same file!
   // Returns true on success, and all bitmaps referred to also loaded
   // successfully.
-  bool Load(const char* skin_file, const char* override_skin_file = nullptr);
+  bool Load(const char* skin_file);
 
   // Unloads all bitmaps used in this skin.
   void UnloadBitmaps();

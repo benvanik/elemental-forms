@@ -218,7 +218,9 @@ int app_main() {
   CodeTextBox::RegisterInflater();
 
   el::io::FileManager::RegisterFileSystem(
-      std::make_unique<el::io::PosixFileSystem>("."));
+      std::make_unique<el::io::PosixFileSystem>("./resources"));
+  el::io::FileManager::RegisterFileSystem(
+      std::make_unique<el::io::PosixFileSystem>("./testbed/resources"));
   auto embedded_file_system = std::make_unique<el::io::EmbeddedFileSystem>();
   std::string language_file(
       "cut Cut\n"
@@ -237,16 +239,16 @@ int app_main() {
       "save Save\n"
       "close Close\n"
       "search Search\n");
-  embedded_file_system->AddFile("resources/language/lng_en.tb.txt",
+  embedded_file_system->AddFile("default_language/language_en.tb.txt",
                                 language_file.data(), language_file.size());
   el::io::FileManager::RegisterFileSystem(std::move(embedded_file_system));
 
-  util::StringTable::get()->Load("resources/language/lng_en.tb.txt");
+  util::StringTable::get()->Load("default_language/language_en.tb.txt");
 
   // Load the default skin, and override skin that contains the graphics
   // specific to the demo.
-  Skin::get()->Load("resources/default_skin/skin.tb.txt",
-                    "testbed/resources/skin/skin.tb.txt");
+  Skin::get()->Load("default_skin/skin.tb.txt");
+  Skin::get()->Load("skin/skin.tb.txt");
 
 // Register font renderers.
 #ifdef EL_FONT_RENDERER_TBBF
@@ -265,23 +267,19 @@ int app_main() {
 
 // Add fonts we can use to the font manager.
 #if defined(EL_FONT_RENDERER_STB) || defined(EL_FONT_RENDERER_FREETYPE)
-  font_manager->AddFontInfo("resources/fonts/vera.ttf", "Vera");
-  font_manager->AddFontInfo("resources/fonts/vera-mono.ttf", "Vera Mono");
-  font_manager->AddFontInfo("resources/fonts/vera-mono-bold.ttf",
-                            "Vera Mono Bold");
-  font_manager->AddFontInfo("resources/fonts/vera-mono-bold-italic.ttf",
+  font_manager->AddFontInfo("fonts/vera.ttf", "Vera");
+  font_manager->AddFontInfo("fonts/vera-mono.ttf", "Vera Mono");
+  font_manager->AddFontInfo("fonts/vera-mono-bold.ttf", "Vera Mono Bold");
+  font_manager->AddFontInfo("fonts/vera-mono-bold-italic.ttf",
                             "Vera Mono Bold Italic");
-  font_manager->AddFontInfo("resources/fonts/vera-mono-italic.ttf",
-                            "Vera Mono Italic");
-  font_manager->AddFontInfo("resources/fonts/ProggyClean.ttf", "ProggyClean");
+  font_manager->AddFontInfo("fonts/vera-mono-italic.ttf", "Vera Mono Italic");
+  font_manager->AddFontInfo("fonts/ProggyClean.ttf", "ProggyClean");
 #endif
 #ifdef EL_FONT_RENDERER_TBBF
-  font_manager->AddFontInfo(
-      "resources/default_font/segoe_white_with_shadow.tb.txt", "Segoe");
-  font_manager->AddFontInfo("testbed/resources/fonts/neon.tb.txt", "Neon");
-  font_manager->AddFontInfo("testbed/resources/fonts/orangutang.tb.txt",
-                            "Orangutang");
-  font_manager->AddFontInfo("testbed/resources/fonts/orange.tb.txt", "Orange");
+  font_manager->AddFontInfo("fonts/segoe_white_with_shadow.tb.txt", "Segoe");
+  font_manager->AddFontInfo("fonts/neon.tb.txt", "Neon");
+  font_manager->AddFontInfo("fonts/orangutang.tb.txt", "Orangutang");
+  font_manager->AddFontInfo("fonts/orange.tb.txt", "Orange");
 #endif
 
   // Set the default font description for elements to one of the fonts we just
@@ -402,9 +400,7 @@ bool DemoWindow::OnEvent(const Event& ev) {
 
 // == EditWindow ==============================================================
 
-EditWindow::EditWindow() {
-  LoadResourceFile("testbed/resources/test_textwindow.tb.txt");
-}
+EditWindow::EditWindow() { LoadResourceFile("test_textwindow.tb.txt"); }
 
 void EditWindow::OnProcessStates() {
   // Update the disabled state of undo/redo buttons, and caret info.
@@ -544,7 +540,7 @@ bool LayoutWindow::OnEvent(const Event& ev) {
 // ============================================================
 
 TabContainerWindow::TabContainerWindow() {
-  LoadResourceFile("testbed/resources/test_tabcontainer01.tb.txt");
+  LoadResourceFile("test_tabcontainer01.tb.txt");
 }
 
 bool TabContainerWindow::OnEvent(const Event& ev) {
@@ -583,7 +579,7 @@ bool TabContainerWindow::OnEvent(const Event& ev) {
 // == ConnectionWindow =========================================================
 
 ConnectionWindow::ConnectionWindow() {
-  LoadResourceFile("testbed/resources/test_connections.tb.txt");
+  LoadResourceFile("test_connections.tb.txt");
 }
 
 bool ConnectionWindow::OnEvent(const Event& ev) {
@@ -604,7 +600,7 @@ bool ConnectionWindow::OnEvent(const Event& ev) {
 // == ScrollContainerWindow ===================================================
 
 ScrollContainerWindow::ScrollContainerWindow() {
-  LoadResourceFile("testbed/resources/test_scrollcontainer.tb.txt");
+  LoadResourceFile("test_scrollcontainer.tb.txt");
 
   if (DropDownButton* select =
           GetElementById<DropDownButton>(TBIDC("name dropdown")))
@@ -673,9 +669,7 @@ void ScrollContainerWindow::OnMessageReceived(Message* msg) {
 
 // == ImageWindow =============================================================
 
-ImageWindow::ImageWindow() {
-  LoadResourceFile("testbed/resources/test_image_widget.tb.txt");
-}
+ImageWindow::ImageWindow() { LoadResourceFile("test_image_widget.tb.txt"); }
 
 bool ImageWindow::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->id() == TBIDC("remove")) {
@@ -690,7 +684,7 @@ bool ImageWindow::OnEvent(const Event& ev) {
 // == PageWindow =============================================================
 
 PageWindow::PageWindow() {
-  LoadResourceFile("testbed/resources/test_scroller_snap.tb.txt");
+  LoadResourceFile("test_scroller_snap.tb.txt");
 
   // Listen to the pagers scroller
   if (auto pager = GetElementById<Element>(TBIDC("page-scroller")))
@@ -709,7 +703,7 @@ void PageWindow::OnScrollSnap(Element* target_element, int& target_x,
 // == AnimationsWindow ========================================================
 
 AnimationsWindow::AnimationsWindow() {
-  LoadResourceFile("testbed/resources/test_animations.tb.txt");
+  LoadResourceFile("test_animations.tb.txt");
   Animate();
 }
 
@@ -752,7 +746,7 @@ bool AnimationsWindow::OnEvent(const Event& ev) {
 // == MainWindow ==============================================================
 
 MainWindow::MainWindow() {
-  LoadResourceFile("testbed/resources/test_ui.tb.txt");
+  LoadResourceFile("test_ui.tb.txt");
 
   set_opacity(0.97f);
 }
@@ -846,7 +840,7 @@ bool MainWindow::OnEvent(const Event& ev) {
                     "Does everything look fine?");
       return true;
     } else if (ev.target->id() == TBIDC("test-layout")) {
-      std::string resource_file("testbed/resources/");
+      std::string resource_file("");
       resource_file.append(ev.target->data.as_string());
       new LayoutWindow(resource_file);
       return true;
@@ -869,14 +863,12 @@ bool MainWindow::OnEvent(const Event& ev) {
       new ScrollContainerWindow();
       return true;
     } else if (ev.target->id() == TBIDC("test-skin-conditions")) {
-      (new DemoWindow())
-          ->LoadResourceFile("testbed/resources/test_skin_conditions01.tb.txt");
-      (new DemoWindow())
-          ->LoadResourceFile("testbed/resources/test_skin_conditions02.tb.txt");
+      (new DemoWindow())->LoadResourceFile("test_skin_conditions01.tb.txt");
+      (new DemoWindow())->LoadResourceFile("test_skin_conditions02.tb.txt");
       return true;
     } else if (ev.target->id() == TBIDC("test-resource-edit")) {
       ResourceEditWindow* res_edit_win = new ResourceEditWindow();
-      res_edit_win->Load("testbed/resources/resource_edit_test.tb.txt");
+      res_edit_win->Load("resource_edit_test.tb.txt");
       parent()->AddChild(res_edit_win);
       return true;
     } else if (ev.type == EventType::kClick &&
