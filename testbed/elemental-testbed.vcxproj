@@ -69,7 +69,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_GLFW_USE_OPENGL;_GLFW_WGL;GLFW_EXPOSE_NATIVE_WIN32;GLFW_EXPOSE_NATIVE_WGL;_GLFW_WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/tb/;../src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/;.;$(ProjectDir)..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -82,7 +82,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_GLFW_USE_OPENGL;_GLFW_WGL;GLFW_EXPOSE_NATIVE_WIN32;GLFW_EXPOSE_NATIVE_WGL;_GLFW_WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/tb/;../src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/;.;$(ProjectDir)..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -95,7 +95,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <PreprocessorDefinitions>_GLFW_USE_OPENGL;_GLFW_WGL;GLFW_EXPOSE_NATIVE_WIN32;GLFW_EXPOSE_NATIVE_WGL;_GLFW_WIN32;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/tb/;../src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);../third_party/glfw/include/;third_party/glfw/lib/win32;..third_party/glfw/lib/;../Demo/;../src/;.;$(ProjectDir)..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -146,7 +146,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     StringBuilder buf;
     buf.AppendString(to_string(ev.type));
     buf.AppendString(" (");
-    buf.AppendString(element->GetClassName());
+    buf.AppendString(element->GetTypeName());
     buf.AppendString(")");
 
     buf.AppendString(" id: ");

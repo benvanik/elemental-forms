@@ -106,7 +106,7 @@ void DesignerWindow::RefreshContent() {
     return;
   }
   auto bind_element = bind_element_.get();
-  set_text_format("Designer: %s", bind_element_.get()->GetClassName());
+  set_text_format("Designer: %s", bind_element_.get()->GetTypeName());
 
   // Load content views.
   auto source_text = source_text_box_->text();

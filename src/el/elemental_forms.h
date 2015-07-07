@@ -11,6 +11,8 @@
 #define EL_ELEMENTAL_FORMS_H_
 
 #include "el/config.h"
+#include "el/elements.h"
+#include "el/util/string.h"
 
 namespace el {
 namespace graphics {
@@ -19,6 +21,8 @@ class Renderer;
 }  // namespace el
 
 namespace el {
+
+using el::util::format_string;
 
 // Initializes Elemental Forms. Call this before using any elemental API.
 bool Initialize(graphics::Renderer* renderer, const char* language_file);

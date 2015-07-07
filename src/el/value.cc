@@ -285,7 +285,7 @@ const char* Value::as_string() {
     sprintf(tmp, "%f", value_.float_number);
     set_string(tmp, Set::kNewCopy);
   } else if (type() == Type::kObject) {
-    return value_.object ? value_.object->GetClassName() : "";
+    return value_.object ? value_.object->GetTypeName() : "";
   }
   return type() == Type::kString ? value_.string : "";
 }
@@ -301,7 +301,7 @@ std::string Value::to_string() const {
     case Type::kInt:
       return std::to_string(value_.integer_number);
     case Type::kObject:
-      return value_.object ? value_.object->GetClassName() : "";
+      return value_.object ? value_.object->GetTypeName() : "";
     case Type::kArray: {
       std::string result;
       for (size_t i = 0; i < value_.value_array->size(); ++i) {

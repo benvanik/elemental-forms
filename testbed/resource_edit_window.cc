@@ -108,7 +108,7 @@ void ResourceEditWindow::AddElementListItemsRecursive(Element* element,
   if (depth > 0)  // Ignore the root
   {
     // Add a new ResourceItem for this element
-    const char* classname = element->GetClassName();
+    const char* classname = element->GetTypeName();
     if (!*classname) {
       classname = "<Unknown element type>";
     }
