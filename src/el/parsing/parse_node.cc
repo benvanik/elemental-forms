@@ -18,7 +18,6 @@
 #include "el/parsing/text_parser.h"
 #include "el/parsing/text_parser_stream.h"
 #include "el/util/debug.h"
-#include "el/util/file.h"
 #include "el/util/string.h"
 #include "el/util/string_builder.h"
 #include "el/util/string_table.h"

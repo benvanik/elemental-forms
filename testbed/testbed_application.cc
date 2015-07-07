@@ -18,6 +18,9 @@
 #include "el/element_animation_manager.h"
 #include "el/elemental_forms.h"
 #include "el/elements.h"
+#include "el/io/embedded_file_system.h"
+#include "el/io/file_manager.h"
+#include "el/io/posix_file_system.h"
 #include "el/parsing/parse_node.h"
 #include "el/text/font_manager.h"
 #include "el/text/font_renderer.h"
@@ -213,6 +216,30 @@ int app_main() {
 
   el::Initialize(application_backend->GetRenderer());
   CodeTextBox::RegisterInflater();
+
+  el::io::FileManager::RegisterFileSystem(
+      std::make_unique<el::io::PosixFileSystem>("."));
+  auto embedded_file_system = std::make_unique<el::io::EmbeddedFileSystem>();
+  std::string language_file(
+      "cut Cut\n"
+      "copy Copy\n"
+      "paste Paste\n"
+      "delete Delete\n"
+      "selectall Select all\n"
+      "undo Undo\n"
+      "redo Redo\n"
+      "MessageWindow.ok Ok\n"
+      "MessageWindow.cancel Cancel\n"
+      "MessageWindow.yes Yes\n"
+      "MessageWindow.no No\n"
+      "ListBox.header Showing %d of %d\n"
+      "new New\n"
+      "save Save\n"
+      "close Close\n"
+      "search Search\n");
+  embedded_file_system->AddFile("resources/language/lng_en.tb.txt",
+                                language_file.data(), language_file.size());
+  el::io::FileManager::RegisterFileSystem(std::move(embedded_file_system));
 
   util::StringTable::get()->Load("resources/language/lng_en.tb.txt");
 

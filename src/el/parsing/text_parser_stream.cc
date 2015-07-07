@@ -7,15 +7,15 @@
  ******************************************************************************
  */
 
+#include "el/io/file_manager.h"
 #include "el/parsing/text_parser_stream.h"
-#include "el/util/file.h"
 
 namespace el {
 namespace parsing {
 
 bool FileTextParserStream::Read(const std::string& filename,
                                 TextParserTarget* target) {
-  file_ = util::File::Open(filename, util::File::Mode::kRead);
+  file_ = io::FileManager::OpenRead(filename);
   if (!file_) {
     return false;
   }
@@ -25,7 +25,7 @@ bool FileTextParserStream::Read(const std::string& filename,
 }
 
 size_t FileTextParserStream::GetMoreData(char* buf, size_t buf_len) {
-  return file_->Read(buf, 1, buf_len);
+  return file_->Read(buf, buf_len);
 }
 
 bool DataTextParserStream::Read(const char* data, size_t data_length,
@@ -39,7 +39,7 @@ bool DataTextParserStream::Read(const char* data, size_t data_length,
 }
 size_t DataTextParserStream::GetMoreData(char* buf, size_t buf_len) {
   size_t consume = std::min(buf_len, m_data_len);
-  memcpy(buf, m_data, consume);
+  std::memcpy(buf, m_data, consume);
   m_data += consume;
   m_data_len -= consume;
   return consume;

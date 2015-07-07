@@ -11,7 +11,6 @@
 #include "el/text/font_face.h"
 #include "el/text/font_manager.h"
 #include "el/text/font_renderer.h"
-#include "el/util/file.h"
 
 #ifdef EL_FONT_RENDERER_STB
 

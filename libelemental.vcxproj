@@ -68,6 +68,10 @@
     <ClInclude Include="src\el\graphics\image_manager.h" />
     <ClInclude Include="src\el\graphics\renderer.h" />
     <ClInclude Include="src\el\id.h" />
+    <ClInclude Include="src\el\io\embedded_file_system.h" />
+    <ClInclude Include="src\el\io\file_system.h" />
+    <ClInclude Include="src\el\io\file_manager.h" />
+    <ClInclude Include="src\el\io\posix_file_system.h" />
     <ClInclude Include="src\el\list_item.h" />
     <ClInclude Include="src\el\message.h" />
     <ClInclude Include="src\el\message_handler.h" />
@@ -96,7 +100,6 @@
     <ClInclude Include="src\el\util\clipboard.h" />
     <ClInclude Include="src\el\util\debug.h" />
     <ClInclude Include="src\el\util\dimension_converter.h" />
-    <ClInclude Include="src\el\util\file.h" />
     <ClInclude Include="src\el\util\hash.h" />
     <ClInclude Include="src\el\util\intrusive_list.h" />
     <ClInclude Include="src\el\util\math.h" />
@@ -164,6 +167,9 @@
     <ClCompile Include="src\el\graphics\image_manager.cc" />
     <ClCompile Include="src\el\graphics\renderer.cc" />
     <ClCompile Include="src\el\id.cc" />
+    <ClCompile Include="src\el\io\embedded_file_system.cc" />
+    <ClCompile Include="src\el\io\file_manager.cc" />
+    <ClCompile Include="src\el\io\posix_file_system.cc" />
     <ClCompile Include="src\el\list_item.cc" />
     <ClCompile Include="src\el\message_handler.cc" />
     <ClCompile Include="src\el\parsing\element_factory.cc" />
@@ -206,7 +212,6 @@
     <ClCompile Include="src\el\util\debug_posix.cc" />
     <ClCompile Include="src\el\util\debug_win.cc" />
     <ClCompile Include="src\el\util\dimension_converter.cc" />
-    <ClCompile Include="src\el\util\file_posix.cc" />
     <ClCompile Include="src\el\util\intrusive_list.cc" />
     <ClCompile Include="src\el\util\metrics_linux.cc">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

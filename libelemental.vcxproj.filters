@@ -85,9 +85,6 @@
     <ClInclude Include="src\el\util\dimension_converter.h">
       <Filter>src\el\util</Filter>
     </ClInclude>
-    <ClInclude Include="src\el\util\file.h">
-      <Filter>src\el\util</Filter>
-    </ClInclude>
     <ClInclude Include="src\el\util\hash.h">
       <Filter>src\el\util</Filter>
     </ClInclude>
@@ -292,6 +289,18 @@
     <ClInclude Include="src\el\elemental_forms.h">
       <Filter>src\el</Filter>
     </ClInclude>
+    <ClInclude Include="src\el\io\file_manager.h">
+      <Filter>src\el\io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\io\posix_file_system.h">
+      <Filter>src\el\io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\io\file_system.h">
+      <Filter>src\el\io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\io\embedded_file_system.h">
+      <Filter>src\el\io</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -338,6 +347,9 @@
     </Filter>
     <Filter Include="docs">
       <UniqueIdentifier>{359ef005-5775-41a3-8965-5f7aeaa23b45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\el\io">
+      <UniqueIdentifier>{5f31d8b4-0e4c-4b1f-b228-9a965c9d2f80}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -408,9 +420,6 @@
       <Filter>src\el\util</Filter>
     </ClCompile>
     <ClCompile Include="src\el\util\dimension_converter.cc">
-      <Filter>src\el\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\el\util\file_posix.cc">
       <Filter>src\el\util</Filter>
     </ClCompile>
     <ClCompile Include="src\el\util\intrusive_list.cc">
@@ -649,6 +658,15 @@
     </ClCompile>
     <ClCompile Include="src\el\elemental_forms.cc">
       <Filter>src\el</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\io\file_manager.cc">
+      <Filter>src\el\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\io\posix_file_system.cc">
+      <Filter>src\el\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\io\embedded_file_system.cc">
+      <Filter>src\el\io</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

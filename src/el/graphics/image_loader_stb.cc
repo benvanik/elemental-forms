@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "el/graphics/image_loader.h"
-#include "el/util/file.h"
+#include "el/io/file_manager.h"
 
 namespace el {
 namespace graphics {
@@ -51,17 +51,11 @@ class StbiImageLoader : public ImageLoader {
 std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
     const std::string& filename) {
   // Load directly from file.
-  auto file = util::File::Open(filename, util::File::Mode::kRead);
-  if (!file) {
-    return nullptr;
-  }
-  size_t size = file->Size();
-  std::vector<uint8_t> buffer(size);
-  size = file->Read(buffer.data(), 1, size);
+  auto buffer = io::FileManager::ReadContents(filename);
 
   int w, h, comp;
-  auto img_data =
-      stbi_load_from_memory(buffer.data(), int(size), &w, &h, &comp, 4);
+  auto img_data = stbi_load_from_memory(buffer->data(), int(buffer->size()), &w,
+                                        &h, &comp, 4);
   if (!img_data) {
     return nullptr;
   }

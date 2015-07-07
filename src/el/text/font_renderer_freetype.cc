@@ -9,7 +9,6 @@
 
 #include "el/graphics/renderer.h"
 #include "el/text/font_renderer.h"
-#include "el/util/file.h"
 
 #ifdef EL_FONT_RENDERER_FREETYPE
 

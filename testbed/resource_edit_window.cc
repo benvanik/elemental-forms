@@ -10,7 +10,7 @@
 #include <cstdio>
 
 #include "el/elements.h"
-#include "el/util/file.h"
+#include "el/io/file_manager.h"
 #include "el/util/string.h"
 #include "el/util/string_builder.h"
 #include "testbed/resource_edit_window.h"
@@ -63,14 +63,14 @@ void ResourceEditWindow::Load(const char* resource_file) {
   // Set the text of the source view.
   m_source_text_box->set_text("");
 
-  auto file = util::File::Open(m_resource_filename, util::File::Mode::kRead);
-  if (file) {
-    util::StringBuilder buffer(file->Size());
-    size_t size_read = file->Read(buffer.data(), 1, buffer.capacity());
-    m_source_text_box->set_text(buffer.c_str(), size_read);
+  auto file_contents = el::io::FileManager::ReadContents(m_resource_filename);
+  if (file_contents) {
+    m_source_text_box->set_text(
+        reinterpret_cast<const char*>(file_contents->data()),
+        file_contents->size());
   } else {
     // Error, show message.
-    MessageWindow* msg_win = new MessageWindow(parent_root(), TBIDC(""));
+    auto msg_win = new MessageWindow(parent_root(), TBIDC(""));
     msg_win->Show(
         "Error loading resource",
         el::util::format_string("Could not load file %s", resource_file));

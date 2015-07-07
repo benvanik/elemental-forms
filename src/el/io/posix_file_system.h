@@ -7,36 +7,28 @@
  ******************************************************************************
  */
 
-#ifndef EL_UTIL_FILE_H_
-#define EL_UTIL_FILE_H_
+#ifndef EL_IO_POSIX_FILE_SYSTEM_H_
+#define EL_IO_POSIX_FILE_SYSTEM_H_
 
 #include <memory>
 #include <string>
 
-#include "el/config.h"
+#include "el/io/file_system.h"
 
 namespace el {
-namespace util {
+namespace io {
 
-// Porting interface for file access.
-class File {
+class PosixFileSystem : public FileSystem {
  public:
-  enum class Mode {
-    kRead,
-  };
+  PosixFileSystem(std::string root_path);
 
-  virtual ~File() = default;
+  std::unique_ptr<File> OpenRead(std::string filename) override;
 
-  static std::unique_ptr<File> Open(const std::string& filename, Mode mode);
-
-  virtual size_t Size() = 0;
-  virtual size_t Read(void* buf, size_t elemSize, size_t count) = 0;
-
- protected:
-  File() = default;
+ private:
+  std::string root_path_;
 };
 
-}  // namespace util
+}  // namespace io
 }  // namespace el
 
-#endif  // EL_UTIL_FILE_H_
+#endif  // EL_IO_POSIX_FILE_SYSTEM_H_

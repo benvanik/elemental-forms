@@ -11,7 +11,6 @@
 #include "el/text/text_view.h"
 #include "el/text/utf8.h"
 #include "el/util/clipboard.h"
-#include "el/util/file.h"
 #include "el/util/rect_region.h"
 #include "el/util/string.h"
 #include "el/util/string_builder.h"
@@ -577,19 +576,6 @@ void TextView::set_text(const char* text, size_t text_len, CaretPosition pos) {
   }
 
   listener->OnChange();
-}
-
-bool TextView::Load(const char* filename) {
-  auto file = util::File::Open(filename, util::File::Mode::kRead);
-  if (!file) {
-    return false;
-  }
-  size_t num_bytes = file->Size();
-  std::vector<char> str(num_bytes + 1);
-  num_bytes = file->Read(str.data(), 1, num_bytes);
-  str[num_bytes] = 0;
-  set_text(str.data());
-  return true;
 }
 
 std::string TextView::text() {

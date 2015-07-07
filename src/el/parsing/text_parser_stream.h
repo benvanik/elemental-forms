@@ -11,15 +11,11 @@
 #define EL_PARSING_TEXT_PARSER_STREAM_H_
 
 #include <algorithm>
+#include <memory>
 #include <string>
 
+#include "el/io/file_system.h"
 #include "el/parsing/text_parser.h"
-
-namespace el {
-namespace util {
-class File;
-}  // namespace util
-}  // namespace el
 
 namespace el {
 namespace parsing {
@@ -38,7 +34,7 @@ class FileTextParserStream : public TextParserStream {
   size_t GetMoreData(char* buf, size_t buf_len) override;
 
  private:
-  std::unique_ptr<util::File> file_;
+  std::unique_ptr<io::File> file_;
 };
 
 class DataTextParserStream : public TextParserStream {
