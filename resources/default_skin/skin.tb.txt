@@ -101,7 +101,7 @@ elements
 	GroupBox.layout
 		spacing -1px
 	GroupBox.container
-		bitmap TBSectionContainer.png
+		bitmap section_container.png
 		type stretch border
 		cut 11
 		expand 6

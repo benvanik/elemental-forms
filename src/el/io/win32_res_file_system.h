@@ -7,32 +7,28 @@
  ******************************************************************************
  */
 
-#ifndef EL_IO_EMBEDDED_FILE_SYSTEM_H_
-#define EL_IO_EMBEDDED_FILE_SYSTEM_H_
+#ifndef EL_IO_WIN32_RES_FILE_SYSTEM_H_
+#define EL_IO_WIN32_RES_FILE_SYSTEM_H_
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 #include "el/io/file_system.h"
 
 namespace el {
 namespace io {
 
-class EmbeddedFileSystem : public FileSystem {
+class Win32ResFileSystem : public FileSystem {
  public:
-  EmbeddedFileSystem();
-
-  void AddFile(std::string filename, const void* data, size_t length);
+  Win32ResFileSystem(std::string prefix);
 
   std::unique_ptr<File> OpenRead(std::string filename) override;
 
  private:
-  std::unordered_map<std::string, std::pair<const uint8_t*, size_t>>
-      file_entries_;
+  std::string prefix_;
 };
 
 }  // namespace io
 }  // namespace el
 
-#endif  // EL_IO_EMBEDDED_FILE_SYSTEM_H_
+#endif  // EL_IO_WIN32_RES_FILE_SYSTEM_H_

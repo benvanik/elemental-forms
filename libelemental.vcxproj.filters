@@ -298,7 +298,10 @@
     <ClInclude Include="src\el\io\file_system.h">
       <Filter>src\el\io</Filter>
     </ClInclude>
-    <ClInclude Include="src\el\io\embedded_file_system.h">
+    <ClInclude Include="src\el\io\memory_file_system.h">
+      <Filter>src\el\io</Filter>
+    </ClInclude>
+    <ClInclude Include="src\el\io\win32_res_file_system.h">
       <Filter>src\el\io</Filter>
     </ClInclude>
   </ItemGroup>
@@ -308,9 +311,6 @@
     </Filter>
     <Filter Include="src\el">
       <UniqueIdentifier>{27a10b56-321a-4bfc-8c4b-9c53d385744d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resources">
-      <UniqueIdentifier>{96cc6df4-c6c7-40f0-95cc-9308164eebcd}</UniqueIdentifier>
     </Filter>
     <Filter Include="third_party">
       <UniqueIdentifier>{ff3900aa-ce03-4b52-a448-2b7e74367ebc}</UniqueIdentifier>
@@ -665,7 +665,10 @@
     <ClCompile Include="src\el\io\posix_file_system.cc">
       <Filter>src\el\io</Filter>
     </ClCompile>
-    <ClCompile Include="src\el\io\embedded_file_system.cc">
+    <ClCompile Include="src\el\io\memory_file_system.cc">
+      <Filter>src\el\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\io\win32_res_file_system.cc">
       <Filter>src\el\io</Filter>
     </ClCompile>
   </ItemGroup>
@@ -698,5 +701,8 @@
     <None Include="docs\integration.md">
       <Filter>docs</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
 </Project>

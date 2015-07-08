@@ -92,11 +92,13 @@
     <Filter Include="testbed\platform">
       <UniqueIdentifier>{fba48d9e-7b52-4963-8e73-ee575661a7b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="testbed\resources">
-      <UniqueIdentifier>{b9f218aa-02c3-4933-b544-bbe6ec06de12}</UniqueIdentifier>
-    </Filter>
     <Filter Include="testbed\scratch">
       <UniqueIdentifier>{d2c9cf31-544f-47f5-8cc2-bef96809ada1}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc">
+      <Filter>testbed</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

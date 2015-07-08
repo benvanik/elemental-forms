@@ -68,10 +68,11 @@
     <ClInclude Include="src\el\graphics\image_manager.h" />
     <ClInclude Include="src\el\graphics\renderer.h" />
     <ClInclude Include="src\el\id.h" />
-    <ClInclude Include="src\el\io\embedded_file_system.h" />
+    <ClInclude Include="src\el\io\memory_file_system.h" />
     <ClInclude Include="src\el\io\file_system.h" />
     <ClInclude Include="src\el\io\file_manager.h" />
     <ClInclude Include="src\el\io\posix_file_system.h" />
+    <ClInclude Include="src\el\io\win32_res_file_system.h" />
     <ClInclude Include="src\el\list_item.h" />
     <ClInclude Include="src\el\message.h" />
     <ClInclude Include="src\el\message_handler.h" />
@@ -167,9 +168,10 @@
     <ClCompile Include="src\el\graphics\image_manager.cc" />
     <ClCompile Include="src\el\graphics\renderer.cc" />
     <ClCompile Include="src\el\id.cc" />
-    <ClCompile Include="src\el\io\embedded_file_system.cc" />
+    <ClCompile Include="src\el\io\memory_file_system.cc" />
     <ClCompile Include="src\el\io\file_manager.cc" />
     <ClCompile Include="src\el\io\posix_file_system.cc" />
+    <ClCompile Include="src\el\io\win32_res_file_system.cc" />
     <ClCompile Include="src\el\list_item.cc" />
     <ClCompile Include="src\el\message_handler.cc" />
     <ClCompile Include="src\el\parsing\element_factory.cc" />
@@ -240,6 +242,9 @@
     <None Include="docs\integration.md" />
     <None Include="LICENSE" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resources.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{156102D7-F2DD-4618-B2EB-2DFE607EE6DD}</ProjectGuid>

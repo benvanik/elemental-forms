@@ -9,15 +9,15 @@
 
 #include <algorithm>
 
-#include "el/io/embedded_file_system.h"
+#include "el/io/memory_file_system.h"
 
 namespace el {
 namespace io {
 
 namespace {
-class EmbeddedFile : public File {
+class MemoryFile : public File {
  public:
-  EmbeddedFile(std::string filename, const uint8_t* data, size_t length)
+  MemoryFile(std::string filename, const uint8_t* data, size_t length)
       : filename_(filename), data_(data), length_(length) {}
 
   size_t size() const override { return length_; }
@@ -40,19 +40,19 @@ class EmbeddedFile : public File {
 };
 }  // namespace
 
-EmbeddedFileSystem::EmbeddedFileSystem() = default;
+MemoryFileSystem::MemoryFileSystem() = default;
 
-void EmbeddedFileSystem::AddFile(std::string filename, const void* data,
+void MemoryFileSystem::AddFile(std::string filename, const void* data,
                                  size_t length) {
   file_entries_[filename] = {reinterpret_cast<const uint8_t*>(data), length};
 }
 
-std::unique_ptr<File> EmbeddedFileSystem::OpenRead(std::string filename) {
+std::unique_ptr<File> MemoryFileSystem::OpenRead(std::string filename) {
   auto it = file_entries_.find(filename);
   if (it == file_entries_.end()) {
     return nullptr;
   }
-  return std::make_unique<EmbeddedFile>(it->first, it->second.first,
+  return std::make_unique<MemoryFile>(it->first, it->second.first,
                                         it->second.second);
 }
 
