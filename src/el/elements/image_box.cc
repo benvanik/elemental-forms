@@ -27,14 +27,24 @@ void ImageBox::OnInflate(const parsing::InflateInfo& info) {
 
 PreferredSize ImageBox::OnCalculatePreferredContentSize(
     const SizeConstraints& constraints) {
-  return PreferredSize(m_image.width(), m_image.height());
+  if (bitmap_) {
+    return PreferredSize(bitmap_->width(), bitmap_->height());
+  } else {
+    return PreferredSize(image_.width(), image_.height());
+  }
 }
 
 void ImageBox::OnPaint(const PaintProps& paint_props) {
-  if (auto fragment = m_image.bitmap()) {
+  if (bitmap_) {
     graphics::Renderer::get()->DrawBitmap(
-        padding_rect(), Rect(0, 0, m_image.width(), m_image.height()),
-        fragment);
+        padding_rect(), Rect(0, 0, bitmap_->width(), bitmap_->height()),
+        bitmap_);
+  } else {
+    if (auto fragment = image_.bitmap()) {
+      graphics::Renderer::get()->DrawBitmap(
+          padding_rect(), Rect(0, 0, image_.width(), image_.height()),
+          fragment);
+    }
   }
 }
 

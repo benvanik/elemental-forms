@@ -26,9 +26,16 @@ class ImageBox : public Element {
 
   ImageBox() = default;
 
-  void set_image(const graphics::Image& image) { m_image = image; }
+  void set_image(graphics::Bitmap* bitmap) {
+    bitmap_ = bitmap;
+    image_ = graphics::Image();
+  }
+  void set_image(const graphics::Image& image) {
+    bitmap_ = nullptr;
+    image_ = image;
+  }
   void set_image(const char* filename) {
-    m_image = graphics::ImageManager::get()->GetImage(filename);
+    set_image(graphics::ImageManager::get()->GetImage(filename));
   }
 
   PreferredSize OnCalculatePreferredContentSize(
@@ -38,7 +45,8 @@ class ImageBox : public Element {
   void OnPaint(const PaintProps& paint_props) override;
 
  private:
-  graphics::Image m_image;
+  graphics::Bitmap* bitmap_ = nullptr;
+  graphics::Image image_;
 };
 
 }  // namespace elements
