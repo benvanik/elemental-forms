@@ -21,6 +21,7 @@ LayoutBox: axis: y, distribution-position: "left top", distribution: "available"
 				id: "test-layout"
 				data: "test_toggle_containers.tb.txt"
 			Button: skin: "Button.flat", text: "Close with dim & alert", id: "Window.close"
+			Button: skin: "Button.flat", text: "Fullscreen Window", id: "test-fullscreen-window"
 			Button: skin: "Button.flat", text: "ResourceEditWindow", id: "test-resource-edit"
 
 	GroupBox: value: 0, text: "Layout tests"

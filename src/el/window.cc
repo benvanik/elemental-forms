@@ -168,6 +168,14 @@ void Window::set_settings(WindowSettings settings) {
     title_close_button_.RemoveFromParent();
   }
 
+  if (any(settings & WindowSettings::kFullScreen)) {
+    set_background_skin(TBIDC("Window.fullscreen"));
+    set_rect(parent()->rect());
+    set_gravity(Gravity::kAll);
+  } else {
+    set_background_skin(TBIDC("Window"));
+  }
+
   // FIX: invalidate layout / resize window!
   Invalidate();
 }

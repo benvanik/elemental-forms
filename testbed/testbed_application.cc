@@ -218,7 +218,7 @@ int app_main() {
   el::Initialize(application_backend->GetRenderer());
   CodeTextBox::RegisterInflater();
 
-  //el::io::FileManager::RegisterFileSystem(
+  // el::io::FileManager::RegisterFileSystem(
   //    std::make_unique<el::io::PosixFileSystem>("./resources"));
   el::io::FileManager::RegisterFileSystem(
       std::make_unique<el::io::PosixFileSystem>("./testbed/resources"));
@@ -727,6 +727,13 @@ bool AnimationsWindow::OnEvent(const Event& ev) {
   return DemoWindow::OnEvent(ev);
 }
 
+class FullScreenWindow : public DemoWindow {
+ public:
+  FullScreenWindow() : DemoWindow() {
+    set_settings(WindowSettings::kFullScreen);
+  }
+};
+
 // == MainWindow ==============================================================
 
 MainWindow::MainWindow() {
@@ -849,6 +856,9 @@ bool MainWindow::OnEvent(const Event& ev) {
     } else if (ev.target->id() == TBIDC("test-skin-conditions")) {
       (new DemoWindow())->LoadResourceFile("test_skin_conditions01.tb.txt");
       (new DemoWindow())->LoadResourceFile("test_skin_conditions02.tb.txt");
+      return true;
+    } else if (ev.target->id() == TBIDC("test-fullscreen-window")) {
+      new FullScreenWindow();
       return true;
     } else if (ev.target->id() == TBIDC("test-resource-edit")) {
       ResourceEditWindow* res_edit_win = new ResourceEditWindow();

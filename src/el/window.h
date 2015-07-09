@@ -19,12 +19,13 @@
 namespace el {
 
 enum class WindowSettings {
-  kNone = 0,           // Chrome less window without any other settings.
-  kTitleBar = 1,       // Show a title bar that can also move the window.
-  kResizable = 2,      // Show an element for resizing the window.
-  kCloseButton = 4,    // Show an element for closing the window.
-  kCanActivate = 8,    // Can be activated and deactivate other windows.
-  kDesignButton = 16,  // Show an element for opening a designer for the window.
+  kNone = 0,               // Chrome less window without any other settings.
+  kTitleBar = 1 << 0,      // Show a title bar that can also move the window.
+  kResizable = 1 << 1,     // Show an element for resizing the window.
+  kCloseButton = 1 << 2,   // Show an element for closing the window.
+  kCanActivate = 1 << 3,   // Can be activated and deactivate other windows.
+  kDesignButton = 1 << 4,  // Show a button to open a designer for the window.
+  kFullScreen = 1 << 5,    // Fully fill parent.
 
   kDefault =
       kTitleBar | kResizable | kCloseButton | kCanActivate | kDesignButton,

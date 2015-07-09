@@ -282,6 +282,10 @@ elements
 		overrides
 			element Window.selected
 				state selected
+	Window.fullscreen
+		clone Window
+		expand 12
+		padding 0
 	Window.selected
 		bitmap window_active.png
 		cut 16
