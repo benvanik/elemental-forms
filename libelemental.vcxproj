@@ -49,6 +49,7 @@
     <ClInclude Include="src\el\elements\separator.h" />
     <ClInclude Include="src\el\elements\slider.h" />
     <ClInclude Include="src\el\elements\spin_box.h" />
+    <ClInclude Include="src\el\elements\split_container.h" />
     <ClInclude Include="src\el\elements\tab_container.h" />
     <ClInclude Include="src\el\elements\text_box.h" />
     <ClInclude Include="src\el\elements\toggle_container.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="src\el\elements\separator.cc" />
     <ClCompile Include="src\el\elements\slider.cc" />
     <ClCompile Include="src\el\elements\spin_box.cc" />
+    <ClCompile Include="src\el\elements\split_container.cc" />
     <ClCompile Include="src\el\elements\tab_container.cc" />
     <ClCompile Include="src\el\elements\text_box.cc" />
     <ClCompile Include="src\el\elements\toggle_container.cc" />

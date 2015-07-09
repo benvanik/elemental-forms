@@ -93,13 +93,12 @@ bool Slider::OnEvent(const Event& ev) {
     if (ev.special_key == SpecialKey::kLeft ||
         ev.special_key == SpecialKey::kUp) {
       set_double_value(double_value() - step);
+      return true;
     } else if (ev.special_key == SpecialKey::kRight ||
                ev.special_key == SpecialKey::kDown) {
       set_double_value(double_value() + step);
-    } else {
-      return Element::OnEvent(ev);
+      return true;
     }
-    return true;
   } else if (ev.type == EventType::kKeyUp) {
     if (ev.special_key == SpecialKey::kLeft ||
         ev.special_key == SpecialKey::kUp ||

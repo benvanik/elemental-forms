@@ -36,6 +36,7 @@
 #include "el/elements/separator.h"
 #include "el/elements/slider.h"
 #include "el/elements/spin_box.h"
+#include "el/elements/split_container.h"
 #include "el/elements/tab_container.h"
 #include "el/elements/text_box.h"
 #include "el/elements/toggle_container.h"

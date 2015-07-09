@@ -438,6 +438,20 @@ elements
 	SliderFgY
 		clone SliderFgX
 
+	SplitContainer
+		bitmap container.png
+		type stretch border
+		cut 12
+		expand 6
+		padding 10
+	SplitContainer.pane
+		clone SplitContainer
+	SplitContainer.divider
+		bitmap window_mover_bg_tile.png
+		type tile
+		expand -1
+		padding 4
+
 	Resizer
 		bitmap resizer.png
 	SpinBox

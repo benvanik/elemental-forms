@@ -12,10 +12,15 @@ LayoutBox
 				Slider
 					value 0.5
 				ScrollBar
-	TextBox
-		multiline 1
-		readonly 1
-	TextBox
-		text Hello world\nHello world
-		adapt-to-content 1
-		multiline 1
+	SplitContainer
+		gravity all
+		value 40
+		TextBox
+			gravity all
+			multiline 1
+			readonly 1
+		TextBox
+			gravity all
+			text Hello world\nHello world
+			adapt-to-content 1
+			multiline 1

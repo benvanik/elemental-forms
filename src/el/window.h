@@ -50,7 +50,7 @@ class Window : public Element {
   bool is_active() const;
 
   // Activates this window if it's not already activated.
-  // This will deactivate any currently activated window..
+  // This will deactivate any currently activated window.
   // This will automatically call EnsureFocus to restore/set focus to this
   // window.
   void Activate();

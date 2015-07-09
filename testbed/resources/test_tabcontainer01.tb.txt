@@ -10,6 +10,7 @@ TabContainer
 		Button: text: "Spinner"
 			IconBox: skin: Icon16
 		Button: text: code
+		Button: text: "Splitter"
 	LayoutBox: axis: y
 		Label: text: "Tab alignment:"
 		LayoutBox
@@ -45,3 +46,21 @@ TabContainer
 			multiline 1
 			styling 1
 			gravity all
+	LayoutBox
+		gravity all
+		distribution available
+		SplitContainer
+			gravity all
+			value 40
+			min 40
+			fixed first
+			TextBox
+				gravity all
+				multiline 1
+				readonly 1
+			TextBox
+				gravity all
+				text Hello world\nHello world
+				adapt-to-content 1
+				multiline 1
+

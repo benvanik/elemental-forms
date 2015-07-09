@@ -304,6 +304,9 @@
     <ClInclude Include="src\el\io\win32_res_file_system.h">
       <Filter>src\el\io</Filter>
     </ClInclude>
+    <ClInclude Include="src\el\elements\split_container.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -670,6 +673,9 @@
     </ClCompile>
     <ClCompile Include="src\el\io\win32_res_file_system.cc">
       <Filter>src\el\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\split_container.cc">
+      <Filter>src\el\elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

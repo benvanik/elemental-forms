@@ -39,6 +39,7 @@ void RegisterBuiltinElementInflaters() {
   Mover::RegisterInflater();
   Resizer::RegisterInflater();
   Dimmer::RegisterInflater();
+  SplitContainer::RegisterInflater();
 }
 
 }  // namespace el
