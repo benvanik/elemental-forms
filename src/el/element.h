@@ -299,6 +299,13 @@ class Element : public util::TypedObject,
     set_rect(Rect(m_rect.x, m_rect.y, width, height));
   }
 
+  // Sizes the element to fit its parent, if it is in one.
+  void FitToParent() {
+    if (parent()) {
+      set_rect(parent()->rect());
+    }
+  }
+
   // Invalidates should be called if the element need to be repainted, to make
   // sure the renderer repaints it and its children next frame.
   void Invalidate();
@@ -357,6 +364,20 @@ class Element : public util::TypedObject,
   Element* GetElementById<Element>(const TBID& id) {
     return GetElementByIdInternal(id);
   }
+
+  struct LookupPair {
+    template <typename T>
+    LookupPair(el::TBID& id, T** out_ptr)
+        : id(id),
+          type_id(GetTypeId<T>()),
+          out_ptr(reinterpret_cast<el::Element**>(out_ptr)) {}
+    el::TBID id;
+    el::util::tb_type_id_t type_id;
+    el::Element** out_ptr;
+  };
+  // Gets all elements in the list by ID and stores them in the given pointers.
+  // Returns false if one or more of the elements is not found.
+  bool GetElementsById(std::vector<LookupPair> els);
 
   using State = SkinState;
 

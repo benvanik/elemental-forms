@@ -170,8 +170,8 @@ void Window::set_settings(WindowSettings settings) {
 
   if (any(settings & WindowSettings::kFullScreen)) {
     set_background_skin(TBIDC("Window.fullscreen"));
-    set_rect(parent()->rect());
     set_gravity(Gravity::kAll);
+    FitToParent();
   } else {
     set_background_skin(TBIDC("Window"));
   }
@@ -232,6 +232,11 @@ void Window::OnAdded() {
   // If we was added last, call Activate to update status etc.
   if (parent()->last_child() == this) {
     Activate();
+  }
+
+  // Fit if needed.
+  if (any(window_settings_ & WindowSettings::kFullScreen)) {
+    FitToParent();
   }
 }
 

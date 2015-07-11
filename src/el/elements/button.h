@@ -103,6 +103,7 @@ struct ButtonNode : public ElementNode<ButtonNode> {
       this->text(text);
     }
   }
+  ButtonNode(std::string text) : ElementNode("Button") { this->text(text); }
   //
   R& text(std::string value) {
     set("text", value);

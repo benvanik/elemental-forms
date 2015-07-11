@@ -334,6 +334,18 @@ Element* Element::GetElementByIdInternal(const TBID& id,
   return nullptr;
 }
 
+bool Element::GetElementsById(std::vector<LookupPair> els) {
+  bool any_failed = false;
+  for (auto& pair : els) {
+    auto el = GetElementByIdInternal(pair.id, pair.type_id);
+    if (!el) {
+      any_failed = true;
+    }
+    *pair.out_ptr = el;
+  }
+  return !any_failed;
+}
+
 std::string Element::GetTextById(const TBID& id) {
   if (auto element = GetElementById<Element>(id)) {
     return element->text();
