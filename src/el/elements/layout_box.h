@@ -177,6 +177,52 @@ class LayoutBox : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+using el::elements::LayoutSize;
+using el::elements::LayoutPosition;
+using el::elements::LayoutDistribution;
+using el::elements::LayoutDistributionPosition;
+using el::elements::LayoutOrder;
+using el::elements::LayoutOverflow;
+
+struct LayoutBoxNode : public ElementNode<LayoutBoxNode> {
+  using R = LayoutBoxNode;
+  LayoutBoxNode(std::vector<Node> children = {})
+      : ElementNode("LayoutBox", {}, std::move(children)) {}
+  //
+  R& spacing(Dimension value) {
+    set("spacing", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& size(LayoutSize value) {
+    set("size", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& position(LayoutPosition value) {
+    set("position", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& overflow(LayoutOverflow value) {
+    set("overflow", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& distribution(LayoutDistribution value) {
+    set("distribution", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& distribution_position(LayoutDistributionPosition value) {
+    set("distribution-position", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_LAYOUT_BOX_H_

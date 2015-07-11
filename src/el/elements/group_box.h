@@ -75,6 +75,29 @@ class GroupBox : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct GroupBoxNode : public ElementNode<GroupBoxNode> {
+  using R = GroupBoxNode;
+  GroupBoxNode(const char* text = nullptr) : ElementNode("GroupBox") {
+    if (text) {
+      this->text(text);
+    }
+  }
+  R& content(Node child) { return this->child(child); }
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& text(std::string value) {
+    set("text", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_GROUP_BOX_H_

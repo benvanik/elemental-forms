@@ -94,6 +94,28 @@ class Button : public Element, protected MessageHandler {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct ButtonNode : public ElementNode<ButtonNode> {
+  using R = ButtonNode;
+  ButtonNode(const char* text = nullptr) : ElementNode("Button") {
+    if (text) {
+      this->text(text);
+    }
+  }
+  //
+  R& text(std::string value) {
+    set("text", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& toggle_mode(bool value) {
+    set("toggle-mode", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_BUTTON_H_

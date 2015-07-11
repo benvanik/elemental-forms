@@ -72,6 +72,19 @@ class DropDownButton : public Button, public ListItemObserver {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct DropDownButtonNode : public ItemListElementNode<DropDownButtonNode> {
+  using R = DropDownButtonNode;
+  DropDownButtonNode() : ItemListElementNode("DropDownButton") {}
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_DROP_DOWN_BUTTON_H_

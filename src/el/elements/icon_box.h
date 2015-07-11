@@ -31,6 +31,14 @@ class IconBox : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct IconBoxNode : public ElementNode<IconBoxNode> {
+  using R = IconBoxNode;
+  IconBoxNode() : ElementNode("IconBox") {}
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_ICON_BOX_H_

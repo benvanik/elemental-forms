@@ -52,6 +52,24 @@ class LabelContainer : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct LabelContainerNode : public ElementNode<LabelContainerNode> {
+  using R = LabelContainerNode;
+  LabelContainerNode(const char* text, std::vector<Node> children = {})
+      : ElementNode("LabelContainer", {}, std::move(children)) {
+    if (text) {
+      this->text(text);
+    }
+  }
+  //
+  R& text(std::string value) {
+    set("text", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_LABEL_CONTAINER_H_

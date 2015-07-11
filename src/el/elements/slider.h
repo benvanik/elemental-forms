@@ -62,6 +62,34 @@ class Slider : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct SliderNode : public ElementNode<SliderNode> {
+  using R = SliderNode;
+  SliderNode() : ElementNode("Slider") {}
+  //
+  R& value(float value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& min(float value) {
+    set("min", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& max(float value) {
+    set("max", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& axis(Axis value) {
+    set("axis", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SLIDER_H_

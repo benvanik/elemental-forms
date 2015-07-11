@@ -26,6 +26,14 @@ class Separator : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct SeparatorNode : public ElementNode<SeparatorNode> {
+  using R = SeparatorNode;
+  SeparatorNode() : ElementNode("Separator") {}
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SEPARATOR_H_

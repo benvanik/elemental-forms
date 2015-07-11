@@ -734,6 +734,87 @@ class FullScreenWindow : public DemoWindow {
   }
 };
 
+class DslWindow : public DemoWindow {
+ public:
+  DslWindow() {
+    set_size(640, 480);
+
+    using namespace el::dsl;
+    auto node = LayoutBoxNode()
+                    .axis(Axis::kX)
+                    .child(LabelNode("foo"))
+                    .child(LabelNode("bar"));
+    LoadNodeTree(node);
+
+    LoadNodeTree(BuildUI());
+  }
+
+  dsl::Node BuildSomeControl() {
+    using namespace el::dsl;
+    return LayoutBoxNode()
+        .axis(Axis::kX)
+        .child(LabelNode("foo"))
+        .child(LabelNode("bar"));
+  }
+  dsl::Node BuildUI() {
+    using namespace el::dsl;
+    auto rep_tree = LayoutBoxNode().axis(Axis::kX).child_list({
+        LabelNode("item"), ButtonNode("button"),
+    });
+    return LayoutBoxNode()
+        .id("foo")
+        .position(LayoutPosition::kLeftTop)
+        .axis(Axis::kY)
+        .children(
+            TabContainerNode()
+                .gravity(Gravity::kAll)
+                .axis(Axis::kX)
+                .tab(ButtonNode("Foo"), CloneNode(rep_tree))
+                .tab(ButtonNode("Foo0"), CloneNode(rep_tree))
+                .tab(ButtonNode("Foo1"), LabelNode("bar1")),
+            GroupBoxNode("controls:")
+                .content(LayoutBoxNode()
+                             .child(BuildSomeControl())
+                             .child(BuildSomeControl())),
+            LabelNode("distribution: preferred").width(32_dp).font_size(3_mm),
+            LayoutBoxNode()
+                .distribution(LayoutDistribution::kPreferred)
+                .child(ButtonNode("tab 0"))
+                .child(TextBoxNode("foo").type(EditType::kPassword))
+                .children(ToggleContainerNode()
+                              .value(true)
+                              .toggle_action(ToggleAction::kExpanded)
+                              .child(TextBoxNode()
+                                         .placeholder("@search")
+                                         .gravity(Gravity::kLeftRight)
+                                         .type(EditType::kSearch)),
+                          ButtonNode("fffoo").is_enabled(false))
+                .child(ButtonNode("tab 0"))
+                .child(ButtonNode("tab 0"))
+                .clone(rep_tree)
+                .children(ButtonNode("tab 1"), ButtonNode("tab 2"),
+                          ButtonNode("tab 3"), ButtonNode("tab 4")),
+            SpinBoxNode(4, 0, 40), ListBoxNode().items({
+                                       {1, "a"}, {2, "b"},
+                                   }),
+            ListBoxNode().item("a").item("id", "b").item(5, "c"),
+            DropDownButtonNode().value(1).items({
+                Item("1", "a"), Item("2", "b"),
+            }),
+            DropDownButtonNode().value(1).items({
+                {1, "a"}, {2, "b"},
+            }),
+            DropDownButtonNode().value(1).items({
+                "a", "b", "c",
+            }));
+  }
+
+  bool OnEvent(const Event& ev) override {
+    //
+    return DemoWindow::OnEvent(ev);
+  }
+};
+
 // == MainWindow ==============================================================
 
 MainWindow::MainWindow() {
@@ -864,6 +945,9 @@ bool MainWindow::OnEvent(const Event& ev) {
       ResourceEditWindow* res_edit_win = new ResourceEditWindow();
       res_edit_win->Load("resource_edit_test.tb.txt");
       parent()->AddChild(res_edit_win);
+      return true;
+    } else if (ev.target->id() == TBIDC("test-dsl")) {
+      new DslWindow();
       return true;
     } else if (ev.type == EventType::kClick &&
                ev.target->id() == TBIDC("debug settings")) {

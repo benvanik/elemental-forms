@@ -112,6 +112,19 @@ class ListBox : public Element, public ListItemObserver {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct ListBoxNode : public ItemListElementNode<ListBoxNode> {
+  using R = ListBoxNode;
+  ListBoxNode() : ItemListElementNode("ListBox") {}
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_LIST_BOX_H_

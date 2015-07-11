@@ -301,6 +301,9 @@
     <ClInclude Include="src\el\elements\split_container.h">
       <Filter>src\el\elements</Filter>
     </ClInclude>
+    <ClInclude Include="src\el\dsl.h">
+      <Filter>src\el</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">

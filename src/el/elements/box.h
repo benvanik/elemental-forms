@@ -26,6 +26,14 @@ class Box : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct BoxNode : public ElementNode<BoxNode> {
+  using R = BoxNode;
+  BoxNode() : ElementNode("Box") {}
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_BOX_H_

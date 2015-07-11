@@ -64,6 +64,31 @@ class ToggleContainer : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+using el::elements::ToggleAction;
+
+struct ToggleContainerNode : public ElementNode<ToggleContainerNode> {
+  using R = ToggleContainerNode;
+  ToggleContainerNode() : ElementNode("ToggleContainer") {}
+  //
+  R& value(bool value) {
+    set("value", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& toggle_action(ToggleAction value) {
+    set("toggle", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& invert(bool value) {
+    set("invert", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_TOGGLE_CONTAINER_H_

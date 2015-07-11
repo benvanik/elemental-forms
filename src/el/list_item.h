@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "el/dsl.h"
 #include "el/id.h"
 #include "el/util/intrusive_list.h"
 #include "el/value.h"
@@ -237,6 +238,101 @@ class GenericStringItemSource : public ListItemSourceList<GenericStringItem> {
                             GenericStringItemSource* target_source);
 };
 
+namespace dsl {
+
+struct Item {
+  std::string id;
+  std::string text;
+  Item(std::string id, std::string text) : id(id), text(text) {}
+};
+
+template <typename T>
+struct ItemListElementNode : public ElementNode<T> {
+ protected:
+  ItemListElementNode(const char* name) : ElementNode(name) {}
+
+ public:
+  T& item(std::string text) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    auto node = ParseNode::Create("item");
+    auto text_node = ParseNode::Create("text");
+    text_node->TakeValue(el::Value(text.c_str()));
+    node->Add(text_node);
+    items_node->Add(node);
+    return *reinterpret_cast<T*>(this);
+  }
+  T& item(std::string id, std::string text) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    auto node = ParseNode::Create("item");
+    auto id_node = ParseNode::Create("id");
+    id_node->TakeValue(el::Value(id.c_str()));
+    node->Add(id_node);
+    auto text_node = ParseNode::Create("text");
+    text_node->TakeValue(el::Value(text.c_str()));
+    node->Add(text_node);
+    items_node->Add(node);
+    return *reinterpret_cast<T*>(this);
+  }
+  T& item(int32_t id, std::string text) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    auto node = ParseNode::Create("item");
+    auto id_node = ParseNode::Create("id");
+    id_node->TakeValue(el::Value(id));
+    node->Add(id_node);
+    auto text_node = ParseNode::Create("text");
+    text_node->TakeValue(el::Value(text.c_str()));
+    node->Add(text_node);
+    items_node->Add(node);
+    return *reinterpret_cast<T*>(this);
+  }
+  T& items(std::initializer_list<std::string> items) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    for (auto& item : items) {
+      auto node = ParseNode::Create("item");
+      auto text_node = ParseNode::Create("text");
+      text_node->TakeValue(el::Value(item.c_str()));
+      node->Add(text_node);
+      items_node->Add(node);
+    }
+    return *reinterpret_cast<T*>(this);
+  }
+  T& items(std::initializer_list<std::pair<int32_t, std::string>> items) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    for (auto& item : items) {
+      auto node = ParseNode::Create("item");
+      auto id_node = ParseNode::Create("id");
+      id_node->TakeValue(el::Value(item.first));
+      node->Add(id_node);
+      auto text_node = ParseNode::Create("text");
+      text_node->TakeValue(el::Value(item.second.c_str()));
+      node->Add(text_node);
+      items_node->Add(node);
+    }
+    return *reinterpret_cast<T*>(this);
+  }
+  T& items(std::initializer_list<Item> items) {
+    using parsing::ParseNode;
+    auto items_node = GetOrCreateNode("items");
+    for (auto& item : items) {
+      auto node = ParseNode::Create("item");
+      auto id_node = ParseNode::Create("id");
+      id_node->TakeValue(el::Value(item.id.c_str()));
+      node->Add(id_node);
+      auto text_node = ParseNode::Create("text");
+      text_node->TakeValue(el::Value(item.text.c_str()));
+      node->Add(text_node);
+      items_node->Add(node);
+    }
+    return *reinterpret_cast<T*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_LIST_ITEM_H_

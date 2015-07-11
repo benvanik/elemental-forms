@@ -67,7 +67,7 @@ const T* SafeCast(const TypedObject* obj) {
 
 // Implements the methods for safe typecasting without requiring RTTI.
 #define TBOBJECT_SUBCLASS(clazz, baseclazz)                              \
-  const char* GetTypeName() const override { return #clazz; }           \
+  const char* GetTypeName() const override { return #clazz; }            \
   bool IsOfTypeId(const el::util::tb_type_id_t type_id) const override { \
     return el::util::TypedObject::GetTypeId<clazz>() == type_id          \
                ? true                                                    \

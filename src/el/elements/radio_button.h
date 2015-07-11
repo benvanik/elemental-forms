@@ -30,6 +30,19 @@ class RadioButton : public parts::BaseRadioCheckBox {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct RadioButtonNode : public ElementNode<RadioButtonNode> {
+  using R = RadioButtonNode;
+  RadioButtonNode() : ElementNode("RadioButton") {}
+  //
+  R& value(bool value) {
+    set("value", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_RADIO_BUTTON_H_

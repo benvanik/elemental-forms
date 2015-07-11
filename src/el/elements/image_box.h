@@ -50,6 +50,23 @@ class ImageBox : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct ImageBoxNode : public ElementNode<ImageBoxNode> {
+  using R = ImageBoxNode;
+  ImageBoxNode(const char* filename = nullptr) : ElementNode("ImageBox") {
+    if (filename) {
+      this->filename(filename);
+    }
+  }
+  //
+  R& filename(std::string value) {
+    set("filename", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_IMAGE_BOX_H_

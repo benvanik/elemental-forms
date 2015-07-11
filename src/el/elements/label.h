@@ -82,6 +82,28 @@ class Label : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct LabelNode : public ElementNode<LabelNode> {
+  using R = LabelNode;
+  LabelNode(const char* text = nullptr) : ElementNode("Label") {
+    if (text) {
+      this->text(text);
+    }
+  }
+  //
+  R& text(std::string value) {
+    set("text", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& text_align(TextAlign value) {
+    set("text-align", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_LABEL_H_

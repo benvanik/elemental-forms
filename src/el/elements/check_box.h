@@ -29,6 +29,19 @@ class CheckBox : public parts::BaseRadioCheckBox {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct CheckBoxNode : public ElementNode<CheckBoxNode> {
+  using R = CheckBoxNode;
+  CheckBoxNode() : ElementNode("CheckBox") {}
+  //
+  R& value(bool value) {
+    set("value", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_CHECK_BOX_H_

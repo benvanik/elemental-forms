@@ -20,6 +20,7 @@
     <ClInclude Include="src\el\color.h" />
     <ClInclude Include="src\el\config.h" />
     <ClInclude Include="src\el\design\designer_window.h" />
+    <ClInclude Include="src\el\dsl.h" />
     <ClInclude Include="src\el\element.h" />
     <ClInclude Include="src\el\elemental_forms.h" />
     <ClInclude Include="src\el\elements.h" />

@@ -85,6 +85,46 @@ class SplitContainer : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+using el::elements::FixedPane;
+
+struct SplitContainerNode : public ElementNode<SplitContainerNode> {
+  using R = SplitContainerNode;
+  SplitContainerNode(std::vector<Node> children = {})
+      : ElementNode("SplitContainer", {}, std::move(children)) {}
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& min(int32_t value) {
+    set("min", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& max(int32_t value) {
+    set("max", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& axis(Axis value) {
+    set("axis", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& fixed_pane(FixedPane value) {
+    set("fixed", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  SplitContainerNode& pane(Node content) {
+    parse_node_->Add(content.parse_node());
+    return *this;
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SPLIT_CONTAINER_H_

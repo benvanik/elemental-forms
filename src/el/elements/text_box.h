@@ -218,6 +218,65 @@ class TextBox : public Element,
 };
 
 }  // namespace elements
+namespace dsl {
+
+using el::elements::EditType;
+
+struct TextBoxNode : public ElementNode<TextBoxNode> {
+  using R = TextBoxNode;
+  TextBoxNode(const char* text = nullptr) : ElementNode("TextBox") {
+    if (text) {
+      this->text(text);
+    }
+  }
+  //
+  R& text(std::string value) {
+    set("text", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_multiline(bool value) {
+    set("multiline", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_styling(bool value) {
+    set("styling", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_read_only(bool value) {
+    set("readonly", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_wrapping(bool value) {
+    set("wrap", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& adapt_to_content(bool value) {
+    set("adapt-to-content", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& virtual_width(Dimension value) {
+    set("virtual-width", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& placeholder(std::string value) {
+    set("placeholder", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& type(EditType value) {
+    set("type", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_EDITFIELD_H

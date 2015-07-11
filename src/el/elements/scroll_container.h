@@ -83,6 +83,32 @@ class ScrollContainer : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+using el::elements::ScrollMode;
+
+struct ScrollContainerNode : public ElementNode<ScrollContainerNode> {
+  using R = ScrollContainerNode;
+  ScrollContainerNode(std::vector<Node> children = {})
+      : ElementNode("ScrollContainer", {}, std::move(children)) {}
+  //
+  R& adapt_content(bool value) {
+    set("adapt-content", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& adapt_to_content(bool value) {
+    set("adapt-to-content", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& scroll_mode(ScrollMode value) {
+    set("scroll-mode", el::elements::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SCROLL_CONTAINER_H_

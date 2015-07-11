@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "el/dsl.h"
 #include "el/element_value.h"
 #include "el/event.h"
 #include "el/font_description.h"
@@ -43,6 +44,8 @@ struct InflateInfo;
 namespace text {
 class FontFace;
 }  // namespace text
+
+using util::kInvalidDimension;
 
 enum class Align {
   kLeft,
@@ -277,6 +280,7 @@ class Element : public util::TypedObject,
     return LoadData(data.c_str(), data.size());
   }
   void LoadNodeTree(parsing::ParseNode* node);
+  void LoadNodeTree(const dsl::Node& node);
 
   inline Rect rect() const { return m_rect; }
   // Sets the rect for this element in its parent.
@@ -1124,6 +1128,196 @@ class ElementSkinConditionContext : public SkinConditionContext {
   bool GetCondition(Element* element, const SkinCondition::ConditionInfo& info);
   Element* m_element = nullptr;
 };
+
+namespace dsl {
+
+using el::Align;
+using el::Axis;
+using ElementState = el::Element::State;
+using el::Gravity;
+using el::Rect;
+using el::TextAlign;
+using el::Visibility;
+
+template <typename T>
+struct ElementNode : public Node {
+  using R = T;
+  ElementNode(const char* name,
+              std::vector<std::pair<const char*, const char*>> properties = {},
+              std::vector<Node> children = {})
+      : Node(name, std::move(properties), std::move(children)) {}
+
+  // TBID
+  R& id(Id value) {
+    value.set(this, "id");
+    return *reinterpret_cast<R*>(this);
+  }
+  // TBID
+  R& group_id(Id value) {
+    value.set(this, "group-id");
+    return *reinterpret_cast<R*>(this);
+  }
+  // TBID
+  R& skin(Id value) {
+    value.set(this, "skin");
+    return *reinterpret_cast<R*>(this);
+  }
+  // Number
+  R& data(int32_t value) {
+    set("data", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  R& data(float value) {
+    set("data", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_group_root(bool value) {
+    set("is-group-root", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_focusable(bool value) {
+    set("is-focusable", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_long_clickable(bool value) {
+    set("want-long-click", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& ignore_input(bool value) {
+    set("ignore-input", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& opacity(float value) {
+    set("opacity", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& connection(std::string value) {
+    set("connection", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& axis(Axis value) {
+    set("axis", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& gravity(Gravity value) {
+    set("gravity", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& visibility(Visibility value) {
+    set("visibility", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& state(ElementState value) {
+    set("state", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& is_enabled(bool value) {
+    set("state",
+        to_string(value ? ElementState::kNone : ElementState::kDisabled));
+    return *reinterpret_cast<R*>(this);
+  }
+  // Rect
+  R& rect(Rect value) {
+    set("rect", std::move(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& width(Dimension value) {
+    set("lp>width", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& min_width(Dimension value) {
+    set("lp>min-width", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& max_width(Dimension value) {
+    set("lp>max-width", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& preferred_width(Dimension value) {
+    set("lp>pref-width", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& height(Dimension value) {
+    set("lp>height", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& min_height(Dimension value) {
+    set("lp>min-height", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& max_height(Dimension value) {
+    set("lp>max-height", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& preferred_height(Dimension value) {
+    set("lp>pref-height", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& tooltip(std::string value) {
+    set("tooltip", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  // The Element will be focused automatically the first time its Window is
+  // activated.
+  R& autofocus(bool value) {
+    set("autofocus", value ? 1 : 0);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& font(const char* name, int32_t size_px) {
+    set("font>name", name);
+    set("font>size", size_px);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& font_name(std::string value) {
+    set("font>name", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& font_size(Dimension value) {
+    set("font>size", value);
+    return *reinterpret_cast<R*>(this);
+  }
+
+  R& clone(Node node) {
+    parse_node_->Add(CloneNode(node).parse_node());
+    return *reinterpret_cast<R*>(this);
+  }
+  R& child(Node node) {
+    parse_node_->Add(node.parse_node());
+    return *reinterpret_cast<R*>(this);
+  }
+  R& children() { return *reinterpret_cast<R*>(this); }
+  template <typename... C>
+  R& children(Node child_node, C... other_children) {
+    child(child_node);
+    children(other_children...);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 
 }  // namespace el
 

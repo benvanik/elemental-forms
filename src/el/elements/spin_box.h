@@ -59,6 +59,35 @@ class SpinBox : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct SpinBoxNode : public ElementNode<SpinBoxNode> {
+  using R = SpinBoxNode;
+  SpinBoxNode() : ElementNode("SpinBox") {}
+  SpinBoxNode(int32_t default_value, int32_t min_value, int32_t max_value)
+      : ElementNode("SpinBox") {
+    value(default_value);
+    min(min_value);
+    max(max_value);
+  }
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& min(int32_t value) {
+    set("min", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& max(int32_t value) {
+    set("max", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SPIN_BOX_H_

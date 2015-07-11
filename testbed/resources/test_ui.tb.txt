@@ -23,6 +23,7 @@ LayoutBox: axis: y, distribution-position: "left top", distribution: "available"
 			Button: skin: "Button.flat", text: "Close with dim & alert", id: "Window.close"
 			Button: skin: "Button.flat", text: "Fullscreen Window", id: "test-fullscreen-window"
 			Button: skin: "Button.flat", text: "ResourceEditWindow", id: "test-resource-edit"
+			Button: skin: "Button.flat", text: "DSL", id: "test-dsl"
 
 	GroupBox: value: 0, text: "Layout tests"
 		LayoutBox: axis: y, spacing: 0, size: available

@@ -74,7 +74,9 @@ void Element::RegisterInflater() {
 Element::Element() = default;
 
 Element::~Element() {
-  assert(!m_parent);  // A element must be removed from parent before deleted.
+  // A element must be removed from parent before deleted.
+  RemoveFromParent();
+  assert(!m_parent);
   m_packed.is_dying = true;
 
   if (this == hovered_element) {
@@ -106,6 +108,12 @@ bool Element::LoadData(const char* data, size_t data_length) {
 
 void Element::LoadNodeTree(parsing::ParseNode* node) {
   return parsing::ElementFactory::get()->LoadNodeTree(this, node);
+}
+
+void Element::LoadNodeTree(const dsl::Node& node) {
+  parsing::ParseNode parse_node;
+  parse_node.Add(node.parse_node());
+  LoadNodeTree(&parse_node);
 }
 
 // Sets the id from the given node.

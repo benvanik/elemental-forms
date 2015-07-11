@@ -56,6 +56,19 @@ class ProgressSpinner : public Element, protected MessageHandler {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct ProgressSpinnerNode : public ElementNode<ProgressSpinnerNode> {
+  using R = ProgressSpinnerNode;
+  ProgressSpinnerNode() : ElementNode("ProgressSpinner") {}
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_PROGRESS_SPINNER_H_

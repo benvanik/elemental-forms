@@ -43,7 +43,7 @@ class MemoryFile : public File {
 MemoryFileSystem::MemoryFileSystem() = default;
 
 void MemoryFileSystem::AddFile(std::string filename, const void* data,
-                                 size_t length) {
+                               size_t length) {
   file_entries_[filename] = {reinterpret_cast<const uint8_t*>(data), length};
 }
 
@@ -53,7 +53,7 @@ std::unique_ptr<File> MemoryFileSystem::OpenRead(std::string filename) {
     return nullptr;
   }
   return std::make_unique<MemoryFile>(it->first, it->second.first,
-                                        it->second.second);
+                                      it->second.second);
 }
 
 }  // namespace io

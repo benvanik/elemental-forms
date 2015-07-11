@@ -75,6 +75,33 @@ class TabContainer : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct TabContainerNode : public ElementNode<TabContainerNode> {
+  using R = TabContainerNode;
+  TabContainerNode(std::vector<Node> children = {})
+      : ElementNode("TabContainer", {}, std::move(children)) {}
+  //
+  R& value(int32_t value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& align(Align value) {
+    set("align", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+  // content?
+  // root?
+  TabContainerNode& tab(Node tab_button, Node tab_content) {
+    auto tabs_node = GetOrCreateNode("tabs");
+    tabs_node->Add(tab_button.parse_node());
+    parse_node_->Add(tab_content.parse_node());
+    return *this;
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_TAB_CONTAINER_H_

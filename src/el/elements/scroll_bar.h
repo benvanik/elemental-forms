@@ -73,6 +73,24 @@ class ScrollBar : public Element {
 };
 
 }  // namespace elements
+namespace dsl {
+
+struct ScrollBarNode : public ElementNode<ScrollBarNode> {
+  using R = ScrollBarNode;
+  ScrollBarNode() : ElementNode("ScrollBar") {}
+  //
+  R& value(float value) {
+    set("value", value);
+    return *reinterpret_cast<R*>(this);
+  }
+  //
+  R& axis(Axis value) {
+    set("axis", el::to_string(value));
+    return *reinterpret_cast<R*>(this);
+  }
+};
+
+}  // namespace dsl
 }  // namespace el
 
 #endif  // EL_ELEMENTS_SCROLL_BAR_H_
