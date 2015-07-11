@@ -60,11 +60,9 @@
     <ClInclude Include="src\el\event.h" />
     <ClInclude Include="src\el\event_handler.h" />
     <ClInclude Include="src\el\font_description.h" />
-    <ClInclude Include="src\el\graphics\batching_renderer.h" />
     <ClInclude Include="src\el\graphics\bitmap_fragment.h" />
     <ClInclude Include="src\el\graphics\bitmap_fragment_manager.h" />
     <ClInclude Include="src\el\graphics\bitmap_fragment_map.h" />
-    <ClInclude Include="src\el\graphics\gles_1_renderer.h" />
     <ClInclude Include="src\el\graphics\image_loader.h" />
     <ClInclude Include="src\el\graphics\image_manager.h" />
     <ClInclude Include="src\el\graphics\renderer.h" />
@@ -161,11 +159,9 @@
     <ClCompile Include="src\el\element_listener.cc" />
     <ClCompile Include="src\el\element_value.cc" />
     <ClCompile Include="src\el\event_handler.cc" />
-    <ClCompile Include="src\el\graphics\batching_renderer.cc" />
     <ClCompile Include="src\el\graphics\bitmap_fragment.cc" />
     <ClCompile Include="src\el\graphics\bitmap_fragment_manager.cc" />
     <ClCompile Include="src\el\graphics\bitmap_fragment_map.cc" />
-    <ClCompile Include="src\el\graphics\gles_1_renderer.cc" />
     <ClCompile Include="src\el\graphics\image_loader_stb.cc" />
     <ClCompile Include="src\el\graphics\image_manager.cc" />
     <ClCompile Include="src\el\graphics\renderer.cc" />
@@ -300,7 +296,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>third_party/glfw/include/;src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -313,7 +309,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>third_party/glfw/include/;src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -326,7 +322,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <AdditionalIncludeDirectories>third_party/glfw/include/;src/;.</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/;.</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

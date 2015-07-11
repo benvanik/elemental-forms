@@ -169,9 +169,6 @@
     <ClInclude Include="src\el\parsing\text_parser_stream.h">
       <Filter>src\el\parsing</Filter>
     </ClInclude>
-    <ClInclude Include="src\el\graphics\batching_renderer.h">
-      <Filter>src\el\graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\el\graphics\bitmap_fragment.h">
       <Filter>src\el\graphics</Filter>
     </ClInclude>
@@ -179,9 +176,6 @@
       <Filter>src\el\graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\el\graphics\bitmap_fragment_map.h">
-      <Filter>src\el\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\el\graphics\gles_1_renderer.h">
       <Filter>src\el\graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\el\graphics\image_loader.h">
@@ -503,9 +497,6 @@
     <ClCompile Include="src\el\parsing\text_parser_stream.cc">
       <Filter>src\el\parsing</Filter>
     </ClCompile>
-    <ClCompile Include="src\el\graphics\batching_renderer.cc">
-      <Filter>src\el\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\el\graphics\bitmap_fragment.cc">
       <Filter>src\el\graphics</Filter>
     </ClCompile>
@@ -513,9 +504,6 @@
       <Filter>src\el\graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\el\graphics\bitmap_fragment_map.cc">
-      <Filter>src\el\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\el\graphics\gles_1_renderer.cc">
       <Filter>src\el\graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\el\graphics\image_loader_stb.cc">

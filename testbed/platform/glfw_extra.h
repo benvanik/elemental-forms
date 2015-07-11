@@ -14,6 +14,7 @@
 #define NOMINMAX
 #include <Windows.h>  // Avoid compilation warnings in GLFW/glfw.h
 #endif
+#include "glad/glad_gl2.h"
 #include "GLFW/glfw3.h"
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(__WINDOWS__)

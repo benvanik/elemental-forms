@@ -58,6 +58,12 @@
     <ClCompile Include="platform\glfw_extra_linux.cc">
       <Filter>testbed\platform</Filter>
     </ClCompile>
+    <ClCompile Include="platform\gl2_renderer.cc">
+      <Filter>testbed\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="platform\glad\glad_gl2.c">
+      <Filter>testbed\platform\glad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\third_party\glfw\src\win32_platform.h">
@@ -78,6 +84,15 @@
     <ClInclude Include="testbed_application.h">
       <Filter>testbed</Filter>
     </ClInclude>
+    <ClInclude Include="platform\gl2_renderer.h">
+      <Filter>testbed\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\glad\glad_gl2.h">
+      <Filter>testbed\platform\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="platform\glad\khrplatform.h">
+      <Filter>testbed\platform\glad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="third_party">
@@ -94,6 +109,9 @@
     </Filter>
     <Filter Include="testbed\scratch">
       <UniqueIdentifier>{d2c9cf31-544f-47f5-8cc2-bef96809ada1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="testbed\platform\glad">
+      <UniqueIdentifier>{8c334987-31b2-4b38-bb65-d898532ba837}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

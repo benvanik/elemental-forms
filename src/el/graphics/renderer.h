@@ -56,7 +56,10 @@ class Bitmap {
   virtual void set_data(uint32_t* data) = 0;
 };
 
-// A minimal interface for painting strings and bitmaps.
+// A batching interface for drawing performed by the library.
+//
+// If overriding any function in this class, make sure to call the base class
+// too.
 class Renderer {
  public:
   static Renderer* get() { return renderer_singleton_; }
@@ -68,65 +71,63 @@ class Renderer {
   // render_target_w and render_target_h should be the size of the render target
   // that the renderer renders to. I.e window size, screen size or frame buffer
   // object.
-  virtual void BeginPaint(int render_target_w, int render_target_h) = 0;
-  virtual void EndPaint() = 0;
+  virtual void BeginPaint(int render_target_w, int render_target_h);
+  virtual void EndPaint();
 
   // Translates all drawing with the given offset.
-  virtual void Translate(int dx, int dy) = 0;
+  void Translate(int dx, int dy);
 
-  virtual float opacity() = 0;
+  float opacity();
   // Sets the current opacity that should apply to all drawing (0.f-1.f).
-  virtual void set_opacity(float opacity) = 0;
+  void set_opacity(float opacity);
 
   // Gets the current clip rect. Note: This may be different from the rect sent
   // to set_clip_rect, due to intersecting with the previous cliprect!
-  virtual Rect clip_rect() = 0;
+  Rect clip_rect();
 
   // Sets a clip rect to the renderer. add_to_current should be true when
   // pushing a new cliprect that should clip inside the last clip rect, and
   // false when restoring. It will return the clip rect that was in use before
   // this call.
-  virtual Rect set_clip_rect(const Rect& rect, bool add_to_current) = 0;
+  Rect set_clip_rect(const Rect& rect, bool add_to_current);
 
   // Draws the src_rect part of the fragment stretched to dst_rect.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          BitmapFragment* bitmap_fragment) = 0;
+  void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
+                  BitmapFragment* bitmap_fragment);
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmap(const Rect& dst_rect, const Rect& src_rect,
-                          Bitmap* bitmap) = 0;
+  void DrawBitmap(const Rect& dst_rect, const Rect& src_rect, Bitmap* bitmap);
 
   // Draws the src_rect part of the fragment stretched to dst_rect.
   // The bitmap will be used as a mask for the color.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const Color& color,
-                                 BitmapFragment* bitmap_fragment) = 0;
+  void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
+                         const Color& color, BitmapFragment* bitmap_fragment);
 
   // Draws the src_rect part of the bitmap stretched to dst_rect.
   // The bitmap will be used as a mask for the color.
   // dst_rect or src_rect can have negative width and height to achieve
   // horizontal and vertical flip.
-  virtual void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
-                                 const Color& color, Bitmap* bitmap) = 0;
+  void DrawBitmapColored(const Rect& dst_rect, const Rect& src_rect,
+                         const Color& color, Bitmap* bitmap);
 
   // Draws the bitmap tiled into dst_rect.
-  virtual void DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap) = 0;
+  void DrawBitmapTile(const Rect& dst_rect, Bitmap* bitmap);
 
   // Draws a 1px thick rectangle outline.
-  virtual void DrawRect(const Rect& dst_rect, const Color& color) = 0;
+  void DrawRect(const Rect& dst_rect, const Color& color);
 
   // Draws a filled rectangle.
-  virtual void DrawRectFill(const Rect& dst_rect, const Color& color) = 0;
+  void DrawRectFill(const Rect& dst_rect, const Color& color);
 
   // Makes sure the given bitmap fragment is flushed from any batching, because
   // it may be changed or deleted after this call.
-  virtual void FlushBitmapFragment(BitmapFragment* bitmap_fragment) = 0;
+  void FlushBitmapFragment(BitmapFragment* bitmap_fragment);
 
   // Creates a new Bitmap from the given data (in BGRA32 format).
   // Width and height must be a power of two.
@@ -168,10 +169,69 @@ class Renderer {
   // Ends the hint scope started with BeginBatchHint.
   virtual void EndBatchHint() {}
 
- private:
+ protected:
+  // Vertex stored in a Batch.
+  struct Vertex {
+    float x, y;
+    float u, v;
+    union {
+      struct {
+        unsigned char r, g, b, a;
+      };
+      uint32_t col;
+    };
+  };
+
+  // A batch which should be rendered.
+  struct Batch {
+    Vertex* vertices = nullptr;
+    size_t vertex_count = 0;
+
+    Bitmap* bitmap = nullptr;
+    BitmapFragment* fragment = nullptr;
+
+    uint32_t batch_id = 0;
+    bool is_flushing = false;
+  };
+
+  Renderer();
+
+  // Returns the maximum number of vertices that may fit within a single batch.
+  virtual size_t max_vertex_batch_size() const = 0;
+
+  // Flushes the current batch.
+  void FlushBatch();
+  // Flushes the current batch if the given bitmap is used.
+  void FlushBitmap(Bitmap* bitmap);
+  // Reserves a block of vertices for use within the current batch.
+  // The batch will be flushed if the request cannot be satisfied.
+  Vertex* ReserveVertices(size_t vertex_count);
+
+  // Renders the given batch with the renderer implementation.
+  virtual void RenderBatch(Batch* batch) = 0;
+  // Sets the clipping rectangle used when rendering.
+  virtual void set_clip_rect(const Rect& rect) = 0;
+
+  void AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
+                       uint32_t color, Bitmap* bitmap,
+                       BitmapFragment* fragment);
+  void FlushAllInternal();
+
   static Renderer* renderer_singleton_;
 
   util::IntrusiveList<RendererListener> listeners_;
+
+  uint8_t opacity_ = 255;
+  Rect screen_rect_;
+  Rect clip_rect_;
+  int translation_x_ = 0;
+  int translation_y_ = 0;
+
+  Batch batch_;
+  float m_u = 0, m_v = 0, m_uu = 0, m_vv = 0;
+
+  size_t begin_paint_batch_id_ = 0;
+  size_t frame_triangle_count_ = 0;
 };
 
 }  // namespace graphics

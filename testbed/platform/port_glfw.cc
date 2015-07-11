@@ -17,10 +17,10 @@
 
 #include "el/element.h"
 #include "el/elemental_forms.h"
-#include "el/graphics/gles_1_renderer.h"
 #include "el/message_handler.h"
 #include "el/util/metrics.h"
 #include "el/util/timer.h"
+#include "testbed/platform/gl2_renderer.h"
 #include "testbed/testbed_application.h"
 
 #ifdef EL_TARGET_MACOSX
@@ -81,7 +81,7 @@ class ApplicationBackendGLFW : public ApplicationBackend {
   int height() const { return m_root.rect().h; }
 
   TestbedApplication* m_application;
-  graphics::RendererGL* m_renderer;
+  GL2Renderer* m_renderer;
   RootElement m_root;
   GLFWwindow* mainWindow;
   bool has_pending_update;
@@ -482,7 +482,8 @@ bool ApplicationBackendGLFW::Init(TestbedApplication* app, int width,
   glfwSetDropCallback(mainWindow, drop_callback);
 #endif
 
-  m_renderer = new graphics::RendererGL();
+  gladLoadGL();
+  m_renderer = new GL2Renderer();
   m_root.set_rect({0, 0, width, height});
 
   // Create the application object for our demo
