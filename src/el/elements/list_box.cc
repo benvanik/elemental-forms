@@ -160,7 +160,7 @@ void ListBox::ValidateList() {
   // Sort.
   if (m_source->sort() != Sort::kNone) {
     std::sort(
-        &sorted_index[0], &sorted_index[num_sorted_items],
+        &sorted_index[0], &sorted_index[0] + num_sorted_items,
         [&](const int a, const int b) {
           int value =
               strcmp(m_source->GetItemString(a), m_source->GetItemString(b));

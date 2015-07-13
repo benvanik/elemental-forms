@@ -9,6 +9,8 @@
 
 #include <string>
 
+#include "el/io/file_manager.h"
+#include "el/io/posix_file_system.h"
 #include "el/testing/testing.h"
 #include "el/util/debug.h"
 
@@ -106,6 +108,9 @@ int TBRunTests(uint32_t settings) {
   int num_passed = 0;
 
   TBDebugOut("Running tests...\n");
+
+  el::io::FileManager::RegisterFileSystem(
+      std::make_unique<el::io::PosixFileSystem>("."));
 
   for (TBTestGroup* group = g_test_groups; group;
        group = group->next_test_group) {
