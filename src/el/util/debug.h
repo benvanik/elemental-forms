@@ -23,11 +23,11 @@ inline void TBDebugOut(const std::string& str) { TBDebugOut(str.c_str()); }
 #define EL_IF_DEBUG(debug)
 #endif  // EL_RUNTIME_DEBUG_INFO
 
-#ifdef EL_RUNTIME_DEBUG_INFO
-
 namespace el {
 class Element;
 }  // namespace el
+
+#ifdef EL_RUNTIME_DEBUG_INFO
 
 namespace el {
 namespace util {
@@ -79,7 +79,11 @@ void ShowDebugInfoSettingsWindow(Element* root);
 }  // namespace el
 
 #else
-#define ShowDebugInfoSettingsWindow(root) ((void)0)
+namespace el {
+namespace util {
+inline void ShowDebugInfoSettingsWindow(Element* root) {}
+}  // namespace util
+}  // namespace el
 #define EL_DEBUG_SETTING(setting) false
 #define EL_IF_DEBUG_SETTING(setting, code)
 #endif  // EL_RUNTIME_DEBUG_INFO
