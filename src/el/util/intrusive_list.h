@@ -2,8 +2,8 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -225,7 +225,7 @@ class AutoDeleteIntrusiveList : public IntrusiveList<T> {
 
   // Deletes all links in this linklist.
   void DeleteAll() {
-    while (T* t = GetFirst()) {
+    while (T* t = this->GetFirst()) {
       Delete(t);
     }
   }
