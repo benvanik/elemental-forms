@@ -85,7 +85,7 @@ Value* ValueArray::AddInteger(int32_t value) {
 }
 
 Value* ValueArray::at(size_t i) const {
-  if (i >= 0 && i < list_.size()) {
+  if (i < list_.size()) {
     return list_[i].get();
   }
   return nullptr;
