@@ -115,7 +115,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resources.rc">
+    <ResourceCompile Include="testbed_resources.rc">
       <Filter>testbed</Filter>
     </ResourceCompile>
   </ItemGroup>

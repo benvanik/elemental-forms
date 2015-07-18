@@ -13,7 +13,7 @@
 #include "el/graphics/bitmap_fragment.h"
 #include "el/util/debug.h"
 #include "el/util/math.h"
-#include "platform/gl2_renderer.h"
+#include "testbed/platform/gl2_renderer.h"
 
 namespace testbed {
 namespace platform {

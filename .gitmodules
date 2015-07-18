@@ -1,3 +1,6 @@
 [submodule "third_party/glfw"]
 	path = third_party/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "build_tools"]
+	path = build_tools
+	url = https://github.com/xenia-project/build-tools.git
