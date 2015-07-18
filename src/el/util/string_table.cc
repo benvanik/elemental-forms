@@ -36,7 +36,7 @@ bool StringTable::Load(const char* filename) {
 void StringTable::Clear() { table_.clear(); }
 
 std::string StringTable::GetString(const TBID& id) {
-  auto& it = table_.find(id);
+  auto it = table_.find(id);
   if (it != table_.end()) {
     return it->second;
   }

@@ -174,12 +174,7 @@ class Renderer {
   struct Vertex {
     float x, y;
     float u, v;
-    union {
-      struct {
-        unsigned char r, g, b, a;
-      };
-      uint32_t col;
-    };
+    uint32_t color;  // RGBA
   };
 
   // A batch which should be rendered.

@@ -111,7 +111,7 @@ void Button::OnMessageReceived(Message* msg) {
                pointer_move_element_y, true);
       captured_element->InvokeEvent(ev);
     }
-    if (kAutoClickRepeattDelayMillis) {
+    if (kAutoClickRepeattDelayMillis > 0) {
       PostMessageDelayed(TBIDC("auto_click"), nullptr,
                          kAutoClickRepeattDelayMillis);
     }

@@ -93,8 +93,6 @@ void DesignerWindow::CloseContent() {
 }
 
 void DesignerWindow::RefreshContent() {
-  auto build_content_root_ = build_container_->content_root();
-
   // Clear existing content.
   build_content_root_->DeleteAllChildren();
 

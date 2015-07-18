@@ -289,11 +289,11 @@ bool ListBox::OnEvent(const Event& ev) {
       }
 
       // Invoke the click event on the target list.
-      Event ev(EventType::kClick);
+      Event invoke_ev(EventType::kClick);
       if (Element* element = GetItemElement(m_value)) {
-        ev.ref_id = element->id();
+        invoke_ev.ref_id = element->id();
       }
-      target_list->InvokeEvent(ev);
+      target_list->InvokeEvent(invoke_ev);
     }
     return true;
   } else if (ev.type == EventType::kKeyDown) {

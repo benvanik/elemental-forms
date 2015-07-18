@@ -193,33 +193,33 @@ void Renderer::AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
   v[0].y = (float)(dst_rect.y + dst_rect.h);
   v[0].u = m_u;
   v[0].v = m_vv;
-  v[0].col = color;
+  v[0].color = color;
   v[1].x = (float)(dst_rect.x + dst_rect.w);
   v[1].y = (float)(dst_rect.y + dst_rect.h);
   v[1].u = m_uu;
   v[1].v = m_vv;
-  v[1].col = color;
+  v[1].color = color;
   v[2].x = (float)dst_rect.x;
   v[2].y = (float)dst_rect.y;
   v[2].u = m_u;
   v[2].v = m_v;
-  v[2].col = color;
+  v[2].color = color;
 
   v[3].x = (float)dst_rect.x;
   v[3].y = (float)dst_rect.y;
   v[3].u = m_u;
   v[3].v = m_v;
-  v[3].col = color;
+  v[3].color = color;
   v[4].x = (float)(dst_rect.x + dst_rect.w);
   v[4].y = (float)(dst_rect.y + dst_rect.h);
   v[4].u = m_uu;
   v[4].v = m_vv;
-  v[4].col = color;
+  v[4].color = color;
   v[5].x = (float)(dst_rect.x + dst_rect.w);
   v[5].y = (float)dst_rect.y;
   v[5].u = m_uu;
   v[5].v = m_v;
-  v[5].col = color;
+  v[5].color = color;
 }
 
 Renderer::Vertex* Renderer::ReserveVertices(size_t vertex_count) {
@@ -264,7 +264,7 @@ void Renderer::FlushBatch() {
     uint32_t hash = uint32_t(id * (2166136261U ^ id));
     uint32_t color = 0xAA000000 + (hash & 0x00FFFFFF);
     for (int i = 0; i < batch_.vertex_count; ++i) {
-      batch_.vertices[i].col = color;
+      batch_.vertices[i].color = color;
     }
     batch_.bitmap = nullptr;
     RenderBatch(&batch_);

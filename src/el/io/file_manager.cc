@@ -23,7 +23,7 @@ void FileManager::RegisterFileSystem(std::unique_ptr<FileSystem> file_system) {
 }
 
 std::unique_ptr<File> FileManager::OpenRead(std::string filename) {
-  for (auto& it = file_manager_.file_systems_.rbegin();
+  for (auto it = file_manager_.file_systems_.rbegin();
        it != file_manager_.file_systems_.rend(); ++it) {
     auto file = it->get()->OpenRead(filename);
     if (file) {

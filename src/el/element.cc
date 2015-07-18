@@ -901,7 +901,7 @@ Element* Element::GetChildFromIndex(int index) const {
 int Element::GetIndexFromChild(Element* child) const {
   assert(child->parent() == this);
   int i = 0;
-  for (Element* tmp = first_child(); tmp; tmp = tmp->GetNext(), ++i) {
+  for (Element *tmp = first_child(); tmp; tmp = tmp->GetNext(), ++i) {
     if (tmp == child) {
       return i;
     }

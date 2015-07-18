@@ -29,7 +29,7 @@ BitmapFragment* BitmapFragmentManager::GetFragmentFromFile(
   TBID id(filename);
 
   // If we already have a fragment for this filename, return that.
-  auto& it = m_fragments.find(id);
+  auto it = m_fragments.find(id);
   if (it != m_fragments.end()) {
     return it->second.get();
   }
@@ -114,7 +114,7 @@ void BitmapFragmentManager::FreeFragment(BitmapFragment* frag) {
 }
 
 BitmapFragment* BitmapFragmentManager::GetFragment(const TBID& id) const {
-  auto& it = m_fragments.find(id);
+  auto it = m_fragments.find(id);
   return it != m_fragments.end() ? it->second.get() : nullptr;
 }
 

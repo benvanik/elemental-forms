@@ -42,11 +42,11 @@ class Rect {
   }
 
   inline void reset() { x = y = w = h = 0; }
-  inline void reset(int x, int y, int w, int h) {
-    this->x = x;
-    this->y = y;
-    this->w = w;
-    this->h = h;
+  inline void reset(int new_x, int new_y, int new_w, int new_h) {
+    x = new_x;
+    y = new_y;
+    w = new_w;
+    h = new_h;
   }
 
   inline Rect Shrink(int left, int top, int right, int bottom) const {

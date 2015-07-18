@@ -616,13 +616,13 @@ void TextView::set_selection(bool selection) {
 }
 
 void TextView::set_password(bool password) {
-  if (packed.password_on == password) return;
+  if (!!packed.password_on == password) return;
   packed.password_on = password;
   Reformat(true);
 }
 
 void TextView::set_wrapping(bool wrapping) {
-  if (packed.wrapping == wrapping) return;
+  if (!!packed.wrapping == wrapping) return;
   packed.wrapping = wrapping;
   Reformat(false);
 }

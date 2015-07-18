@@ -38,17 +38,23 @@ class Node {
   el::parsing::ParseNode* parse_node() const { return parse_node_; }
 
   Node& set(const char* key, int32_t value) {
-    return set(key, el::Value(value));
+    auto v = el::Value(value);
+    return set(key, v);
   }
 
-  Node& set(const char* key, float value) { return set(key, el::Value(value)); }
+  Node& set(const char* key, float value) {
+    auto v = el::Value(value);
+    return set(key, v);
+  }
 
   Node& set(const char* key, const char* value) {
-    return set(key, el::Value(value));
+    auto v = el::Value(value);
+    return set(key, v);
   }
 
   Node& set(const char* key, const std::string& value) {
-    return set(key, el::Value(value.c_str()));
+    auto v = el::Value(value.c_str());
+    return set(key, v);
   }
 
   Node& set(const char* key, el::Rect value) {

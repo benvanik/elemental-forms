@@ -21,20 +21,26 @@ void Color::reset(const char* value, size_t length) {
   if (length == std::string::npos) {
     length = std::strlen(value);
   }
-  int r, g, b, a;
-  if (length == 9 && std::sscanf(value, "#%2x%2x%2x%2x", &r, &g, &b, &a) == 4) {
+  int new_r, new_g, new_b, new_a;
+  if (length == 9 &&
+      std::sscanf(value, "#%2x%2x%2x%2x", &new_r, &new_g, &new_b, &new_a) ==
+          4) {
     // rrggbbaa
-    reset(r, g, b, a);
-  } else if (length == 7 && std::sscanf(value, "#%2x%2x%2x", &r, &g, &b) == 3) {
+    reset(new_r, new_g, new_b, new_a);
+  } else if (length == 7 &&
+             std::sscanf(value, "#%2x%2x%2x", &new_r, &new_g, &new_b) == 3) {
     // rrggbb
-    reset(r, g, b);
+    reset(new_r, new_g, new_b);
   } else if (length == 5 &&
-             std::sscanf(value, "#%1x%1x%1x%1x", &r, &g, &b, &a) == 4) {
+             std::sscanf(value, "#%1x%1x%1x%1x", &new_r, &new_g, &new_b,
+                         &new_a) == 4) {
     // rgba
-    reset(r + (r << 4), g + (g << 4), b + (b << 4), a + (a << 4));
-  } else if (length == 4 && std::sscanf(value, "#%1x%1x%1x", &r, &g, &b) == 3) {
+    reset(new_r + (new_r << 4), new_g + (new_g << 4), new_b + (new_b << 4),
+          new_a + (new_a << 4));
+  } else if (length == 4 &&
+             std::sscanf(value, "#%1x%1x%1x", &new_r, &new_g, &new_b) == 3) {
     // rgb
-    reset(r + (r << 4), g + (g << 4), b + (b << 4));
+    reset(new_r + (new_r << 4), new_g + (new_g << 4), new_b + (new_b << 4));
   } else {
     reset();
   }

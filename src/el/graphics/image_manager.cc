@@ -94,7 +94,7 @@ ImageManager::~ImageManager() {
 
 Image ImageManager::GetImage(const char* filename) {
   uint32_t hash_key = util::hash(filename);
-  auto& it = m_image_rep_hash.find(hash_key);
+  auto it = m_image_rep_hash.find(hash_key);
   if (it != m_image_rep_hash.end()) {
     return it->second;
   }

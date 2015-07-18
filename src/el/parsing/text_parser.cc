@@ -41,7 +41,7 @@ void UnescapeString(char* str) {
   // Fast forward to any escape sequence.
   while (*str && *str != '\\') str++;
 
-  char* dst = str, * src = str;
+  char *dst = str, *src = str;
   while (*src) {
     if (*src == '\\') {
       bool code_found = true;

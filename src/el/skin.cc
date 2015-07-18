@@ -578,14 +578,14 @@ int SkinElement::intrinsic_height() const {
 }
 
 void SkinElement::SetBitmapDPI(const util::DimensionConverter& dim_conv,
-                               int bitmap_dpi) {
-  if (this->bitmap_dpi) {
+                               int new_bitmap_dpi) {
+  if (bitmap_dpi) {
     // We have already applied the modifications so abort. This may
     // happen when we reload bitmaps without reloading the skin.
     return;
   }
   if (dim_conv.NeedConversion()) {
-    if (bitmap_dpi == dim_conv.GetDstDPI()) {
+    if (new_bitmap_dpi == dim_conv.GetDstDPI()) {
       // The bitmap was loaded in a different DPI than the base DPI so
       // we must scale the bitmap properties.
       expand = expand * dim_conv.GetDstDPI() / dim_conv.GetSrcDPI();
@@ -599,7 +599,7 @@ void SkinElement::SetBitmapDPI(const util::DimensionConverter& dim_conv,
       // scale_y = scale_y * dim_conv.GetDstDPI() / dim_conv.GetSrcDPI();
     }
   }
-  this->bitmap_dpi = bitmap_dpi;
+  bitmap_dpi = new_bitmap_dpi;
 }
 
 bool SkinElement::has_state(SkinState state, SkinConditionContext& context) {

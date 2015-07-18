@@ -20,7 +20,8 @@ namespace el {
 class Color {
  public:
   Color() = default;
-  Color(int r, int g, int b, int a = 255) : b(b), g(g), r(r), a(a) {}
+  Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255)
+      : b(b), g(g), r(r), a(a) {}
 
   uint8_t b = 0;
   uint8_t g = 0;
@@ -31,11 +32,11 @@ class Color {
     b = g = r = 0;
     a = 255;
   }
-  void reset(int r, int g, int b, int a = 255) {
-    this->b = b;
-    this->g = g;
-    this->r = r;
-    this->a = a;
+  void reset(uint8_t new_r, uint8_t new_g, uint8_t new_b, uint8_t new_a = 255) {
+    b = new_b;
+    g = new_g;
+    r = new_r;
+    a = new_a;
   }
   void reset(const Color& value) { *this = value; }
   void reset(uint32_t value) { *reinterpret_cast<uint32_t*>(this) = value; }

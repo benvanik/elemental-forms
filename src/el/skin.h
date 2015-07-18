@@ -288,7 +288,8 @@ class SkinElement {
 
   // Sets the DPI that the bitmap was loaded in. This may modify properties to
   // compensate for the bitmap resolution.
-  void SetBitmapDPI(const util::DimensionConverter& dim_conv, int bitmap_dpi);
+  void SetBitmapDPI(const util::DimensionConverter& dim_conv,
+                    int new_bitmap_dpi);
 
   // Checks if there's a exact or partial match for the given state in either
   // override, child or overlay element list. State elements with state "all"

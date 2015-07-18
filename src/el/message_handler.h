@@ -29,7 +29,7 @@ class MessageHandler {
  public:
   // kNotSoon is returned from MessageHandler::GetNextMessageFireTime
   // and means that there is currently no more messages to process.
-  static const uint64_t kNotSoon = -1;
+  static const uint64_t kNotSoon = ~0ull;
 
   MessageHandler();
   virtual ~MessageHandler();

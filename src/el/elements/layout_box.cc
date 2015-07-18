@@ -131,7 +131,7 @@ void LayoutBox::set_layout_distribution_position(
 
 void LayoutBox::set_layout_order(LayoutOrder order) {
   bool reversed = (order == LayoutOrder::kTopToBottom);
-  if (reversed == m_packed.mode_reverse_order) return;
+  if (reversed == !!m_packed.mode_reverse_order) return;
   m_packed.mode_reverse_order = reversed;
   InvalidateLayout(InvalidationMode::kTargetOnly);
 }
@@ -214,11 +214,11 @@ int LayoutBox::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
 }
 
 Element* LayoutBox::GetNextNonCollapsedElement(Element* child) const {
-  Element* next = GetNextInLayoutOrder(child);
-  while (next && next->visibility() == Visibility::kGone) {
-    next = GetNextInLayoutOrder(next);
+  Element* next_child = GetNextInLayoutOrder(child);
+  while (next_child && next_child->visibility() == Visibility::kGone) {
+    next_child = GetNextInLayoutOrder(next_child);
   }
-  return next;
+  return next_child;
 }
 
 int LayoutBox::GetTrailingSpace(Element* child, int spacing) const {

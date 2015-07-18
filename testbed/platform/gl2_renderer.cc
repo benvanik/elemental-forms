@@ -163,7 +163,7 @@ void GL2Renderer::BeginPaint(int render_target_w, int render_target_h) {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
                         &vertices_[0].u);
   glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
-                        &vertices_[0].r);
+                        &vertices_[0].color);
 }
 
 void GL2Renderer::EndPaint() {

@@ -138,7 +138,7 @@ ElementValue* ElementValueGroup::CreateValueIfNeeded(const TBID& name,
 }
 
 ElementValue* ElementValueGroup::GetValue(const TBID& name) const {
-  auto& it = m_values.find(name);
+  auto it = m_values.find(name);
   return it != m_values.end() ? it->second.get() : nullptr;
 }
 

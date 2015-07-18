@@ -32,7 +32,7 @@ FontFace::FontFace(FontGlyphCache* glyph_cache,
     m_metrics = m_font_renderer->GetMetrics();
   } else {
     // Invent some metrics for the test font.
-    int size = m_font_desc.size();
+    int16_t size = m_font_desc.size();
     m_metrics.ascent = size - size / 4;
     m_metrics.descent = size / 4;
     m_metrics.height = size;
