@@ -77,6 +77,8 @@ class Window : public Element {
   // Sets settings for how this window should look and behave.
   void set_settings(WindowSettings settings);
 
+  void CenterInParent();
+
   // ResizeFit specifies how ResizeToFitContent should resize the window.
   enum class ResizeFit {
     kPreferred,        // Fit the preferred size of all content.

@@ -180,6 +180,14 @@ void Window::set_settings(WindowSettings settings) {
   Invalidate();
 }
 
+void Window::CenterInParent() {
+  if (!parent()) {
+    return;
+  }
+  Rect bounds(0, 0, parent()->rect().w, parent()->rect().h);
+  set_rect(rect().CenterIn(bounds).MoveIn(bounds).Clip(bounds));
+}
+
 int Window::title_bar_height() {
   if (any(window_settings_ & WindowSettings::kTitleBar)) {
     return title_mover_.GetPreferredSize().pref_h;
