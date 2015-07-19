@@ -23,7 +23,6 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Demo</RootNamespace>
     <ProjectName>elemental-forms-demo</ProjectName>
-    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
