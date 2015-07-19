@@ -42,6 +42,7 @@
     <ClInclude Include="src\el\elements\list_box.h" />
     <ClInclude Include="src\el\elements\menu_window.h" />
     <ClInclude Include="src\el\elements\message_window.h" />
+    <ClInclude Include="src\el\elements\modal_window.h" />
     <ClInclude Include="src\el\elements\mover.h" />
     <ClInclude Include="src\el\elements\parts\base_radio_check_box.h" />
     <ClInclude Include="src\el\elements\parts\scroller.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="src\el\elements\list_box.cc" />
     <ClCompile Include="src\el\elements\menu_window.cc" />
     <ClCompile Include="src\el\elements\message_window.cc" />
+    <ClCompile Include="src\el\elements\modal_window.cc" />
     <ClCompile Include="src\el\elements\mover.cc" />
     <ClCompile Include="src\el\elements\parts\base_radio_check_box.cc" />
     <ClCompile Include="src\el\elements\parts\scroller.cc" />

@@ -26,6 +26,7 @@
 #include "el/elements/list_box.h"
 #include "el/elements/menu_window.h"
 #include "el/elements/message_window.h"
+#include "el/elements/modal_window.h"
 #include "el/elements/mover.h"
 #include "el/elements/popup_window.h"
 #include "el/elements/progress_spinner.h"

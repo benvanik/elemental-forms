@@ -229,6 +229,9 @@
     <ClInclude Include="src\el\elements\message_window.h">
       <Filter>src\el\elements</Filter>
     </ClInclude>
+    <ClInclude Include="src\el\elements\modal_window.h">
+      <Filter>src\el\elements</Filter>
+    </ClInclude>
     <ClInclude Include="src\el\elements\mover.h">
       <Filter>src\el\elements</Filter>
     </ClInclude>
@@ -558,6 +561,9 @@
       <Filter>src\el\elements</Filter>
     </ClCompile>
     <ClCompile Include="src\el\elements\message_window.cc">
+      <Filter>src\el\elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\el\elements\modal_window.cc">
       <Filter>src\el\elements</Filter>
     </ClCompile>
     <ClCompile Include="src\el\elements\mover.cc">
