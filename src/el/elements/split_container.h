@@ -36,9 +36,9 @@ class SplitContainer : public Element {
   SplitContainer();
   ~SplitContainer() override;
 
-  Axis axis() const { return axis_; }
+  Axis axis() const override { return axis_; }
   // Sets the axis the divider splits across. X is horizontal, Y is vertical.
-  void set_axis(Axis axis);
+  void set_axis(Axis axis) override;
 
   FixedPane fixed_pane() const { return fixed_pane_; }
   // Sets how resizing of the split container is handled.

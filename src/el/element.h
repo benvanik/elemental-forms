@@ -358,12 +358,6 @@ class Element : public util::TypedObject,
   T* GetElementById(const TBID& id) {
     return reinterpret_cast<T*>(GetElementByIdInternal(id, GetTypeId<T>()));
   }
-  // Gets this element or any child element with a matching id, or nullptr if
-  // none is found.
-  template <>
-  Element* GetElementById<Element>(const TBID& id) {
-    return GetElementByIdInternal(id);
-  }
 
   struct LookupPair {
     template <typename T>
@@ -1137,6 +1131,13 @@ class Element : public util::TypedObject,
   // state opacity.
   float CalculateOpacityInternal(State state, SkinElement* skin_element) const;
 };
+
+// Gets this element or any child element with a matching id, or nullptr if
+// none is found.
+template <>
+inline Element* Element::GetElementById<Element>(const TBID& id) {
+  return GetElementByIdInternal(id);
+}
 
 // Check if a condition is true for a element when painting a skin.
 class ElementSkinConditionContext : public SkinConditionContext {

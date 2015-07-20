@@ -249,7 +249,7 @@ struct Item {
 template <typename T>
 struct ItemListElementNode : public ElementNode<T> {
  protected:
-  ItemListElementNode(const char* name) : ElementNode(name) {}
+  ItemListElementNode(const char* name) : ElementNode<T>(name) {}
 
  public:
   T& item(std::string text) {

@@ -44,7 +44,7 @@ class ModalWindow : public Window, private ElementListener {
   bool OnEvent(const el::Event& ev) override;
   void OnDie() override;
   void OnRemove() override;
-  void OnElementAdded(Element* parent, Element* element);
+  void OnElementAdded(Element* parent, Element* element) override;
   bool OnElementDying(Element* element) override;
 
   std::function<void()> on_close_callback_;
