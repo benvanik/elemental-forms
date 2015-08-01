@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <cstring>
+
 #include "el/graphics/bitmap_fragment_map.h"
 #include "el/graphics/renderer.h"
 #include "el/util/math.h"

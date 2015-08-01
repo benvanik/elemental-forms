@@ -118,12 +118,9 @@ bool Caret::Place(TextBlock* block, size_t ofs, bool allow_snap,
       ofs -= block->str_len;
       block = block->GetNext();
     }
-    while (block->prev && ofs < 0ull) {
+    while (block->prev) {
       block = block->GetPrev();
       ofs += block->str_len;
-    }
-    if (ofs < 0ull) {
-      ofs = 0;
     }
     if (ofs > block->str_len) {
       ofs = block->str_len;

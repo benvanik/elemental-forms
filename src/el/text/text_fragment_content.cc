@@ -32,11 +32,11 @@ TextFragmentContent* TextFragmentContentFactory::CreateFragmentContent(
     return new TextFragmentContentHR(100, 2);
   } else if (strncmp(text, "<u>", text_len) == 0) {
     return new TextFragmentContentUnderline();
-  } else if (strncmp(text, "<color ", std::min(text_len, 7ull)) == 0) {
+  } else if (strncmp(text, "<color ", std::min(text_len, size_t(7))) == 0) {
     Color color;
     color.reset(text + 7, text_len - 8);
     return new TextFragmentContentTextColor(color);
-  } else if (strncmp(text, "</", std::min(text_len, 2ull)) == 0) {
+  } else if (strncmp(text, "</", std::min(text_len, size_t(2))) == 0) {
     return new TextFragmentContentStylePop();
   }
   return nullptr;

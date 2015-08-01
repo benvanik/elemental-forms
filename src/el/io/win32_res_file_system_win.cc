@@ -12,7 +12,7 @@
 #include <cstring>
 #include <locale>
 
-#include "el/io/win32_res_file_system.h"
+#include "el/io/win32_res_file_system_win.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

@@ -21,7 +21,7 @@
 #include "el/io/file_manager.h"
 #include "el/io/memory_file_system.h"
 #include "el/io/posix_file_system.h"
-#include "el/io/win32_res_file_system.h"
+#include "el/io/win32_res_file_system_win.h"
 #include "el/parsing/parse_node.h"
 #include "el/text/font_manager.h"
 #include "el/text/font_renderer.h"

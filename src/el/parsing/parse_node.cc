@@ -231,6 +231,8 @@ class ParseNodeTarget : public TextParserTarget {
 
 void ParseNode::TakeValue(Value& value) { m_value.TakeOver(value); }
 
+void ParseNode::EmplaceValue(Value value) { m_value.TakeOver(value); }
+
 bool ParseNode::ReadFile(const std::string& filename, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {
     Clear();

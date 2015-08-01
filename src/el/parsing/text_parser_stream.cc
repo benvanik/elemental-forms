@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <cstring>
+
 #include "el/io/file_manager.h"
 #include "el/parsing/text_parser_stream.h"
 

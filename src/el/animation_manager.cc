@@ -113,7 +113,7 @@ void AnimationManager::StartAnimation(Animation* obj,
   }
   obj->adjust_start_time = animation_time == AnimationTime::kFirstUpdate;
   obj->animation_start_time = util::GetTimeMS();
-  obj->animation_duration = std::max(animation_duration, 0ull);
+  obj->animation_duration = std::max(animation_duration, uint64_t(0));
   obj->animation_curve = animation_curve;
   animating_objects.AddLast(obj);
   obj->InvokeOnAnimationStart();

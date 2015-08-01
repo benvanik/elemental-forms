@@ -1,9 +1,9 @@
-/**
+ï»¿/**
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -27,11 +27,11 @@ namespace text {
 
 const int TAB_SPACE = 4;
 
-const char* special_char_newln = "¶";  // 00B6 PILCROW SIGN
-const char* special_char_space = "·";  // 00B7 MIDDLE DOT
+const char* special_char_newln = "Â¶";  // 00B6 PILCROW SIGN
+const char* special_char_space = "Â·";  // 00B7 MIDDLE DOT
 const char* special_char_tab =
-    "»";  // 00BB RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
-const char* special_char_password = "•";  // 2022 BULLET
+    "Â»";  // 00BB RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+const char* special_char_password = "â€¢";  // 2022 BULLET
 
 // Checks if no line wrapping is allowed before the character at the given
 // offset. The string must be null terminated.

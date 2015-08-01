@@ -607,7 +607,7 @@ int TextBox::TextBoxContentFactory::GetContent(const char* text) {
 text::TextFragmentContent*
 TextBox::TextBoxContentFactory::CreateFragmentContent(const char* text,
                                                       size_t text_len) {
-  if (strncmp(text, "<element ", std::min(text_len, 8ull)) == 0) {
+  if (strncmp(text, "<element ", std::min(text_len, size_t(8))) == 0) {
     // Create a wrapper for the generated element.
     // Its size will adapt to the content.
     auto element = new Element();

@@ -8,6 +8,7 @@
  */
 
 #include <algorithm>
+#include <cstring>
 
 #include "el/io/memory_file_system.h"
 

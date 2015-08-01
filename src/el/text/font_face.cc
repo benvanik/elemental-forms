@@ -8,6 +8,7 @@
  */
 
 #include <cmath>
+#include <cstring>
 #include <memory>
 
 #include "el/text/font_face.h"

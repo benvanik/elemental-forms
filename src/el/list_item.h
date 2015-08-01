@@ -257,7 +257,7 @@ struct ItemListElementNode : public ElementNode<T> {
     auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto text_node = ParseNode::Create("text");
-    text_node->TakeValue(el::Value(text.c_str()));
+    text_node->EmplaceValue(el::Value(text.c_str()));
     node->Add(text_node);
     items_node->Add(node);
     return *reinterpret_cast<T*>(this);
@@ -267,10 +267,10 @@ struct ItemListElementNode : public ElementNode<T> {
     auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto id_node = ParseNode::Create("id");
-    id_node->TakeValue(el::Value(id.c_str()));
+    id_node->EmplaceValue(el::Value(id.c_str()));
     node->Add(id_node);
     auto text_node = ParseNode::Create("text");
-    text_node->TakeValue(el::Value(text.c_str()));
+    text_node->EmplaceValue(el::Value(text.c_str()));
     node->Add(text_node);
     items_node->Add(node);
     return *reinterpret_cast<T*>(this);
@@ -280,10 +280,10 @@ struct ItemListElementNode : public ElementNode<T> {
     auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto id_node = ParseNode::Create("id");
-    id_node->TakeValue(el::Value(id));
+    id_node->EmplaceValue(el::Value(id));
     node->Add(id_node);
     auto text_node = ParseNode::Create("text");
-    text_node->TakeValue(el::Value(text.c_str()));
+    text_node->EmplaceValue(el::Value(text.c_str()));
     node->Add(text_node);
     items_node->Add(node);
     return *reinterpret_cast<T*>(this);
@@ -294,7 +294,7 @@ struct ItemListElementNode : public ElementNode<T> {
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto text_node = ParseNode::Create("text");
-      text_node->TakeValue(el::Value(item.c_str()));
+      text_node->EmplaceValue(el::Value(item.c_str()));
       node->Add(text_node);
       items_node->Add(node);
     }
@@ -306,10 +306,10 @@ struct ItemListElementNode : public ElementNode<T> {
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto id_node = ParseNode::Create("id");
-      id_node->TakeValue(el::Value(item.first));
+      id_node->EmplaceValue(el::Value(item.first));
       node->Add(id_node);
       auto text_node = ParseNode::Create("text");
-      text_node->TakeValue(el::Value(item.second.c_str()));
+      text_node->EmplaceValue(el::Value(item.second.c_str()));
       node->Add(text_node);
       items_node->Add(node);
     }
@@ -321,10 +321,10 @@ struct ItemListElementNode : public ElementNode<T> {
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto id_node = ParseNode::Create("id");
-      id_node->TakeValue(el::Value(item.id.c_str()));
+      id_node->EmplaceValue(el::Value(item.id.c_str()));
       node->Add(id_node);
       auto text_node = ParseNode::Create("text");
-      text_node->TakeValue(el::Value(item.text.c_str()));
+      text_node->EmplaceValue(el::Value(item.text.c_str()));
       node->Add(text_node);
       items_node->Add(node);
     }

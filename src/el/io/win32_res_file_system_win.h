@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef EL_IO_WIN32_RES_FILE_SYSTEM_H_
-#define EL_IO_WIN32_RES_FILE_SYSTEM_H_
+#ifndef EL_IO_WIN32_RES_FILE_SYSTEM_WIN_H_
+#define EL_IO_WIN32_RES_FILE_SYSTEM_WIN_H_
 
 #include <memory>
 #include <string>
@@ -31,4 +31,4 @@ class Win32ResFileSystem : public FileSystem {
 }  // namespace io
 }  // namespace el
 
-#endif  // EL_IO_WIN32_RES_FILE_SYSTEM_H_
+#endif  // EL_IO_WIN32_RES_FILE_SYSTEM_WIN_H_
