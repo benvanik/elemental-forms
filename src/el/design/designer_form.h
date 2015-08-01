@@ -7,28 +7,28 @@
  ******************************************************************************
  */
 
-#ifndef EL_DESIGN_DESIGNER_WINDOW_H_
-#define EL_DESIGN_DESIGNER_WINDOW_H_
+#ifndef EL_DESIGN_DESIGNER_FORM_H_
+#define EL_DESIGN_DESIGNER_FORM_H_
 
 #include "el/element.h"
 #include "el/element_listener.h"
+#include "el/elements/form.h"
 #include "el/elements/list_box.h"
 #include "el/elements/text_box.h"
 #include "el/event_handler.h"
 #include "el/message_handler.h"
-#include "el/window.h"
 
 namespace el {
 namespace design {
 
-class DesignerWindow : public Window,
-                       public MessageHandler,
-                       public ElementListener {
+class DesignerForm : public elements::Form,
+                     public MessageHandler,
+                     public ElementListener {
  public:
-  TBOBJECT_SUBCLASS(DesignerWindow, Window);
+  TBOBJECT_SUBCLASS(DesignerForm, Form);
 
-  DesignerWindow();
-  ~DesignerWindow() override;
+  DesignerForm();
+  ~DesignerForm() override;
 
   void Show(Element* root_element);
 
@@ -62,4 +62,4 @@ class DesignerWindow : public Window,
 }  // namespace design
 }  // namespace el
 
-#endif  // EL_DESIGN_DESIGNER_WINDOW_H_
+#endif  // EL_DESIGN_DESIGNER_FORM_H_

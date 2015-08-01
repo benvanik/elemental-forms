@@ -65,8 +65,8 @@ class DebugInfo {
   static DebugInfo debug_info_singleton_;
 };
 
-// Shows a window containing runtime debugging settings.
-void ShowDebugInfoSettingsWindow(Element* root);
+// Shows a form containing runtime debugging settings.
+void ShowDebugInfoSettingsForm(Element* root);
 
 #define EL_DEBUG_SETTING(setting) \
   el::util::DebugInfo::get()->settings[int(setting)]
@@ -81,7 +81,7 @@ void ShowDebugInfoSettingsWindow(Element* root);
 #else
 namespace el {
 namespace util {
-inline void ShowDebugInfoSettingsWindow(Element* root) {}
+inline void ShowDebugInfoSettingsForm(Element* root) {}
 }  // namespace util
 }  // namespace el
 #define EL_DEBUG_SETTING(setting) false

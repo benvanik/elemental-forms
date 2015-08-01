@@ -25,9 +25,9 @@ class ElementAnimation : public Animation,
   TBOBJECT_SUBCLASS(ElementAnimation, Animation);
 
   // Don't use 0.0 for opacity animations since that may break focus code.
-  // At the moment a window should appear and start fading in from opacity 0,
+  // At the moment a form should appear and start fading in from opacity 0,
   // it would also attempt setting the focus to it, but if opacity is 0 it will
-  // think focus should not be set in that window and fail.
+  // think focus should not be set in that form and fail.
   static const float kAlmostZeroOpacity;
 
   ElementAnimation(Element* element);

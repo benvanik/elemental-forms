@@ -145,7 +145,7 @@ bool TestbedApplication::Init() {
   new TabContainerWindow();
 
   if (num_failed_tests) {
-    MessageWindow* msg_win = new MessageWindow(GetRoot(), TBIDC(""));
+    auto msg_win = new MessageForm(GetRoot(), TBIDC(""));
     msg_win->Show(
         "Testing results",
         el::util::format_string(
@@ -379,7 +379,7 @@ bool DemoWindow::OnEvent(const Event& ev) {
     title_close_button_.InvokeEvent(click_ev);
     return true;
   }
-  return Window::OnEvent(ev);
+  return Form::OnEvent(ev);
 }
 
 // == EditWindow ==============================================================
@@ -443,7 +443,7 @@ bool EditWindow::OnEvent(const Event& ev) {
             "Align right", TBIDC("align right")));
       }
 
-      if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popup_menu")))
+      if (auto menu = new MenuForm(ev.target, TBIDC("popup_menu")))
         menu->Show(&source, PopupAlignment());
       return true;
     } else if (ev.target->id() == TBIDC("popup_menu")) {
@@ -625,11 +625,11 @@ bool ScrollContainerWindow::OnEvent(const Event& ev) {
       delete ev.target;
       return true;
     } else if (ev.target->id() == TBIDC("showpopupmenu1")) {
-      if (MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu1")))
+      if (auto menu = new MenuForm(ev.target, TBIDC("popupmenu1")))
         menu->Show(&popup_menu_source, PopupAlignment());
       return true;
     } else if (ev.target->id() == TBIDC("popupmenu1")) {
-      MessageWindow* msg_win = new MessageWindow(this, TBIDC("popup_dialog"));
+      auto msg_win = new MessageForm(this, TBIDC("popup_dialog"));
       msg_win->Show("Info",
                     el::util::format_string("Menu event received!\nref_id: %d",
                                             (int)ev.ref_id));
@@ -730,7 +730,7 @@ bool AnimationsWindow::OnEvent(const Event& ev) {
 class FullScreenWindow : public DemoWindow {
  public:
   FullScreenWindow() : DemoWindow() {
-    set_settings(WindowSettings::kFullScreen);
+    set_settings(FormSettings::kFullScreen);
   }
 };
 
@@ -825,13 +825,13 @@ MainWindow::MainWindow() {
 
 void MainWindow::OnMessageReceived(Message* msg) {
   if (msg->message_id() == TBIDC("instantmsg")) {
-    MessageWindow* msg_win = new MessageWindow(this, TBIDC("test_dialog"));
+    auto msg_win = new MessageForm(this, TBIDC("test_dialog"));
     msg_win->Show("Message window", "Instant message received!");
   } else if (msg->message_id() == TBIDC("busy")) {
     // Keep the message queue busy by posting another "busy" message.
     PostMessage(TBIDC("busy"), nullptr);
   } else if (msg->message_id() == TBIDC("delayedmsg")) {
-    MessageWindow* msg_win = new MessageWindow(this, TBIDC(""));
+    auto msg_win = new MessageForm(this, TBIDC(""));
     msg_win->Show("Message window",
                   el::util::format_string(
                       "Delayed message received!\n\n"
@@ -855,8 +855,7 @@ bool MainWindow::OnEvent(const Event& ev) {
         assert(!GetMessageById(TBIDC("busy")));
         if (!GetMessageById(TBIDC("busy"))) {
           PostMessage(TBIDC("busy"), nullptr);
-          MessageWindow* msg_win =
-              new MessageWindow(this, TBIDC("test_dialog"));
+          auto msg_win = new MessageForm(this, TBIDC("test_dialog"));
           msg_win->Show("Message window",
                         "The message loop is now constantly busy with messages "
                         "to process.\n\n"
@@ -876,10 +875,8 @@ bool MainWindow::OnEvent(const Event& ev) {
     } else if (ev.target->id() == TBIDC("Window.close")) {
       // Intercept the Window.close message and stop it from bubbling
       // to Window (prevent the window from closing)
-      MessageWindow* msg_win =
-          new MessageWindow(this, TBIDC("confirm_close_dialog"));
-      MessageWindowSettings settings(MessageWindowButtons::kYesNo,
-                                     TBIDC("Icon48"));
+      auto msg_win = new MessageForm(this, TBIDC("confirm_close_dialog"));
+      MessageFormSettings settings(MessageFormButtons::kYesNo, TBIDC("Icon48"));
       settings.dimmer = true;
       settings.styling = true;
       msg_win->Show("Are you sure?",
@@ -897,7 +894,7 @@ bool MainWindow::OnEvent(const Event& ev) {
       }
       uint64_t t2 = util::GetTimeMS();
 
-      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
+      auto msg_win = new MessageForm(ev.target, TBID());
       msg_win->Show("GFX load performance",
                     el::util::format_string(
                         "Reloading the skin graphics %d times took %dms",
@@ -906,7 +903,7 @@ bool MainWindow::OnEvent(const Event& ev) {
     } else if (ev.target->id() == TBIDC("test context lost")) {
       Renderer::get()->InvokeContextLost();
       Renderer::get()->InvokeContextRestored();
-      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
+      auto msg_win = new MessageForm(ev.target, TBID());
       msg_win->Show("Context lost & restore",
                     "Called InvokeContextLost and InvokeContextRestored.\n\n"
                     "Does everything look fine?");
@@ -952,7 +949,7 @@ bool MainWindow::OnEvent(const Event& ev) {
     } else if (ev.type == EventType::kClick &&
                ev.target->id() == TBIDC("debug settings")) {
 #ifdef EL_RUNTIME_DEBUG_INFO
-      util::ShowDebugInfoSettingsWindow(parent_root());
+      util::ShowDebugInfoSettingsForm(parent_root());
 #else
       MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
       msg_win->Show("Debug settings",

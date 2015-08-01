@@ -8,16 +8,16 @@
  */
 
 #include "el/element_listener.h"
-#include "el/elements/menu_window.h"
+#include "el/elements/menu_form.h"
 
 namespace el {
 namespace elements {
 
-MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
+MenuForm::MenuForm(Element* target, TBID id) : PopupForm(target) {
   set_id(id);
-  set_background_skin(TBIDC("MenuWindow"), InvokeInfo::kNoCallbacks);
+  set_background_skin(TBIDC("MenuForm"), InvokeInfo::kNoCallbacks);
   m_select_list.scroll_container()->set_adapt_to_content_size(true);
-  // Avoid it autoclosing its window on click:
+  // Avoid it autoclosing its form on click:
   m_select_list.set_focusable(false);
   m_select_list.set_background_skin("");
   m_select_list.set_rect(padding_rect());
@@ -25,17 +25,17 @@ MenuWindow::MenuWindow(Element* target, TBID id) : PopupWindow(target) {
   AddChild(&m_select_list);
 }
 
-MenuWindow::~MenuWindow() { RemoveChild(&m_select_list); }
+MenuForm::~MenuForm() { RemoveChild(&m_select_list); }
 
-void MenuWindow::Show(ListItemSource* source, const PopupAlignment& alignment,
-                      int initial_value) {
+void MenuForm::Show(ListItemSource* source, const PopupAlignment& alignment,
+                    int initial_value) {
   m_select_list.set_value(initial_value);
   m_select_list.set_source(source);
   m_select_list.ValidateList();
-  PopupWindow::Show(alignment);
+  PopupForm::Show(alignment);
 }
 
-bool MenuWindow::OnEvent(const Event& ev) {
+bool MenuForm::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && &m_select_list == ev.target) {
     WeakElementPointer this_element(this);
 
@@ -50,7 +50,7 @@ bool MenuWindow::OnEvent(const Event& ev) {
     }
     return true;
   }
-  return PopupWindow::OnEvent(ev);
+  return PopupForm::OnEvent(ev);
 }
 
 }  // namespace elements

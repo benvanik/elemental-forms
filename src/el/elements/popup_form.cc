@@ -9,7 +9,7 @@
 
 #include <algorithm>
 
-#include "el/elements/popup_window.h"
+#include "el/elements/popup_form.h"
 #include "el/util/math.h"
 
 namespace el {
@@ -71,37 +71,37 @@ Rect PopupAlignment::GetAlignedRect(Element* popup, Element* target) const {
   return Rect(x, y, w, h);
 }
 
-PopupWindow::PopupWindow(Element* target) : m_target(target) {
+PopupForm::PopupForm(Element* target) : m_target(target) {
   ElementListener::AddGlobalListener(this);
-  set_background_skin(TBIDC("PopupWindow"), InvokeInfo::kNoCallbacks);
-  set_settings(WindowSettings::kNone);
+  set_background_skin(TBIDC("PopupForm"), InvokeInfo::kNoCallbacks);
+  set_settings(FormSettings::kNone);
 }
 
-PopupWindow::~PopupWindow() { ElementListener::RemoveGlobalListener(this); }
+PopupForm::~PopupForm() { ElementListener::RemoveGlobalListener(this); }
 
-void PopupWindow::Show(const PopupAlignment& alignment) {
-  // Calculate and set a good size for the popup window
+void PopupForm::Show(const PopupAlignment& alignment) {
+  // Calculate and set a good size for the popup form
   set_rect(alignment.GetAlignedRect(this, m_target.get()));
 
   Element* root = m_target.get()->parent_root();
   root->AddChild(this);
 }
 
-bool PopupWindow::OnEvent(const Event& ev) {
+bool PopupForm::OnEvent(const Event& ev) {
   if (ev.type == EventType::kKeyDown && ev.special_key == SpecialKey::kEsc) {
     Close();
     return true;
   }
-  return Window::OnEvent(ev);
+  return Form::OnEvent(ev);
 }
 
-void PopupWindow::OnElementFocusChanged(Element* element, bool focused) {
+void PopupForm::OnElementFocusChanged(Element* element, bool focused) {
   if (focused && !IsEventDestinationFor(element)) {
     Close();
   }
 }
 
-bool PopupWindow::OnElementInvokeEvent(Element* element, const Event& ev) {
+bool PopupForm::OnElementInvokeEvent(Element* element, const Event& ev) {
   if ((ev.type == EventType::kPointerDown ||
        ev.type == EventType::kContextMenu) &&
       !IsEventDestinationFor(ev.target)) {
@@ -110,14 +110,14 @@ bool PopupWindow::OnElementInvokeEvent(Element* element, const Event& ev) {
   return false;
 }
 
-void PopupWindow::OnElementDelete(Element* element) {
+void PopupForm::OnElementDelete(Element* element) {
   // If the target element is deleted, close!
   if (!m_target.get()) {
     Close();
   }
 }
 
-bool PopupWindow::OnElementDying(Element* element) {
+bool PopupForm::OnElementDying(Element* element) {
   // If the target element or an ancestor of it is dying, close!
   if (element == m_target.get() || element->IsAncestorOf(m_target.get())) {
     Close();

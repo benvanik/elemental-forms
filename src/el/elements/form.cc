@@ -10,31 +10,32 @@
 #include <algorithm>
 #include <cassert>
 
-#include "el/design/designer_window.h"
+#include "el/design/designer_form.h"
+#include "el/elements/form.h"
 #include "el/util/math.h"
-#include "el/window.h"
 
 namespace el {
+namespace elements {
 
-Window::Window() {
-  set_background_skin(TBIDC("Window"), InvokeInfo::kNoCallbacks);
+Form::Form() {
+  set_background_skin(TBIDC("Form"), InvokeInfo::kNoCallbacks);
   AddChild(&title_mover_);
   AddChild(&title_resizer_);
-  title_mover_.set_background_skin(TBIDC("Window.mover"));
+  title_mover_.set_background_skin(TBIDC("Form.mover"));
   title_mover_.AddChild(&title_label_);
   title_label_.set_ignoring_input(true);
   title_mover_.AddChild(&title_design_button_);
-  title_design_button_.set_background_skin(TBIDC("Window.close"));
+  title_design_button_.set_background_skin(TBIDC("Form.close"));
   title_design_button_.set_focusable(false);
-  title_design_button_.set_id(TBIDC("Window.design"));
+  title_design_button_.set_id(TBIDC("Form.design"));
   title_mover_.AddChild(&title_close_button_);
-  title_close_button_.set_background_skin(TBIDC("Window.close"));
+  title_close_button_.set_background_skin(TBIDC("Form.close"));
   title_close_button_.set_focusable(false);
-  title_close_button_.set_id(TBIDC("Window.close"));
+  title_close_button_.set_id(TBIDC("Form.close"));
   set_group_root(true);
 }
 
-Window::~Window() {
+Form::~Form() {
   title_resizer_.RemoveFromParent();
   title_mover_.RemoveFromParent();
   title_design_button_.RemoveFromParent();
@@ -42,7 +43,7 @@ Window::~Window() {
   title_mover_.RemoveChild(&title_label_);
 }
 
-Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
+Rect Form::GetResizeToFitContentRect(ResizeFit fit) {
   PreferredSize ps = GetPreferredSize();
   int new_w = ps.pref_w;
   int new_h = ps.pref_h;
@@ -60,32 +61,32 @@ Rect Window::GetResizeToFitContentRect(ResizeFit fit) {
   return Rect(rect().x, rect().y, new_w, new_h);
 }
 
-void Window::ResizeToFitContent(ResizeFit fit) {
+void Form::ResizeToFitContent(ResizeFit fit) {
   set_rect(GetResizeToFitContentRect(fit));
 }
 
-void Window::Close() { Die(); }
+void Form::Close() { Die(); }
 
-bool Window::is_active() const { return has_state(Element::State::kSelected); }
+bool Form::is_active() const { return has_state(Element::State::kSelected); }
 
-Window* Window::GetTopMostOtherWindow(bool only_activable_windows) {
-  Window* other_window = nullptr;
+Form* Form::GetTopMostOtherForm(bool only_activable_forms) {
+  Form* other_form = nullptr;
   Element* sibling = parent()->last_child();
-  while (sibling && !other_window) {
+  while (sibling && !other_form) {
     if (sibling != this) {
-      other_window = util::SafeCast<Window>(sibling);
+      other_form = util::SafeCast<Form>(sibling);
     }
-    if (only_activable_windows && other_window &&
-        !any(other_window->window_settings_ & WindowSettings::kCanActivate)) {
-      other_window = nullptr;
+    if (only_activable_forms && other_form &&
+        !any(other_form->form_settings_ & FormSettings::kCanActivate)) {
+      other_form = nullptr;
     }
     sibling = sibling->GetPrev();
   }
-  return other_window;
+  return other_form;
 }
 
-void Window::Activate() {
-  if (!parent() || !any(window_settings_ & WindowSettings::kCanActivate)) {
+void Form::Activate() {
+  if (!parent() || !any(form_settings_ & FormSettings::kCanActivate)) {
     return;
   }
   if (is_active()) {
@@ -95,19 +96,19 @@ void Window::Activate() {
     return;
   }
 
-  // Deactivate currently active window.
-  Window* active_window = GetTopMostOtherWindow(true);
-  if (active_window) {
-    active_window->Deactivate();
+  // Deactivate currently active form.
+  Form* active_form = GetTopMostOtherForm(true);
+  if (active_form) {
+    active_form->Deactivate();
   }
 
-  // Activate this window.
+  // Activate this form.
   set_z(ElementZ::kTop);
-  SetWindowActiveState(true);
+  SetFormActiveState(true);
   EnsureFocus();
 }
 
-bool Window::EnsureFocus() {
+bool Form::EnsureFocus() {
   // If we already have focus, we're done.
   if (focused_element && IsAncestorOf(focused_element)) {
     return true;
@@ -125,42 +126,42 @@ bool Window::EnsureFocus() {
   return success;
 }
 
-void Window::Deactivate() {
+void Form::Deactivate() {
   if (!is_active()) return;
-  SetWindowActiveState(false);
+  SetFormActiveState(false);
 }
 
-void Window::SetWindowActiveState(bool active) {
+void Form::SetFormActiveState(bool active) {
   set_state(Element::State::kSelected, active);
   title_mover_.set_state(Element::State::kSelected, active);
 }
 
-void Window::set_settings(WindowSettings settings) {
-  if (settings == window_settings_) return;
-  window_settings_ = settings;
+void Form::set_settings(FormSettings settings) {
+  if (settings == form_settings_) return;
+  form_settings_ = settings;
 
-  if (any(settings & WindowSettings::kTitleBar)) {
+  if (any(settings & FormSettings::kTitleBar)) {
     if (!title_mover_.parent()) {
       AddChild(&title_mover_);
     }
   } else {
     title_mover_.RemoveFromParent();
   }
-  if (any(settings & WindowSettings::kResizable)) {
+  if (any(settings & FormSettings::kResizable)) {
     if (!title_resizer_.parent()) {
       AddChild(&title_resizer_);
     }
   } else {
     title_resizer_.RemoveFromParent();
   }
-  if (any(settings & WindowSettings::kDesignButton)) {
+  if (any(settings & FormSettings::kDesignButton)) {
     if (!title_design_button_.parent()) {
       title_mover_.AddChild(&title_design_button_);
     }
   } else {
     title_design_button_.RemoveFromParent();
   }
-  if (any(settings & WindowSettings::kCloseButton)) {
+  if (any(settings & FormSettings::kCloseButton)) {
     if (!title_close_button_.parent()) {
       title_mover_.AddChild(&title_close_button_);
     }
@@ -168,19 +169,19 @@ void Window::set_settings(WindowSettings settings) {
     title_close_button_.RemoveFromParent();
   }
 
-  if (any(settings & WindowSettings::kFullScreen)) {
-    set_background_skin(TBIDC("Window.fullscreen"));
+  if (any(settings & FormSettings::kFullScreen)) {
+    set_background_skin(TBIDC("Form.fullscreen"));
     set_gravity(Gravity::kAll);
     FitToParent();
   } else {
-    set_background_skin(TBIDC("Window"));
+    set_background_skin(TBIDC("Form"));
   }
 
-  // FIX: invalidate layout / resize window!
+  // FIX: invalidate layout / resize form!
   Invalidate();
 }
 
-void Window::CenterInParent() {
+void Form::CenterInParent() {
   if (!parent()) {
     return;
   }
@@ -188,14 +189,14 @@ void Window::CenterInParent() {
   set_rect(rect().CenterIn(bounds).MoveIn(bounds).Clip(bounds));
 }
 
-int Window::title_bar_height() {
-  if (any(window_settings_ & WindowSettings::kTitleBar)) {
+int Form::title_bar_height() {
+  if (any(form_settings_ & FormSettings::kTitleBar)) {
     return title_mover_.GetPreferredSize().pref_h;
   }
   return 0;
 }
 
-Rect Window::padding_rect() {
+Rect Form::padding_rect() {
   Rect padding_rect = Element::padding_rect();
   int title_height = title_bar_height();
   padding_rect.y += title_height;
@@ -203,25 +204,25 @@ Rect Window::padding_rect() {
   return padding_rect;
 }
 
-PreferredSize Window::OnCalculatePreferredSize(
+PreferredSize Form::OnCalculatePreferredSize(
     const SizeConstraints& constraints) {
   PreferredSize ps = OnCalculatePreferredContentSize(constraints);
 
-  // Add window skin padding
+  // Add form skin padding
   if (auto e = background_skin_element()) {
     ps.min_w += e->padding_left + e->padding_right;
     ps.pref_w += e->padding_left + e->padding_right;
     ps.min_h += e->padding_top + e->padding_bottom;
     ps.pref_h += e->padding_top + e->padding_bottom;
   }
-  // Add window title bar height
+  // Add form title bar height
   int title_height = title_bar_height();
   ps.min_h += title_height;
   ps.pref_h += title_height;
   return ps;
 }
 
-bool Window::OnEvent(const Event& ev) {
+bool Form::OnEvent(const Event& ev) {
   if (ev.target == &title_close_button_) {
     if (ev.type == EventType::kClick) {
       Close();
@@ -236,31 +237,30 @@ bool Window::OnEvent(const Event& ev) {
   return Element::OnEvent(ev);
 }
 
-void Window::OnAdded() {
+void Form::OnAdded() {
   // If we was added last, call Activate to update status etc.
   if (parent()->last_child() == this) {
     Activate();
   }
 
   // Fit if needed.
-  if (any(window_settings_ & WindowSettings::kFullScreen)) {
+  if (any(form_settings_ & FormSettings::kFullScreen)) {
     FitToParent();
   }
 }
 
-void Window::OnRemove() {
+void Form::OnRemove() {
   Deactivate();
 
-  // Active the top most other window
-  if (Window* active_window = GetTopMostOtherWindow(true))
-    active_window->Activate();
+  // Active the top most other form
+  if (Form* active_form = GetTopMostOtherForm(true)) active_form->Activate();
 }
 
-void Window::OnChildAdded(Element* child) {
+void Form::OnChildAdded(Element* child) {
   title_resizer_.set_z(ElementZ::kTop);
 }
 
-void Window::OnResized(int old_w, int old_h) {
+void Form::OnResized(int old_w, int old_h) {
   // Apply gravity on children.
   Element::OnResized(old_w, old_h);
   // Manually move our own decoration children.
@@ -278,19 +278,20 @@ void Window::OnResized(int old_w, int old_h) {
   title_close_button_.set_rect(
       {title_mover_rect.x + title_mover_rect.w - button_size,
        title_mover_rect.y, button_size, button_size});
-  if (any(window_settings_ & WindowSettings::kDesignButton)) {
+  if (any(form_settings_ & FormSettings::kDesignButton)) {
     title_mover_rect.w -= button_size;
   }
-  if (any(window_settings_ & WindowSettings::kCloseButton)) {
+  if (any(form_settings_ & FormSettings::kCloseButton)) {
     title_mover_rect.w -= button_size;
   }
   title_label_.set_rect(title_mover_rect);
 }
 
-void Window::OpenDesigner() {
-  auto designer_window = new design::DesignerWindow();
-  designer_window->BindContent(this);
-  designer_window->Show(this);
+void Form::OpenDesigner() {
+  auto designer_form = new design::DesignerForm();
+  designer_form->BindContent(this);
+  designer_form->Show(this);
 }
 
+}  // namespace elements
 }  // namespace el

@@ -7,11 +7,11 @@
  ******************************************************************************
  */
 
-#ifndef EL_ELEMENTS_POPUP_WINDOW_H_
-#define EL_ELEMENTS_POPUP_WINDOW_H_
+#ifndef EL_ELEMENTS_POPUP_FORM_H_
+#define EL_ELEMENTS_POPUP_FORM_H_
 
 #include "el/element_listener.h"
-#include "el/window.h"
+#include "el/elements/form.h"
 
 namespace el {
 namespace elements {
@@ -43,7 +43,7 @@ class PopupAlignment {
         align(Align::kBottom),
         expand_to_target_width(true) {}
 
-  // Calculates a good rect for the given popup window using its preferred size
+  // Calculates a good rect for the given popup form using its preferred size
   // and the preferred alignment information stored in this class.
   Rect GetAlignedRect(Element* popup, Element* target) const;
 
@@ -56,15 +56,15 @@ class PopupAlignment {
   bool expand_to_target_width;
 };
 
-// A popup window that redirects any child elements events through the given
+// A popup form that redirects any child elements events through the given
 // target. It will automatically close on click events that are not sent through
 // this popup.
-class PopupWindow : public Window, private ElementListener {
+class PopupForm : public Form, private ElementListener {
  public:
-  TBOBJECT_SUBCLASS(PopupWindow, Window);
+  TBOBJECT_SUBCLASS(PopupForm, Form);
 
-  PopupWindow(Element* target);
-  ~PopupWindow() override;
+  PopupForm(Element* target);
+  ~PopupForm() override;
 
   void Show(const PopupAlignment& alignment);
 
@@ -86,4 +86,4 @@ class PopupWindow : public Window, private ElementListener {
 }  // namespace elements
 }  // namespace el
 
-#endif  // EL_ELEMENTS_POPUP_WINDOW_H_
+#endif  // EL_ELEMENTS_POPUP_FORM_H_

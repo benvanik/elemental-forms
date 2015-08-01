@@ -31,9 +31,9 @@ EL_TEST_GROUP(tb_text_box) {
      * tests. */
     edit->set_rect({0, 0, 1000, 1000});
 
-    /** Force windows style line breaks so testing is the same on all platforms.
+    /** Force forms style line breaks so testing is the same on all platforms.
      */
-    sedit->set_windows_style_break(true);
+    sedit->set_forms_style_break(true);
   }
   EL_TEST(Cleanup) { delete edit; }
 
@@ -46,7 +46,7 @@ EL_TEST_GROUP(tb_text_box) {
   }
 
   EL_TEST(settext_multiline) {
-    // Both unix and windows line endings should be ok.
+    // Both unix and forms line endings should be ok.
     edit->set_text("One\nTwo", CaretPosition::kEnd);
     EL_VERIFY_STR(edit->text(), "One\nTwo");
     edit->set_text("One\r\nTwo", CaretPosition::kEnd);
@@ -179,7 +179,7 @@ EL_TEST_GROUP(tb_text_box) {
   }
 
   EL_TEST(settext_undo_stack_ins_linebreak_3) {
-    sedit->set_windows_style_break(false);
+    sedit->set_forms_style_break(false);
 
     sedit->InsertBreak();
     EL_VERIFY_STR(edit->text(), "\n\n");

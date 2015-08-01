@@ -8,7 +8,7 @@
  */
 
 #include "el/elements/drop_down_button.h"
-#include "el/elements/menu_window.h"
+#include "el/elements/menu_form.h"
 #include "el/parsing/element_inflater.h"
 #include "el/util/string.h"
 #include "el/util/string_builder.h"
@@ -33,7 +33,7 @@ DropDownButton::DropDownButton() {
 DropDownButton::~DropDownButton() {
   content_root()->RemoveChild(&m_arrow);
   set_source(nullptr);
-  CloseWindow();
+  CloseForm();
 }
 
 void DropDownButton::OnInflate(const parsing::InflateInfo& info) {
@@ -72,25 +72,25 @@ TBID DropDownButton::selected_item_id() {
   return TBID();
 }
 
-void DropDownButton::OpenWindow() {
-  if (!m_source || !m_source->size() || m_window_pointer.get()) {
+void DropDownButton::OpenForm() {
+  if (!m_source || !m_source->size() || m_form_pointer.get()) {
     return;
   }
 
-  MenuWindow* window = new MenuWindow(this, TBIDC("DropDownButton.window"));
-  m_window_pointer.reset(window);
-  window->set_background_skin(TBIDC("DropDownButton.window"));
-  window->Show(m_source, PopupAlignment(), value());
+  MenuForm* form = new MenuForm(this, TBIDC("DropDownButton.form"));
+  m_form_pointer.reset(form);
+  form->set_background_skin(TBIDC("DropDownButton.form"));
+  form->Show(m_source, PopupAlignment(), value());
 }
 
-void DropDownButton::CloseWindow() {
-  if (MenuWindow* window = menu_if_open()) {
-    window->Close();
+void DropDownButton::CloseForm() {
+  if (MenuForm* form = menu_if_open()) {
+    form->Close();
   }
 }
 
-MenuWindow* DropDownButton::menu_if_open() const {
-  return util::SafeCast<MenuWindow>(m_window_pointer.get());
+MenuForm* DropDownButton::menu_if_open() const {
+  return util::SafeCast<MenuForm>(m_form_pointer.get());
 }
 
 bool DropDownButton::OnEvent(const Event& ev) {
@@ -98,29 +98,29 @@ bool DropDownButton::OnEvent(const Event& ev) {
     // Open the menu, or set the value and close it if already open (this will
     // happen when clicking by keyboard since that will call click on this
     // button).
-    if (MenuWindow* menu_window = menu_if_open()) {
+    if (MenuForm* menu_form = menu_if_open()) {
       WeakElementPointer tmp(this);
-      int value = menu_window->list_box()->value();
-      menu_window->Die();
+      int value = menu_form->list_box()->value();
+      menu_form->Die();
       if (tmp.get()) {
         set_value(value);
       }
     } else {
-      OpenWindow();
+      OpenForm();
     }
     return true;
-  } else if (ev.target->id() == TBIDC("DropDownButton.window") &&
+  } else if (ev.target->id() == TBIDC("DropDownButton.form") &&
              ev.type == EventType::kClick) {
     // Set the value of the clicked item.
-    if (MenuWindow* menu_window = menu_if_open()) {
-      set_value(menu_window->list_box()->value());
+    if (MenuForm* menu_form = menu_if_open()) {
+      set_value(menu_form->list_box()->value());
     }
     return true;
   } else if (ev.target == this && m_source && ev.is_key_event()) {
-    if (MenuWindow* menu_window = menu_if_open()) {
+    if (MenuForm* menu_form = menu_if_open()) {
       // Redirect the key strokes to the list.
       Event redirected_ev(ev);
-      return menu_window->list_box()->InvokeEvent(redirected_ev);
+      return menu_form->list_box()->InvokeEvent(redirected_ev);
     }
   }
   return Element::OnEvent(ev);

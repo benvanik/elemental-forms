@@ -7,7 +7,7 @@
  ******************************************************************************
  */
 
-#include "el/elements/menu_window.h"
+#include "el/elements/menu_form.h"
 #include "el/elements/text_box.h"
 #include "el/parsing/element_inflater.h"
 #include "el/text/font_face.h"
@@ -282,7 +282,7 @@ bool TextBox::OnEvent(const Event& ev) {
     Point pos_in_root(ev.target_x, ev.target_y);
     ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
 
-    MenuWindow* menu = new MenuWindow(ev.target, TBIDC("popupmenu"));
+    MenuForm* menu = new MenuForm(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->list_box()->default_source();
     source->push_back(std::make_unique<GenericStringItem>(
         util::GetString(TBIDC("cut")), TBIDC("cut")));

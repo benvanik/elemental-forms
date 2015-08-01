@@ -12,23 +12,22 @@
 #include "el/animation_manager.h"
 #include "el/element_animation.h"
 #include "el/elements/dimmer.h"
-#include "el/elements/modal_window.h"
+#include "el/elements/modal_form.h"
 
 namespace el {
 namespace elements {
 
-int ModalWindow::visible_count_ = 0;
+int ModalForm::visible_count_ = 0;
 
-ModalWindow::ModalWindow(std::function<void()> on_close_callback)
+ModalForm::ModalForm(std::function<void()> on_close_callback)
     : on_close_callback_(on_close_callback) {
   ++visible_count_;
-  set_settings(el::WindowSettings::kTitleBar |
-               el::WindowSettings::kCloseButton |
-               el::WindowSettings::kCanActivate);
+  set_settings(FormSettings::kTitleBar | FormSettings::kCloseButton |
+               FormSettings::kCanActivate);
   el::ElementListener::AddGlobalListener(this);
 }
 
-ModalWindow::~ModalWindow() {
+ModalForm::~ModalForm() {
   --visible_count_;
   el::ElementListener::RemoveGlobalListener(this);
   if (auto dimmer = dimmer_.get()) {
@@ -37,7 +36,7 @@ ModalWindow::~ModalWindow() {
   }
 }
 
-void ModalWindow::Show(el::Element* root_element) {
+void ModalForm::Show(el::Element* root_element) {
   auto dimmer = new Dimmer();
   root_element->AddChild(dimmer);
   dimmer_.reset(dimmer);
@@ -49,7 +48,7 @@ void ModalWindow::Show(el::Element* root_element) {
   CenterInParent();
 }
 
-bool ModalWindow::OnEvent(const el::Event& ev) {
+bool ModalForm::OnEvent(const el::Event& ev) {
   if (ev.target->id() == TBIDC("exit_button") &&
       ev.type == el::EventType::kClick) {
     Die();
@@ -59,19 +58,19 @@ bool ModalWindow::OnEvent(const el::Event& ev) {
     Die();
     return true;
   }
-  return el::Window::OnEvent(ev);
+  return Form::OnEvent(ev);
 }
 
-void ModalWindow::OnDie() {
+void ModalForm::OnDie() {
   if (auto dimmer = dimmer_.get()) {
     dimmer->Die();
   }
-  Window::OnDie();
+  Form::OnDie();
 }
 
-void ModalWindow::OnRemove() { on_close_callback_(); }
+void ModalForm::OnRemove() { on_close_callback_(); }
 
-void ModalWindow::OnElementAdded(Element* parent, Element* element) {
+void ModalForm::OnElementAdded(Element* parent, Element* element) {
   if (element == this) {
     // Move in.
     auto anim = new RectElementAnimation(this, Rect(0, -50, 0, 0),
@@ -80,7 +79,7 @@ void ModalWindow::OnElementAdded(Element* parent, Element* element) {
   }
 }
 
-bool ModalWindow::OnElementDying(Element* element) {
+bool ModalForm::OnElementDying(Element* element) {
   if (element == this) {
     // Move out.
     auto anim = new RectElementAnimation(this, Rect(0, 50, 0, 0),

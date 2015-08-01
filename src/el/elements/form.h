@@ -7,8 +7,8 @@
  ******************************************************************************
  */
 
-#ifndef EL_WINDOW_H_
-#define EL_WINDOW_H_
+#ifndef EL_ELEMENTS_FORM_H_
+#define EL_ELEMENTS_FORM_H_
 
 #include "el/element_listener.h"
 #include "el/elements/button.h"
@@ -17,69 +17,70 @@
 #include "el/elements/resizer.h"
 
 namespace el {
+namespace elements {
 
-enum class WindowSettings {
-  kNone = 0,               // Chrome less window without any other settings.
-  kTitleBar = 1 << 0,      // Show a title bar that can also move the window.
-  kResizable = 1 << 1,     // Show an element for resizing the window.
-  kCloseButton = 1 << 2,   // Show an element for closing the window.
-  kCanActivate = 1 << 3,   // Can be activated and deactivate other windows.
-  kDesignButton = 1 << 4,  // Show a button to open a designer for the window.
+enum class FormSettings {
+  kNone = 0,               // Chrome less form without any other settings.
+  kTitleBar = 1 << 0,      // Show a title bar that can also move the form.
+  kResizable = 1 << 1,     // Show an element for resizing the form.
+  kCloseButton = 1 << 2,   // Show an element for closing the form.
+  kCanActivate = 1 << 3,   // Can be activated and deactivate other forms.
+  kDesignButton = 1 << 4,  // Show a button to open a designer for the form.
   kFullScreen = 1 << 5,    // Fully fill parent.
 
   kDefault =
       kTitleBar | kResizable | kCloseButton | kCanActivate | kDesignButton,
 };
-MAKE_ENUM_FLAG_COMBO(WindowSettings);
+MAKE_ENUM_FLAG_COMBO(FormSettings);
 
-// A Element that provides some window-like features.
+// A Element that provides some form-like features.
 // It can have a titlebar, be movable, resizable etc.
-// It will activate and deactivate other windows on click (which will restore
+// It will activate and deactivate other forms on click (which will restore
 // focus to the last focused child element).
-class Window : public Element {
+class Form : public Element {
  public:
-  TBOBJECT_SUBCLASS(Window, Element);
+  TBOBJECT_SUBCLASS(Form, Element);
 
-  Window();
-  ~Window() override;
+  Form();
+  ~Form() override;
 
-  // Closes this window.
-  // NOTE: This window will be deleted after this call!
+  // Closes this form.
+  // NOTE: This form will be deleted after this call!
   void Close();
 
-  // Returns true if this window is active.
+  // Returns true if this form is active.
   bool is_active() const;
 
-  // Activates this window if it's not already activated.
-  // This will deactivate any currently activated window.
+  // Activates this form if it's not already activated.
+  // This will deactivate any currently activated form.
   // This will automatically call EnsureFocus to restore/set focus to this
-  // window.
+  // form.
   void Activate();
 
-  // Ensures that this window has focus by attempting to find a focusable child
+  // Ensures that this form has focus by attempting to find a focusable child
   // element.
   // It will first try to restore focus to the last focused element in this
-  // window, or a element that has received SetFocus while the window was
+  // form, or a element that has received SetFocus while the form was
   // inactive. If that doesn't succeed, it will go through all children and try
   // to set focus.
   // Returns false if no focusable child was found.
   bool EnsureFocus();
 
-  // Sets the element that should be focused when this window is activated next
+  // Sets the element that should be focused when this form is activated next
   // time.
   // This should not be used to change focus. Call Element::SetFocus to focus,
-  // which will call this method if the window is inactive!
+  // which will call this method if the form is inactive!
   void set_last_focus(Element* last_focus) {
     last_focus_element_.reset(last_focus);
   }
 
-  WindowSettings settings() const { return window_settings_; }
-  // Sets settings for how this window should look and behave.
-  void set_settings(WindowSettings settings);
+  FormSettings settings() const { return form_settings_; }
+  // Sets settings for how this form should look and behave.
+  void set_settings(FormSettings settings);
 
   void CenterInParent();
 
-  // ResizeFit specifies how ResizeToFitContent should resize the window.
+  // ResizeFit specifies how ResizeToFitContent should resize the form.
   enum class ResizeFit {
     kPreferred,        // Fit the preferred size of all content.
     kMinimal,          // Fit the minimal size of all content.
@@ -88,21 +89,21 @@ class Window : public Element {
                        // size.
   };
 
-  // Gets a suitable rect for the window based on the contents and the given
+  // Gets a suitable rect for the form based on the contents and the given
   // fit.
   Rect GetResizeToFitContentRect(ResizeFit fit = ResizeFit::kPreferred);
 
-  // Resizes the window to fit the its content. This is the same as doing
+  // Resizes the form to fit the its content. This is the same as doing
   // set_rect(GetResizeToFitContentRect(fit)).
   void ResizeToFitContent(ResizeFit fit = ResizeFit::kPreferred);
 
   std::string text() override { return title_label_.text(); }
-  // Sets the window title.
+  // Sets the form title.
   void set_text(const char* text) override { title_label_.set_text(text); }
   using Element::set_text;
 
-  // Gets the height of the title bar (or 0 if the WindowSettings say this
-  // window shouldn't have any title bar).
+  // Gets the height of the title bar (or 0 if the FormSettings say this
+  // form shouldn't have any title bar).
   int title_bar_height();
 
   Rect padding_rect() override;
@@ -118,8 +119,8 @@ class Window : public Element {
   void OpenDesigner();
 
  protected:
-  Window* GetTopMostOtherWindow(bool only_activable_windows);
-  void SetWindowActiveState(bool active);
+  Form* GetTopMostOtherForm(bool only_activable_forms);
+  void SetFormActiveState(bool active);
   void Deactivate();
 
   elements::Mover title_mover_;
@@ -127,10 +128,11 @@ class Window : public Element {
   elements::Label title_label_;
   elements::Button title_design_button_;
   elements::Button title_close_button_;
-  WindowSettings window_settings_ = WindowSettings::kDefault;
+  FormSettings form_settings_ = FormSettings::kDefault;
   WeakElementPointer last_focus_element_;
 };
 
+}  // namespace elements
 }  // namespace el
 
-#endif  // EL_WINDOW_H_
+#endif  // EL_ELEMENTS_FORM_H_

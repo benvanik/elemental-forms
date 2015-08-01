@@ -9,7 +9,7 @@
 
 #include "el/elements/icon_box.h"
 #include "el/elements/layout_box.h"
-#include "el/elements/menu_window.h"
+#include "el/elements/menu_form.h"
 #include "el/elements/separator.h"
 #include "el/list_item.h"
 #include "el/parsing/parse_node.h"
@@ -41,7 +41,7 @@ class SimpleBoxItemElement : public LayoutBox, private ElementListener {
   Label m_textfield;
   IconBox m_image;
   IconBox m_image_arrow;
-  MenuWindow* m_menu = nullptr;  // Points to the submenu window if opened.
+  MenuForm* m_menu = nullptr;  // Points to the submenu form if opened.
 };
 
 SimpleBoxItemElement::SimpleBoxItemElement(TBID image, ListItemSource* source,
@@ -92,8 +92,8 @@ void SimpleBoxItemElement::OnElementDelete(Element* element) {
 void SimpleBoxItemElement::OpenSubMenu() {
   if (m_menu) return;
 
-  // Open a new menu window for the submenu with this element as target.
-  m_menu = new MenuWindow(this, TBIDC("submenu"));
+  // Open a new menu form for the submenu with this element as target.
+  m_menu = new MenuForm(this, TBIDC("submenu"));
   set_state(SkinState::kSelected, true);
   m_menu->AddListener(this);
   m_menu->Show(m_source, PopupAlignment(Align::kRight), -1);

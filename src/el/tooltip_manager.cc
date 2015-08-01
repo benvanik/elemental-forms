@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "el/elements/popup_window.h"
+#include "el/elements/popup_form.h"
 #include "el/elements/text_box.h"
 #include "el/tooltip_manager.h"
 
@@ -32,14 +32,14 @@ class TTMsgParam : public util::TypedObject {
 
 }  // namespace
 
-// Implements functionality of tooltip popups, based on PopupWindow and
+// Implements functionality of tooltip popups, based on PopupForm and
 // contains TextBox as content viewer.
-class TooltipWindow : public elements::PopupWindow {
+class TooltipForm : public elements::PopupForm {
  public:
-  TBOBJECT_SUBCLASS(TooltipWindow, elements::PopupWindow);
+  TBOBJECT_SUBCLASS(TooltipForm, elements::PopupForm);
 
-  TooltipWindow(Element* target);
-  ~TooltipWindow() override;
+  TooltipForm(Element* target);
+  ~TooltipForm() override;
 
   bool Show(int mouse_x, int mouse_y);
 
@@ -53,9 +53,9 @@ class TooltipWindow : public elements::PopupWindow {
   int m_offset_y = 0;
 };
 
-TooltipWindow::TooltipWindow(Element* target) : PopupWindow(target) {
+TooltipForm::TooltipForm(Element* target) : PopupForm(target) {
   set_background_skin("", InvokeInfo::kNoCallbacks);
-  set_settings(WindowSettings::kNone);
+  set_settings(elements::FormSettings::kNone);
   m_content.set_background_skin(TBIDC("TBTooltip"), InvokeInfo::kNoCallbacks);
   m_content.set_focusable(false);
   m_content.set_styled(true);
@@ -67,9 +67,9 @@ TooltipWindow::TooltipWindow(Element* target) : PopupWindow(target) {
   AddChild(&m_content);
 }
 
-TooltipWindow::~TooltipWindow() { RemoveChild(&m_content); }
+TooltipForm::~TooltipForm() { RemoveChild(&m_content); }
 
-bool TooltipWindow::Show(int mouse_x, int mouse_y) {
+bool TooltipForm::Show(int mouse_x, int mouse_y) {
   m_offset_x = mouse_x;
   m_offset_y = mouse_y;
 
@@ -78,7 +78,7 @@ bool TooltipWindow::Show(int mouse_x, int mouse_y) {
   return true;
 }
 
-Rect TooltipWindow::GetAlignedRect(int x, int y) {
+Rect TooltipForm::GetAlignedRect(int x, int y) {
   Element* root = parent_root();
 
   SizeConstraints sc(root->rect().w, root->rect().h);
@@ -166,7 +166,7 @@ void TooltipManager::OnMessageReceived(Message* msg) {
     if (tipped_element == param->m_hovered) {
       KillToolTip();
 
-      m_tooltip = new TooltipWindow(tipped_element);
+      m_tooltip = new TooltipForm(tipped_element);
 
       int x = Element::pointer_move_element_x;
       int y = Element::pointer_move_element_y;

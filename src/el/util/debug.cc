@@ -10,13 +10,13 @@
 #include <cstdio>
 
 #include "el/elements/check_box.h"
+#include "el/elements/form.h"
 #include "el/elements/label_container.h"
 #include "el/elements/text_box.h"
 #include "el/graphics/image_manager.h"
 #include "el/text/font_manager.h"
 #include "el/util/debug.h"
 #include "el/util/string.h"
-#include "el/window.h"
 
 #ifdef EL_RUNTIME_DEBUG_INFO
 
@@ -27,14 +27,14 @@ DebugInfo DebugInfo::debug_info_singleton_;
 
 DebugInfo::DebugInfo() = default;
 
-// Window showing runtime debug settings.
-class DebugSettingsWindow : public Window, public ElementListener {
+// Form showing runtime debug settings.
+class DebugSettingsForm : public elements::Form, public ElementListener {
  public:
-  TBOBJECT_SUBCLASS(DebugSettingsWindow, Window);
+  TBOBJECT_SUBCLASS(DebugSettingsForm, elements::Form);
 
   elements::TextBox* output;
 
-  DebugSettingsWindow(Element* root) {
+  DebugSettingsForm(Element* root) {
     set_text("Debug settings");
     LoadData(
         "LayoutBox: axis: y, distribution: available, position: left\n"
@@ -66,7 +66,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
     ElementListener::AddGlobalListener(this);
   }
 
-  ~DebugSettingsWindow() { ElementListener::RemoveGlobalListener(this); }
+  ~DebugSettingsForm() { ElementListener::RemoveGlobalListener(this); }
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     auto check = new elements::CheckBox();
@@ -89,11 +89,11 @@ class DebugSettingsWindow : public Window, public ElementListener {
       parent_root()->Invalidate();
       return true;
     }
-    return Window::OnEvent(ev);
+    return Form::OnEvent(ev);
   }
 
   void OnPaint(const PaintProps& paint_props) override {
-    // Draw stuff to the right of the debug window.
+    // Draw stuff to the right of the debug form.
     graphics::Renderer::get()->Translate(rect().w, 0);
 
     // Draw skin bitmap fragments.
@@ -135,10 +135,10 @@ class DebugSettingsWindow : public Window, public ElementListener {
       return false;
     }
 
-    // Always ignore activity in this window (or we might get endless
+    // Always ignore activity in this form (or we might get endless
     // recursion).
-    if (Window* window = element->parent_window()) {
-      if (SafeCast<DebugSettingsWindow>(window)) {
+    if (Form* form = element->parent_form()) {
+      if (SafeCast<DebugSettingsForm>(form)) {
         return false;
       }
     }
@@ -187,9 +187,7 @@ class DebugSettingsWindow : public Window, public ElementListener {
   }
 };
 
-void ShowDebugInfoSettingsWindow(Element* root) {
-  new DebugSettingsWindow(root);
-}
+void ShowDebugInfoSettingsForm(Element* root) { new DebugSettingsForm(root); }
 
 }  // namespace util
 }  // namespace el

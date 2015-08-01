@@ -11,19 +11,19 @@
 
 #include "el/elements/dimmer.h"
 #include "el/elements/icon_box.h"
-#include "el/elements/message_window.h"
+#include "el/elements/message_form.h"
 #include "el/elements/text_box.h"
 #include "el/util/string_table.h"
 
 namespace el {
 namespace elements {
 
-MessageWindow::MessageWindow(Element* target, TBID id) : m_target(target) {
+MessageForm::MessageForm(Element* target, TBID id) : m_target(target) {
   ElementListener::AddGlobalListener(this);
   set_id(id);
 }
 
-MessageWindow::~MessageWindow() {
+MessageForm::~MessageForm() {
   ElementListener::RemoveGlobalListener(this);
   if (Element* dimmer = m_dimmer.get()) {
     dimmer->parent()->RemoveChild(dimmer);
@@ -31,12 +31,12 @@ MessageWindow::~MessageWindow() {
   }
 }
 
-bool MessageWindow::Show(const std::string& title, const std::string& message,
-                         MessageWindowSettings* settings) {
+bool MessageForm::Show(const std::string& title, const std::string& message,
+                       MessageFormSettings* settings) {
   Element* target = m_target.get();
   if (!target) return false;
 
-  MessageWindowSettings default_settings;
+  MessageFormSettings default_settings;
   if (!settings) {
     settings = &default_settings;
   }
@@ -63,14 +63,14 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   text_box->set_background_skin("");
 
   // Create buttons.
-  if (settings->msg == MessageWindowButtons::kOk) {
-    AddButton("MessageWindow.ok", true);
-  } else if (settings->msg == MessageWindowButtons::kOkCancel) {
-    AddButton("MessageWindow.ok", true);
-    AddButton("MessageWindow.cancel", false);
-  } else if (settings->msg == MessageWindowButtons::kYesNo) {
-    AddButton("MessageWindow.yes", true);
-    AddButton("MessageWindow.no", false);
+  if (settings->msg == MessageFormButtons::kOk) {
+    AddButton("MessageForm.ok", true);
+  } else if (settings->msg == MessageFormButtons::kOkCancel) {
+    AddButton("MessageForm.ok", true);
+    AddButton("MessageForm.cancel", false);
+  } else if (settings->msg == MessageFormButtons::kYesNo) {
+    AddButton("MessageForm.yes", true);
+    AddButton("MessageForm.no", false);
   }
 
   // Size to fit content. This will use the default size of the textfield.
@@ -98,7 +98,7 @@ bool MessageWindow::Show(const std::string& title, const std::string& message,
   return true;
 }
 
-void MessageWindow::AddButton(TBID id, bool focused) {
+void MessageForm::AddButton(TBID id, bool focused) {
   auto layout = GetElementById<LayoutBox>(3);
   if (!layout) return;
   Button* btn = new Button();
@@ -110,7 +110,7 @@ void MessageWindow::AddButton(TBID id, bool focused) {
   }
 }
 
-bool MessageWindow::OnEvent(const Event& ev) {
+bool MessageForm::OnEvent(const Event& ev) {
   if (ev.type == EventType::kClick && ev.target->IsOfType<Button>()) {
     WeakElementPointer this_element(this);
 
@@ -130,23 +130,23 @@ bool MessageWindow::OnEvent(const Event& ev) {
     title_close_button_.InvokeEvent(click_ev);
     return true;
   }
-  return Window::OnEvent(ev);
+  return Form::OnEvent(ev);
 }
 
-void MessageWindow::OnDie() {
+void MessageForm::OnDie() {
   if (Element* dimmer = m_dimmer.get()) {
     dimmer->Die();
   }
 }
 
-void MessageWindow::OnElementDelete(Element* element) {
+void MessageForm::OnElementDelete(Element* element) {
   // If the target element is deleted, close!
   if (!m_target.get()) {
     Close();
   }
 }
 
-bool MessageWindow::OnElementDying(Element* element) {
+bool MessageForm::OnElementDying(Element* element) {
   // If the target element or an ancestor of it is dying, close!
   if (element == m_target.get() || element->IsAncestorOf(m_target.get())) {
     Close();

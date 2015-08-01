@@ -7,25 +7,25 @@
  ******************************************************************************
  */
 
-#ifndef EL_ELEMENTS_MENU_WINDOW_H_
-#define EL_ELEMENTS_MENU_WINDOW_H_
+#ifndef EL_ELEMENTS_MENU_FORM_H_
+#define EL_ELEMENTS_MENU_FORM_H_
 
 #include "el/elements/list_box.h"
-#include "el/elements/popup_window.h"
+#include "el/elements/popup_form.h"
 
 namespace el {
 namespace elements {
 
-// MenuWindow is a popup window that shows a list of items (ListBox).
+// MenuForm is a popup form that shows a list of items (ListBox).
 // When selected it will invoke a click with the id given to the menu,
 // and the id of the clicked item as ref_id, and then close itself.
-// It may open sub items as new windows at the same time as this window is open.
-class MenuWindow : public PopupWindow {
+// It may open sub items as new forms at the same time as this form is open.
+class MenuForm : public PopupForm {
  public:
-  TBOBJECT_SUBCLASS(MenuWindow, PopupWindow);
+  TBOBJECT_SUBCLASS(MenuForm, PopupForm);
 
-  MenuWindow(Element* target, TBID id);
-  ~MenuWindow() override;
+  MenuForm(Element* target, TBID id);
+  ~MenuForm() override;
 
   void Show(ListItemSource* source, const PopupAlignment& alignment,
             int initial_value = -1);
@@ -41,4 +41,4 @@ class MenuWindow : public PopupWindow {
 }  // namespace elements
 }  // namespace el
 
-#endif  // EL_ELEMENTS_MENU_WINDOW_H_
+#endif  // EL_ELEMENTS_MENU_FORM_H_

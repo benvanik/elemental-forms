@@ -69,7 +69,7 @@ class Renderer {
 
   // Should be called before invoking paint on any element.
   // render_target_w and render_target_h should be the size of the render target
-  // that the renderer renders to. I.e window size, screen size or frame buffer
+  // that the renderer renders to. I.e form size, screen size or frame buffer
   // object.
   virtual void BeginPaint(int render_target_w, int render_target_h);
   virtual void EndPaint();

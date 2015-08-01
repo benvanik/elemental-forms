@@ -11,6 +11,7 @@
 
 #include "el/element.h"
 #include "el/element_listener.h"
+#include "el/elements/form.h"
 #include "el/elements/parts/scroller.h"
 #include "el/elements/tab_container.h"
 #include "el/elements/text_box.h"
@@ -25,7 +26,6 @@
 #include "el/util/metrics.h"
 #include "el/util/string.h"
 #include "el/value.h"
-#include "el/window.h"
 
 namespace el {
 
@@ -720,16 +720,16 @@ bool Element::set_focus(FocusReason reason, InvokeInfo info) {
     return false;
   }
 
-  // Update windows last focus.
-  Window* window = parent_window();
-  if (window) {
-    window->set_last_focus(this);
-    // If not active, just return. We should get focus when the window is
+  // Update forms last focus.
+  auto form = parent_form();
+  if (form) {
+    form->set_last_focus(this);
+    // If not active, just return. We should get focus when the form is
     // activated.
-    // Exception for windows that doesn't activate. They may contain focusable
+    // Exception for forms that doesn't activate. They may contain focusable
     // elements.
-    if (!window->is_active() &&
-        any(window->settings() & WindowSettings::kCanActivate)) {
+    if (!form->is_active() &&
+        any(form->settings() & elements::FormSettings::kCanActivate)) {
       return true;
     }
   }
@@ -795,7 +795,7 @@ bool Element::MoveFocus(bool forward) {
     origin = this;
   }
 
-  Element* root = origin->parent_window();
+  Element* root = origin->parent_form();
   if (!root) {
     root = origin->parent_root();
   }
@@ -937,12 +937,12 @@ Element* Element::parent_root() {
   return tmp;
 }
 
-Window* Element::parent_window() {
+elements::Form* Element::parent_form() {
   Element* tmp = this;
-  while (tmp && !tmp->IsOfType<Window>()) {
+  while (tmp && !tmp->IsOfType<elements::Form>()) {
     tmp = tmp->m_parent;
   }
-  return static_cast<Window*>(tmp);
+  return static_cast<elements::Form*>(tmp);
 }
 
 void Element::AddListener(ElementListener* listener) {
@@ -1505,11 +1505,10 @@ bool Element::InvokePointerDown(int x, int y, int click_count,
       captured_element->StartLongClickTimer(touch);
     }
 
-    // Get the closest parent window and bring it to the top.
-    Window* window =
-        captured_element ? captured_element->parent_window() : nullptr;
-    if (window) {
-      window->Activate();
+    // Get the closest parent form and bring it to the top.
+    auto form = captured_element ? captured_element->parent_form() : nullptr;
+    if (form) {
+      form->Activate();
     }
   }
   if (captured_element) {
@@ -1931,9 +1930,9 @@ bool ElementSkinConditionContext::GetCondition(
   switch (info.prop) {
     case SkinProperty::kSkin:
       return element->background_skin() == info.value;
-    case SkinProperty::kWindowActive:
-      if (Window* window = element->parent_window()) {
-        return window->is_active();
+    case SkinProperty::kFormActive:
+      if (auto form = element->parent_form()) {
+        return form->is_active();
       }
       return false;
     case SkinProperty::kAxis:

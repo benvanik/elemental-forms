@@ -17,7 +17,7 @@
 
 namespace el {
 
-class TooltipWindow;
+class TooltipForm;
 
 // Implements logic for show/hide tooltips.
 class TooltipManager : private ElementListener, public MessageHandler {
@@ -49,7 +49,7 @@ class TooltipManager : private ElementListener, public MessageHandler {
 
   static std::unique_ptr<TooltipManager> tooltip_manager_singleton_;
 
-  TooltipWindow* m_tooltip = nullptr;
+  TooltipForm* m_tooltip = nullptr;
   Element* m_last_tipped_element = nullptr;
 };
 

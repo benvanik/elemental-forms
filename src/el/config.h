@@ -16,8 +16,8 @@
 #define EL_CONFIG_H_
 
 // Enables for some handy runtime debugging, enabled by modifying the various
-// settings in DebugInfo::get()-> A settings window can be shown by calling
-// ShowDebugInfoSettingsWindow.
+// settings in DebugInfo::get()-> A settings form can be shown by calling
+// ShowDebugInfoSettingsForm.
 #ifndef NDEBUG
 #define EL_RUNTIME_DEBUG_INFO
 #endif  // !NDEBUG

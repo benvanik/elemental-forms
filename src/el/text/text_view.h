@@ -96,12 +96,12 @@ class TextView {
   void set_password(bool password = true);
   void set_wrapping(bool wrapping = true);
 
-  // Sets if line breaks should be inserted in windows style (\r\n) or unix
-  // style (\n). The default is windows style on the windows platform and
+  // Sets if line breaks should be inserted in forms style (\r\n) or unix
+  // style (\n). The default is forms style on the forms platform and
   // disabled elsewhere.
   // NOTE: This only affects InsertBreak (pressing enter). Content set from
   // SetText (and clipboard etc.) maintains the used line break.
-  void set_windows_style_break(bool win_style_br) {
+  void set_forms_style_break(bool win_style_br) {
     packed.win_style_br = win_style_br;
   }
 

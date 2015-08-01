@@ -32,8 +32,8 @@ class ElementListener;
 class EventHandler;
 class GenericStringItemSource;
 class LongClickTimer;
-class Window;
 namespace elements {
+class Form;
 namespace parts {
 class Scroller;
 }  // namespace parts
@@ -505,7 +505,7 @@ class Element : public util::TypedObject,
   // Sets if this element is a group root.
   // Grouped elements (such as RadioButton) will toggle all other elements with
   // the same group_id under the nearest parent group root.
-  // Window is a group root by default.
+  // Form is a group root by default.
   void set_group_root(bool group_root) { m_packed.is_group_root = group_root; }
 
   bool is_focusable() const { return m_packed.is_focusable; }
@@ -542,11 +542,11 @@ class Element : public util::TypedObject,
   // keyboard input.
   // Elements can be focused only after enabling it (see set_focusable(true)).
   // Invisible or disabled elements can not be focused.
-  // If SetFocus is called on a element in a inactive window, it will succeed
-  // (return true), but it won't actually become focused until that window is
-  // activated (see Window::set_last_focus).
+  // If SetFocus is called on a element in a inactive form, it will succeed
+  // (return true), but it won't actually become focused until that form is
+  // activated (see Form::set_last_focus).
   // Returns true if successfully focused, or if set as last focus in its
-  // window.
+  // form.
   bool set_focus(FocusReason reason, InvokeInfo info = InvokeInfo::kNormal);
 
   // Calls SetFocus on all children and their children, until a element is found
@@ -556,8 +556,8 @@ class Element : public util::TypedObject,
 
   // Moves focus from the currently focused element to another focusable
   // element.
-  // It will search for a focusable element in the same Window (or top root if
-  // there is no window) forward or backwards in the element order.
+  // It will search for a focusable element in the same Form (or top root if
+  // there is no form) forward or backwards in the element order.
   bool MoveFocus(bool forward);
 
   // Returns the child element that contains the coordinate or nullptr if no one
@@ -748,10 +748,10 @@ class Element : public util::TypedObject,
   // Gets this element or a parent element that is the absolute root parent.
   Element* parent_root();
 
-  // Gets the closest parent element that is a Window or nullptr if there is
+  // Gets the closest parent element that is a Form or nullptr if there is
   // none.
-  // If this element is a window itself, this will be returned.
-  Window* parent_window();
+  // If this element is a form itself, this will be returned.
+  elements::Form* parent_form();
 
   // Gets the parent element, or nullptr if this element is not added.
   inline Element* parent() const { return m_parent; }
@@ -1299,7 +1299,7 @@ struct ElementNode : public Node {
     set("tooltip", value);
     return *reinterpret_cast<R*>(this);
   }
-  // The Element will be focused automatically the first time its Window is
+  // The Element will be focused automatically the first time its Form is
   // activated.
   R& autofocus(bool value) {
     set("autofocus", value ? 1 : 0);

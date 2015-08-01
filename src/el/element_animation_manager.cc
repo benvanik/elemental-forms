@@ -12,8 +12,8 @@
 #include "el/element_animation.h"
 #include "el/element_animation_manager.h"
 #include "el/elements/dimmer.h"
-#include "el/elements/message_window.h"
-#include "el/window.h"
+#include "el/elements/form.h"
+#include "el/elements/message_form.h"
 
 namespace el {
 
@@ -59,16 +59,16 @@ void ElementAnimationManager::OnElementDelete(Element* element) {
 
 bool ElementAnimationManager::OnElementDying(Element* element) {
   bool handled = false;
-  if (Window* window = SafeCast<Window>(element)) {
-    // Fade out dying windows.
+  if (auto form = SafeCast<elements::Form>(element)) {
+    // Fade out dying forms.
     auto anim = new OpacityElementAnimation(
-        window, 1.f, ElementAnimation::kAlmostZeroOpacity, true);
+        form, 1.f, ElementAnimation::kAlmostZeroOpacity, true);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
     handled = true;
   }
-  if (auto window = SafeCast<elements::MessageWindow>(element)) {
-    // Move out dying message windows.
-    auto anim = new RectElementAnimation(window, Rect(0, 50, 0, 0),
+  if (auto form = SafeCast<elements::MessageForm>(element)) {
+    // Move out dying message forms.
+    auto anim = new RectElementAnimation(form, Rect(0, 50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaIn);
     AnimationManager::StartAnimation(anim, AnimationCurve::kSpeedUp);
     handled = true;
@@ -85,15 +85,15 @@ bool ElementAnimationManager::OnElementDying(Element* element) {
 
 void ElementAnimationManager::OnElementAdded(Element* parent,
                                              Element* element) {
-  if (Window* window = SafeCast<Window>(element)) {
-    // Fade in new windows.
+  if (auto form = SafeCast<elements::Form>(element)) {
+    // Fade in new forms.
     auto anim = new OpacityElementAnimation(
-        window, ElementAnimation::kAlmostZeroOpacity, 1.f, false);
+        form, ElementAnimation::kAlmostZeroOpacity, 1.f, false);
     AnimationManager::StartAnimation(anim, AnimationCurve::kBezier);
   }
-  if (auto window = SafeCast<elements::MessageWindow>(element)) {
-    // Move in new message windows.
-    auto anim = new RectElementAnimation(window, Rect(0, -50, 0, 0),
+  if (auto form = SafeCast<elements::MessageForm>(element)) {
+    // Move in new message forms.
+    auto anim = new RectElementAnimation(form, Rect(0, -50, 0, 0),
                                          RectElementAnimation::Mode::kDeltaOut);
     AnimationManager::StartAnimation(anim);
   }

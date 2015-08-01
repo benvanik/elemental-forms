@@ -11,14 +11,14 @@
 #define EL_ELEMENTS_DROP_DOWN_BUTTON_H_
 
 #include "el/element.h"
+#include "el/elements/form.h"
 #include "el/elements/icon_box.h"
 #include "el/list_item.h"
-#include "el/window.h"
 
 namespace el {
 namespace elements {
 
-class MenuWindow;
+class MenuForm;
 
 // Shows a button that opens a popup with a ListBox with items provided by a
 // ItemSource.
@@ -46,14 +46,14 @@ class DropDownButton : public Button, public ListItemObserver {
   // Gets the ID of the selected item, or 0 if there is no item selected.
   TBID selected_item_id();
 
-  // Opens the window if the model has items.
-  void OpenWindow();
+  // Opens the form if the model has items.
+  void OpenForm();
 
-  // Closes the window if it is open.
-  void CloseWindow();
+  // Closes the form if it is open.
+  void CloseForm();
 
-  // Returns the menu window if it's open, or nullptr.
-  MenuWindow* menu_if_open() const;
+  // Returns the menu form if it's open, or nullptr.
+  MenuForm* menu_if_open() const;
 
   void OnInflate(const parsing::InflateInfo& info) override;
   bool OnEvent(const Event& ev) override;
@@ -68,7 +68,7 @@ class DropDownButton : public Button, public ListItemObserver {
   GenericStringItemSource m_default_source;
   IconBox m_arrow;
   int m_value = -1;
-  WeakElementPointer m_window_pointer;  // Dropdown window, if opened.
+  WeakElementPointer m_form_pointer;  // Dropdown form, if opened.
 };
 
 }  // namespace elements

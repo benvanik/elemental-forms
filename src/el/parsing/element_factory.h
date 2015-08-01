@@ -66,11 +66,11 @@ class ElementInflater;
 // gravity				  SetGravity        string
 //     combination of left, top, right, bottom, or all
 // visibility			  SetVisibility     string (visible, invisible,
-//                                    gone)
+// gone)
 // state				    SetState          string (disabled)
 // skin				      SetSkinBg         TBID (string or int)
 // rect				      set_rect          4 integers (x, y, width,
-//                                    height)
+// height)
 // lp>width			    set_layout_params   dimension
 // lp>min-width		  set_layout_params   dimension
 // lp>max-width		  set_layout_params   dimension
@@ -80,7 +80,7 @@ class ElementInflater;
 // lp>max-height		set_layout_params   dimension
 // lp>pref-height		set_layout_params   dimension
 // autofocus			  The Element will be focused automatically the
-//                  first time its Window is activated.
+//                  first time its Form is activated.
 // font>name			  Font name
 // font>size			  Font size
 class ElementFactory {

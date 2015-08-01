@@ -95,20 +95,20 @@ MAKE_ORDERED_ENUM_STRING_UTILS(SkinTarget, "this", "parent", "ancestors",
 
 // Defines which property in the context that should be checked.
 enum class SkinProperty {
-  kSkin,          // The background skin id.
-  kWindowActive,  // The window is active (no value required).
-  kAxis,          // The axis of the content (x or y)
-  kAlign,         // The alignment.
-  kId,            // The id.
-  kState,         // The state is set.
-  kValue,         // The current value (integer).
-  kHover,         // Focus is on the target or any child (no value required).
-  kCapture,       // Capture is on the target or any child (no value required).
-  kFocus,         // Focus is on the target or any child (no value required).
+  kSkin,        // The background skin id.
+  kFormActive,  // The form is active (no value required).
+  kAxis,        // The axis of the content (x or y)
+  kAlign,       // The alignment.
+  kId,          // The id.
+  kState,       // The state is set.
+  kValue,       // The current value (integer).
+  kHover,       // Focus is on the target or any child (no value required).
+  kCapture,     // Capture is on the target or any child (no value required).
+  kFocus,       // Focus is on the target or any child (no value required).
   kCustom,  // It's a property unknown to skin, that the SkinConditionContext
             // might know about.
 };
-MAKE_ORDERED_ENUM_STRING_UTILS(SkinProperty, "skin", "window active", "axis",
+MAKE_ORDERED_ENUM_STRING_UTILS(SkinProperty, "skin", "form active", "axis",
                                "align", "id", "state", "value", "hover",
                                "capture", "focus", "custom");
 

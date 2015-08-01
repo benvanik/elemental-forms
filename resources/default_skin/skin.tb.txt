@@ -273,50 +273,50 @@ elements
 		img-position-x 0
 		img-ofs-x 5
 
-	# == Window skin =================================================================================
-	Window
+	# == Form skin =================================================================================
+	Form
 		bitmap window.png
 		cut 16
 		expand 12
 		padding 10
 		overrides
-			element Window.selected
+			element Form.selected
 				state selected
-	Window.fullscreen
-		clone Window
+	Form.fullscreen
+		clone Form
 		expand 12
 		padding 0
-	Window.selected
+	Form.selected
 		bitmap window_active.png
 		cut 16
 		expand 12
-	Window.close
+	Form.close
 		bitmap window_close.png
 		type image
 		children
-			element Window.close.pressed
+			element Form.close.pressed
 				state pressed
-	Window.close.pressed
+	Form.close.pressed
 		bitmap window_close_pressed.png
 		type image
-	Window.mover
+	Form.mover
 		text-color #b8b8b8
 		bitmap window_mover_bg_tile.png
 		type tile
 		expand -1
 		padding 4
 		overrides
-			element Window.mover.active
+			element Form.mover.active
 				state selected
 		children
-			element Window.mover.overlay
+			element Form.mover.overlay
 				state all
-	Window.mover.overlay
+	Form.mover.overlay
 		bitmap window_mover_overlay.png
 		cut 12
 		expand 3
-	Window.mover.active
-		clone Window.mover
+	Form.mover.active
+		clone Form.mover
 		text-color #fefefe
 		overrides
 		overlays
@@ -373,13 +373,13 @@ elements
 		clone Button
 	DropDownButton.arrow
 		clone arrow.down
-	DropDownButton.window
-		clone PopupWindow
-	PopupWindow
-		clone Window
+	DropDownButton.form
+		clone PopupForm
+	PopupForm
+		clone Form
 		padding 2
-	MenuWindow
-		clone PopupWindow
+	MenuForm
+		clone PopupForm
 	ListItem
 		padding 4 10
 		children

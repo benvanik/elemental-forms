@@ -70,7 +70,7 @@ void ResourceEditWindow::Load(const char* resource_file) {
         file_contents->size());
   } else {
     // Error, show message.
-    auto msg_win = new MessageWindow(parent_root(), TBIDC(""));
+    auto msg_win = new MessageForm(parent_root(), TBIDC(""));
     msg_win->Show(
         "Error loading resource",
         el::util::format_string("Could not load file %s", resource_file));
@@ -156,7 +156,7 @@ bool ResourceEditWindow::OnEvent(const Event& ev) {
     return true;
   } else if (ev.type == EventType::kClick && ev.target->id() == TBIDC("test")) {
     // Create a window containing the current layout, resize and center it.
-    Window* win = new Window();
+    auto win = new Form();
     win->set_text("Test window");
     win->content_root()->LoadData(m_source_text_box->text());
     Rect bounds(0, 0, parent()->rect().w, parent()->rect().h);
@@ -172,11 +172,11 @@ bool ResourceEditWindow::OnEvent(const Event& ev) {
   } else if (ev.type == EventType::kFileDrop) {
     return OnDropFileEvent(ev);
   }
-  return Window::OnEvent(ev);
+  return Form::OnEvent(ev);
 }
 
 void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
-  Window::OnPaintChildren(paint_props);
+  Form::OnPaintChildren(paint_props);
 
   // Paint the selection of the selected element
   if (Element* selected_element = GetSelectedElement()) {

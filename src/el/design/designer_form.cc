@@ -9,13 +9,13 @@
 
 #include <memory>
 
-#include "el/design/designer_window.h"
+#include "el/design/designer_form.h"
 #include "el/elements.h"
 
 namespace el {
 namespace design {
 
-DesignerWindow::DesignerWindow() {
+DesignerForm::DesignerForm() {
   set_text("Empty Designer");
 
   LoadData(
@@ -69,16 +69,16 @@ DesignerWindow::DesignerWindow() {
   build_content_root_ = build_container_->content_root();
 }
 
-DesignerWindow::~DesignerWindow() { CloseContent(); }
+DesignerForm::~DesignerForm() { CloseContent(); }
 
-void DesignerWindow::Show(Element* root_element) {
+void DesignerForm::Show(Element* root_element) {
   set_rect({100, 50, 900, 600});
 
   auto root = root_element->parent_root();
   root->AddChild(this);
 }
 
-void DesignerWindow::BindContent(Element* bind_element) {
+void DesignerForm::BindContent(Element* bind_element) {
   CloseContent();
   bind_element_ = bind_element;
 
@@ -88,12 +88,12 @@ void DesignerWindow::BindContent(Element* bind_element) {
   RefreshContent();
 }
 
-void DesignerWindow::CloseContent() {
+void DesignerForm::CloseContent() {
   bind_element_.reset();
   RefreshContent();
 }
 
-void DesignerWindow::RefreshContent() {
+void DesignerForm::RefreshContent() {
   // Clear existing content.
   build_content_root_->DeleteAllChildren();
 
@@ -123,7 +123,7 @@ void DesignerWindow::RefreshContent() {
   source_text_box_->set_focus(FocusReason::kUnknown);
 }
 
-void DesignerWindow::PopulateElementListBox() {
+void DesignerForm::PopulateElementListBox() {
   element_list_source_.clear();
 
   // TODO(benvanik): walk tree.

@@ -41,8 +41,8 @@ enum class AnimationTime {
   // Using this is most often preferable since starting a animation is often
   // accompanied with some extra work that might eat up a considerable time of
   // the total duration (and chop of the beginning of it).
-  // F.ex: Creating a window and starting its appearance animation. During
-  // initialization of the window, you might initiate loading of additional
+  // F.ex: Creating a form and starting its appearance animation. During
+  // initialization of the form, you might initiate loading of additional
   // resources. When that is done and you finally end up updating animations,
   // most of the animation time might already have passed. If the animation
   // start time is adjusted to the first update, the whole animation will run

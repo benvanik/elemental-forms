@@ -7,13 +7,13 @@
  ******************************************************************************
  */
 
+#include "el/elements/form.h"
 #include "el/elements/label.h"
 #include "el/elements/list_box.h"
-#include "el/elements/menu_window.h"
+#include "el/elements/menu_form.h"
 #include "el/parsing/element_inflater.h"
 #include "el/util/string.h"
 #include "el/util/string_table.h"
-#include "el/window.h"
 
 namespace el {
 namespace elements {
@@ -277,15 +277,15 @@ bool ListBox::OnEvent(const Event& ev) {
     // If we're still around, invoke the click event too.
     if (this_element.get()) {
       ListBox* target_list = this;
-      // If the parent window is a MenuWindow, we will iterate up the event
-      // destination chain to find the top MenuWindow and invoke the event
+      // If the parent form is a MenuForm, we will iterate up the event
+      // destination chain to find the top MenuForm and invoke the event
       // there.
       // That way events in submenus will reach the caller properly, and seem
       // like it was invoked on the top menu.
-      Window* window = parent_window();
-      while (auto menu_win = util::SafeCast<MenuWindow>(window)) {
+      Form* form = parent_form();
+      while (auto menu_win = util::SafeCast<MenuForm>(form)) {
         target_list = menu_win->list_box();
-        window = menu_win->event_destination()->parent_window();
+        form = menu_win->event_destination()->parent_form();
       }
 
       // Invoke the click event on the target list.

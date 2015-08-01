@@ -7,30 +7,30 @@
  ******************************************************************************
  */
 
-#ifndef EL_ELEMENTS_MODAL_WINDOW_H_
-#define EL_ELEMENTS_MODAL_WINDOW_H_
+#ifndef EL_ELEMENTS_MODAL_FORM_H_
+#define EL_ELEMENTS_MODAL_FORM_H_
 
 #include <functional>
 
 #include "el/element_listener.h"
-#include "el/window.h"
+#include "el/elements/form.h"
 
 namespace el {
 namespace elements {
 
-// A window for showing modal messages.
-// Events invoked in this window will travel up through the target element.
+// A form for showing modal messages.
+// Events invoked in this form will travel up through the target element.
 // When the user click any of its buttons, it will invoke a click event
-// (with the window ID), with the clicked buttons id as ref_id.
+// (with the form ID), with the clicked buttons id as ref_id.
 // Then it will delete itself.
-// If the target element is deleted while this window is alive, the window will
+// If the target element is deleted while this form is alive, the form will
 // delete itself.
-class ModalWindow : public Window, private ElementListener {
+class ModalForm : public Form, private ElementListener {
  public:
-  TBOBJECT_SUBCLASS(ModalWindow, Window);
+  TBOBJECT_SUBCLASS(ModalForm, Form);
 
-  ModalWindow(std::function<void()> on_close_callback);
-  ~ModalWindow() override;
+  ModalForm(std::function<void()> on_close_callback);
+  ~ModalForm() override;
 
   void Show(el::Element* root_element);
 
@@ -54,4 +54,4 @@ class ModalWindow : public Window, private ElementListener {
 }  // namespace elements
 }  // namespace el
 
-#endif  // EL_ELEMENTS_MODAL_WINDOW_H_
+#endif  // EL_ELEMENTS_MODAL_FORM_H_

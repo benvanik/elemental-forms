@@ -12,10 +12,10 @@
 
 #include "el/element.h"
 #include "el/element_listener.h"
+#include "el/elements/form.h"
 #include "el/elements/list_box.h"
 #include "el/elements/text_box.h"
 #include "el/message_handler.h"
-#include "el/window.h"
 
 namespace testbed {
 
@@ -30,11 +30,11 @@ class ResourceItem : public el::GenericStringItem {
   Element* m_element;
 };
 
-class ResourceEditWindow : public Window,
+class ResourceEditWindow : public elements::Form,
                            public MessageHandler,
                            public ElementListener {
  public:
-  TBOBJECT_SUBCLASS(ResourceEditWindow, Window);
+  TBOBJECT_SUBCLASS(ResourceEditWindow, elements::Form);
 
   ResourceEditWindow();
   ~ResourceEditWindow() override;

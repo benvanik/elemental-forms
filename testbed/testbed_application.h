@@ -57,7 +57,7 @@ class TestbedApplication {
   ApplicationBackend* m_backend;
 };
 
-class DemoWindow : public Window {
+class DemoWindow : public elements::Form {
  public:
   DemoWindow();
   bool LoadResourceFile(const std::string& filename);
