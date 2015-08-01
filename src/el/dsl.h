@@ -23,13 +23,13 @@
 namespace el {
 namespace dsl {
 
-inline std::string operator"" _px(uint64_t value) {
+inline std::string operator"" _px(unsigned long long int value) {
   return std::to_string(value) + "px";
 }
-inline std::string operator"" _dp(uint64_t value) {
+inline std::string operator"" _dp(unsigned long long int value) {
   return std::to_string(value) + "dp";
 }
-inline std::string operator"" _mm(uint64_t value) {
+inline std::string operator"" _mm(unsigned long long int value) {
   return std::to_string(value) + "mm";
 }
 

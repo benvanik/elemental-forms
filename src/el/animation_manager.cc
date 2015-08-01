@@ -1,4 +1,3 @@
-#pragma once
 /**
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *

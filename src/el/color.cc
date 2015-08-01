@@ -8,6 +8,7 @@
  */
 
 #include <cstdio>
+#include <cstring>
 
 #include "el/color.h"
 

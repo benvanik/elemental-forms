@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <memory>
+
 #include "el/elements/label_container.h"
 #include "el/parsing/element_inflater.h"
 

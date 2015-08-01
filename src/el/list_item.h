@@ -254,7 +254,7 @@ struct ItemListElementNode : public ElementNode<T> {
  public:
   T& item(std::string text) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto text_node = ParseNode::Create("text");
     text_node->TakeValue(el::Value(text.c_str()));
@@ -264,7 +264,7 @@ struct ItemListElementNode : public ElementNode<T> {
   }
   T& item(std::string id, std::string text) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto id_node = ParseNode::Create("id");
     id_node->TakeValue(el::Value(id.c_str()));
@@ -277,7 +277,7 @@ struct ItemListElementNode : public ElementNode<T> {
   }
   T& item(int32_t id, std::string text) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     auto node = ParseNode::Create("item");
     auto id_node = ParseNode::Create("id");
     id_node->TakeValue(el::Value(id));
@@ -290,7 +290,7 @@ struct ItemListElementNode : public ElementNode<T> {
   }
   T& items(std::initializer_list<std::string> items) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto text_node = ParseNode::Create("text");
@@ -302,7 +302,7 @@ struct ItemListElementNode : public ElementNode<T> {
   }
   T& items(std::initializer_list<std::pair<int32_t, std::string>> items) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto id_node = ParseNode::Create("id");
@@ -317,7 +317,7 @@ struct ItemListElementNode : public ElementNode<T> {
   }
   T& items(std::initializer_list<Item> items) {
     using parsing::ParseNode;
-    auto items_node = GetOrCreateNode("items");
+    auto items_node = Node::GetOrCreateNode("items");
     for (auto& item : items) {
       auto node = ParseNode::Create("item");
       auto id_node = ParseNode::Create("id");

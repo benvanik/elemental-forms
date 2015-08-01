@@ -7,8 +7,9 @@
  ******************************************************************************
  */
 
-#include "el/design/designer_window.h"
+#include <memory>
 
+#include "el/design/designer_window.h"
 #include "el/elements.h"
 
 namespace el {

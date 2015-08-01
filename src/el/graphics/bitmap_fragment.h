@@ -10,6 +10,7 @@
 #ifndef EL_GRAPHICS_BITMAP_FRAGMENT_H_
 #define EL_GRAPHICS_BITMAP_FRAGMENT_H_
 
+#include <climits>
 #include <memory>
 #include <vector>
 
