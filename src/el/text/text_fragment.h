@@ -58,7 +58,7 @@ class TextBlock : public el::util::IntrusiveListEntry<TextBlock> {
 
   void Clear();
   void Set(const char* newstr, size_t len);
-  void set_alignment(TextAlign align);
+  void set_alignment(TextAlign new_align);
 
   size_t InsertText(size_t ofs, const char* text, size_t len,
                     bool allow_line_recurse);

@@ -167,10 +167,10 @@ class SkinElementState : public util::IntrusiveListEntry<SkinElementState> {
     kOnlySpecificState,
   };
 
-  bool IsMatch(SkinState state, SkinConditionContext& context,
+  bool IsMatch(SkinState test_state, SkinConditionContext& context,
                MatchRule rule = MatchRule::kDefault) const;
 
-  bool IsExactMatch(SkinState state, SkinConditionContext& context,
+  bool IsExactMatch(SkinState test_state, SkinConditionContext& context,
                     MatchRule rule = MatchRule::kDefault) const;
 
   TBID element_id;

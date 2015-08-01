@@ -102,8 +102,8 @@ bool Element::LoadFile(const char* filename) {
   return parsing::ElementFactory::get()->LoadFile(this, filename);
 }
 
-bool Element::LoadData(const char* data, size_t data_length) {
-  return parsing::ElementFactory::get()->LoadData(this, data, data_length);
+bool Element::LoadData(const char* data_str, size_t data_length) {
+  return parsing::ElementFactory::get()->LoadData(this, data_str, data_length);
 }
 
 void Element::LoadNodeTree(parsing::ParseNode* node) {

@@ -160,9 +160,9 @@ void TextBlock::Set(const char* newstr, size_t len) {
   Layout(true, true);
 }
 
-void TextBlock::set_alignment(TextAlign align) {
-  if (TextAlign(this->align) == align) return;
-  this->align = int8_t(align);
+void TextBlock::set_alignment(TextAlign new_align) {
+  if (TextAlign(align) == new_align) return;
+  align = int8_t(new_align);
   Layout(false, false);
 }
 

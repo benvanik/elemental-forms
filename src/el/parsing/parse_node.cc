@@ -147,7 +147,8 @@ class ParseNodeTarget : public TextParserTarget {
   ParseNodeTarget(ParseNode* root, const std::string& filename)
       : m_root_node(root), m_target_node(root), m_filename(filename) {}
   void OnError(int line_nr, const std::string& error) override {
-    TBDebugOut("%s(%d):Parse error: %s\n", m_filename, line_nr, error.c_str());
+    TBDebugOut("%s(%d):Parse error: %s\n", m_filename.c_str(), line_nr,
+               error.c_str());
   }
   void OnComment(int line_nr, const char* comment) override {}
   void OnToken(int line_nr, const char* name, Value& value) override {

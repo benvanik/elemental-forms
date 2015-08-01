@@ -62,10 +62,10 @@ class TextView {
   TextView();
   virtual ~TextView();
 
-  void SetListener(TextViewListener* listener);
-  void SetContentFactory(TextFragmentContentFactory* content_factory);
+  void SetListener(TextViewListener* new_listener);
+  void SetContentFactory(TextFragmentContentFactory* new_content_factory);
 
-  void SetFont(const FontDescription& font_desc);
+  void SetFont(const FontDescription& new_font_desc);
 
   void Paint(const Rect& rect, const FontDescription& font_desc,
              const Color& text_color);
@@ -88,7 +88,7 @@ class TextView {
 
   // Sets the default text alignment and all currently selected blocks, or the
   // block of the current caret position if nothing is selected.
-  void set_alignment(TextAlign align);
+  void set_alignment(TextAlign new_align);
   void set_multiline(bool multiline = true);
   void set_styled(bool styling = true);
   void set_read_only(bool readonly = true);

@@ -43,22 +43,23 @@ TextView::~TextView() {
   Clear(false);
 }
 
-void TextView::SetListener(TextViewListener* listener) {
-  this->listener = listener;
+void TextView::SetListener(TextViewListener* new_listener) {
+  listener = new_listener;
 }
 
-void TextView::SetContentFactory(TextFragmentContentFactory* content_factory) {
-  if (content_factory) {
-    this->content_factory = content_factory;
+void TextView::SetContentFactory(
+    TextFragmentContentFactory* new_content_factory) {
+  if (new_content_factory) {
+    content_factory = new_content_factory;
   } else {
-    this->content_factory = &default_content_factory;
+    content_factory = &default_content_factory;
   }
 }
 
-void TextView::SetFont(const FontDescription& font_desc) {
-  if (this->font_desc == font_desc) return;
-  this->font_desc = font_desc;
-  font = el::text::FontManager::get()->GetFontFace(font_desc);
+void TextView::SetFont(const FontDescription& new_font_desc) {
+  if (font_desc == new_font_desc) return;
+  font_desc = new_font_desc;
+  font = el::text::FontManager::get()->GetFontFace(new_font_desc);
   Reformat(true);
 }
 
@@ -589,8 +590,8 @@ bool TextView::empty() const {
          blocks.GetFirst()->str.empty();
 }
 
-void TextView::set_alignment(TextAlign align) {
-  this->align = align;
+void TextView::set_alignment(TextAlign new_align) {
+  align = new_align;
   // Call SetAlign on all blocks currently selected, or the block of the current
   // caret position.
   TextBlock* start =
@@ -598,7 +599,7 @@ void TextView::set_alignment(TextAlign align) {
   TextBlock* stop =
       selection.IsSelected() ? selection.stop.block : caret.pos.block;
   while (start && start != stop->GetNext()) {
-    start->set_alignment(align);
+    start->set_alignment(new_align);
     start = start->GetNext();
   }
 }
@@ -609,10 +610,12 @@ void TextView::set_multiline(bool multiline) {
 
 void TextView::set_styled(bool styling) { packed.styling_on = styling; }
 
-void TextView::set_read_only(bool readonly) { packed.read_only = readonly; }
+void TextView::set_read_only(bool new_read_only) {
+  packed.read_only = new_read_only;
+}
 
-void TextView::set_selection(bool selection) {
-  packed.selection_on = selection;
+void TextView::set_selection(bool new_selection) {
+  packed.selection_on = new_selection;
 }
 
 void TextView::set_password(bool password) {

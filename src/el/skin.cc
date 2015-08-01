@@ -220,7 +220,7 @@ Skin::~Skin() { Renderer::get()->RemoveListener(this); }
 
 SkinElement* Skin::GetSkinElementById(const TBID& skin_id) const {
   if (!skin_id) return nullptr;
-  auto& it = m_elements.find(skin_id);
+  auto it = m_elements.find(skin_id);
   return it != m_elements.end() ? it->second.get() : nullptr;
 }
 
@@ -612,10 +612,10 @@ bool SkinElement::has_state(SkinState state, SkinConditionContext& context) {
 }
 
 void SkinElement::Load(ParseNode* n, Skin* skin, const char* skin_path) {
-  if (const char* bitmap = n->GetValueString("bitmap", nullptr)) {
+  if (auto bitmap_path = n->GetValueString("bitmap", nullptr)) {
     bitmap_file.clear();
     bitmap_file.append(skin_path);
-    bitmap_file.append(bitmap);
+    bitmap_file.append(bitmap_path);
   }
 
   // Note: Always read cut and expand as pixels. These values might later be
@@ -685,12 +685,13 @@ void SkinElement::Load(ParseNode* n, Skin* skin, const char* skin_path) {
   m_overlay_elements.Load(n->GetNode("overlays"));
 }
 
-bool SkinElementState::IsMatch(SkinState state, SkinConditionContext& context,
+bool SkinElementState::IsMatch(SkinState test_state,
+                               SkinConditionContext& context,
                                MatchRule rule) const {
-  if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll) {
+  if (rule == MatchRule::kOnlySpecificState && state == SkinState::kAll) {
     return false;
   }
-  if (any(state & this->state) || this->state == SkinState::kAll) {
+  if (any(test_state & state) || state == SkinState::kAll) {
     for (SkinCondition* condition = conditions.GetFirst(); condition;
          condition = condition->GetNext()) {
       if (!condition->GetCondition(context)) {
@@ -702,13 +703,13 @@ bool SkinElementState::IsMatch(SkinState state, SkinConditionContext& context,
   return false;
 }
 
-bool SkinElementState::IsExactMatch(SkinState state,
+bool SkinElementState::IsExactMatch(SkinState test_state,
                                     SkinConditionContext& context,
                                     MatchRule rule) const {
-  if (rule == MatchRule::kOnlySpecificState && this->state == SkinState::kAll) {
+  if (rule == MatchRule::kOnlySpecificState && state == SkinState::kAll) {
     return false;
   }
-  if (state == this->state || this->state == SkinState::kAll) {
+  if (test_state == state || state == SkinState::kAll) {
     for (SkinCondition* condition = conditions.GetFirst(); condition;
          condition = condition->GetNext()) {
       if (!condition->GetCondition(context)) {

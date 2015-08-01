@@ -135,7 +135,7 @@ bool TBBFRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
     return false;
   }
 
-  auto& it = m_glyph_table.find(cp);
+  auto it = m_glyph_table.find(cp);
   if (it == m_glyph_table.end()) {
     it = m_glyph_table.find('?');
   }
@@ -157,7 +157,7 @@ void TBBFRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   if (cp == ' ') {
     metrics->advance = m_space_advance;
   } else {
-    auto& it = m_glyph_table.find(cp);
+    auto it = m_glyph_table.find(cp);
     if (it != m_glyph_table.end()) {
       metrics->advance = it->second->w + m_advance_delta;
     } else {

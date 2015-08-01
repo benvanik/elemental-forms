@@ -36,7 +36,7 @@ FontGlyphCache::FontGlyphCache() {
 FontGlyphCache::~FontGlyphCache() { Renderer::get()->RemoveListener(this); }
 
 FontGlyph* FontGlyphCache::GetGlyph(const TBID& hash_id, UCS4 cp) {
-  auto& it = m_glyphs.find(hash_id);
+  auto it = m_glyphs.find(hash_id);
   if (it == m_glyphs.end()) {
     return nullptr;
   }
@@ -146,7 +146,7 @@ FontInfo* FontManager::AddFontInfo(const char* filename, const char* name) {
 }
 
 FontInfo* FontManager::GetFontInfo(const TBID& id) const {
-  auto& it = m_font_info.find(id);
+  auto it = m_font_info.find(id);
   return it != m_font_info.end() ? it->second.get() : nullptr;
 }
 
@@ -156,7 +156,7 @@ bool FontManager::HasFontFace(const FontDescription& font_desc) const {
 
 FontFace* FontManager::GetFontFace(const FontDescription& font_desc) {
   // Try requested:
-  auto& it = m_fonts.find(font_desc.font_face_id());
+  auto it = m_fonts.find(font_desc.font_face_id());
   if (it != m_fonts.end()) {
     return it->second.get();
   }

@@ -275,9 +275,9 @@ class Element : public util::TypedObject,
   virtual ~Element();
 
   bool LoadFile(const char* filename);
-  bool LoadData(const char* data, size_t data_length = std::string::npos);
-  bool LoadData(std::string data) {
-    return LoadData(data.c_str(), data.size());
+  bool LoadData(const char* data_str, size_t data_length = std::string::npos);
+  bool LoadData(std::string data_str) {
+    return LoadData(data_str.c_str(), data_str.size());
   }
   void LoadNodeTree(parsing::ParseNode* node);
   void LoadNodeTree(const dsl::Node& node);
