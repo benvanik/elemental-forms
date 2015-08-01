@@ -171,9 +171,8 @@ FontFace* FontManager::GetFontFace(const FontDescription& font_desc) {
 }
 
 FontFace* FontManager::CreateFontFace(const FontDescription& font_desc) {
-  assert(
-      !HasFontFace(
-          font_desc));  // There is already a font added with this description!
+  assert(!HasFontFace(
+      font_desc));  // There is already a font added with this description!
 
   FontInfo* fi = GetFontInfo(font_desc.id());
   if (!fi) {

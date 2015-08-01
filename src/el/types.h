@@ -32,8 +32,7 @@ namespace el {
   inline const char* to_string(Enum value) {                       \
     static const char* text[] = {__VA_ARGS__};                     \
     return text[int(value)];                                       \
-  \
-}
+  }
 
 // Makes it possible to use the given enum types as flag combinations.
 // That will catch use of incorrect type during compilation, that wouldn't be
@@ -53,9 +52,8 @@ namespace el {
   constexpr Enum operator^(Enum a, Enum b) {             \
     return static_cast<Enum>(static_cast<uint32_t>(a) ^  \
                              static_cast<uint32_t>(b));  \
-  } \
-inline void                                              \
-  operator|=(Enum& a, Enum b) {                          \
+  };                                                     \
+  inline void operator|=(Enum& a, Enum b) {              \
     a = static_cast<Enum>(static_cast<uint32_t>(a) |     \
                           static_cast<uint32_t>(b));     \
   }                                                      \
