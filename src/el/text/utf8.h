@@ -10,6 +10,7 @@
 #ifndef EL_TEXT_UTF8_H_
 #define EL_TEXT_UTF8_H_
 
+#include <cstddef>
 #include <cstdint>
 
 namespace el {
