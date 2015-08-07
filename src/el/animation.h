@@ -72,8 +72,8 @@ class AnimationListener : public util::IntrusiveListEntry<AnimationListener> {
 class Animation : public util::TypedObject,
                   public util::IntrusiveListEntry<Animation> {
  public:
-  const static AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
-  const static uint64_t kDefaultDuration = 200;
+  static const AnimationCurve kDefaultCurve = AnimationCurve::kSlowDown;
+  static const uint64_t kDefaultDuration = 200;
 
   AnimationCurve animation_curve;
   uint64_t animation_start_time;
