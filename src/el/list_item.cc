@@ -18,7 +18,13 @@
 
 namespace el {
 
-using namespace el::elements;
+using el::elements::IconBox;
+using el::elements::Label;
+using el::elements::LayoutBox;
+using el::elements::LayoutDistribution;
+using el::elements::MenuForm;
+using el::elements::PopupAlignment;
+using el::elements::Separator;
 
 // SimpleBoxItemElement is a item containing a layout with the following:
 // - IconBox showing the item image.

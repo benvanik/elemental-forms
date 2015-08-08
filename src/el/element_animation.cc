@@ -56,8 +56,9 @@ void OpacityElementAnimation::OnAnimationStop(bool aborted) {
     WeakElementPointer the_element(m_element);
     if (m_element->parent()) m_element->parent()->RemoveChild(m_element);
     if (the_element.get()) delete the_element.get();
-  } else
+  } else {
     m_element->set_opacity(m_dst_opacity);
+  }
 }
 
 RectElementAnimation::RectElementAnimation(Element* element,
@@ -107,10 +108,14 @@ void RectElementAnimation::OnAnimationUpdate(float progress) {
     m_mode = Mode::kSrcToDest;
   }
   Rect rect;
-  rect.x = int(Lerp(float(m_src_rect.x), float(m_dst_rect.x), progress));
-  rect.y = int(Lerp(float(m_src_rect.y), float(m_dst_rect.y), progress));
-  rect.w = int(Lerp(float(m_src_rect.w), float(m_dst_rect.w), progress));
-  rect.h = int(Lerp(float(m_src_rect.h), float(m_dst_rect.h), progress));
+  rect.x = static_cast<int>(Lerp(static_cast<float>(m_src_rect.x),
+                                 static_cast<float>(m_dst_rect.x), progress));
+  rect.y = static_cast<int>(Lerp(static_cast<float>(m_src_rect.y),
+                                 static_cast<float>(m_dst_rect.y), progress));
+  rect.w = static_cast<int>(Lerp(static_cast<float>(m_src_rect.w),
+                                 static_cast<float>(m_dst_rect.w), progress));
+  rect.h = static_cast<int>(Lerp(static_cast<float>(m_src_rect.h),
+                                 static_cast<float>(m_dst_rect.h), progress));
   m_element->set_rect(rect);
 }
 

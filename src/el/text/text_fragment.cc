@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/text/font_manager.h"
 #include "el/text/text_fragment.h"
 #include "el/text/text_fragment_content.h"
@@ -264,7 +266,7 @@ void TextBlock::Merge() {
 int32_t TextBlock::CalculateTabWidth(el::text::FontFace* font,
                                      int32_t xpos) const {
   int tabsize = font->GetStringWidth("x", 1) * TAB_SPACE;
-  int p2 = int(xpos / tabsize) * tabsize + tabsize;
+  int p2 = static_cast<int>(xpos / tabsize) * tabsize + tabsize;
   return p2 - xpos;
 }
 
@@ -274,7 +276,7 @@ int32_t TextBlock::CalculateStringWidth(el::text::FontFace* font,
     // Convert the length in number or characters, since that's what matters for
     // password width.
     len = utf8::count_characters(str, len);
-    return font->GetStringWidth(special_char_password) * int(len);
+    return font->GetStringWidth(special_char_password) * static_cast<int>(len);
   }
   return font->GetStringWidth(str, len);
 }
@@ -308,7 +310,7 @@ int TextBlock::GetStartIndentation(el::text::FontFace* font,
       case 0x2022:  // BULLET
         indentation += CalculateStringWidth(font, current_str, 3);
         continue;
-    };
+    }
     break;
   }
   return indentation;
@@ -661,7 +663,7 @@ void TextFragment::Paint(int32_t translate_x, int32_t translate_y,
     int cw = block->CalculateStringWidth(font, special_char_password);
     size_t num_char = utf8::count_characters(Str(), len);
     for (size_t i = 0; i < num_char; ++i) {
-      listener->DrawString(int(x + i * cw), y, font, color,
+      listener->DrawString(static_cast<int>(x + i * cw), y, font, color,
                            special_char_password);
     }
   } else if (block->style_edit->packed.show_whitespace) {

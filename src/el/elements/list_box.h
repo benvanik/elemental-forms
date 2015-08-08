@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_LIST_BOX_H_
 #define EL_ELEMENTS_LIST_BOX_H_
 
+#include <string>
+
 #include "el/element.h"
 #include "el/elements/layout_box.h"
 #include "el/elements/scroll_container.h"

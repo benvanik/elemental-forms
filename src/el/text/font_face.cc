@@ -20,6 +20,7 @@ namespace el {
 namespace text {
 
 using graphics::Renderer;
+using UCS4 = el::text::utf8::UCS4;
 
 FontGlyph::FontGlyph(const TBID& hash_id, UCS4 cp) : hash_id(hash_id), cp(cp) {}
 
@@ -103,7 +104,7 @@ void FontFace::RenderGlyph(FontGlyph* glyph) {
     if (!glyph_dsta_src && result_glyph_data->data8) {
       m_temp_buffer.Reserve(result_glyph_data->w * result_glyph_data->h *
                             sizeof(uint32_t));
-      glyph_dsta_src = (uint32_t*)m_temp_buffer.data();
+      glyph_dsta_src = reinterpret_cast<uint32_t*>(m_temp_buffer.data());
       for (int y = 0; y < result_glyph_data->h; y++) {
         for (int x = 0; x < result_glyph_data->w; x++) {
           glyph_dsta_src[x + y * result_glyph_data->w] = Color(

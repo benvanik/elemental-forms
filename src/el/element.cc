@@ -389,12 +389,11 @@ Element::State Element::computed_state() const {
   }
   if (this == focused_element && show_focus_state) {
     state |= Element::State::kFocused;
-  }
+  } else if (this == focused_element && IsOfType<elements::TextBox>()) {
 #ifdef EL_ALWAYS_SHOW_EDIT_FOCUS
-  else if (this == focused_element && IsOfType<TextBox>()) {
     state |= Element::State::kFocused;
-  }
 #endif  // EL_ALWAYS_SHOW_EDIT_FOCUS
+  }
   return state;
 }
 
@@ -423,7 +422,7 @@ void Element::set_opacity(float opacity) {
 }
 
 void Element::set_visibility(Visibility vis) {
-  if (m_packed.visibility == int(vis)) {
+  if (m_packed.visibility == static_cast<int>(vis)) {
     return;
   }
 
@@ -436,7 +435,7 @@ void Element::set_visibility(Visibility vis) {
   }
 
   Visibility old_vis = visibility();
-  m_packed.visibility = int(vis);
+  m_packed.visibility = static_cast<int>(vis);
 
   Invalidate();
   if (old_vis == Visibility::kGone) {
@@ -864,8 +863,9 @@ HitStatus Element::GetHitStatus(int x, int y) {
 }
 
 Element* Element::GetElementAt(int x, int y, bool include_children) const {
-  int child_translation_x, child_translation_y;
-  GetChildTranslation(child_translation_x, child_translation_y);
+  int child_translation_x;
+  int child_translation_y;
+  GetChildTranslation(&child_translation_x, &child_translation_y);
   x -= child_translation_x;
   y -= child_translation_y;
 
@@ -979,8 +979,9 @@ void Element::OnPaintChildren(const PaintProps& paint_props) {
   if (!m_children.GetFirst()) return;
 
   // Translate renderer with child translation.
-  int child_translation_x, child_translation_y;
-  GetChildTranslation(child_translation_x, child_translation_y);
+  int child_translation_x;
+  int child_translation_y;
+  GetChildTranslation(&child_translation_x, &child_translation_y);
   Renderer::get()->Translate(child_translation_x, child_translation_y);
 
   Rect clip_rect = Renderer::get()->clip_rect();
@@ -1231,15 +1232,21 @@ PreferredSize Element::GetPreferredSize(const SizeConstraints& in_constraints) {
   // Returned cached result if valid and the constraints are the same.
   if (m_packed.is_cached_ps_valid) {
     if (m_cached_sc == constraints ||
-        m_cached_ps.size_dependency == SizeDependency::kNone /*||
-			// FIX: These optimizations would probably be good. Keeping
-			//      disabled for now because it needs testing.
-			// If *only* width depend on height, only the height matter
-			(m_cached_ps.size_dependency == SizeDependency::kWidthOnHeight &&
-			m_cached_sc.available_h == constraints.available_h) ||
-			// If *only* height depend on width, only the width matter
-			(m_cached_ps.size_dependency == SizeDependency::kHeightOnWidth &&
-			m_cached_sc.available_w == constraints.available_w)*/) {
+        m_cached_ps.size_dependency == SizeDependency::kNone) {
+      /*||
+                        // FIX: These optimizations would probably be good.
+         Keeping
+                        //      disabled for now because it needs testing.
+                        // If *only* width depend on height, only the height
+         matter
+                        (m_cached_ps.size_dependency ==
+         SizeDependency::kWidthOnHeight &&
+                        m_cached_sc.available_h == constraints.available_h) ||
+                        // If *only* height depend on width, only the width
+         matter
+                        (m_cached_ps.size_dependency ==
+         SizeDependency::kHeightOnWidth &&
+                        m_cached_sc.available_w == constraints.available_w)*/
       return m_cached_ps;
     }
   }
@@ -1253,9 +1260,10 @@ PreferredSize Element::GetPreferredSize(const SizeConstraints& in_constraints) {
 
   // Override the calculated ps with any specified layout parameter.
   if (m_layout_params) {
-#define LP_OVERRIDE(param)                                  \
-  if (m_layout_params->param != LayoutParams::kUnspecified) \
-    m_cached_ps.param = m_layout_params->param;
+#define LP_OVERRIDE(param)                                    \
+  if (m_layout_params->param != LayoutParams::kUnspecified) { \
+    m_cached_ps.param = m_layout_params->param;               \
+  }
     LP_OVERRIDE(min_w);
     LP_OVERRIDE(min_h);
     LP_OVERRIDE(max_w);
@@ -1469,7 +1477,7 @@ bool Element::InvokeEvent(Event& ev) {
       break;
     default:
       break;
-  };
+  }
 
   // Call OnEvent on this elements and travel up through its parents if not
   // handled.
@@ -1648,9 +1656,10 @@ void Element::HandlePanningOnMove(int x, int y) {
       return;
     }
 
-    int old_translation_x = 0, old_translation_y = 0;
-    captured_element->scroll_root()->GetChildTranslation(old_translation_x,
-                                                         old_translation_y);
+    int old_translation_x = 0;
+    int old_translation_y = 0;
+    captured_element->scroll_root()->GetChildTranslation(&old_translation_x,
+                                                         &old_translation_y);
 
     if (scroller->OnPan(dx + start_compensation_x, dy + start_compensation_y)) {
       // Scroll delta changed, so we are now panning!
@@ -1660,9 +1669,10 @@ void Element::HandlePanningOnMove(int x, int y) {
       // If the captured element (or its scroll root) has panned, we have to
       // compensate the pointer down coordinates so we won't accumulate the
       // difference the following pan.
-      int new_translation_x = 0, new_translation_y = 0;
-      captured_element->scroll_root()->GetChildTranslation(new_translation_x,
-                                                           new_translation_y);
+      int new_translation_x = 0;
+      int new_translation_y = 0;
+      captured_element->scroll_root()->GetChildTranslation(&new_translation_x,
+                                                           &new_translation_y);
       pointer_down_element_x +=
           new_translation_x - old_translation_x + start_compensation_x;
       pointer_down_element_y +=
@@ -1758,8 +1768,9 @@ void Element::ConvertToRoot(int& x, int& y) const {
     tmp = tmp->m_parent;
 
     if (tmp) {
-      int child_translation_x, child_translation_y;
-      tmp->GetChildTranslation(child_translation_x, child_translation_y);
+      int child_translation_x;
+      int child_translation_y;
+      tmp->GetChildTranslation(&child_translation_x, &child_translation_y);
       x += child_translation_x;
       y += child_translation_y;
     }
@@ -1774,8 +1785,9 @@ void Element::ConvertFromRoot(int& x, int& y) const {
     tmp = tmp->m_parent;
 
     if (tmp) {
-      int child_translation_x, child_translation_y;
-      tmp->GetChildTranslation(child_translation_x, child_translation_y);
+      int child_translation_x;
+      int child_translation_y;
+      tmp->GetChildTranslation(&child_translation_x, &child_translation_y);
       x -= child_translation_x;
       y -= child_translation_y;
     }
@@ -1957,7 +1969,7 @@ bool ElementSkinConditionContext::GetCondition(
     case SkinProperty::kState:
       return !!(uint32_t(element->computed_state()) & info.value);
     case SkinProperty::kValue:
-      return element->value() == (int)info.value;
+      return element->value() == static_cast<int>(info.value);
     case SkinProperty::kHover:
       return Element::hovered_element &&
              element->IsAncestorOf(Element::hovered_element);

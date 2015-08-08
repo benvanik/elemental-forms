@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/text/text_fragment_content.h"
 
 namespace el {

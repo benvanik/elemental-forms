@@ -22,6 +22,7 @@ static FT_Library g_freetype = nullptr;
 
 using namespace el;
 using namespace el::resources;
+using UCS4 = el::text::utf8::UCS4;
 
 /** Cache of truetype file data, so it isn't loaded multiple times for each font
  * size */
@@ -153,11 +154,11 @@ FontFace* FreetypeFontRenderer::Create(FontManager* font_manager,
     FreetypeFace* f = ft_face_cache.Get(face_cache_id);
     if (f) {
       ++f->refCount;
-      if (fr->Load(f, (int)font_desc.size()))
+      if (fr->Load(f, static_cast<int>(font_desc.size())))
         if (FontFace* font =
                 new FontFace(font_manager->glyph_cache(), fr, font_desc))
           return font;
-    } else if (fr->Load(filename, (int)font_desc.size())) {
+    } else if (fr->Load(filename, static_cast<int>(font_desc.size()))) {
       if (ft_face_cache.Add(face_cache_id, fr->m_face))
         fr->m_face->hashID = face_cache_id;
       if (FontFace* font =

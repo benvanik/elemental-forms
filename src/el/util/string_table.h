@@ -11,6 +11,7 @@
 #define EL_UTIL_STRING_TABLE_H_
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 #include "el/id.h"

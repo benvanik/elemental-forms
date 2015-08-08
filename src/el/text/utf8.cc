@@ -61,28 +61,29 @@ invalid:
 
 int encode(UCS4 ch, char* dst) {
   if (ch < 0x80) {
-    dst[0] = (char)ch;
+    dst[0] = static_cast<char>(ch);
     return 1;
   } else if (ch < 0x800) {
-    dst[0] = (char)(0xC0 + (ch >> 6));
-    dst[1] = (char)(0x80 + (ch & 0x3F));
+    dst[0] = static_cast<char>(0xC0 + (ch >> 6));
+    dst[1] = static_cast<char>(0x80 + (ch & 0x3F));
     return 2;
   } else if (ch < 0x10000) {
-    dst[0] = (char)(0xE0 + (ch >> 12));
-    dst[1] = (char)(0x80 + ((ch >> 6) & 0x3F));
-    dst[2] = (char)(0x80 + (ch & 0x3F));
+    dst[0] = static_cast<char>(0xE0 + (ch >> 12));
+    dst[1] = static_cast<char>(0x80 + ((ch >> 6) & 0x3F));
+    dst[2] = static_cast<char>(0x80 + (ch & 0x3F));
     return 3;
   } else if (ch <= 0x10FFFF) {
-    dst[0] = (char)(0xF0 + (ch >> 18));
-    dst[1] = (char)(0x80 + ((ch >> 12) & 0x3F));
-    dst[2] = (char)(0x80 + ((ch >> 6) & 0x3F));
-    dst[3] = (char)(0x80 + (ch & 0x3F));
+    dst[0] = static_cast<char>(0xF0 + (ch >> 18));
+    dst[1] = static_cast<char>(0x80 + ((ch >> 12) & 0x3F));
+    dst[2] = static_cast<char>(0x80 + ((ch >> 6) & 0x3F));
+    dst[3] = static_cast<char>(0x80 + (ch & 0x3F));
     return 4;
   } else {
-    //  output UTF-8 encoding of 0xFFFF
-    dst[0] = (char)0xEF;
-    dst[1] = (char)0xBF;
-    dst[2] = (char)0xBF;
+    // output UTF-8 encoding of 0xFFFF
+    auto udst = reinterpret_cast<uint8_t*>(dst);
+    udst[0] = 0xEF;
+    udst[1] = 0xBF;
+    udst[2] = 0xBF;
     return 3;
   }
 }

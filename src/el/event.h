@@ -138,7 +138,7 @@ class Event : public util::TypedObject {
   // on screen).
   bool touch = false;
 
-  Event(EventType type) : type(type) {}
+  explicit Event(EventType type) : type(type) {}
 
   Event(EventType type, int x, int y, bool touch,
         ModifierKeys modifierkeys = ModifierKeys::kNone)

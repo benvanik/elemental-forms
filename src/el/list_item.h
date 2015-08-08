@@ -11,6 +11,8 @@
 #define EL_LIST_ITEM_H_
 
 #include <memory>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "el/dsl.h"
@@ -203,11 +205,11 @@ class GenericStringItem {
         id(other.id),
         sub_source(other.sub_source),
         tag(other.tag) {}
-  GenericStringItem(const char* str) : str(str) {}
+  explicit GenericStringItem(const char* str) : str(str) {}
   GenericStringItem(const char* str, TBID id) : str(str), id(id) {}
   GenericStringItem(const char* str, ListItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
-  GenericStringItem(const std::string& str) : str(str) {}
+  explicit GenericStringItem(const std::string& str) : str(str) {}
   GenericStringItem(const std::string& str, TBID id) : str(str), id(id) {}
   GenericStringItem(const std::string& str, ListItemSource* sub_source)
       : str(str), sub_source(sub_source) {}
@@ -249,7 +251,7 @@ struct Item {
 template <typename T>
 struct ItemListElementNode : public ElementNode<T> {
  protected:
-  ItemListElementNode(const char* name) : ElementNode<T>(name) {}
+  explicit ItemListElementNode(const char* name) : ElementNode<T>(name) {}
 
  public:
   T& item(std::string text) {

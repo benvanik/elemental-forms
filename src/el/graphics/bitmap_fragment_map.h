@@ -11,6 +11,7 @@
 #define EL_GRAPHICS_BITMAP_FRAGMENT_MAP_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "el/graphics/bitmap_fragment.h"

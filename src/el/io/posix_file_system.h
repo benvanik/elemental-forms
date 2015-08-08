@@ -20,7 +20,7 @@ namespace io {
 
 class PosixFileSystem : public FileSystem {
  public:
-  PosixFileSystem(std::string root_path);
+  explicit PosixFileSystem(std::string root_path);
 
   std::unique_ptr<File> OpenRead(std::string filename) override;
 

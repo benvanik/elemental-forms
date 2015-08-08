@@ -19,8 +19,7 @@ void Slider::RegisterInflater() {
 }
 
 Slider::Slider()
-    : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
-{
+    : m_axis(Axis::kY) {  // Make SetAxis below always succeed and set the skin
   set_focusable(true);
   set_axis(Axis::kX);
   AddChild(&m_handle);
@@ -32,8 +31,10 @@ void Slider::OnInflate(const parsing::InflateInfo& info) {
   auto axis = el::from_string(info.node->GetValueString("axis", "x"), Axis::kY);
   set_axis(axis);
   set_gravity(axis == Axis::kX ? Gravity::kLeftRight : Gravity::kTopBottom);
-  double min = double(info.node->GetValueFloat("min", (float)min_value()));
-  double max = double(info.node->GetValueFloat("max", (float)max_value()));
+  double min = static_cast<double>(
+      info.node->GetValueFloat("min", static_cast<float>(min_value())));
+  double max = static_cast<double>(
+      info.node->GetValueFloat("max", static_cast<float>(max_value())));
   set_limits(min, max);
   Element::OnInflate(info);
 }
@@ -119,10 +120,10 @@ void Slider::UpdateHandle() {
   if (m_max - m_min > 0) {
     PreferredSize ps = m_handle.GetPreferredSize();
     int handle_pixels = horizontal ? ps.pref_w : ps.pref_h;
-    m_to_pixel_factor =
-        double(available_pixels - handle_pixels) / (m_max - m_min) /*+ 0.5*/;
+    m_to_pixel_factor = static_cast<double>(available_pixels - handle_pixels) /
+                        (m_max - m_min) /*+ 0.5*/;
 
-    int pixel_pos = int((m_value - m_min) * m_to_pixel_factor);
+    int pixel_pos = static_cast<int>((m_value - m_min) * m_to_pixel_factor);
 
     if (horizontal) {
       handle_rect.reset(pixel_pos, (rect().h - ps.pref_h) / 2, ps.pref_w,

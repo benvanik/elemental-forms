@@ -10,6 +10,8 @@
 #ifndef EL_DESIGN_DESIGNER_FORM_H_
 #define EL_DESIGN_DESIGNER_FORM_H_
 
+#include <string>
+
 #include "el/element.h"
 #include "el/element_listener.h"
 #include "el/elements/form.h"
@@ -49,7 +51,7 @@ class DesignerForm : public elements::Form,
   void RefreshContent();
   void PopulateElementListBox();
 
-  EventHandler event_handler_ = {this};
+  EventHandler event_handler_ = EventHandler(this);
   elements::ListBox* element_list_box_ = nullptr;
   ListItemSourceList<ElementItem> element_list_source_;
   elements::TextBox* source_text_box_ = nullptr;

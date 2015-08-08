@@ -25,7 +25,7 @@ class PopupAlignment {
   static const int kUnspecified = el::util::kInvalidDimension;
 
   // Aligns relative to the target element.
-  PopupAlignment(Align align = Align::kBottom)
+  explicit PopupAlignment(Align align = Align::kBottom)
       : pos_in_root(kUnspecified, kUnspecified),
         align(align),
         expand_to_target_width(true) {}
@@ -63,7 +63,7 @@ class PopupForm : public Form, private ElementListener {
  public:
   TBOBJECT_SUBCLASS(PopupForm, Form);
 
-  PopupForm(Element* target);
+  explicit PopupForm(Element* target);
   ~PopupForm() override;
 
   void Show(const PopupAlignment& alignment);

@@ -46,7 +46,7 @@
 namespace el {
 
 // TODO(benvanik): using all the elements to bring them into tb?
-using namespace el::elements;
+using namespace el::elements;  // NOLINT(build/namespaces)
 
 using el::elements::to_string;
 

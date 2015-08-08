@@ -27,25 +27,22 @@
 #define EL_UNIT_TESTING
 #endif  // CHECKED
 
-/** Enable if the focus state should automatically be set on edit fields even
-        when using the pointer. It is normally set only while moving focus by
-   keyboard. */
-//#define EL_ALWAYS_SHOW_EDIT_FOCUS
+// Enable if the focus state should automatically be set on edit fields even
+// when using the pointer. It is normally set only while moving focus by
+// keyboard.
+// #define EL_ALWAYS_SHOW_EDIT_FOCUS
 
-/** Enable to support TBBF fonts (Turbo Badger Bitmap Fonts) */
+// Enable to support TBBF fonts (Turbo Badger Bitmap Fonts).
 #define EL_FONT_RENDERER_TBBF
 
-/** Enable to support truetype fonts using freetype. */
-//#define EL_FONT_RENDERER_FREETYPE
+// Enable to support truetype fonts using freetype.
+// #define EL_FONT_RENDERER_FREETYPE
 
-/** Enable to support truetype fonts using stb_truetype.h
-   (http://nothings.org/).
-        It's a *very unsafe* font library. Use only with fonts distributed with
-   your
-        app, that you know work! Freetype generates much prettier glyphs (using
-        hinting) but is a lot larger. This implementation is kept here as
-   alternative
-        as long as it compiles. */
-//#define EL_FONT_RENDERER_STB
+// Enable to support truetype fonts using stb_truetype.h (http://nothings.org/).
+// It's a *very unsafe* font library. Use only with fonts distributed with your
+// app, that you know work! Freetype generates much prettier glyphs (using
+// hinting) but is a lot larger. This implementation is kept here as alternative
+// as long as it compiles.
+// #define EL_FONT_RENDERER_STB
 
 #endif  // EL_CONFIG_H_

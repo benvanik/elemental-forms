@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "el/dsl.h"
@@ -465,7 +466,9 @@ class Element : public util::TypedObject,
 
   ElementZ z_inflate() const { return (ElementZ)m_packed.inflate_child_z; }
   // Sets the z-order in which children are added during resource loading.
-  void set_z_inflate(ElementZ z) { m_packed.inflate_child_z = int(z) ? 1 : 0; }
+  void set_z_inflate(ElementZ z) {
+    m_packed.inflate_child_z = static_cast<int>(z) ? 1 : 0;
+  }
 
   Gravity gravity() const { return m_gravity; }
   // Sets the element gravity (any combination of Gravity).
@@ -771,7 +774,7 @@ class Element : public util::TypedObject,
   // NOTE: you can apply the translation on one element and implement those
   // methods on a parent, by returning this element from the parents
   // scroll_root().
-  virtual void GetChildTranslation(int& x, int& y) const { x = y = 0; }
+  virtual void GetChildTranslation(int* x, int* y) const { *x = *y = 0; }
 
   // If this is a element that scroll children (see GetChildTranslation), it
   // should scroll to the coordinates x, y.
@@ -846,12 +849,14 @@ class Element : public util::TypedObject,
   // It only makes sense to use this instead of value() on elements that
   // store the value as double.
   // F.ex ScrollBar, Slider.
-  virtual double double_value() { return double(value()); }
+  virtual double double_value() { return static_cast<double>(value()); }
   // Sets the value in double precision.
   // It only makes sense to use this instead of set_value() on elements that
   // store the value as double.
   // F.ex ScrollBar, Slider.
-  virtual void set_double_value(double value) { set_value(int(value)); }
+  virtual void set_double_value(double value) {
+    set_value(static_cast<int>(value));
+  }
 
   // Gets the text of this element. Implemented by most elements that have text.
   virtual std::string text() { return ""; }
@@ -1142,7 +1147,7 @@ inline Element* Element::GetElementById<Element>(const TBID& id) {
 // Check if a condition is true for a element when painting a skin.
 class ElementSkinConditionContext : public SkinConditionContext {
  public:
-  ElementSkinConditionContext(Element* element) : m_element(element) {}
+  explicit ElementSkinConditionContext(Element* element) : m_element(element) {}
   bool GetCondition(SkinTarget target,
                     const SkinCondition::ConditionInfo& info) override;
 

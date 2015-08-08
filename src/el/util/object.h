@@ -37,14 +37,14 @@ class TypedObject {
 
   // Returns this object as the given type or nullptr if it's not that type.
   template <class T>
-  T* SafeCastTo() const {
-    return (T*)(IsOfTypeId(GetTypeId<T>()) ? this : nullptr);
+  T* SafeCastTo() {
+    return reinterpret_cast<T*>(IsOfTypeId(GetTypeId<T>()) ? this : nullptr);
   }
 
   // Return true if this object can safely be casted to the given type.
   template <class T>
   bool IsOfType() const {
-    return SafeCastTo<T>() ? true : false;
+    return IsOfTypeId(GetTypeId<T>());
   }
 
   // Gets the classname of the object.
@@ -62,7 +62,7 @@ T* SafeCast(TypedObject* obj) {
 // or if the object is nullptr.
 template <class T>
 const T* SafeCast(const TypedObject* obj) {
-  return obj ? obj->SafeCastTo<T>() : nullptr;
+  return obj ? const_cast<TypedObject*>(obj)->SafeCastTo<T>() : nullptr;
 }
 
 // Implements the methods for safe typecasting without requiring RTTI.

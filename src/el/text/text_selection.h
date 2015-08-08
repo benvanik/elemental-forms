@@ -10,6 +10,8 @@
 #ifndef EL_TEXT_TEXT_SELECTION_H_
 #define EL_TEXT_TEXT_SELECTION_H_
 
+#include <string>
+
 #include "el/color.h"
 
 namespace el {
@@ -44,7 +46,7 @@ class TextOffset {
 // Handles the selected text in a TextView.
 class TextSelection {
  public:
-  TextSelection(TextView* style_edit);
+  explicit TextSelection(TextView* style_edit);
   void Invalidate() const;
   void Select(const TextOffset& new_start, const TextOffset& new_stop);
   void Select(const Point& from, const Point& to);

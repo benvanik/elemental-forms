@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/element.h"
 #include "el/elements/parts/scroller.h"
 #include "el/util/metrics.h"
@@ -17,7 +19,7 @@ namespace parts {
 
 constexpr uint32_t kPanTargetFps = 60;
 constexpr uint32_t kPanMessageDelayMillis =
-    uint32_t(1000.0 / double(kPanTargetFps));
+    static_cast<uint32_t>(1000.0 / static_cast<double>(kPanTargetFps));
 constexpr uint32_t kPanStartThresholdMillis = 50;
 constexpr uint32_t kPanPowerAccelerationThresholdMillis = 600;
 constexpr float kPanPowerMultiplier = 1.3f;
@@ -52,7 +54,7 @@ float ScrollerFunction::GetDistanceAtTime(float start_speed,
 int ScrollerFunction::GetDistanceAtTimeInt(float start_speed,
                                            float elapsed_time_ms) {
   float distance = GetDistanceAtTime(start_speed, elapsed_time_ms);
-  return int(distance < 0 ? distance - 0.5f : distance + 0.5f);
+  return static_cast<int>(distance < 0 ? distance - 0.5f : distance + 0.5f);
 }
 
 Scroller::Scroller(Element* target) : m_target(target), m_func(kScrollDecay) {
@@ -79,8 +81,8 @@ void Scroller::OnScrollBy(int dx, int dy, bool accumulative) {
     Start();
   }
 
-  float ppms_x = m_func.GetSpeedFromDistance((float)dx);
-  float ppms_y = m_func.GetSpeedFromDistance((float)dy);
+  float ppms_x = m_func.GetSpeedFromDistance(static_cast<float>(dx));
+  float ppms_y = m_func.GetSpeedFromDistance(static_cast<float>(dy));
 
   if (accumulative && IsScrolling()) {
     auto scroll_info = m_target->scroll_info();
@@ -95,7 +97,8 @@ void Scroller::OnScrollBy(int dx, int dy, bool accumulative) {
           m_scroll_start_scroll_x + distance_x - scroll_info.x;
       distance_remaining_x += m_func.GetDistanceAtTimeInt(
           ppms_x, m_func.GetDurationFromSpeed(ppms_x));
-      ppms_x = m_func.GetSpeedFromDistance((float)distance_remaining_x);
+      ppms_x =
+          m_func.GetSpeedFromDistance(static_cast<float>(distance_remaining_x));
     }
     if ((ppms_y < 0) == (m_scroll_start_speed_ppms_y < 0)) {
       int distance_y = m_func.GetDistanceAtTimeInt(
@@ -105,7 +108,8 @@ void Scroller::OnScrollBy(int dx, int dy, bool accumulative) {
           m_scroll_start_scroll_y + distance_y - scroll_info.y;
       distance_remaining_y += m_func.GetDistanceAtTimeInt(
           ppms_y, m_func.GetDurationFromSpeed(ppms_y));
-      ppms_y = m_func.GetSpeedFromDistance((float)distance_remaining_y);
+      ppms_y =
+          m_func.GetSpeedFromDistance(static_cast<float>(distance_remaining_y));
     }
   }
 
@@ -123,7 +127,7 @@ bool Scroller::OnPan(int dx, int dy) {
 
   // Calculate the pan speed. Smooth it out with the
   // previous pan speed to reduce fluctuation a little.
-  double now_ms = double(util::GetTimeMS());
+  double now_ms = static_cast<double>(util::GetTimeMS());
   if (m_pan_time_ms) {
     if (m_pan_delta_time_ms) {
       m_pan_delta_time_ms =
@@ -166,14 +170,17 @@ void Scroller::OnPanReleased() {
       return;
     }
 
-    float ppms_x = (float)m_pan_dx / (float)m_pan_delta_time_ms;
-    float ppms_y = (float)m_pan_dy / (float)m_pan_delta_time_ms;
+    float ppms_x =
+        static_cast<float>(m_pan_dx) / static_cast<float>(m_pan_delta_time_ms);
+    float ppms_y =
+        static_cast<float>(m_pan_dy) / static_cast<float>(m_pan_delta_time_ms);
     ppms_x *= m_pan_power_multiplier_x;
     ppms_y *= m_pan_power_multiplier_y;
 
     AdjustToSnappingAndScroll(ppms_x, ppms_y);
-  } else
+  } else {
     StopOrSnapScroll();
+  }
 }
 
 void Scroller::Start() {
@@ -181,7 +188,7 @@ void Scroller::Start() {
     return;
   }
   m_is_started = true;
-  double now_ms = double(util::GetTimeMS());
+  double now_ms = static_cast<double>(util::GetTimeMS());
   if (now_ms < m_scroll_start_ms + kPanPowerAccelerationThresholdMillis) {
     m_pan_power_multiplier_x *= kPanPowerMultiplier;
     m_pan_power_multiplier_y *= kPanPowerMultiplier;
@@ -196,9 +203,11 @@ void Scroller::Stop() {
 }
 
 bool Scroller::StopIfAlmostStill() {
-  double now_ms = double(util::GetTimeMS());
-  if (now_ms > m_scroll_start_ms + (double)m_scroll_duration_x_ms &&
-      now_ms > m_scroll_start_ms + (double)m_scroll_duration_y_ms) {
+  double now_ms = static_cast<double>(util::GetTimeMS());
+  if (now_ms >
+          m_scroll_start_ms + static_cast<double>(m_scroll_duration_x_ms) &&
+      now_ms >
+          m_scroll_start_ms + static_cast<double>(m_scroll_duration_y_ms)) {
     Stop();
     return true;
   }
@@ -229,8 +238,8 @@ void Scroller::AdjustToSnappingAndScroll(float ppms_x, float ppms_y) {
     distance_y = target_y - info.y;
 
     // Get the start speed from the new distance.
-    ppms_x = m_func.GetSpeedFromDistance((float)distance_x);
-    ppms_y = m_func.GetSpeedFromDistance((float)distance_y);
+    ppms_x = m_func.GetSpeedFromDistance(static_cast<float>(distance_x));
+    ppms_y = m_func.GetSpeedFromDistance(static_cast<float>(distance_y));
   }
 
   Scroll(ppms_x, ppms_y);
@@ -238,7 +247,7 @@ void Scroller::AdjustToSnappingAndScroll(float ppms_x, float ppms_y) {
 
 void Scroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
   // Set start values.
-  m_scroll_start_ms = double(util::GetTimeMS());
+  m_scroll_start_ms = static_cast<double>(util::GetTimeMS());
   GetTargetScrollXY(m_scroll_start_scroll_x, m_scroll_start_scroll_y);
   m_scroll_start_speed_ppms_x = start_speed_ppms_x;
   m_scroll_start_speed_ppms_y = start_speed_ppms_y;
@@ -268,10 +277,11 @@ bool Scroller::IsScrolling() {
 
 void Scroller::GetTargetChildTranslation(int& x, int& y) const {
   int root_x = 0, root_y = 0;
-  int child_translation_x = 0, child_translation_y = 0;
+  int child_translation_x = 0;
+  int child_translation_y = 0;
   Element* scroll_root = m_target->scroll_root();
   scroll_root->ConvertToRoot(root_x, root_y);
-  scroll_root->GetChildTranslation(child_translation_x, child_translation_y);
+  scroll_root->GetChildTranslation(&child_translation_x, &child_translation_y);
   x = root_x + child_translation_x;
   y = root_y + child_translation_y;
 }
@@ -306,8 +316,8 @@ void Scroller::OnMessageReceived(Message* msg) {
 
     // Calculate the time elapsed from scroll start. Clip within the
     // duration for each axis.
-    double now_ms = double(util::GetTimeMS());
-    float elapsed_time_x = (float)(now_ms - m_scroll_start_ms);
+    double now_ms = static_cast<double>(util::GetTimeMS());
+    float elapsed_time_x = static_cast<float>(now_ms - m_scroll_start_ms);
     float elapsed_time_y = elapsed_time_x;
     elapsed_time_x = std::min(elapsed_time_x, m_scroll_duration_x_ms);
     elapsed_time_y = std::min(elapsed_time_y, m_scroll_duration_y_ms);

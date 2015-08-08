@@ -7,8 +7,10 @@
  ******************************************************************************
  */
 
-#ifndef EL_EDITFIELD_H
-#define EL_EDITFIELD_H
+#ifndef EL_ELEMENTS_TEXT_BOX_H_
+#define EL_ELEMENTS_TEXT_BOX_H_
+
+#include <string>
 
 #include "el/element.h"
 #include "el/elements/label.h"
@@ -164,7 +166,7 @@ class TextBox : public Element,
 
    public:
     void OnPaintChildren(const PaintProps& paint_props) override;
-    void GetChildTranslation(int& x, int& y) const override;
+    void GetChildTranslation(int* x, int* y) const override;
     HitStatus GetHitStatus(int x, int y) override;
   };
 
@@ -224,7 +226,7 @@ using el::elements::EditType;
 
 struct TextBoxNode : public ElementNode<TextBoxNode> {
   using R = TextBoxNode;
-  TextBoxNode(const char* text = nullptr) : ElementNode("TextBox") {
+  explicit TextBoxNode(const char* text = nullptr) : ElementNode("TextBox") {
     if (text) {
       this->text(text);
     }
@@ -279,4 +281,4 @@ struct TextBoxNode : public ElementNode<TextBoxNode> {
 }  // namespace dsl
 }  // namespace el
 
-#endif  // EL_EDITFIELD_H
+#endif  // EL_ELEMENTS_TEXT_BOX_H_

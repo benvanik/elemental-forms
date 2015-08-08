@@ -20,7 +20,7 @@ namespace io {
 
 class Win32ResFileSystem : public FileSystem {
  public:
-  Win32ResFileSystem(std::string prefix);
+  explicit Win32ResFileSystem(std::string prefix);
 
   std::unique_ptr<File> OpenRead(std::string filename) override;
 

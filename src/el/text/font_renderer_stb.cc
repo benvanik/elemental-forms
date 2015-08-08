@@ -21,7 +21,9 @@ namespace text {
                                      // implementation
 #include "third_party/stb/stb_truetype.h"
 
-/** SFontRenderer renders fonts using stb_truetype.h (http://nothings.org/) */
+// SFontRenderer renders fonts using stb_truetype.h (http://nothings.org/).
+
+using UCS4 = el::text::utf8::UCS4;
 
 class SFontRenderer : public FontRenderer {
  public:
@@ -66,7 +68,7 @@ bool SFontRenderer::RenderGlyph(FontGlyphData* data, UCS4 cp) {
 void SFontRenderer::GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) {
   int advanceWidth, leftSideBearing;
   stbtt_GetCodepointHMetrics(&font, cp, &advanceWidth, &leftSideBearing);
-  metrics->advance = (int)(advanceWidth * scale + 0.5f);
+  metrics->advance = static_cast<int>(advanceWidth * scale + 0.5f);
   int ix0, iy0, ix1, iy1;
   stbtt_GetCodepointBitmapBox(&font, cp, 0, scale, &ix0, &iy0, &ix1, &iy1);
   metrics->x = ix0;
@@ -77,9 +79,10 @@ FontMetrics SFontRenderer::GetMetrics() {
   FontMetrics metrics;
   int ascent, descent, lineGap;
   stbtt_GetFontVMetrics(&font, &ascent, &descent, &lineGap);
-  metrics.ascent = (int)(ascent * scale + 0.5f);
-  metrics.descent = (int)((-descent) * scale + 0.5f);
-  metrics.height = (int)((ascent - descent + lineGap) * scale + 0.5f);
+  metrics.ascent = static_cast<int>(ascent * scale + 0.5f);
+  metrics.descent = static_cast<int>((-descent) * scale + 0.5f);
+  metrics.height =
+      static_cast<int>((ascent - descent + lineGap) * scale + 0.5f);
   return metrics;
 }
 
@@ -93,9 +96,10 @@ bool SFontRenderer::Load(const char* filename, int size) {
 
   stbtt_InitFont(&font, ttf_buffer, stbtt_GetFontOffsetForIndex(ttf_buffer, 0));
 
-  font_size = (int)(size * 1.3f);  // FIX: Constant taken out of thin air
-                                   // because fonts get too small.
-  scale = stbtt_ScaleForPixelHeight(&font, (float)font_size);
+  font_size =
+      static_cast<int>(size * 1.3f);  // FIX: Constant taken out of thin air
+                                      // because fonts get too small.
+  scale = stbtt_ScaleForPixelHeight(&font, static_cast<float>(font_size));
   return true;
 }
 
@@ -103,7 +107,8 @@ std::unique_ptr<FontFace> SFontRenderer::Create(
     FontManager* font_manager, const std::string& filename,
     const FontDescription& font_desc) {
   auto font_renderer = std::make_unique<SFontRenderer>();
-  if (font_renderer->Load(filename.c_str(), (int)font_desc.size())) {
+  if (font_renderer->Load(filename.c_str(),
+                          static_cast<int>(font_desc.size()))) {
     return std::make_unique<FontFace>(font_manager->glyph_cache(),
                                       std::move(font_renderer), font_desc);
   }

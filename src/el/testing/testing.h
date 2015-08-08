@@ -156,7 +156,7 @@ class TBCall : public util::IntrusiveListEntry<TBCall> {
  * Cleanup calls. */
 class TBTestGroup {
  public:
-  TBTestGroup(const char* name);
+  explicit TBTestGroup(const char* name);
   bool IsSpecialTest(TBCall* call) const { return !call->linklist; }
 
  public:

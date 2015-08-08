@@ -55,8 +55,8 @@ void AnimationManager::Update() {
     // If animation_duration is 0, it should just complete immediately.
     float progress = 1.0f;
     if (obj->animation_duration != 0) {
-      progress = (float)(time_now - obj->animation_start_time) /
-                 (float)obj->animation_duration;
+      progress = static_cast<float>(time_now - obj->animation_start_time) /
+                 static_cast<float>(obj->animation_duration);
       progress = std::min(progress, 1.0f);
     }
 
@@ -78,7 +78,7 @@ void AnimationManager::Update() {
         break;
       default:  // linear (progress is already linear)
         break;
-    };
+    }
 
     // Update animation
     obj->InvokeOnAnimationUpdate(progress);

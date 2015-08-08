@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/layout_box.h"
 #include "el/parsing/element_inflater.h"
 #include "el/skin.h"
@@ -208,7 +210,7 @@ int LayoutBox::GetWantedHeight(Gravity gravity, const PreferredSize& ps,
     case LayoutSize::kAvailable:
       height = std::min(available_height, ps.max_h);
       break;
-  };
+  }
   height = std::min(height, ps.max_h);
   return height;
 }
@@ -366,8 +368,9 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
     int width = ps.pref_w;
     if (missing_space && total_min_pref_diff_w) {
       int diff_w = ps.pref_w - ps.min_w;
-      float factor = (float)diff_w / (float)total_min_pref_diff_w;
-      int removed = (int)(missing_space * factor);
+      float factor = static_cast<float>(diff_w) /
+                     static_cast<float>(total_min_pref_diff_w);
+      int removed = static_cast<int>(missing_space * factor);
       removed = std::min(removed, diff_w);
       width -= removed;
 
@@ -377,8 +380,9 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
                QualifyForExpansion(gravity)) {
       int capped_max_w = std::min(layout_rect.w, ps.max_w);
       int diff_w = capped_max_w - ps.pref_w;
-      float factor = (float)diff_w / (float)total_max_pref_diff_w;
-      int added = (int)(extra_space * factor);
+      float factor = static_cast<float>(diff_w) /
+                     static_cast<float>(total_max_pref_diff_w);
+      int added = static_cast<int>(extra_space * factor);
       added = std::min(added, diff_w);
       width += added;
 
@@ -408,7 +412,7 @@ void LayoutBox::ValidateLayout(const SizeConstraints& constraints,
         break;
       default:  // LayoutPosition::kLeftTop
         break;
-    };
+    }
 
     // Done! Set rect and increase used space.
     Rect rect(used_space + offset, pos, width, height);
@@ -509,13 +513,13 @@ void LayoutBox::OnInflateChild(Element* child) {
   // Do nothing since we're going to layout the child soon.
 }
 
-void LayoutBox::GetChildTranslation(int& x, int& y) const {
+void LayoutBox::GetChildTranslation(int* x, int* y) const {
   if (m_axis == Axis::kX) {
-    x = -m_overflow_scroll;
-    y = 0;
+    *x = -m_overflow_scroll;
+    *y = 0;
   } else {
-    x = 0;
-    y = -m_overflow_scroll;
+    *x = 0;
+    *y = -m_overflow_scroll;
   }
 }
 

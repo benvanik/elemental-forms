@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_FORM_H_
 #define EL_ELEMENTS_FORM_H_
 
+#include <string>
+
 #include "el/element_listener.h"
 #include "el/elements/button.h"
 #include "el/elements/label.h"

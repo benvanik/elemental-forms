@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/scroll_container.h"
 #include "el/parsing/element_inflater.h"
 #include "el/util/debug.h"
@@ -111,11 +113,11 @@ void ScrollContainer::ScrollContainerRoot::OnPaintChildren(
   graphics::Renderer::get()->set_clip_rect(old_clip_rect, false);
 }
 
-void ScrollContainer::ScrollContainerRoot::GetChildTranslation(int& x,
-                                                               int& y) const {
+void ScrollContainer::ScrollContainerRoot::GetChildTranslation(int* x,
+                                                               int* y) const {
   ScrollContainer* sc = static_cast<ScrollContainer*>(parent());
-  x = -sc->m_scrollbar_x.value();
-  y = -sc->m_scrollbar_y.value();
+  *x = -sc->m_scrollbar_x.value();
+  *y = -sc->m_scrollbar_y.value();
 }
 
 void ScrollContainer::RegisterInflater() {
@@ -273,7 +275,8 @@ bool ScrollContainer::OnEvent(const Event& ev) {
     } else if (ev.special_key == SpecialKey::kHome) {
       ScrollToSmooth(m_scrollbar_x.value(), 0);
     } else if (ev.special_key == SpecialKey::kEnd) {
-      ScrollToSmooth(m_scrollbar_x.value(), (int)m_scrollbar_y.max_value());
+      ScrollToSmooth(m_scrollbar_x.value(),
+                     static_cast<int>(m_scrollbar_y.max_value()));
     } else {
       return Element::OnEvent(ev);
     }

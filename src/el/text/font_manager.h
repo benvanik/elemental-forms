@@ -26,10 +26,6 @@
 namespace el {
 namespace text {
 
-namespace {
-using UCS4 = el::text::utf8::UCS4;
-}  // namespace
-
 // Provides information about a font file associated with a font id.
 class FontInfo {
  public:
@@ -57,11 +53,11 @@ class FontGlyphCache : private graphics::RendererListener {
   ~FontGlyphCache();
 
   // Gets the glyph or nullptr if it is not in the cache.
-  FontGlyph* GetGlyph(const TBID& hash_id, UCS4 cp);
+  FontGlyph* GetGlyph(const TBID& hash_id, utf8::UCS4 cp);
 
   // Creates the glyph and put it in the cache.
   // Returns the glyph, or nullptr on fail.
-  FontGlyph* CreateAndCacheGlyph(const TBID& hash_id, UCS4 cp);
+  FontGlyph* CreateAndCacheGlyph(const TBID& hash_id, utf8::UCS4 cp);
 
   // Creates a bitmap fragment for the given glyph and render data. This may
   // drop other rendered glyphs from the fragment map.

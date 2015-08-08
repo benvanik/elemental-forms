@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/resizer.h"
 #include "el/parsing/element_inflater.h"
 

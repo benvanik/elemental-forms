@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_BUTTON_H_
 #define EL_ELEMENTS_BUTTON_H_
 
+#include <string>
+
 #include "el/element.h"
 #include "el/elements/label.h"
 #include "el/elements/layout_box.h"
@@ -98,12 +100,14 @@ namespace dsl {
 
 struct ButtonNode : public ElementNode<ButtonNode> {
   using R = ButtonNode;
-  ButtonNode(const char* text = nullptr) : ElementNode("Button") {
+  explicit ButtonNode(const char* text = nullptr) : ElementNode("Button") {
     if (text) {
       this->text(text);
     }
   }
-  ButtonNode(std::string text) : ElementNode("Button") { this->text(text); }
+  explicit ButtonNode(std::string text) : ElementNode("Button") {
+    this->text(text);
+  }
   //
   R& text(std::string value) {
     set("text", value);

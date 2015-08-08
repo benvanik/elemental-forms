@@ -30,7 +30,7 @@ void StringBuilder::SetAppendPos(size_t append_pos) {
 
 void StringBuilder::Reserve(size_t size) {
   if (size > m_data_size) {
-    char* new_data = (char*)realloc(m_data, size);
+    char* new_data = reinterpret_cast<char*>(realloc(m_data, size));
     assert(new_data);
     m_data = new_data;
     m_data_size = size;

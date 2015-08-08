@@ -158,7 +158,7 @@ void Caret::AvoidLineBreak() {
 }
 
 void Caret::Paint(int32_t translate_x, int32_t translate_y) {
-  //	if (on && !(style_edit->select_state &&
+  // if (on && !(style_edit->select_state &&
   // style_edit->selection.IsSelected()))
   if (on || style_edit->select_state) {
     style_edit->listener->DrawCaret(

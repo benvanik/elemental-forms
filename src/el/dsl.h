@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "el/color.h"
@@ -103,17 +104,17 @@ class Node {
 };
 
 struct Dimension {
-  Dimension(int32_t value) : value(std::to_string(value) + "px") {}
-  Dimension(const char* value) : value(value) {}
-  Dimension(std::string value) : value(std::move(value)) {}
+  Dimension(int32_t value) : value(std::to_string(value) + "px") {}  // NOLINT
+  Dimension(const char* value) : value(value) {}                     // NOLINT
+  Dimension(std::string value) : value(std::move(value)) {}          // NOLINT
   operator std::string() { return value; }
   std::string value;
 };
 
 struct Id {
-  Id(int32_t value) : is_int(true), int_value(value) {}
-  Id(const char* value) : str_value(value) {}
-  Id(std::string value) : str_value(std::move(value)) {}
+  Id(int32_t value) : is_int(true), int_value(value) {}   // NOLINT
+  Id(const char* value) : str_value(value) {}             // NOLINT
+  Id(std::string value) : str_value(std::move(value)) {}  // NOLINT
   void set(Node* node, const char* key) {
     if (is_int) {
       node->set(key, int_value);
@@ -128,7 +129,7 @@ struct Id {
 
 struct CloneNode : public Node {
   using R = CloneNode;
-  CloneNode(const Node& source) : Node(source.parse_node()->name()) {
+  explicit CloneNode(const Node& source) : Node(source.parse_node()->name()) {
     parse_node_->value().Copy(source.parse_node()->value());
     parse_node_->CloneChildren(source.parse_node());
   }

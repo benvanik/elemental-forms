@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_LAYOUT_BOX_H_
 #define EL_ELEMENTS_LAYOUT_BOX_H_
 
+#include <vector>
+
 #include "el/element.h"
 #include "el/types.h"
 
@@ -96,7 +98,7 @@ class LayoutBox : public Element {
   // This means the spacing should be the default, read from the skin.
   static const int kSpacingFromSkin = util::kInvalidDimension;
 
-  LayoutBox(Axis axis = Axis::kX);
+  explicit LayoutBox(Axis axis = Axis::kX);
 
   Axis axis() const override { return m_axis; }
   // Sets along which axis the content should layout.
@@ -141,7 +143,7 @@ class LayoutBox : public Element {
   void OnProcess() override;
   void OnResized(int old_w, int old_h) override;
   void OnInflateChild(Element* child) override;
-  void GetChildTranslation(int& x, int& y) const override;
+  void GetChildTranslation(int* x, int* y) const override;
   void ScrollTo(int x, int y) override;
   Element::ScrollInfo scroll_info() override;
 
@@ -188,7 +190,7 @@ using el::elements::LayoutOverflow;
 
 struct LayoutBoxNode : public ElementNode<LayoutBoxNode> {
   using R = LayoutBoxNode;
-  LayoutBoxNode(std::vector<Node> children = {})
+  explicit LayoutBoxNode(std::vector<Node> children = {})
       : ElementNode("LayoutBox", {}, std::move(children)) {}
   //
   R& spacing(Dimension value) {

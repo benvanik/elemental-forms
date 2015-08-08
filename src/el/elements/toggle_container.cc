@@ -70,7 +70,7 @@ void ToggleContainer::UpdateInternal() {
       // Also disable when collapsed so tab focus skips the children.
       set_state(Element::State::kDisabled, !on);
       break;
-  };
+  }
 }
 
 }  // namespace elements

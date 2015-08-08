@@ -11,6 +11,7 @@
 #define EL_PARSING_ELEMENT_FACTORY_H_
 
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "el/parsing/parse_node.h"
@@ -50,39 +51,39 @@ class ElementInflater;
 //
 // Resource name:   Element property:    Values:
 //
-// id					      m_id              TBID (string or
+// id               m_id              TBID (string or
 // int)
-// group-id			    m_group_id		    TBID (string or int)
-// value				    SetValue          integer
-// data				      m_data            integer
-// is-group-root		SetIsGroupRoot	  boolean
-// is-focusable		  SetIsFocusable	  boolean
-// want-long-click	SetWantLongClick  boolean
-// ignore-input		  SetIgnoreInput	  boolean
-// opacity				  SetOpacity        float (0 - 1)
-// text				      SetText           string
-// connection			  Connect           string
-// axis				      SetAxis           x or y
-// gravity				  SetGravity        string
+// group-id         m_group_id        TBID (string or int)
+// value            SetValue          integer
+// data             m_data            integer
+// is-group-root    SetIsGroupRoot    boolean
+// is-focusable     SetIsFocusable    boolean
+// want-long-click  SetWantLongClick  boolean
+// ignore-input     SetIgnoreInput    boolean
+// opacity          SetOpacity        float (0 - 1)
+// text             SetText           string
+// connection       Connect           string
+// axis             SetAxis           x or y
+// gravity          SetGravity        string
 //     combination of left, top, right, bottom, or all
-// visibility			  SetVisibility     string (visible, invisible,
+// visibility       SetVisibility     string (visible, invisible,
 // gone)
-// state				    SetState          string (disabled)
-// skin				      SetSkinBg         TBID (string or int)
-// rect				      set_rect          4 integers (x, y, width,
+// state            SetState          string (disabled)
+// skin             SetSkinBg         TBID (string or int)
+// rect             set_rect          4 integers (x, y, width,
 // height)
-// lp>width			    set_layout_params   dimension
-// lp>min-width		  set_layout_params   dimension
-// lp>max-width		  set_layout_params   dimension
-// lp>pref-width		set_layout_params   dimension
-// lp>height			  set_layout_params   dimension
-// lp>min-height		set_layout_params   dimension
-// lp>max-height		set_layout_params   dimension
-// lp>pref-height		set_layout_params   dimension
-// autofocus			  The Element will be focused automatically the
+// lp>width         set_layout_params   dimension
+// lp>min-width     set_layout_params   dimension
+// lp>max-width     set_layout_params   dimension
+// lp>pref-width    set_layout_params   dimension
+// lp>height        set_layout_params   dimension
+// lp>min-height    set_layout_params   dimension
+// lp>max-height    set_layout_params   dimension
+// lp>pref-height   set_layout_params   dimension
+// autofocus        The Element will be focused automatically the
 //                  first time its Form is activated.
-// font>name			  Font name
-// font>size			  Font size
+// font>name        Font name
+// font>size        Font size
 class ElementFactory {
  public:
   static ElementFactory* get() { return element_reader_singleton_.get(); }

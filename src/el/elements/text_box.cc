@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/menu_form.h"
 #include "el/elements/text_box.h"
 #include "el/parsing/element_inflater.h"
@@ -183,7 +185,7 @@ bool TextBox::GetCustomSkinCondition(const SkinCondition::ConditionInfo& info) {
         return info.value == TBIDC("url");
       case EditType::kNumber:
         return info.value == TBIDC("number");
-    };
+    }
   } else if (info.custom_prop == TBIDC("multiline")) {
     return !((uint32_t)info.value) == !is_multiline();
   } else if (info.custom_prop == TBIDC("readonly")) {
@@ -339,11 +341,13 @@ void TextBox::OnPaintChildren(const PaintProps& paint_props) {
   Element::OnPaintChildren(paint_props);
 
   // Draw fadeout skin at the needed edges.
-  Skin::DrawEdgeFadeout(
-      visible_rect(), TBIDC("TextBox.fadeout_x"), TBIDC("TextBox.fadeout_y"),
-      m_scrollbar_x.value(), m_scrollbar_y.value(),
-      int(m_scrollbar_x.max_value() - m_scrollbar_x.double_value()),
-      int(m_scrollbar_y.max_value() - m_scrollbar_y.double_value()));
+  Skin::DrawEdgeFadeout(visible_rect(), TBIDC("TextBox.fadeout_x"),
+                        TBIDC("TextBox.fadeout_y"), m_scrollbar_x.value(),
+                        m_scrollbar_y.value(),
+                        static_cast<int>(m_scrollbar_x.max_value() -
+                                         m_scrollbar_x.double_value()),
+                        static_cast<int>(m_scrollbar_y.max_value() -
+                                         m_scrollbar_y.double_value()));
 }
 
 void TextBox::OnAdded() { m_style_edit.SetFont(computed_font_description()); }
@@ -536,10 +540,10 @@ void TextBox::TextBoxScrollRoot::OnPaintChildren(
   Renderer::get()->set_clip_rect(old_clip_rect, false);
 }
 
-void TextBox::TextBoxScrollRoot::GetChildTranslation(int& x, int& y) const {
+void TextBox::TextBoxScrollRoot::GetChildTranslation(int* x, int* y) const {
   TextBox* edit_field = static_cast<TextBox*>(parent());
-  x = -edit_field->text_view()->scroll_x;
-  y = -edit_field->text_view()->scroll_y;
+  *x = -edit_field->text_view()->scroll_x;
+  *y = -edit_field->text_view()->scroll_y;
 }
 
 HitStatus TextBox::TextBoxScrollRoot::GetHitStatus(int x, int y) {

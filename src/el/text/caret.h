@@ -30,7 +30,7 @@ enum class CaretPosition {
 // The caret in a TextView.
 class Caret {
  public:
-  Caret(TextView* style_edit);
+  explicit Caret(TextView* style_edit);
   void Invalidate();
   void UpdatePos();
   bool Move(bool forward, bool word);

@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_IMAGE_BOX_H_
 #define EL_ELEMENTS_IMAGE_BOX_H_
 
+#include <string>
+
 #include "el/element.h"
 #include "el/graphics/image_manager.h"
 
@@ -54,7 +56,8 @@ namespace dsl {
 
 struct ImageBoxNode : public ElementNode<ImageBoxNode> {
   using R = ImageBoxNode;
-  ImageBoxNode(const char* filename = nullptr) : ElementNode("ImageBox") {
+  explicit ImageBoxNode(const char* filename = nullptr)
+      : ElementNode("ImageBox") {
     if (filename) {
       this->filename(filename);
     }

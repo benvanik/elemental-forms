@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_LABEL_H_
 #define EL_ELEMENTS_LABEL_H_
 
+#include <string>
+
 #include "el/element.h"
 
 namespace el {
@@ -86,7 +88,7 @@ namespace dsl {
 
 struct LabelNode : public ElementNode<LabelNode> {
   using R = LabelNode;
-  LabelNode(const char* text = nullptr) : ElementNode("Label") {
+  explicit LabelNode(const char* text = nullptr) : ElementNode("Label") {
     if (text) {
       this->text(text);
     }

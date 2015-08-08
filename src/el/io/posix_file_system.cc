@@ -15,13 +15,13 @@ namespace io {
 namespace {
 class PosixFile : public File {
  public:
-  PosixFile(FILE* file_handle_) : file_handle_(file_handle_) {}
+  explicit PosixFile(FILE* file_handle) : file_handle_(file_handle) {}
   ~PosixFile() override { fclose(file_handle_); }
 
   size_t size() const override {
-    long oldpos = ftell(file_handle_);
+    int32_t oldpos = ftell(file_handle_);
     fseek(file_handle_, 0, SEEK_END);
-    long num_bytes = ftell(file_handle_);
+    int32_t num_bytes = ftell(file_handle_);
     fseek(file_handle_, oldpos, SEEK_SET);
     return num_bytes;
   }

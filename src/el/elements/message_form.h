@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_MESSAGE_FORM_H_
 #define EL_ELEMENTS_MESSAGE_FORM_H_
 
+#include <string>
+
 #include "el/element_listener.h"
 #include "el/elements/form.h"
 

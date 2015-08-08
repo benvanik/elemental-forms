@@ -16,6 +16,7 @@ namespace el {
 namespace text {
 
 using graphics::Renderer;
+using UCS4 = el::text::utf8::UCS4;
 
 // The dimensions of the font glyph cache bitmap. Must be a power of two.
 constexpr int kDefaultGlyphCacheMapWidth = 512;

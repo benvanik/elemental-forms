@@ -25,6 +25,7 @@ namespace el {
 namespace text {
 
 using namespace el::parsing;
+using UCS4 = el::text::utf8::UCS4;
 
 namespace {
 struct GLYPH {
@@ -284,7 +285,7 @@ std::unique_ptr<FontFace> TBBFRenderer::Create(
     const FontDescription& font_desc) {
   if (!strstr(filename.c_str(), ".tb.txt")) return nullptr;
   auto fr = std::make_unique<TBBFRenderer>();
-  if (!fr->Load(filename, (int)font_desc.size())) {
+  if (!fr->Load(filename, static_cast<int>(font_desc.size()))) {
     return nullptr;
   }
   return std::make_unique<FontFace>(font_manager->glyph_cache(), std::move(fr),

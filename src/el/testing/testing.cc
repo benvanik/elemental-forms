@@ -129,15 +129,14 @@ int TBRunTests(uint32_t settings) {
       // Execute test (and call setup and cleanup if available).
       int fail = 0;
       if (group->setup) fail = !!CallAndOutput(group, group->setup);
-      if (!fail)  // Only run if setup succeeded
-      {
+      if (!fail) {  // Only run if setup succeeded
         fail |= !!CallAndOutput(group, call);
         if (group->cleanup) fail |= !!CallAndOutput(group, group->cleanup);
       }
       // Handle result
-      if (fail)
+      if (fail) {
         num_failed++;
-      else {
+      } else {
         num_passed++;
         OutputPass(group, call->name());
       }

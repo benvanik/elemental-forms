@@ -10,6 +10,9 @@
 #ifndef EL_ELEMENTS_SPLIT_CONTAINER_H_
 #define EL_ELEMENTS_SPLIT_CONTAINER_H_
 
+#include <algorithm>
+#include <vector>
+
 #include "el/element.h"
 #include "el/elements/box.h"
 
@@ -91,7 +94,7 @@ using el::elements::FixedPane;
 
 struct SplitContainerNode : public ElementNode<SplitContainerNode> {
   using R = SplitContainerNode;
-  SplitContainerNode(std::vector<Node> children = {})
+  explicit SplitContainerNode(std::vector<Node> children = {})
       : ElementNode("SplitContainer", {}, std::move(children)) {}
   //
   R& value(int32_t value) {

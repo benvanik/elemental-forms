@@ -118,7 +118,7 @@ Value::Value(Type type) {
     default:
       assert(!"Not implemented!");
       break;
-  };
+  }
 }
 
 Value::Value(int value) { set_integer(value); }
@@ -222,7 +222,7 @@ void Value::parse_string(const char* str, Set set) {
     set_null();
   } else if (is_number_only(str)) {
     if (is_number_float(str)) {
-      set_float((float)atof(str));
+      set_float(static_cast<float>(std::atof(str)));
     } else {
       set_integer(atoi(str));
     }
@@ -233,7 +233,7 @@ void Value::parse_string(const char* str, Set set) {
     set_null();
     ValueArray* arr = new ValueArray();
     std::string tmpstr = str;
-    char* str_next = (char*)tmpstr.data();
+    char* str_next = const_cast<char*>(tmpstr.data());
     while (char* token = next_token(str_next, ", ")) {
       Value* new_val = arr->AddValue();
       new_val->parse_string(token, Set::kNewCopy);
@@ -259,18 +259,18 @@ void Value::parse_string(const char* str, Set set) {
 
 int Value::as_integer() const {
   if (type() == Type::kString) {
-    return atoi(value_.string);
+    return std::atoi(value_.string);
   } else if (type() == Type::kFloat) {
-    return (int)value_.float_number;
+    return static_cast<int>(value_.float_number);
   }
   return type() == Type::kInt ? value_.integer_number : 0;
 }
 
 float Value::as_float() const {
   if (type() == Type::kString) {
-    return (float)atof(value_.string);
+    return static_cast<float>(std::atof(value_.string));
   } else if (type() == Type::kInt) {
-    return (float)value_.integer_number;
+    return static_cast<float>(value_.integer_number);
   }
   return type() == Type::kFloat ? value_.float_number : 0;
 }
@@ -278,11 +278,11 @@ float Value::as_float() const {
 const char* Value::as_string() {
   if (type() == Type::kInt) {
     char tmp[32];
-    sprintf(tmp, "%d", value_.integer_number);
+    snprintf(tmp, sizeof(tmp), "%d", value_.integer_number);
     set_string(tmp, Set::kNewCopy);
   } else if (type() == Type::kFloat) {
     char tmp[32];
-    sprintf(tmp, "%f", value_.float_number);
+    snprintf(tmp, sizeof(tmp), "%f", value_.float_number);
     set_string(tmp, Set::kNewCopy);
   } else if (type() == Type::kObject) {
     return value_.object ? value_.object->GetTypeName() : "";

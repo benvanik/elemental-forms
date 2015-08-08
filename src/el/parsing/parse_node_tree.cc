@@ -107,11 +107,10 @@ ParseNode* ParseNodeTree::FollowNodeRef(ParseNode* node) {
       }
       next_node =
           local_root->GetNode(name_start + 1, ParseNode::MissingPolicy::kNull);
-    }
-    // We have a "@treename>noderequest" string. Go ahead and look it up from
-    // the right node tree.
-    else if (ParseNodeTree* rt =
-                 ParseNodeTree::GetRefTree(name_start, name_end - name_start)) {
+    } else if (ParseNodeTree* rt = ParseNodeTree::GetRefTree(
+                   name_start, name_end - name_start)) {
+      // We have a "@treename>noderequest" string. Go ahead and look it up from
+      // the right node tree.
       next_node =
           rt->m_node.GetNode(name_end + 1, ParseNode::MissingPolicy::kNull);
     } else {

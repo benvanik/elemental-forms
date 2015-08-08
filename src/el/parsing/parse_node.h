@@ -10,6 +10,8 @@
 #ifndef EL_PARSING_PARSE_NODE_H_
 #define EL_PARSING_PARSE_NODE_H_
 
+#include <string>
+
 #include "el/types.h"
 #include "el/util/intrusive_list.h"
 #include "el/value.h"

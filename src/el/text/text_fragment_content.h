@@ -76,7 +76,7 @@ class TextFragmentContentUnderline : public TextFragmentContent {
 // Fragment content that changes color in a TextView.
 class TextFragmentContentTextColor : public TextFragmentContent {
  public:
-  TextFragmentContentTextColor(const Color& color) : color(color) {}
+  explicit TextFragmentContentTextColor(const Color& color) : color(color) {}
   void Paint(TextFragment* fragment, int32_t translate_x, int32_t translate_y,
              TextProps* props) override;
   bool GetAllowBreakBefore() override { return true; }

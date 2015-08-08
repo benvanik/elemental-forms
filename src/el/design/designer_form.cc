@@ -80,7 +80,7 @@ void DesignerForm::Show(Element* root_element) {
 
 void DesignerForm::BindContent(Element* bind_element) {
   CloseContent();
-  bind_element_ = bind_element;
+  bind_element_ = WeakElementPointer(bind_element);
 
   // TODO(benvanik): serialize element tree.
   source_text_box_->set_text("Label: text: foo");

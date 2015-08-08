@@ -53,7 +53,7 @@ class ScrollBar : public Element {
   // Same as SetValue, but with double precision.
   void set_double_value(double value) override;
 
-  int value() override { return (int)double_value(); }
+  int value() override { return static_cast<int>(double_value()); }
   void set_value(int value) override { set_double_value(value); }
 
   void OnInflate(const parsing::InflateInfo& info) override;

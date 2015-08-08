@@ -12,7 +12,7 @@
 #include "el/util/metrics.h"
 
 #define NOMINMAX
-#include <windows.h>
+#include <windows.h>  // NOLINT(build/include_order)
 
 namespace el {
 namespace util {

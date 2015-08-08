@@ -191,8 +191,7 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
   pending_multiline = false;
   multi_line_sub_level = 0;
 
-  while (size_t read_len =
-             stream->GetMoreData((char*)work.data(), work.capacity())) {
+  while (size_t read_len = stream->GetMoreData(work.data(), work.capacity())) {
     char* buf = work.data();
 
     // Skip BOM (BYTE ORDER MARK) character, often in the beginning of UTF-8

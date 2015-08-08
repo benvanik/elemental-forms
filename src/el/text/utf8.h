@@ -21,9 +21,8 @@ typedef uint32_t UCS4;
 
 /** Decodes UTF-8 from a string input to a UCS4 character.
         @param src buffer in UTF-8 that should be decoded. If the buffer
-   represent
-               a valid character, the pointer will be incremented to the next
-   character.
+               represents a valid character, the pointer will be incremented to
+               the next character.
         @param src_end The end of the string.
         @return a UCS4 character, or 0xFFFF if the buffer didn't represent a
    valid character.

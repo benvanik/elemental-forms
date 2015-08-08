@@ -85,7 +85,7 @@ class ElementListener : public util::IntrusiveListEntry<ElementListener>,
 class WeakElementPointer : private ElementListener {
  public:
   WeakElementPointer() = default;
-  WeakElementPointer(Element* element) { reset(element); }
+  explicit WeakElementPointer(Element* element) { reset(element); }
   ~WeakElementPointer() { reset(nullptr); }
 
   // Sets the element pointer that should be nulled if deleted.

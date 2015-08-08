@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_SCROLL_CONTAINER_H_
 #define EL_ELEMENTS_SCROLL_CONTAINER_H_
 
+#include <vector>
+
 #include "el/element.h"
 #include "el/elements/scroll_bar.h"
 
@@ -68,7 +70,7 @@ class ScrollContainer : public Element {
   class ScrollContainerRoot : public Element {
    public:
     void OnPaintChildren(const PaintProps& paint_props) override;
-    void GetChildTranslation(int& x, int& y) const override;
+    void GetChildTranslation(int* x, int* y) const override;
   };
 
   void ValidateLayout(const SizeConstraints& constraints);
@@ -89,7 +91,7 @@ using el::elements::ScrollMode;
 
 struct ScrollContainerNode : public ElementNode<ScrollContainerNode> {
   using R = ScrollContainerNode;
-  ScrollContainerNode(std::vector<Node> children = {})
+  explicit ScrollContainerNode(std::vector<Node> children = {})
       : ElementNode("ScrollContainer", {}, std::move(children)) {}
   //
   R& adapt_content(bool value) {

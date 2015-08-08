@@ -25,9 +25,6 @@ class FontGlyphData;
 class FontManager;
 class FontMetrics;
 class GlyphMetrics;
-namespace {
-using UCS4 = el::text::utf8::UCS4;
-}  // namespace
 
 // Renders glyphs from a font file.
 class FontRenderer {
@@ -41,8 +38,8 @@ class FontRenderer {
       FontManager* font_manager, const std::string& filename,
       const FontDescription& font_desc) = 0;
 
-  virtual bool RenderGlyph(FontGlyphData* data, UCS4 cp) = 0;
-  virtual void GetGlyphMetrics(GlyphMetrics* metrics, UCS4 cp) = 0;
+  virtual bool RenderGlyph(FontGlyphData* data, utf8::UCS4 cp) = 0;
+  virtual void GetGlyphMetrics(GlyphMetrics* metrics, utf8::UCS4 cp) = 0;
   virtual FontMetrics GetMetrics() = 0;
 };
 

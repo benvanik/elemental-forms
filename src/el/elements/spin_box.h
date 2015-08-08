@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_SPIN_BOX_H_
 #define EL_ELEMENTS_SPIN_BOX_H_
 
+#include <algorithm>
+
 #include "el/element.h"
 #include "el/elements/button.h"
 #include "el/elements/layout_box.h"

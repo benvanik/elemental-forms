@@ -22,7 +22,7 @@ namespace el {
 
 class EventHandler : public util::IntrusiveListEntry<EventHandler> {
  public:
-  EventHandler(Element* scope_element);
+  explicit EventHandler(Element* scope_element);
   ~EventHandler();
 
   void Listen(EventType event_type,

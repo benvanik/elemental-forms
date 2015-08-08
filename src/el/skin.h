@@ -11,6 +11,7 @@
 #define EL_SKIN_H_
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 
 #include "el/graphics/bitmap_fragment.h"

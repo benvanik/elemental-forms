@@ -13,7 +13,7 @@
 #include "el/util/string.h"
 
 #define NOMINMAX
-#include <windows.h>
+#include <windows.h>  // NOLINT(build/include_order)
 
 #ifdef EL_RUNTIME_DEBUG_INFO
 

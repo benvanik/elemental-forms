@@ -30,7 +30,7 @@ class ElementAnimation : public Animation,
   // think focus should not be set in that form and fail.
   static const float kAlmostZeroOpacity;
 
-  ElementAnimation(Element* element);
+  explicit ElementAnimation(Element* element);
   ~ElementAnimation() override;
 
  public:

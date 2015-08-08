@@ -178,10 +178,10 @@ void Renderer::AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
   if (bitmap) {
     int bitmap_w = bitmap->width();
     int bitmap_h = bitmap->height();
-    m_u = (float)src_rect.x / bitmap_w;
-    m_v = (float)src_rect.y / bitmap_h;
-    m_uu = (float)(src_rect.x + src_rect.w) / bitmap_w;
-    m_vv = (float)(src_rect.y + src_rect.h) / bitmap_h;
+    m_u = static_cast<float>(src_rect.x) / bitmap_w;
+    m_v = static_cast<float>(src_rect.y) / bitmap_h;
+    m_uu = static_cast<float>(src_rect.x + src_rect.w) / bitmap_w;
+    m_vv = static_cast<float>(src_rect.y + src_rect.h) / bitmap_h;
   }
   batch_.fragment = fragment;
   if (fragment) {
@@ -189,34 +189,34 @@ void Renderer::AddQuadInternal(const Rect& dst_rect, const Rect& src_rect,
     fragment->m_batch_id = batch_.batch_id;
   }
 
-  v[0].x = (float)dst_rect.x;
-  v[0].y = (float)(dst_rect.y + dst_rect.h);
+  v[0].x = static_cast<float>(dst_rect.x);
+  v[0].y = static_cast<float>(dst_rect.y + dst_rect.h);
   v[0].u = m_u;
   v[0].v = m_vv;
   v[0].color = color;
-  v[1].x = (float)(dst_rect.x + dst_rect.w);
-  v[1].y = (float)(dst_rect.y + dst_rect.h);
+  v[1].x = static_cast<float>(dst_rect.x + dst_rect.w);
+  v[1].y = static_cast<float>(dst_rect.y + dst_rect.h);
   v[1].u = m_uu;
   v[1].v = m_vv;
   v[1].color = color;
-  v[2].x = (float)dst_rect.x;
-  v[2].y = (float)dst_rect.y;
+  v[2].x = static_cast<float>(dst_rect.x);
+  v[2].y = static_cast<float>(dst_rect.y);
   v[2].u = m_u;
   v[2].v = m_v;
   v[2].color = color;
 
-  v[3].x = (float)dst_rect.x;
-  v[3].y = (float)dst_rect.y;
+  v[3].x = static_cast<float>(dst_rect.x);
+  v[3].y = static_cast<float>(dst_rect.y);
   v[3].u = m_u;
   v[3].v = m_v;
   v[3].color = color;
-  v[4].x = (float)(dst_rect.x + dst_rect.w);
-  v[4].y = (float)(dst_rect.y + dst_rect.h);
+  v[4].x = static_cast<float>(dst_rect.x + dst_rect.w);
+  v[4].y = static_cast<float>(dst_rect.y + dst_rect.h);
   v[4].u = m_uu;
   v[4].v = m_vv;
   v[4].color = color;
-  v[5].x = (float)(dst_rect.x + dst_rect.w);
-  v[5].y = (float)dst_rect.y;
+  v[5].x = static_cast<float>(dst_rect.x + dst_rect.w);
+  v[5].y = static_cast<float>(dst_rect.y);
   v[5].u = m_uu;
   v[5].v = m_v;
   v[5].color = color;

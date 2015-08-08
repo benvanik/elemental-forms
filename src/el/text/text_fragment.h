@@ -53,7 +53,7 @@ class TextProps {
 // A block of text (a line, that might be wrapped).
 class TextBlock : public el::util::IntrusiveListEntry<TextBlock> {
  public:
-  TextBlock(TextView* style_edit);
+  explicit TextBlock(TextView* style_edit);
   ~TextBlock();
 
   void Clear();
@@ -118,12 +118,12 @@ class TextBlock : public el::util::IntrusiveListEntry<TextBlock> {
 
 // The text fragment base class for TextView.
 class TextFragment : public el::util::IntrusiveListEntry<TextFragment> {
-  // TODO: This object is allocated on vast amounts and need
-  // to shrink in size.Remove all cached positioning
-  // and implement a fragment traverser(for TextBlock).
-  // Also allocate fragments in chunks.
+  // TODO(benvanik): This object is allocated on vast amounts and need to shrink
+  // in size. Remove all cached positioning and implement a fragment traverser
+  // (for TextBlock). Also allocate fragments in chunks.
  public:
-  TextFragment(TextFragmentContent* content = nullptr) : content(content) {}
+  explicit TextFragment(TextFragmentContent* content = nullptr)
+      : content(content) {}
   ~TextFragment();
 
   void Init(TextBlock* block, uint16_t ofs, uint16_t len);

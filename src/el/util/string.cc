@@ -44,7 +44,8 @@ std::string format_string(const char* format, va_list args) {
   std::string new_s;
   while (true) {
     new_s.resize(max_len);
-    int ret = std::vsnprintf((char*)new_s.data(), max_len, format, args);
+    int ret =
+        std::vsnprintf(const_cast<char*>(new_s.data()), max_len, format, args);
     if (ret > max_len) {
       // Needed size is known (+2 for termination and avoid ambiguity).
       max_len = ret + 2;

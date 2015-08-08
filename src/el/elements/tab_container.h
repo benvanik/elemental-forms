@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_TAB_CONTAINER_H_
 #define EL_ELEMENTS_TAB_CONTAINER_H_
 
+#include <vector>
+
 #include "el/element.h"
 #include "el/elements/layout_box.h"
 
@@ -79,7 +81,7 @@ namespace dsl {
 
 struct TabContainerNode : public ElementNode<TabContainerNode> {
   using R = TabContainerNode;
-  TabContainerNode(std::vector<Node> children = {})
+  explicit TabContainerNode(std::vector<Node> children = {})
       : ElementNode("TabContainer", {}, std::move(children)) {}
   //
   R& value(int32_t value) {

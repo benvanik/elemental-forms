@@ -26,7 +26,7 @@ namespace parts {
 // distance is in pixels. Distance and speed may be negative!
 class ScrollerFunction {
  public:
-  ScrollerFunction(float decay) : m_decay(decay) {}
+  explicit ScrollerFunction(float decay) : m_decay(decay) {}
 
   // Calculates the duration needed until the end distance is reached from the
   // given start speed.
@@ -67,7 +67,7 @@ class ScrollerSnapListener {
 // released with a flick.
 class Scroller : private MessageHandler {
  public:
-  Scroller(Element* target);
+  explicit Scroller(Element* target);
   ~Scroller() override;
 
   // Sets the listener that may override the target scroll position.

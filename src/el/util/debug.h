@@ -59,7 +59,7 @@ class DebugInfo {
 
     kSettingCount,
   };
-  int settings[int(Setting::kSettingCount)] = {0};
+  int settings[static_cast<int>(Setting::kSettingCount)] = {0};
 
  private:
   static DebugInfo debug_info_singleton_;
@@ -69,7 +69,7 @@ class DebugInfo {
 void ShowDebugInfoSettingsForm(Element* root);
 
 #define EL_DEBUG_SETTING(setting) \
-  el::util::DebugInfo::get()->settings[int(setting)]
+  el::util::DebugInfo::get()->settings[static_cast<int>(setting)]
 #define EL_IF_DEBUG_SETTING(setting, code) \
   if (EL_DEBUG_SETTING(setting)) {         \
     code;                                  \

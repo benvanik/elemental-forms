@@ -37,7 +37,7 @@ ParseNode* ParseNode::Create(const char* name) {
 // static
 ParseNode* ParseNode::Create(const char* name, size_t name_len) {
   ParseNode* n = new ParseNode();
-  n->m_name = (char*)malloc(name_len + 1);
+  n->m_name = reinterpret_cast<char*>(malloc(name_len + 1));
   std::memcpy(n->m_name, name, name_len);
   n->m_name[name_len] = 0;
   return n;

@@ -62,7 +62,7 @@ void ElementValue::SetFromElement(Element* source_element) {
       break;
     case Value::Type::kFloat:
       // FIX: Value should use double instead of float?
-      m_value.set_float(float(source_element->double_value()));
+      m_value.set_float(static_cast<float>(source_element->double_value()));
       break;
     default:
       assert(!"Unsupported value type!");
@@ -122,7 +122,7 @@ void ElementValue::set_text(const char* text) {
 
 void ElementValue::set_double(double value) {
   // FIX: Value should use double instead of float?
-  m_value.set_float(float(value));
+  m_value.set_float(static_cast<float>(value));
   SyncToElements(nullptr);
 }
 

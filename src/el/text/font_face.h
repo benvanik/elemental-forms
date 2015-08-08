@@ -11,6 +11,7 @@
 #define EL_TEXT_FONT_FACE_H_
 
 #include <memory>
+#include <string>
 
 #include "el/color.h"
 #include "el/font_description.h"
@@ -30,9 +31,6 @@ namespace text {
 
 class FontGlyphCache;
 class FontRenderer;
-namespace {
-using UCS4 = el::text::utf8::UCS4;
-}  // namespace
 
 // Rendering info used during glyph rendering by FontRenderer.
 // It does not own the data pointers.
@@ -67,9 +65,9 @@ class FontMetrics {
 // FontFace.
 class FontGlyph : public util::IntrusiveListEntry<FontGlyph> {
  public:
-  FontGlyph(const TBID& hash_id, UCS4 cp);
+  FontGlyph(const TBID& hash_id, utf8::UCS4 cp);
   TBID hash_id;
-  UCS4 cp;
+  utf8::UCS4 cp;
   GlyphMetrics metrics;  // The glyph metrics.
   graphics::BitmapFragment* frag =
       nullptr;           // The bitmap fragment, or nullptr if missing.
@@ -130,9 +128,9 @@ class FontFace {
   void SetBackgroundFont(FontFace* font, const Color& col, int xofs, int yofs);
 
  private:
-  TBID GetHashId(UCS4 cp) const;
-  FontGlyph* GetGlyph(UCS4 cp, bool render_if_needed);
-  FontGlyph* CreateAndCacheGlyph(UCS4 cp);
+  TBID GetHashId(utf8::UCS4 cp) const;
+  FontGlyph* GetGlyph(utf8::UCS4 cp, bool render_if_needed);
+  FontGlyph* CreateAndCacheGlyph(utf8::UCS4 cp);
   void RenderGlyph(FontGlyph* glyph);
 
   FontGlyphCache* m_glyph_cache = nullptr;

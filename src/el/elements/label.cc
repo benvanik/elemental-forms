@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/label.h"
 #include "el/parsing/element_inflater.h"
 #include "el/text/font_face.h"
@@ -43,7 +45,6 @@ void ElementString::Paint(Element* element, const Rect& rect,
     // There's not enough room for the entire string
     // so cut it off and end with ellipsis (...)
 
-    // const char *end = "…"; // 2026 HORIZONTAL ELLIPSIS
     // Some fonts seem to render ellipsis a lot uglier than three dots.
     const char* end = "...";
 

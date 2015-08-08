@@ -25,10 +25,12 @@ namespace el {
 // string which will be hashed into the uint32_t.
 class TBID {
  public:
-  TBID(uint32_t id = 0) { reset(id); }
-  TBID(const char* string) { reset(string); }
-  TBID(const std::string& string) { reset(string.c_str()); }
-  TBID(const TBID& id) { reset(id); }
+  TBID(uint32_t id = 0) { reset(id); }         // NOLINT(runtime/explicit)
+  TBID(const char* string) { reset(string); }  // NOLINT(runtime/explicit)
+  TBID(const std::string& string) {            // NOLINT(runtime/explicit)
+    reset(string.c_str());
+  }
+  TBID(const TBID& id) { reset(id); }  // NOLINT(runtime/explicit)
 
 #ifdef EL_RUNTIME_DEBUG_INFO
   void reset(uint32_t newid);

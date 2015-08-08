@@ -10,6 +10,8 @@
 #ifndef EL_PARSING_PARSE_NODE_TREE_H_
 #define EL_PARSING_PARSE_NODE_TREE_H_
 
+#include <string>
+
 #include "el/id.h"
 #include "el/parsing/parse_node.h"
 #include "el/util/intrusive_list.h"
@@ -28,7 +30,7 @@ class ParseNodeTreeListener;
 // nodes can be included.
 class ParseNodeTree : public util::IntrusiveListEntry<ParseNodeTree> {
  public:
-  ParseNodeTree(const char* name);
+  explicit ParseNodeTree(const char* name);
   virtual ~ParseNodeTree();
 
   const std::string& name() const { return m_name; }

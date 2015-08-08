@@ -10,6 +10,8 @@
 #ifndef EL_ELEMENTS_GROUP_BOX_H_
 #define EL_ELEMENTS_GROUP_BOX_H_
 
+#include <string>
+
 #include "el/element.h"
 #include "el/elements/button.h"
 #include "el/elements/layout_box.h"
@@ -79,7 +81,7 @@ namespace dsl {
 
 struct GroupBoxNode : public ElementNode<GroupBoxNode> {
   using R = GroupBoxNode;
-  GroupBoxNode(const char* text = nullptr) : ElementNode("GroupBox") {
+  explicit GroupBoxNode(const char* text = nullptr) : ElementNode("GroupBox") {
     if (text) {
       this->text(text);
     }

@@ -23,7 +23,8 @@ class SpaceAllocator {
     int width;
   };
 
-  SpaceAllocator(int available_space) : m_available_space(available_space) {}
+  explicit SpaceAllocator(int available_space)
+      : m_available_space(available_space) {}
 
   // Returns true if no allocations are currently live using this allocator.
   bool empty() const { return !m_used_space_list.HasLinks(); }

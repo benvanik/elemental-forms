@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <vector>
+
 #include "el/elements/form.h"
 #include "el/elements/label.h"
 #include "el/elements/list_box.h"
@@ -153,7 +155,7 @@ void ListBox::ValidateList() {
   int num_sorted_items = 0;
   for (size_t i = 0; i < m_source->size(); ++i) {
     if (m_filter.empty() || m_source->Filter(i, m_filter)) {
-      sorted_index[num_sorted_items++] = int(i);
+      sorted_index[num_sorted_items++] = static_cast<int>(i);
     }
   }
 
@@ -195,7 +197,7 @@ void ListBox::ValidateList() {
 Element* ListBox::CreateAndAddItemAfter(size_t index, Element* reference) {
   if (Element* element = m_source->CreateItemElement(index, this)) {
     // Use item data as element to index lookup.
-    element->data.set_integer(int(index));
+    element->data.set_integer(static_cast<int>(index));
     m_layout.content_root()->AddChildRelative(element, ElementZRel::kAfter,
                                               reference);
     return element;
@@ -272,7 +274,7 @@ bool ListBox::OnEvent(const Event& ev) {
     WeakElementPointer this_element(this);
 
     size_t index = ev.target->data.as_integer();
-    set_value(int(index));
+    set_value(static_cast<int>(index));
 
     // If we're still around, invoke the click event too.
     if (this_element.get()) {

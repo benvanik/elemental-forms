@@ -47,8 +47,8 @@ class ImageRep {
 class Image {
  public:
   Image() = default;
-  Image(ImageRep* rep);
-  Image(const Image& image);
+  Image(ImageRep* rep);       // NOLINT(runtime/explicit)
+  Image(const Image& image);  // NOLINT(runtime/explicit)
   ~Image();
 
   // Returns true if this image is empty.

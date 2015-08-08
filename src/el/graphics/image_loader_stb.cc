@@ -20,7 +20,6 @@ namespace graphics {
 // size.
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
-//#define STBI_SIMD
 #define STBI_NO_STDIO
 #define STBI_NO_FAILURE_STRINGS
 #define STBI_NO_HDR
@@ -40,7 +39,7 @@ class StbiImageLoader : public ImageLoader {
 
   int width() override { return width_; }
   int height() override { return height_; }
-  uint32_t* data() override { return (uint32_t*)data_; }
+  uint32_t* data() override { return reinterpret_cast<uint32_t*>(data_); }
 
  private:
   int width_;
@@ -57,8 +56,8 @@ std::unique_ptr<ImageLoader> ImageLoader::CreateFromFile(
   }
 
   int w, h, comp;
-  auto img_data = stbi_load_from_memory(buffer->data(), int(buffer->size()), &w,
-                                        &h, &comp, 4);
+  auto img_data = stbi_load_from_memory(
+      buffer->data(), static_cast<int>(buffer->size()), &w, &h, &comp, 4);
   if (!img_data) {
     return nullptr;
   }

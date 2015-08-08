@@ -71,13 +71,13 @@ class Value {
   };
 
   Value();
-  Value(const Value& value);
-  Value(Type type);
+  Value(const Value& value);  // NOLINT(runtime/explicit)
+  Value(Type type);           // NOLINT(runtime/explicit)
 
-  Value(int value);
-  Value(float value);
+  Value(int value);    // NOLINT(runtime/explicit)
+  Value(float value);  // NOLINT(runtime/explicit)
   Value(const char* value, Set set = Set::kNewCopy);
-  Value(util::TypedObject* object);
+  Value(util::TypedObject* object);  // NOLINT(runtime/explicit)
 
   ~Value();
 

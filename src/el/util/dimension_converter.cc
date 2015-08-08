@@ -55,7 +55,7 @@ int DimensionConverter::MmToPx(int mm) const {
   if (mm <= kInvalidDimension || mm == 0) {
     return mm;
   }
-  return int(mm * util::GetDPI() / 25.4f + 0.5f);
+  return static_cast<int>(mm * util::GetDPI() / 25.4f + 0.5f);
 }
 
 int DimensionConverter::GetPxFromString(const char* str, int def_value) const {
@@ -83,7 +83,7 @@ int DimensionConverter::GetPxFromValue(Value* value, int def_value) const {
     return DpToPx(value->as_integer());
   } else if (value->type() == Value::Type::kFloat) {
     // FIX: We might want float versions of all dimension functions.
-    return DpToPx((int)value->as_float());
+    return DpToPx(static_cast<int>(value->as_float()));
   }
   return GetPxFromString(value->as_string(), def_value);
 }

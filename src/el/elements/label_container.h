@@ -10,6 +10,9 @@
 #ifndef EL_ELEMENTS_LABEL_CONTAINER_H_
 #define EL_ELEMENTS_LABEL_CONTAINER_H_
 
+#include <string>
+#include <vector>
+
 #include "el/element.h"
 #include "el/elements/label.h"
 #include "el/elements/layout_box.h"

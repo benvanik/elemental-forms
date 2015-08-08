@@ -47,15 +47,15 @@ class IntrusiveListIterator {
                         IntrusiveListEntry* current_link, bool forward);
   ~IntrusiveListIterator();
 
-  /** Set the iterator to the first link in we iterate forward,
-  or set it to the last link if we iterate backward.  */
+  // Set the iterator to the first link in we iterate forward,
+  // or set it to the last link if we iterate backward.
   void Reset();
 
-  /** Get the current link or nullptr if out of bounds. */
+  // Get the current link or nullptr if out of bounds.
   IntrusiveListEntry* get() const { return current_entry_; }
 
-  /** Get the current link and step the iterator to the next (forward or
-  * backward). */
+  // Get the current link and step the iterator to the next (forward or
+  // backward).
   IntrusiveListEntry* GetAndStep();
 
   operator IntrusiveListEntry*() const { return current_entry_; }
@@ -63,15 +63,15 @@ class IntrusiveListIterator {
   const IntrusiveListIterator& operator=(const IntrusiveListIterator& iter);
 
  private:
-  /** RemoveLink is called when removing/deleting links in the target linklist.
-  This will make sure iterators skip the deleted item. */
+  // RemoveLink is called when removing/deleting links in the target linklist.
+  // This will make sure iterators skip the deleted item.
   void RemoveLink(IntrusiveListEntry* link);
   friend class IntrusiveList;
 
-  /** Add ourself to the chain of iterators in the linklist. */
+  // Add ourself to the chain of iterators in the linklist.
   void Register();
 
-  /** Unlink ourself from the chain of iterators in the linklist. */
+  // Unlink ourself from the chain of iterators in the linklist.
   void Unregister();
   void UnregisterAndClear();
 
@@ -125,51 +125,49 @@ class IntrusiveListEntry : public impl::IntrusiveListEntry {
   inline T* GetNext() const { return (T*)next; }
 };
 
-/** IntrusiveList is a double linked linklist. */
+// IntrusiveList is a double linked linklist.
 template <typename T>
 class IntrusiveList {
  public:
   using TLink = IntrusiveListEntry<T>;
 
-  /** Remove link from this linklist. */
+  // Remove link from this linklist.
   void Remove(T* link) { base_list_.Remove(static_cast<TLink*>(link)); }
 
-  /** Remove all links without deleting them. */
+  // Remove all links without deleting them.
   void RemoveAll() { base_list_.RemoveAll(); }
 
-  /** Add link first in this linklist. */
+  // Add link first in this linklist.
   void AddFirst(T* link) { base_list_.AddFirst(static_cast<TLink*>(link)); }
 
-  /** Add link last in this linklist. */
+  // Add link last in this linklist.
   void AddLast(T* link) { base_list_.AddLast(static_cast<TLink*>(link)); }
 
-  /** Add link before the reference link (which must be added to this linklist).
-  */
+  // Add link before the reference link (which must be added to this linklist).
   void AddBefore(T* link, T* reference) {
     base_list_.AddBefore(static_cast<TLink*>(link), reference);
   }
 
-  /** Add link after the reference link (which must be added to this linklist).
-  */
+  // Add link after the reference link (which must be added to this linklist).
   void AddAfter(T* link, T* reference) {
     base_list_.AddAfter(static_cast<TLink*>(link), reference);
   }
 
-  /** Return true if the link is currently added to this linklist. */
+  // Return true if the link is currently added to this linklist.
   bool ContainsLink(T* link) const {
     return base_list_.ContainsLink(static_cast<TLink*>(link));
   }
 
-  /** Get the first link, or nullptr. */
+  // Get the first link, or nullptr.
   T* GetFirst() const { return (T*)static_cast<TLink*>(base_list_.first); }
 
-  /** Get the last link, or nullptr. */
+  // Get the last link, or nullptr.
   T* GetLast() const { return (T*)static_cast<TLink*>(base_list_.last); }
 
-  /** Return true if this linklist contains any links. */
+  // Return true if this linklist contains any links.
   bool HasLinks() const { return base_list_.HasLinks(); }
 
-  /** Count the number of links in this list by iterating through all links. */
+  // Count the number of links in this list by iterating through all links.
   int CountLinks() const { return base_list_.CountLinks(); }
 
   // Typed iterator for safe iteration. For more info, see
@@ -192,16 +190,16 @@ class IntrusiveList {
     inline operator T*() const { return (T*)static_cast<TLink*>(get()); }
   };
 
-  /** Get a forward iterator that starts with the first link. */
+  // Get a forward iterator that starts with the first link.
   Iterator IterateForward() { return Iterator(this, true); }
 
-  /** Get a forward iterator that starts with the given link. */
+  // Get a forward iterator that starts with the given link.
   Iterator IterateForward(T* link) { return Iterator(this, link, true); }
 
-  /** Get a backward iterator that starts with the last link. */
+  // Get a backward iterator that starts with the last link.
   Iterator IterateBackward() { return Iterator(this, false); }
 
-  /** Get a backward iterator that starts with the given link. */
+  // Get a backward iterator that starts with the given link.
   Iterator IterateBackward(T* link) { return Iterator(this, link, false); }
 
  private:

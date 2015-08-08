@@ -7,6 +7,8 @@
  ******************************************************************************
  */
 
+#include <algorithm>
+
 #include "el/elements/scroll_bar.h"
 #include "el/parsing/element_inflater.h"
 #include "el/util/math.h"
@@ -20,8 +22,7 @@ void ScrollBar::RegisterInflater() {
 }
 
 ScrollBar::ScrollBar()
-    : m_axis(Axis::kY)  // Make SetAxis below always succeed and set the skin
-{
+    : m_axis(Axis::kY) {  // Make SetAxis below always succeed and set the skin
   set_axis(Axis::kX);
   AddChild(&m_handle);
 }
@@ -123,14 +124,14 @@ void ScrollBar::UpdateHandle() {
 
   if (m_max - m_min > 0 && m_visible > 0) {
     double visible_proportion = m_visible / (m_visible + m_max - m_min);
-    visible_pixels = (int)(visible_proportion * available_pixels);
+    visible_pixels = static_cast<int>(visible_proportion * available_pixels);
 
     // Limit the size of the indicator to the slider thickness so that it
     // doesn't become too tiny when the visible proportion is very small.
     visible_pixels = std::max(visible_pixels, min_thickness_pixels);
 
-    m_to_pixel_factor =
-        double(available_pixels - visible_pixels) / (m_max - m_min) /*+ 0.5*/;
+    m_to_pixel_factor = static_cast<double>(available_pixels - visible_pixels) /
+                        (m_max - m_min) /*+ 0.5*/;
   } else {
     m_to_pixel_factor = 0;
 
@@ -138,7 +139,7 @@ void ScrollBar::UpdateHandle() {
     visible_pixels = 0;
   }
 
-  int pixel_pos = (int)(m_value * m_to_pixel_factor);
+  int pixel_pos = static_cast<int>(m_value * m_to_pixel_factor);
 
   Rect handle_rect;
   if (horizontal) {

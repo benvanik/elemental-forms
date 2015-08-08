@@ -25,7 +25,7 @@ const TBID messageHide = TBIDC("TooltipManager.hide");
 
 class TTMsgParam : public util::TypedObject {
  public:
-  TTMsgParam(Element* hovered) : m_hovered(hovered) {}
+  explicit TTMsgParam(Element* hovered) : m_hovered(hovered) {}
 
   Element* m_hovered;
 };
@@ -38,7 +38,7 @@ class TooltipForm : public elements::PopupForm {
  public:
   TBOBJECT_SUBCLASS(TooltipForm, elements::PopupForm);
 
-  TooltipForm(Element* target);
+  explicit TooltipForm(Element* target);
   ~TooltipForm() override;
 
   bool Show(int mouse_x, int mouse_y);
@@ -119,8 +119,10 @@ bool TooltipManager::OnElementInvokeEvent(Element* element, const Event& ev) {
       tipped_element->ConvertToRoot(x, y);
       y += tooltip_point_offset_y;
       Point tt_point = m_tooltip->offset_point();
-      if (abs(tt_point.x - x) > (int)tooltip_hide_point_dist ||
-          abs(tt_point.y - y) > (int)tooltip_hide_point_dist) {
+      if (std::abs(tt_point.x - x) >
+              static_cast<int>(tooltip_hide_point_dist) ||
+          std::abs(tt_point.y - y) >
+              static_cast<int>(tooltip_hide_point_dist)) {
         KillToolTip();
         DeleteShowMessages();
       }

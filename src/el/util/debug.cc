@@ -34,7 +34,7 @@ class DebugSettingsForm : public elements::Form, public ElementListener {
 
   elements::TextBox* output;
 
-  DebugSettingsForm(Element* root) {
+  explicit DebugSettingsForm(Element* root) {
     set_text("Debug settings");
     LoadData(
         "LayoutBox: axis: y, distribution: available, position: left\n"
@@ -70,8 +70,8 @@ class DebugSettingsForm : public elements::Form, public ElementListener {
 
   void AddCheckbox(DebugInfo::Setting setting, const char* str) {
     auto check = new elements::CheckBox();
-    check->set_value(DebugInfo::get()->settings[int(setting)]);
-    check->data.set_integer(int(setting));
+    check->set_value(DebugInfo::get()->settings[static_cast<int>(setting)]);
+    check->data.set_integer(static_cast<int>(setting));
     check->set_id(TBIDC("check"));
 
     auto label = new elements::LabelContainer();

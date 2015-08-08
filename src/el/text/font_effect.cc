@@ -60,12 +60,12 @@ void FontEffect::SetBlurRadius(int blur_radius) {
   if (m_blur_radius > 0) {
     delete[] m_kernel;
     m_kernel = new float[m_blur_radius * 2 + 1];
-    float stdDevSq2 = (float)m_blur_radius / 2.f;
+    float stdDevSq2 = static_cast<float>(m_blur_radius) / 2.f;
     stdDevSq2 = 2.f * stdDevSq2 * stdDevSq2;
     float scale = 1.f / sqrt(3.1415f * stdDevSq2);
     float sum = 0;
     for (int k = 0; k < 2 * m_blur_radius + 1; k++) {
-      float x = (float)(k - m_blur_radius);
+      float x = static_cast<float>(k - m_blur_radius);
       float kval = scale * exp(-(x * x / stdDevSq2));
       m_kernel[k] = kval;
       sum += kval;
@@ -98,7 +98,8 @@ FontGlyphData* FontEffect::Render(GlyphMetrics* metrics,
     // Blur!
     BlurGlyph(src->data8, src->w, src->h, src->stride, effect_glyph_data->data8,
               effect_glyph_data->w, effect_glyph_data->h, effect_glyph_data->w,
-              (float*)m_blur_temp.data(), m_kernel, m_blur_radius);
+              reinterpret_cast<float*>(m_blur_temp.data()), m_kernel,
+              m_blur_radius);
 
     // Adjust glyph position to compensate for larger size.
     metrics->x -= m_blur_radius;
