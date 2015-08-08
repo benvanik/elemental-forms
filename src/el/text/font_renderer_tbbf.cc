@@ -2,7 +2,7 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Copyright 2015 Ben Vanik. All rights reserved. Licensed as BSD 3-clause.   *
  * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
