@@ -136,7 +136,7 @@ class SkinCondition : public util::IntrusiveListEntry<SkinCondition> {
                 const TBID& value, Test test);
 
   // Returns true if the condition is true for the given context.
-  bool GetCondition(SkinConditionContext& context) const;
+  bool GetCondition(const SkinConditionContext& context) const;
 
  private:
   SkinTarget m_target;
@@ -153,7 +153,7 @@ class SkinConditionContext {
  public:
   // Returns true if the given target and property equals the given value.
   virtual bool GetCondition(SkinTarget target,
-                            const SkinCondition::ConditionInfo& info) = 0;
+                            const SkinCondition::ConditionInfo& info) const = 0;
 };
 
 // SkinElementState has a skin element id that should be used if its state and
@@ -168,10 +168,10 @@ class SkinElementState : public util::IntrusiveListEntry<SkinElementState> {
     kOnlySpecificState,
   };
 
-  bool IsMatch(SkinState test_state, SkinConditionContext& context,
+  bool IsMatch(SkinState test_state, const SkinConditionContext& context,
                MatchRule rule = MatchRule::kDefault) const;
 
-  bool IsExactMatch(SkinState test_state, SkinConditionContext& context,
+  bool IsExactMatch(SkinState test_state, const SkinConditionContext& context,
                     MatchRule rule = MatchRule::kDefault) const;
 
   TBID element_id;
@@ -185,12 +185,12 @@ class SkinElementStateList {
   ~SkinElementStateList();
 
   SkinElementState* GetStateElement(
-      SkinState state, SkinConditionContext& context,
+      SkinState state, const SkinConditionContext& context,
       SkinElementState::MatchRule rule =
           SkinElementState::MatchRule::kDefault) const;
 
   SkinElementState* GetStateElementExactMatch(
-      SkinState state, SkinConditionContext& context,
+      SkinState state, const SkinConditionContext& context,
       SkinElementState::MatchRule rule =
           SkinElementState::MatchRule::kDefault) const;
 
@@ -295,7 +295,7 @@ class SkinElement {
   // Checks if there's a exact or partial match for the given state in either
   // override, child or overlay element list. State elements with state "all"
   // will be ignored.
-  bool has_state(SkinState state, SkinConditionContext& context);
+  bool has_state(SkinState state, const SkinConditionContext& context) const;
 
   // Returns true if this element has overlay elements.
   bool has_overlay_elements() const {
@@ -389,7 +389,7 @@ class Skin : private graphics::RendererListener {
   // Returns nullptr if there's no match.
   SkinElement* GetSkinElementStrongOverride(
       const TBID& skin_id, SkinState state,
-      SkinConditionContext& context) const;
+      const SkinConditionContext& context) const;
 
   Color default_text_color() const { return m_default_text_color; }
   float default_disabled_opacity() const { return m_default_disabled_opacity; }
@@ -429,16 +429,16 @@ class Skin : private graphics::RendererListener {
   // Returns the skin element used (after following override elements), or
   // nullptr if no skin element was found matching the skin_id.
   SkinElement* PaintSkin(const Rect& dst_rect, const TBID& skin_id,
-                         SkinState state, SkinConditionContext& context);
+                         SkinState state, const SkinConditionContext& context);
 
   // Paints the skin at dst_rect. Just like the PaintSkin above, but takes a
   // specific skin element instead of looking it up from the id.
   SkinElement* PaintSkin(const Rect& dst_rect, SkinElement* element,
-                         SkinState state, SkinConditionContext& context);
+                         SkinState state, const SkinConditionContext& context);
 
   // Paints the overlay elements for the given skin element and state.
   void PaintSkinOverlay(const Rect& dst_rect, SkinElement* element,
-                        SkinState state, SkinConditionContext& context);
+                        SkinState state, const SkinConditionContext& context);
 
   // Draw fade out skin elements at the edges of dst_rect if needed.
   // It indicates to the user that there is hidden content.

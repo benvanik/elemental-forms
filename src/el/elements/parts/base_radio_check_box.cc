@@ -43,7 +43,7 @@ void BaseRadioCheckBox::set_value(int value) {
   set_state(Element::State::kSelected, value ? true : false);
 
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 
   if (value && group_id()) UpdateGroupElements(this);
 }

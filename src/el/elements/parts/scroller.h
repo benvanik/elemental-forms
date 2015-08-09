@@ -58,8 +58,8 @@ class ScrollerSnapListener {
   // NOTE: The scroll positions are relative to the target element (inner
   // scrolled Element). If there's nested scrollable elements, only the
   // inner scrolled element applies snapping.
-  virtual void OnScrollSnap(Element* target_element, int& target_x,
-                            int& target_y) = 0;
+  virtual void OnScrollSnap(Element* target_element, int* target_x,
+                            int* target_y) = 0;
 };
 
 // Scroller handles panning while the pointer is down and measure the pan speed
@@ -112,8 +112,8 @@ class Scroller : private MessageHandler {
   void Reset();
   void AdjustToSnappingAndScroll(float ppms_x, float ppms_y);
   void Scroll(float start_speed_ppms_x, float start_speed_ppms_y);
-  void GetTargetChildTranslation(int& x, int& y) const;
-  void GetTargetScrollXY(int& x, int& y) const;
+  void GetTargetChildTranslation(int* x, int* y) const;
+  void GetTargetScrollXY(int* x, int* y) const;
 
   Element* m_target = nullptr;
   ScrollerSnapListener* m_snap_listener = nullptr;

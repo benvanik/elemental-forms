@@ -61,7 +61,7 @@ void Button::set_value(int new_value) {
   if (can_toggle()) {
     // Invoke a changed event.
     Event ev(EventType::kChanged);
-    InvokeEvent(ev);
+    InvokeEvent(std::move(ev));
   }
 
   if (new_value && group_id()) {
@@ -109,7 +109,7 @@ void Button::OnMessageReceived(Message* msg) {
             HitStatus::kNoHit) {
       Event ev(EventType::kClick, pointer_move_element_x,
                pointer_move_element_y, true);
-      captured_element->InvokeEvent(ev);
+      captured_element->InvokeEvent(std::move(ev));
     }
     if (kAutoClickRepeattDelayMillis > 0) {
       PostMessageDelayed(TBIDC("auto_click"), nullptr,

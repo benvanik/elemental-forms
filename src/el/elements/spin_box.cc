@@ -77,7 +77,7 @@ void SpinBox::SetValueInternal(int value, bool update_text) {
   }
 
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 
   // Warning: Do nothing here since the event might have deleted us.
   //          If needed, check if we are alive using a safe pointer first.

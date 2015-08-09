@@ -116,7 +116,7 @@ bool TooltipManager::OnElementInvokeEvent(Element* element, const Event& ev) {
                m_tooltip) {
       int x = Element::pointer_move_element_x;
       int y = Element::pointer_move_element_y;
-      tipped_element->ConvertToRoot(x, y);
+      tipped_element->ConvertToRoot(&x, &y);
       y += tooltip_point_offset_y;
       Point tt_point = m_tooltip->offset_point();
       if (std::abs(tt_point.x - x) >
@@ -172,7 +172,7 @@ void TooltipManager::OnMessageReceived(Message* msg) {
 
       int x = Element::pointer_move_element_x;
       int y = Element::pointer_move_element_y;
-      Element::hovered_element->ConvertToRoot(x, y);
+      Element::hovered_element->ConvertToRoot(&x, &y);
       y += tooltip_point_offset_y;
 
       m_tooltip->Show(x, y);

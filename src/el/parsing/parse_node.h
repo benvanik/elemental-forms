@@ -43,7 +43,7 @@ class ParseNode : public util::IntrusiveListEntry<ParseNode> {
   // Creates a new node with the given name.
   static ParseNode* Create(const char* name);
 
-  void TakeValue(Value& value);
+  void TakeValue(Value* value);
   void EmplaceValue(Value value);
 
   // Reads a tree of nodes from file into this node.

@@ -182,8 +182,8 @@ void ResourceEditWindow::OnPaintChildren(const PaintProps& paint_props) {
   if (Element* selected_element = GetSelectedElement()) {
     Rect element_rect(0, 0, selected_element->rect().w,
                       selected_element->rect().h);
-    selected_element->ConvertToRoot(element_rect.x, element_rect.y);
-    ConvertFromRoot(element_rect.x, element_rect.y);
+    selected_element->ConvertToRoot(&element_rect.x, &element_rect.y);
+    ConvertFromRoot(&element_rect.x, &element_rect.y);
     graphics::Renderer::get()->DrawRect(element_rect, Color(255, 205, 0));
   }
 }

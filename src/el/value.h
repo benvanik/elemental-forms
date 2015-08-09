@@ -85,7 +85,7 @@ class Value {
   // NOTE: If source_value has string or array that are set with Set::kAsStatic,
   // it will make new copies of those.
   // NOTE: value will be nulled on source_value after this call.
-  void TakeOver(Value& source_value);
+  void TakeOver(Value* source_value);
 
   // Copies the content of source_value to this value.
   // NOTE: This value will become Type::kNull if source_value holds an object.

@@ -376,7 +376,7 @@ bool DemoWindow::OnEvent(const Event& ev) {
     // That way the window has a chance of intercepting the close and f.ex ask
     // if it really should be closed.
     Event click_ev(EventType::kClick);
-    title_close_button_.InvokeEvent(click_ev);
+    title_close_button_.InvokeEvent(std::move(click_ev));
     return true;
   }
   return Form::OnEvent(ev);
@@ -677,11 +677,11 @@ PageWindow::PageWindow() {
 
 bool PageWindow::OnEvent(const Event& ev) { return DemoWindow::OnEvent(ev); }
 
-void PageWindow::OnScrollSnap(Element* target_element, int& target_x,
-                              int& target_y) {
+void PageWindow::OnScrollSnap(Element* target_element, int* target_x,
+                              int* target_y) {
   int page_w = target_element->padding_rect().w;
-  int target_page = (target_x + page_w / 2) / page_w;
-  target_x = target_page * page_w;
+  int target_page = (*target_x + page_w / 2) / page_w;
+  *target_x = target_page * page_w;
 }
 
 // == AnimationsWindow ========================================================

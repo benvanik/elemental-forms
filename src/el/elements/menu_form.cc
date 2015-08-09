@@ -42,7 +42,7 @@ bool MenuForm::OnEvent(const Event& ev) {
     // Invoke the click on the target.
     Event target_ev(EventType::kClick);
     target_ev.ref_id = ev.ref_id;
-    InvokeEvent(target_ev);
+    InvokeEvent(std::move(target_ev));
 
     // If target got deleted, close.
     if (this_element.get()) {

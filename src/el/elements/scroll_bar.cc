@@ -66,13 +66,13 @@ void ScrollBar::set_limits(double min, double max, double visible_range) {
   // to root and then back after the applying the new limit.
   // This prevents sudden jumps to unexpected positions when scrolling.
   if (captured_element == &m_handle) {
-    m_handle.ConvertToRoot(pointer_down_element_x, pointer_down_element_y);
+    m_handle.ConvertToRoot(&pointer_down_element_x, &pointer_down_element_y);
   }
 
   UpdateHandle();
 
   if (captured_element == &m_handle) {
-    m_handle.ConvertFromRoot(pointer_down_element_x, pointer_down_element_y);
+    m_handle.ConvertFromRoot(&pointer_down_element_x, &pointer_down_element_y);
   }
 }
 
@@ -85,7 +85,7 @@ void ScrollBar::set_double_value(double value) {
 
   UpdateHandle();
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 bool ScrollBar::OnEvent(const Event& ev) {

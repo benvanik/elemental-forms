@@ -217,7 +217,7 @@ void ListBox::set_value(int value) {
   if (Element* element = GetItemElement(m_value)) {
     ev.ref_id = element->id();
   }
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 TBID ListBox::selected_item_id() {
@@ -295,7 +295,7 @@ bool ListBox::OnEvent(const Event& ev) {
       if (Element* element = GetItemElement(m_value)) {
         invoke_ev.ref_id = element->id();
       }
-      target_list->InvokeEvent(invoke_ev);
+      target_list->InvokeEvent(std::move(invoke_ev));
     }
     return true;
   } else if (ev.type == EventType::kKeyDown) {

@@ -62,7 +62,7 @@ void DropDownButton::set_value(int value) {
   }
 
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 TBID DropDownButton::selected_item_id() {
@@ -120,7 +120,7 @@ bool DropDownButton::OnEvent(const Event& ev) {
     if (MenuForm* menu_form = menu_if_open()) {
       // Redirect the key strokes to the list.
       Event redirected_ev(ev);
-      return menu_form->list_box()->InvokeEvent(redirected_ev);
+      return menu_form->list_box()->InvokeEvent(std::move(redirected_ev));
     }
   }
   return Element::OnEvent(ev);

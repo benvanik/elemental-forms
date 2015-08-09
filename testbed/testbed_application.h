@@ -87,8 +87,8 @@ class PageWindow : public DemoWindow,
  public:
   PageWindow();
   virtual bool OnEvent(const Event& ev);
-  virtual void OnScrollSnap(Element* target_element, int& target_x,
-                            int& target_y);
+  virtual void OnScrollSnap(Element* target_element, int* target_x,
+                            int* target_y);
 };
 
 class AnimationsWindow : public DemoWindow {

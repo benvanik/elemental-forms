@@ -151,12 +151,12 @@ class ParseNodeTarget : public TextParserTarget {
                error.c_str());
   }
   void OnComment(int line_nr, const char* comment) override {}
-  void OnToken(int line_nr, const char* name, Value& value) override {
+  void OnToken(int line_nr, const char* name, Value* value) override {
     if (!m_target_node) return;
     if (strcmp(name, "@file") == 0) {
-      IncludeFile(line_nr, value.as_string());
+      IncludeFile(line_nr, value->as_string());
     } else if (strcmp(name, "@include") == 0) {
-      IncludeRef(line_nr, value.as_string());
+      IncludeRef(line_nr, value->as_string());
     } else {
       ParseNode* n = ParseNode::Create(name);
       n->TakeValue(value);
@@ -229,9 +229,9 @@ class ParseNodeTarget : public TextParserTarget {
   std::string m_filename;
 };
 
-void ParseNode::TakeValue(Value& value) { m_value.TakeOver(value); }
+void ParseNode::TakeValue(Value* value) { m_value.TakeOver(value); }
 
-void ParseNode::EmplaceValue(Value value) { m_value.TakeOver(value); }
+void ParseNode::EmplaceValue(Value value) { m_value.TakeOver(&value); }
 
 bool ParseNode::ReadFile(const std::string& filename, ReadFlags flags) {
   if (!any(flags & ReadFlags::kAppend)) {

@@ -70,7 +70,7 @@ void Slider::set_double_value(double value) {
 
   UpdateHandle();
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 bool Slider::OnEvent(const Event& ev) {

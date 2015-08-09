@@ -51,7 +51,8 @@ bool is_number_float(const char* str) {
   return false;
 }
 
-char* next_token(char*& str, const char* delim) {
+char* next_token(char** inout_str, const char* delim) {
+  auto& str = *inout_str;
   str += strspn(str, delim);
   if (!*str) return nullptr;
   char* token = str;
@@ -131,19 +132,19 @@ Value::Value(util::TypedObject* object) { set_object(object); }
 
 Value::~Value() { set_null(); }
 
-void Value::TakeOver(Value& source_value) {
-  if (Type(source_value.packed_.type) == Type::kString) {
-    set_string(source_value.value_.string, source_value.packed_.allocated
-                                               ? Set::kTakeOwnership
-                                               : Set::kNewCopy);
-  } else if (source_value.type() == Type::kArray) {
-    set_array(source_value.value_.value_array, source_value.packed_.allocated
-                                                   ? Set::kTakeOwnership
-                                                   : Set::kNewCopy);
+void Value::TakeOver(Value* source_value) {
+  if (Type(source_value->packed_.type) == Type::kString) {
+    set_string(source_value->value_.string, source_value->packed_.allocated
+                                                ? Set::kTakeOwnership
+                                                : Set::kNewCopy);
+  } else if (source_value->type() == Type::kArray) {
+    set_array(source_value->value_.value_array, source_value->packed_.allocated
+                                                    ? Set::kTakeOwnership
+                                                    : Set::kNewCopy);
   } else {
-    *this = source_value;
+    *this = *source_value;
   }
-  source_value.set_type(Type::kNull);
+  source_value->set_type(Type::kNull);
 }
 
 void Value::Copy(const Value& source_value) {
@@ -234,7 +235,7 @@ void Value::parse_string(const char* str, Set set) {
     ValueArray* arr = new ValueArray();
     std::string tmpstr = str;
     char* str_next = const_cast<char*>(tmpstr.data());
-    while (char* token = next_token(str_next, ", ")) {
+    while (char* token = next_token(&str_next, ", ")) {
       Value* new_val = arr->AddValue();
       new_val->parse_string(token, Set::kNewCopy);
     }

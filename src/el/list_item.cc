@@ -214,7 +214,7 @@ void GenericStringItemSource::ReadItemNodes(
     const char* text = node->GetValueString("text", "");
     TBID item_id;
     if (auto id_node = node->GetNode("id")) {
-      Element::SetIdFromNode(item_id, id_node);
+      Element::SetIdFromNode(&item_id, id_node);
     }
     auto item = std::make_unique<GenericStringItem>(text, item_id);
     target_source->push_back(std::move(item));

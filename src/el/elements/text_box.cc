@@ -282,7 +282,7 @@ bool TextBox::OnEvent(const Event& ev) {
     return true;
   } else if (ev.type == EventType::kContextMenu && ev.target == this) {
     Point pos_in_root(ev.target_x, ev.target_y);
-    ev.target->ConvertToRoot(pos_in_root.x, pos_in_root.y);
+    ev.target->ConvertToRoot(&pos_in_root.x, &pos_in_root.y);
 
     MenuForm* menu = new MenuForm(ev.target, TBIDC("popupmenu"));
     GenericStringItemSource* source = menu->list_box()->default_source();
@@ -462,7 +462,7 @@ void TextBox::OnChange() {
   }
 
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 bool TextBox::OnEnter() { return false; }

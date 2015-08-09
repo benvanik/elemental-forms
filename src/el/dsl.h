@@ -40,22 +40,22 @@ class Node {
 
   Node& set(const char* key, int32_t value) {
     auto v = el::Value(value);
-    return set(key, v);
+    return set(key, &v);
   }
 
   Node& set(const char* key, float value) {
     auto v = el::Value(value);
-    return set(key, v);
+    return set(key, &v);
   }
 
   Node& set(const char* key, const char* value) {
     auto v = el::Value(value);
-    return set(key, v);
+    return set(key, &v);
   }
 
   Node& set(const char* key, const std::string& value) {
     auto v = el::Value(value.c_str());
-    return set(key, v);
+    return set(key, &v);
   }
 
   Node& set(const char* key, el::Rect value) {
@@ -69,7 +69,7 @@ class Node {
     return *this;
   }
 
-  Node& set(const char* key, el::Value& value) {
+  Node& set(const char* key, el::Value* value) {
     auto node = GetOrCreateNode(key);
     node->TakeValue(value);
     return *this;

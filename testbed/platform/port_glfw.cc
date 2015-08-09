@@ -168,7 +168,7 @@ static bool InvokeShortcut(int key, SpecialKey special_key,
   Event ev(EventType::kShortcut);
   ev.modifierkeys = modifierkeys;
   ev.ref_id = id;
-  return Element::focused_element->InvokeEvent(ev);
+  return Element::focused_element->InvokeEvent(std::move(ev));
 }
 
 static bool InvokeKey(GLFWwindow* window, unsigned int key,
@@ -278,7 +278,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action,
       if (Element::focused_element && !down) {
         Event ev(EventType::kContextMenu);
         ev.modifierkeys = modifier;
-        Element::focused_element->InvokeEvent(ev);
+        Element::focused_element->InvokeEvent(std::move(ev));
       }
       break;
     case GLFW_KEY_LEFT_SHIFT:
@@ -344,9 +344,9 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action,
     GetBackend(window)->GetRoot()->InvokePointerMove(x, y, modifier,
                                                      ShouldEmulateTouchEvent());
     if (Element::hovered_element) {
-      Element::hovered_element->ConvertFromRoot(x, y);
+      Element::hovered_element->ConvertFromRoot(&x, &y);
       Event ev(EventType::kContextMenu, x, y, false, modifier);
-      Element::hovered_element->InvokeEvent(ev);
+      Element::hovered_element->InvokeEvent(std::move(ev));
     }
   }
 }
@@ -399,7 +399,7 @@ static void drop_callback(GLFWwindow* window, int count,
     for (int i = 0; i < count; ++i) {
       ev.files.push_back(files_utf8[i]);
     }
-    target->InvokeEvent(ev);
+    target->InvokeEvent(std::move(ev));
   }
 }
 #endif

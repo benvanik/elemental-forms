@@ -63,7 +63,7 @@ bool LabelContainer::OnEvent(const Event& ev) {
     Event target_ev(ev.type, ev.target_x - click_target->rect().x,
                     ev.target_y - click_target->rect().y, ev.touch,
                     ev.modifierkeys);
-    if (click_target->InvokeEvent(target_ev)) {
+    if (click_target->InvokeEvent(std::move(target_ev))) {
       return true;
     }
   }

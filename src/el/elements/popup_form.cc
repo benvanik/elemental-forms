@@ -40,7 +40,7 @@ Rect PopupAlignment::GetAlignedRect(Element* popup, Element* target) const {
       x = util::Clamp(x, 0, root->rect().w - w);
     }
   } else {
-    target->ConvertToRoot(x, y);
+    target->ConvertToRoot(&x, &y);
 
     if (align == Align::kTop || align == Align::kBottom) {
       if (expand_to_target_width) {

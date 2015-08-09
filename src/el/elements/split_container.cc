@@ -77,7 +77,7 @@ void SplitContainer::set_value(int value) {
   value_ = clamped_value;
   InvalidateLayout(InvalidationMode::kTargetOnly);
   Event ev(EventType::kChanged);
-  InvokeEvent(ev);
+  InvokeEvent(std::move(ev));
 }
 
 int SplitContainer::computed_min_value() const {

@@ -11,6 +11,7 @@
 #define EL_GRAPHICS_BITMAP_FRAGMENT_MANAGER_H_
 
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 

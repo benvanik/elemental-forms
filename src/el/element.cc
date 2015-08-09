@@ -117,18 +117,18 @@ void Element::LoadNodeTree(const dsl::Node& node) {
 }
 
 // Sets the id from the given node.
-void Element::SetIdFromNode(TBID& id, parsing::ParseNode* node) {
+void Element::SetIdFromNode(TBID* id, parsing::ParseNode* node) {
   if (!node) return;
   if (node->value().is_string()) {
-    id.reset(node->value().as_string());
+    id->reset(node->value().as_string());
   } else {
-    id.reset(node->value().as_integer());
+    id->reset(node->value().as_integer());
   }
 }
 
 void Element::OnInflate(const parsing::InflateInfo& info) {
-  Element::SetIdFromNode(id(), info.node->GetNode("id"));
-  Element::SetIdFromNode(group_id(), info.node->GetNode("group-id"));
+  Element::SetIdFromNode(&id(), info.node->GetNode("id"));
+  Element::SetIdFromNode(&group_id(), info.node->GetNode("group-id"));
 
   if (info.sync_type == Value::Type::kFloat) {
     set_double_value(info.node->GetValueFloat("value", 0));
@@ -664,15 +664,15 @@ void Element::ScrollBy(int dx, int dy) {
   ScrollTo(info.x + dx, info.y + dy);
 }
 
-void Element::ScrollByRecursive(int& dx, int& dy) {
+void Element::ScrollByRecursive(int* dx, int* dy) {
   Element* tmp = this;
   while (tmp) {
     ScrollInfo old_info = tmp->scroll_info();
-    tmp->ScrollTo(old_info.x + dx, old_info.y + dy);
+    tmp->ScrollTo(old_info.x + *dx, old_info.y + *dy);
     ScrollInfo new_info = tmp->scroll_info();
-    dx -= new_info.x - old_info.x;
-    dy -= new_info.y - old_info.y;
-    if (!dx && !dy) {
+    *dx -= new_info.x - old_info.x;
+    *dy -= new_info.y - old_info.y;
+    if (!*dx && !*dy) {
       break;
     }
     tmp = tmp->m_parent;
@@ -1442,7 +1442,7 @@ void Element::InvokePaint(const PaintProps& parent_paint_props) {
   Renderer::get()->set_opacity(old_opacity);
 }
 
-bool Element::InvokeEvent(Event& ev) {
+bool Element::InvokeEvent(Event ev) {
   ev.target = this;
 
   // First call the global listener about this event.
@@ -1544,12 +1544,12 @@ bool Element::InvokePointerDown(int x, int y, int click_count,
     }
   }
   if (captured_element) {
-    captured_element->ConvertFromRoot(x, y);
+    captured_element->ConvertFromRoot(&x, &y);
     pointer_move_element_x = pointer_down_element_x = x;
     pointer_move_element_y = pointer_down_element_y = y;
     Event ev(EventType::kPointerDown, x, y, touch, modifierkeys);
     ev.count = click_count;
-    captured_element->InvokeEvent(ev);
+    captured_element->InvokeEvent(std::move(ev));
     return true;
   }
 
@@ -1561,13 +1561,13 @@ bool Element::InvokePointerUp(int x, int y, ModifierKeys modifierkeys,
   // If we have a captured element then we have a focused element so the pointer
   // up event was handled
   if (captured_element) {
-    captured_element->ConvertFromRoot(x, y);
+    captured_element->ConvertFromRoot(&x, &y);
     Event ev_up(EventType::kPointerUp, x, y, touch, modifierkeys);
-    Event ev_click(EventType::kClick, x, y, touch, modifierkeys);
-    captured_element->InvokeEvent(ev_up);
+    captured_element->InvokeEvent(std::move(ev_up));
     if (!cancel_click && captured_element &&
         captured_element->GetHitStatus(x, y) != HitStatus::kNoHit) {
-      captured_element->InvokeEvent(ev_click);
+      Event ev_click(EventType::kClick, x, y, touch, modifierkeys);
+      captured_element->InvokeEvent(std::move(ev_click));
     }
     if (captured_element) {  // && button == captured_button
       captured_element->ReleaseCapture();
@@ -1587,12 +1587,12 @@ void Element::MaybeInvokeLongClickOrContextMenu(bool touch) {
     // Invoke long click.
     Event ev_long_click(EventType::kLongClick, pointer_move_element_x,
                         pointer_move_element_y, touch, ModifierKeys::kNone);
-    bool handled = captured_element->InvokeEvent(ev_long_click);
+    bool handled = captured_element->InvokeEvent(std::move(ev_long_click));
     if (!handled) {
       // Long click not handled so invoke a context menu event instead.
       Event ev_context_menu(EventType::kContextMenu, pointer_move_element_x,
                             pointer_move_element_y, touch, ModifierKeys::kNone);
-      handled = captured_element->InvokeEvent(ev_context_menu);
+      handled = captured_element->InvokeEvent(std::move(ev_context_menu));
     }
     // If any event was handled, suppress click when releasing pointer.
     if (handled) {
@@ -1607,12 +1607,12 @@ void Element::InvokePointerMove(int x, int y, ModifierKeys modifierkeys,
   Element* target = captured_element ? captured_element : hovered_element;
 
   if (target) {
-    target->ConvertFromRoot(x, y);
+    target->ConvertFromRoot(&x, &y);
     pointer_move_element_x = x;
     pointer_move_element_y = y;
 
     Event ev(EventType::kPointerMove, x, y, touch, modifierkeys);
-    if (target->InvokeEvent(ev)) {
+    if (target->InvokeEvent(std::move(ev))) {
       return;
     }
     // The move event was not handled, so handle panning of scrollable elements.
@@ -1690,13 +1690,13 @@ bool Element::InvokeWheel(int x, int y, int delta_x, int delta_y,
   if (!target) {
     return false;
   }
-  target->ConvertFromRoot(x, y);
+  target->ConvertFromRoot(&x, &y);
   pointer_move_element_x = x;
   pointer_move_element_y = y;
   Event ev(EventType::kWheel, x, y, true, modifierkeys);
   ev.delta_x = delta_x;
   ev.delta_y = delta_y;
-  target->InvokeEvent(ev);
+  target->InvokeEvent(std::move(ev));
   return true;
 }
 
@@ -1729,7 +1729,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
       // Invoke the click event.
       if (!down) {
         Event ev(EventType::kClick, m_rect.w / 2, m_rect.h / 2, true);
-        focused_element->InvokeEvent(ev);
+        focused_element->InvokeEvent(std::move(ev));
       }
       handled = true;
     } else {
@@ -1738,7 +1738,7 @@ bool Element::InvokeKey(int key, SpecialKey special_key,
       ev.key = key;
       ev.special_key = special_key;
       ev.modifierkeys = modifierkeys;
-      handled = focused_element->InvokeEvent(ev);
+      handled = focused_element->InvokeEvent(std::move(ev));
     }
   }
 
@@ -1760,36 +1760,36 @@ void Element::ReleaseCapture() {
   }
 }
 
-void Element::ConvertToRoot(int& x, int& y) const {
+void Element::ConvertToRoot(int* x, int* y) const {
   const Element* tmp = this;
   while (tmp->m_parent) {
-    x += tmp->m_rect.x;
-    y += tmp->m_rect.y;
+    *x += tmp->m_rect.x;
+    *y += tmp->m_rect.y;
     tmp = tmp->m_parent;
 
     if (tmp) {
       int child_translation_x;
       int child_translation_y;
       tmp->GetChildTranslation(&child_translation_x, &child_translation_y);
-      x += child_translation_x;
-      y += child_translation_y;
+      *x += child_translation_x;
+      *y += child_translation_y;
     }
   }
 }
 
-void Element::ConvertFromRoot(int& x, int& y) const {
+void Element::ConvertFromRoot(int* x, int* y) const {
   const Element* tmp = this;
   while (tmp->m_parent) {
-    x -= tmp->m_rect.x;
-    y -= tmp->m_rect.y;
+    *x -= tmp->m_rect.x;
+    *y -= tmp->m_rect.y;
     tmp = tmp->m_parent;
 
     if (tmp) {
       int child_translation_x;
       int child_translation_y;
       tmp->GetChildTranslation(&child_translation_x, &child_translation_y);
-      x -= child_translation_x;
-      y -= child_translation_y;
+      *x -= child_translation_x;
+      *y -= child_translation_y;
     }
   }
 }
@@ -1914,7 +1914,7 @@ using el::SkinProperty;
 using el::SkinTarget;
 
 bool ElementSkinConditionContext::GetCondition(
-    SkinTarget target, const SkinCondition::ConditionInfo& info) {
+    SkinTarget target, const SkinCondition::ConditionInfo& info) const {
   switch (target) {
     case SkinTarget::kThis:
       return GetCondition(m_element, info);
@@ -1938,7 +1938,7 @@ bool ElementSkinConditionContext::GetCondition(
 }
 
 bool ElementSkinConditionContext::GetCondition(
-    Element* element, const SkinCondition::ConditionInfo& info) {
+    Element* element, const SkinCondition::ConditionInfo& info) const {
   switch (info.prop) {
     case SkinProperty::kSkin:
       return element->background_skin() == info.value;

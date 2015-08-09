@@ -23,7 +23,8 @@ bool is_hex(char c) {
           (c >= 'A' && c <= 'F'));
 }
 
-uint32_t parse_hex(char*& src, int max_count) {
+uint32_t parse_hex(char** inout_src, int max_count) {
+  auto src = *inout_src;
   uint32_t hex = 0;
   for (int i = 0; i < max_count; ++i) {
     char c = *src;
@@ -32,6 +33,7 @@ uint32_t parse_hex(char*& src, int max_count) {
     hex |= isdigit(c) ? c - '0' : tolower(c) - 'a' + 10;
     src++;
   }
+  *inout_src = src;
   return hex;
 }
 
@@ -85,7 +87,7 @@ void UnescapeString(char* str) {
           // This should be safe. A utf-8 character can be at most 4 bytes,
           // and we have 4 bytes to use for \xXX and 6 for \uXXXX.
           src += 2;
-          if (auto hex = parse_hex(src, src[1] == 'x' ? 2 : 4)) {
+          if (auto hex = parse_hex(&src, src[1] == 'x' ? 2 : 4)) {
             dst += text::utf8::encode(hex, dst);
           }
           continue;
@@ -147,13 +149,13 @@ bool is_start_of_reference(const char* str) {
 
 // Checks if the line is a comment or empty space. If it is, consume the leading
 // whitespace from line.
-bool is_space_or_comment(char*& line) {
-  char* tmp = line;
+bool is_space_or_comment(char** inout_line) {
+  char* tmp = *inout_line;
   while (is_white_space(tmp)) {
     tmp++;
   }
   if (*tmp == '#' || *tmp == 0) {
-    line = tmp;
+    *inout_line = tmp;
     return true;
   }
   return false;
@@ -249,7 +251,7 @@ TextParser::Status TextParser::Read(TextParserStream* stream,
 }
 
 void TextParser::OnLine(char* line, TextParserTarget* target) {
-  if (is_space_or_comment(line)) {
+  if (is_space_or_comment(&line)) {
     if (*line == '#') {
       target->OnComment(current_line_nr, line + 1);
     }
@@ -310,7 +312,7 @@ void TextParser::OnLine(char* line, TextParserTarget* target) {
       if (*line == '[' || *line == '\"' || *line == '\'' ||
           util::is_start_of_number(line) || is_start_of_color(line) ||
           is_start_of_reference(line)) {
-        ConsumeValue(value, line);
+        ConsumeValue(&value, &line);
 
         if (pending_multiline) {
           // The value wrapped to the next line, so we should remember the token
@@ -324,7 +326,7 @@ void TextParser::OnLine(char* line, TextParserTarget* target) {
       UnescapeString(line);
       value.parse_string(line, Value::Set::kAsStatic);
     }
-    target->OnToken(current_line_nr, token, value);
+    target->OnToken(current_line_nr, token, &value);
 
     if (is_compact_line) {
       OnCompactLine(line, target);
@@ -357,7 +359,7 @@ void TextParser::OnCompactLine(char* line, TextParserTarget* target) {
     }
 
     Value v;
-    ConsumeValue(v, line);
+    ConsumeValue(&v, &line);
 
     if (pending_multiline) {
       // The value wrapped to the next line, so we should remember the token and
@@ -370,7 +372,7 @@ void TextParser::OnCompactLine(char* line, TextParserTarget* target) {
     }
 
     // Ready.
-    target->OnToken(current_line_nr, token, v);
+    target->OnToken(current_line_nr, token, &v);
   }
 
   target->Leave();
@@ -383,12 +385,12 @@ void TextParser::OnMultiline(char* line, TextParserTarget* target) {
   }
 
   Value value;
-  ConsumeValue(value, line);
+  ConsumeValue(&value, &line);
 
   if (!pending_multiline) {
     // Ready with all lines.
     value.set_string(multi_line_value.data(), Value::Set::kAsStatic);
-    target->OnToken(current_line_nr, multi_line_token.c_str(), value);
+    target->OnToken(current_line_nr, multi_line_token.c_str(), &value);
 
     if (multi_line_sub_level) {
       target->Leave();
@@ -400,8 +402,9 @@ void TextParser::OnMultiline(char* line, TextParserTarget* target) {
   }
 }
 
-void TextParser::ConsumeValue(Value& dst_value, char*& line) {
+void TextParser::ConsumeValue(Value* dst_value, char** inout_line) {
   // Find value (As quoted string, or as auto).
+  char* line = *inout_line;
   char* value = line;
   if (*line == '\"' || *line == '\'') {
     const char quote_type = *line;
@@ -427,7 +430,7 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.set_string(value, Value::Set::kAsStatic);
+    dst_value->set_string(value, Value::Set::kAsStatic);
   } else {
     // Find next comma or end.
     while (*line != ',' && *line != 0) {
@@ -439,7 +442,7 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
     }
 
     UnescapeString(value);
-    dst_value.parse_string(value, Value::Set::kAsStatic);
+    dst_value->parse_string(value, Value::Set::kAsStatic);
   }
 
   // Check if we still have pending value data on the following line and set
@@ -449,8 +452,10 @@ void TextParser::ConsumeValue(Value& dst_value, char*& line) {
 
   // Append the multi line value to the buffer.
   if (continuing_multiline || pending_multiline) {
-    multi_line_value.AppendString(dst_value.as_string());
+    multi_line_value.AppendString(dst_value->as_string());
   }
+
+  *inout_line = line;
 }
 
 }  // namespace parsing

@@ -123,7 +123,7 @@ bool Scroller::OnPan(int dx, int dy) {
 
   // Pan the target.
   const int in_dx = dx, in_dy = dy;
-  m_target->ScrollByRecursive(dx, dy);
+  m_target->ScrollByRecursive(&dx, &dy);
 
   // Calculate the pan speed. Smooth it out with the
   // previous pan speed to reduce fluctuation a little.
@@ -233,7 +233,7 @@ void Scroller::AdjustToSnappingAndScroll(float ppms_x, float ppms_y) {
     Element::ScrollInfo info = m_target->scroll_info();
     int target_x = distance_x + info.x;
     int target_y = distance_y + info.y;
-    m_snap_listener->OnScrollSnap(m_target, target_x, target_y);
+    m_snap_listener->OnScrollSnap(m_target, &target_x, &target_y);
     distance_x = target_x - info.x;
     distance_y = target_y - info.y;
 
@@ -248,7 +248,7 @@ void Scroller::AdjustToSnappingAndScroll(float ppms_x, float ppms_y) {
 void Scroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
   // Set start values.
   m_scroll_start_ms = static_cast<double>(util::GetTimeMS());
-  GetTargetScrollXY(m_scroll_start_scroll_x, m_scroll_start_scroll_y);
+  GetTargetScrollXY(&m_scroll_start_scroll_x, &m_scroll_start_scroll_y);
   m_scroll_start_speed_ppms_x = start_speed_ppms_x;
   m_scroll_start_speed_ppms_y = start_speed_ppms_y;
 
@@ -265,7 +265,7 @@ void Scroller::Scroll(float start_speed_ppms_x, float start_speed_ppms_y) {
   // Post the pan message if we don't already have one.
   if (!GetMessageById(TBIDC("scroll"))) {
     // Update expected translation.
-    GetTargetChildTranslation(m_expected_scroll_x, m_expected_scroll_y);
+    GetTargetChildTranslation(&m_expected_scroll_x, &m_expected_scroll_y);
 
     PostMessageDelayed(TBIDC("scroll"), nullptr, kPanMessageDelayMillis);
   }
@@ -275,25 +275,25 @@ bool Scroller::IsScrolling() {
   return GetMessageById(TBIDC("scroll")) ? true : false;
 }
 
-void Scroller::GetTargetChildTranslation(int& x, int& y) const {
+void Scroller::GetTargetChildTranslation(int* x, int* y) const {
   int root_x = 0, root_y = 0;
   int child_translation_x = 0;
   int child_translation_y = 0;
   Element* scroll_root = m_target->scroll_root();
-  scroll_root->ConvertToRoot(root_x, root_y);
+  scroll_root->ConvertToRoot(&root_x, &root_y);
   scroll_root->GetChildTranslation(&child_translation_x, &child_translation_y);
-  x = root_x + child_translation_x;
-  y = root_y + child_translation_y;
+  *x = root_x + child_translation_x;
+  *y = root_y + child_translation_y;
 }
 
-void Scroller::GetTargetScrollXY(int& x, int& y) const {
-  x = 0;
-  y = 0;
+void Scroller::GetTargetScrollXY(int* x, int* y) const {
+  *x = 0;
+  *y = 0;
   Element* tmp = m_target->scroll_root();
   while (tmp) {
     Element::ScrollInfo info = tmp->scroll_info();
-    x += info.x;
-    y += info.y;
+    *x += info.x;
+    *y += info.y;
     tmp = tmp->parent();
   }
 }
@@ -301,7 +301,7 @@ void Scroller::GetTargetScrollXY(int& x, int& y) const {
 void Scroller::OnMessageReceived(Message* msg) {
   if (msg->message_id() == TBIDC("scroll")) {
     int actual_scroll_x = 0, actual_scroll_y = 0;
-    GetTargetChildTranslation(actual_scroll_x, actual_scroll_y);
+    GetTargetChildTranslation(&actual_scroll_x, &actual_scroll_y);
     if (actual_scroll_x != m_expected_scroll_x ||
         actual_scroll_y != m_expected_scroll_y) {
       // Something else has affected the target child translation.
@@ -332,15 +332,15 @@ void Scroller::OnMessageReceived(Message* msg) {
 
     // Get the scroll delta and invoke ScrollByRecursive.
     int curr_scroll_x, curr_scroll_y;
-    GetTargetScrollXY(curr_scroll_x, curr_scroll_y);
+    GetTargetScrollXY(&curr_scroll_x, &curr_scroll_y);
     const int dx = scroll_x - curr_scroll_x;
     const int dy = scroll_y - curr_scroll_y;
 
     int idx = dx, idy = dy;
-    m_target->ScrollByRecursive(idx, idy);
+    m_target->ScrollByRecursive(&idx, &idy);
 
     // Update expected translation.
-    GetTargetChildTranslation(m_expected_scroll_x, m_expected_scroll_y);
+    GetTargetChildTranslation(&m_expected_scroll_x, &m_expected_scroll_y);
 
     if ((dx && actual_scroll_x == m_expected_scroll_x) &&
         (dy && actual_scroll_y == m_expected_scroll_y)) {

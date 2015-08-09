@@ -45,7 +45,7 @@ SkinCondition::SkinCondition(SkinTarget target, SkinProperty prop,
   m_info.value = value;
 }
 
-bool SkinCondition::GetCondition(SkinConditionContext& context) const {
+bool SkinCondition::GetCondition(const SkinConditionContext& context) const {
   bool equal = context.GetCondition(m_target, m_info);
   return equal == (m_test == Test::kEqual);
 }
@@ -225,7 +225,8 @@ SkinElement* Skin::GetSkinElementById(const TBID& skin_id) const {
 }
 
 SkinElement* Skin::GetSkinElementStrongOverride(
-    const TBID& skin_id, SkinState state, SkinConditionContext& context) const {
+    const TBID& skin_id, SkinState state,
+    const SkinConditionContext& context) const {
   if (SkinElement* skin_element = GetSkinElementById(skin_id)) {
     // Avoid eternal recursion when overrides refer to elements referring back.
     if (skin_element->is_getting) {
@@ -253,12 +254,14 @@ SkinElement* Skin::GetSkinElementStrongOverride(
 }
 
 SkinElement* Skin::PaintSkin(const Rect& dst_rect, const TBID& skin_id,
-                             SkinState state, SkinConditionContext& context) {
+                             SkinState state,
+                             const SkinConditionContext& context) {
   return PaintSkin(dst_rect, GetSkinElementById(skin_id), state, context);
 }
 
 SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
-                             SkinState state, SkinConditionContext& context) {
+                             SkinState state,
+                             const SkinConditionContext& context) {
   if (!element || element->is_painting) return nullptr;
 
   // Avoid potential endless recursion in evil skins.
@@ -315,7 +318,8 @@ SkinElement* Skin::PaintSkin(const Rect& dst_rect, SkinElement* element,
 }
 
 void Skin::PaintSkinOverlay(const Rect& dst_rect, SkinElement* element,
-                            SkinState state, SkinConditionContext& context) {
+                            SkinState state,
+                            const SkinConditionContext& context) {
   if (!element || element->is_painting) return;
 
   // Avoid potential endless recursion in evil skins.
@@ -602,7 +606,8 @@ void SkinElement::SetBitmapDPI(const util::DimensionConverter& dim_conv,
   bitmap_dpi = new_bitmap_dpi;
 }
 
-bool SkinElement::has_state(SkinState state, SkinConditionContext& context) {
+bool SkinElement::has_state(SkinState state,
+                            const SkinConditionContext& context) const {
   return m_override_elements.GetStateElement(
              state, context, SkinElementState::MatchRule::kOnlySpecificState) ||
          m_child_elements.GetStateElement(
@@ -686,7 +691,7 @@ void SkinElement::Load(ParseNode* n, Skin* skin, const char* skin_path) {
 }
 
 bool SkinElementState::IsMatch(SkinState test_state,
-                               SkinConditionContext& context,
+                               const SkinConditionContext& context,
                                MatchRule rule) const {
   if (rule == MatchRule::kOnlySpecificState && state == SkinState::kAll) {
     return false;
@@ -704,7 +709,7 @@ bool SkinElementState::IsMatch(SkinState test_state,
 }
 
 bool SkinElementState::IsExactMatch(SkinState test_state,
-                                    SkinConditionContext& context,
+                                    const SkinConditionContext& context,
                                     MatchRule rule) const {
   if (rule == MatchRule::kOnlySpecificState && state == SkinState::kAll) {
     return false;
@@ -729,7 +734,7 @@ SkinElementStateList::~SkinElementStateList() {
 }
 
 SkinElementState* SkinElementStateList::GetStateElement(
-    SkinState state, SkinConditionContext& context,
+    SkinState state, const SkinConditionContext& context,
     SkinElementState::MatchRule rule) const {
   // First try to get a state element with a exact match to the current state.
   if (SkinElementState* element_state =
@@ -748,7 +753,7 @@ SkinElementState* SkinElementStateList::GetStateElement(
 }
 
 SkinElementState* SkinElementStateList::GetStateElementExactMatch(
-    SkinState state, SkinConditionContext& context,
+    SkinState state, const SkinConditionContext& context,
     SkinElementState::MatchRule rule) const {
   SkinElementState* state_element = m_state_elements.GetFirst();
   while (state_element) {

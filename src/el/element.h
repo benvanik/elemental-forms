@@ -362,7 +362,7 @@ class Element : public util::TypedObject,
 
   struct LookupPair {
     template <typename T>
-    LookupPair(el::TBID& id, T** out_ptr)
+    LookupPair(const el::TBID& id, T** out_ptr)
         : id(id),
           type_id(GetTypeId<T>()),
           out_ptr(reinterpret_cast<el::Element**>(out_ptr)) {}
@@ -821,7 +821,7 @@ class Element : public util::TypedObject,
 
   // Scrolls this element and/or any parent elements by the given delta.
   // dx and dy will be reduced by the amount that was successfully scrolled.
-  void ScrollByRecursive(int& dx, int& dy);
+  void ScrollByRecursive(int* dx, int* dy);
 
   // Makes this element visible by calling ScrollIntoView on all parent
   // elements.
@@ -974,7 +974,7 @@ class Element : public util::TypedObject,
   // NOTE: remember that this elements may be deleted after this call! So if you
   // really must do something after this call and are not sure what the event
   // will cause, use WeakElementPointer to detect self deletion.
-  bool InvokeEvent(Event& ev);
+  bool InvokeEvent(Event ev);
 
   bool InvokePointerDown(int x, int y, int click_count,
                          ModifierKeys modifierkeys, bool touch);
@@ -999,11 +999,11 @@ class Element : public util::TypedObject,
 
   // Makes x and y (relative to this element) relative to the upper left corner
   // of the root element.
-  void ConvertToRoot(int& x, int& y) const;
+  void ConvertToRoot(int* x, int* y) const;
 
   // Makes x and y (relative to the upper left corner of the root element)
   // relative to this element.
-  void ConvertFromRoot(int& x, int& y) const;
+  void ConvertFromRoot(int* x, int* y) const;
 
   // Gets the font description as set with SetFontDescription.
   // Use computed_font_description() to get the calculated font description
@@ -1113,7 +1113,7 @@ class Element : public util::TypedObject,
   // true if the focused state should be painted automatically.
   static bool show_focus_state;
 
-  static void SetIdFromNode(TBID& id, parsing::ParseNode* node);
+  static void SetIdFromNode(TBID* id, parsing::ParseNode* node);
 
  private:
   // Returns this element or the nearest parent that is scrollable in the given
@@ -1149,10 +1149,11 @@ class ElementSkinConditionContext : public SkinConditionContext {
  public:
   explicit ElementSkinConditionContext(Element* element) : m_element(element) {}
   bool GetCondition(SkinTarget target,
-                    const SkinCondition::ConditionInfo& info) override;
+                    const SkinCondition::ConditionInfo& info) const override;
 
  private:
-  bool GetCondition(Element* element, const SkinCondition::ConditionInfo& info);
+  bool GetCondition(Element* element,
+                    const SkinCondition::ConditionInfo& info) const;
   Element* m_element = nullptr;
 };
 
