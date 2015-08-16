@@ -453,6 +453,11 @@ class Element : public util::TypedObject,
   // Removes child from this element and deletes it.
   void DeleteChild(Element* child, InvokeInfo info = InvokeInfo::kNormal);
 
+  // Deletes a child and replaces it with the given new child in the same
+  // location.
+  void ReplaceChild(Element* old_child, Element* new_child,
+                    InvokeInfo info = InvokeInfo::kNormal);
+
   // Removes and deletes all children in this element.
   // NOTE: This won't invoke Die so there's no chance for elements to survive or
   // animate. They will be instantly removed and deleted.

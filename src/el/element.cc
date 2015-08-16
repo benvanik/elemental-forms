@@ -542,6 +542,12 @@ void Element::DeleteChild(Element* child, InvokeInfo info) {
   delete child;
 }
 
+void Element::ReplaceChild(Element* old_child, Element* new_child,
+                           InvokeInfo info) {
+  AddChildRelative(new_child, ElementZRel::kAfter, old_child, info);
+  DeleteChild(old_child, info);
+}
+
 void Element::DeleteAllChildren() {
   while (Element* child = first_child()) {
     DeleteChild(child);
