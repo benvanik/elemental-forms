@@ -3,7 +3,7 @@
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
  * Copyright 2015 Ben Vanik. All rights reserved. Licensed as BSD 3-clause.   *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -15,7 +15,7 @@
 namespace el {
 namespace design {
 
-DesignerForm::DesignerForm() {
+DesignerForm::DesignerForm() : event_handler_(this) {
   set_text("Empty Designer");
 
   LoadData(
