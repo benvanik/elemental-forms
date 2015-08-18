@@ -2,8 +2,8 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -520,9 +520,6 @@ ApplicationBackendGLFW::~ApplicationBackendGLFW() {
 
 void ApplicationBackendGLFW::Run() {
   do {
-#ifdef EL_TARGET_LINUX
-    util::PollEvents();
-#endif
     glfwPollEvents();
 
     if (has_pending_update) window_refresh_callback(mainWindow);
@@ -583,6 +580,6 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 #else  // EL_TARGET_WINDOWS
 
-int main(int argc, char** argv) { return app_main(); }
+int main(int argc, char** argv) { return testbed::app_main(); }
 
 #endif  // !EL_TARGET_WINDOWS

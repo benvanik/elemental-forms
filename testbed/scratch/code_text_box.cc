@@ -2,8 +2,8 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -50,12 +50,12 @@ bool CodeTextBox::StringHasColorOverride(const char* str, size_t len,
     return true;
   }
 
-  char* keywords[] = {"in",  "vec3",  "uvec2",   "const", "uniform", "void",
+  const char* keywords[] = {"in",  "vec3",  "uvec2",   "const", "uniform", "void",
                       "if",  "float", "vec4",    "for",   "uint",    "abs",
                       "sin", "cos",   "texture", "int"};
 
   for (int32_t keywordIdx = 0; keywordIdx < 16; keywordIdx++) {
-    char* matchAgainst = keywords[keywordIdx];
+    const char* matchAgainst = keywords[keywordIdx];
     int32_t matchLen = (int32_t)strlen(matchAgainst);
     if (matchLen == len) {
       auto matched = true;

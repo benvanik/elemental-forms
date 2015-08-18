@@ -2,8 +2,8 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -23,7 +23,7 @@ class ListWindow : public DemoWindow {
  public:
   ListWindow(ListItemSource* source);
   bool OnEvent(const Event& ev) override;
-  EventHandler eh_ = EventHandler(this);
+  EventHandler eh_;
 };
 
 /** Shows a list of items from a source of type AdvancedItemSource. */

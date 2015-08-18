@@ -2,8 +2,8 @@
  ******************************************************************************
  * Elemental Forms : a lightweight user interface framework                   *
  ******************************************************************************
- * ©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
- * Portions ©2011-2015 Emil Segerås: https://github.com/fruxo/turbobadger     *
+ * Â©2015 Ben Vanik. All rights reserved. Released under the BSD license.      *
+ * Portions Â©2011-2015 Emil SegerÃ¥s: https://github.com/fruxo/turbobadger     *
  ******************************************************************************
  */
 
@@ -74,7 +74,7 @@ Element* AdvancedItemSource::CreateItemElement(size_t index,
 
 // == ListWindow ==============================================================
 
-ListWindow::ListWindow(ListItemSource* source) {
+ListWindow::ListWindow(ListItemSource* source) : eh_(this) {
   LoadResourceFile("test_select.tb.txt");
   if (ListBox* select = GetElementById<ListBox>("list")) {
     select->set_source(source);
