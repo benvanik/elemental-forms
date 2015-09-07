@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "el/color.h"
-#include "el/font_description.h"
 #include "el/element.h"
+#include "el/font_description.h"
 #include "el/text/caret.h"
 #include "el/text/text_fragment.h"
 #include "el/text/undo_stack.h"

@@ -15,9 +15,9 @@
 #include "el/elemental_forms.h"
 #include "el/graphics/image_manager.h"
 #include "el/parsing/element_factory.h"
+#include "el/skin.h"
 #include "el/text/font_manager.h"
 #include "el/text/font_renderer.h"
-#include "el/skin.h"
 #include "el/tooltip_manager.h"
 #include "el/util/string_table.h"
 

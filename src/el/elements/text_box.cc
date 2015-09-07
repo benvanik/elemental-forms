@@ -12,9 +12,9 @@
 #include "el/elements/menu_form.h"
 #include "el/elements/text_box.h"
 #include "el/parsing/element_inflater.h"
+#include "el/skin.h"
 #include "el/text/font_face.h"
 #include "el/text/text_fragment_content.h"
-#include "el/skin.h"
 #include "el/util/metrics.h"
 #include "el/util/string_table.h"
 
