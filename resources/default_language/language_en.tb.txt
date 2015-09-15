@@ -5,10 +5,10 @@ delete Delete
 selectall Select all
 undo Undo
 redo Redo
-MessageWindow.ok Ok
-MessageWindow.cancel Cancel
-MessageWindow.yes Yes
-MessageWindow.no No
+MessageForm.ok Ok
+MessageForm.cancel Cancel
+MessageForm.yes Yes
+MessageForm.no No
 ListBox.header Showing %d of %d
 new New
 save Save
