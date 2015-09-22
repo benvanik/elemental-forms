@@ -14,4 +14,6 @@ project("elemental-forms")
   })
   recursive_platform_files("src/")
 
-include("testbed")
+if os.is("windows") then
+  include("testbed")
+end
