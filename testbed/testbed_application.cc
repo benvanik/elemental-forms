@@ -951,7 +951,7 @@ bool MainWindow::OnEvent(const Event& ev) {
 #ifdef EL_RUNTIME_DEBUG_INFO
       util::ShowDebugInfoSettingsForm(parent_root());
 #else
-      MessageWindow* msg_win = new MessageWindow(ev.target, TBID());
+      MessageForm* msg_win = new MessageForm(ev.target, TBID());
       msg_win->Show("Debug settings",
                     "Debug settings is only available in builds "
                     "compiled with EL_RUNTIME_DEBUG_INFO defined.\n\n"
