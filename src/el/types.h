@@ -52,8 +52,8 @@ namespace el {
   constexpr Enum operator^(Enum a, Enum b) {             \
     return static_cast<Enum>(static_cast<uint32_t>(a) ^  \
                              static_cast<uint32_t>(b));  \
-  } inline void                                          \
-  operator|=(Enum& a, Enum b) {                          \
+  }                                                      \
+  inline void operator|=(Enum& a, Enum b) {              \
     a = static_cast<Enum>(static_cast<uint32_t>(a) |     \
                           static_cast<uint32_t>(b));     \
   }                                                      \
