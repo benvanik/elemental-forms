@@ -1,5 +1,5 @@
 project_root = ".."
-include(project_root.."/build_tools")
+dofile(project_root.."/build_tools/scripts/platform_files.lua")
 
 group("samples")
 project("elemental-forms-testbed")
